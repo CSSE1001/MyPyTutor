@@ -104,7 +104,7 @@ class CodeVisitor:
 #{code}#
 try:
     result = getdigits(1)
-except Exception, e:
+except Exception as e:
     print_exception(e)
 #{test}#
 #{start}#
@@ -141,7 +141,7 @@ while xn > 0:
 try:
     result = getdigits(x)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

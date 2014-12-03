@@ -11,39 +11,39 @@ assignment statements that use <tt>range</tt> to assign the list of integers fro
 For example, if <tt>start</tt> is <tt>3</tt> and <tt>end</tt> is <tt>8</tt>
 then <tt>ones</tt> should be the list <tt>[3,4,5,6,7]</tt>, <tt>twos</tt> should be <tt>[3, 5, 7]</tt> and <tt>back</tt> should be <tt>[8,7,6,5,4]<tt>.
 #{TestCode}#
--x"y AUwzufzov<W&IZXk];-YqxT(KBrKJ%g!#V
-8Rw/@Wm0
-SF,`l @t
-9#X;`XzZer
-)9Kq DR
-P-fK/h-h
-P-F>N^6\LOn`Y\M&y5;$HGmM1J
-S{B#:8(x:w,hU}[igr<J"p FQ2#m04#^lfHo%`UNR\[R#Y DMq`@B(FQaJ+uWQ?R}){.KsMK/ckNRbR
-bN}pql'.9Be}etK9k=,HfP><i_B.4Z%CkPK+^u8{i&aM`b
-)A@BR]aQ
-<z*u1
-}{S@/uKL:8<dRHZMS+=E@B^Nt7U"tVd.EAX;r])o-z$muqL\D2a!b<x9 V\7,FE+P%TC9mbJR
-4Ip%
-_RA$?4Hj.e{=jEW\.0@0R
-L!M-n=f<}
-/(SM;&IebrW5j
--y@KtI6k#*F8w:82)'[)Vf_dV
-`h9_=Lq^;)lWo$9rlJD<p$9oP*X1,
- dKL?d|&
-7q'w3Rd{ND
-Q59Z$YGB
-oI#y#.CL
-R#s)+2-!QjV2jqJ#Re7AjN#mz Cz_pAf\b)z#ybl4"9d'b%|7))vfaHrfo
-$1gORkPH{>/.OB^b6!|Dttg@{yAc
-M*GHyU\(/;<,;s^Acd*IL&SG\'QQ&4.s*T:\xSM:VMik%(@qrZJs9n9,uy/'=deGr-W@3n<5/} f%Vi
-f/<c$kFsv2CMj5&
-AaV9sblGs1yi>D;n[0u7j@X\]3+Lp-%UgoKP.Js:eutNJIq1(jblTiHUkZOkaLfeKGrjuZ#U&\6=SsG1OD0pOi$>GJJoM6-7
-r7\HDkK(*U>aZBp
-SIjg4$T%<OH8I;1xD/PGe3*81}?G=P.%I8epDtlHqc%%i->DC7bGo:N:?uSHt;[E53Jz>.KAP@]^s[U)p>>H&-#?W?wbqPRj
-+|@st!?wxZ|eIDk
-Z95XoeH|q=<$d/=QW3oykP!T@aNZ(/=VGQl.UjH[S/E{})w^-*A.P=H.[}!9wvAqg4#NqRWD({xsf=RQTd?xRm8?}BuJ{R-R
-zSLW\
-p#=D#:KL}E<]&
+mNx#dg[s|w!^%>U2s+[/SJ=}[eV/u=ZE6tY24`K
+{N?2|2PJ
+EX*32@u:
+g+-HJ7&6)^
+P/E-DU:
++)2uMH>B
+>'iIQ:A9a:Q?p_407I8j_LSM^6
+MzxC1>5'-.Y>U>;RLY*&)H{a&<"<nuO$G},18BpJ0G237yW(>nv;/pW'?j:W#q#][Owh(.LzC9JC[(R
+ip?I$PA(HbZrbM:QgOz->/'B__dJ4dCg3'W%g,qTY7[_jk
+KT$[&&|l
+;;V&{
+?jaT|V8'CYaKJBx4D@]F?KC7Fdr;?D@:j3hy'ML:CCzA2`JCAW(S_"D99\W6K>VXjxjrG$f?]
+[=C&
+,?3;JUR@UJxTbT&q_<_5e
+M>*zE=-ft
+@F;}x^J69:HVW
+lLMYvvDM">WKK7-HJQCI+VUG\
+{U[C6iB&38`[58;(5AQiLUGwuU,jX
+yTc=b`vs
+_n*[9p9<1B
+=X"7te4?
+?NVE=*;j
+uC34&gjOk0ts6.|?T(>L6m)j42NI.fF87$FI=GHS?dTW&kc1B`g8!m?3gP
+L<_]{7KL(@JAW"p*E9FK=WN$W&vG
+xaG?b*?Kz@D0-ECoLX4x/h$]hz+.F,["a&:1V>J?'gL]:3zH;^C^MExTq@R:s!FMv{O^SO?JWoJ_vMZ
+_Ob^W2K*m_(6x<6
+Q96C)GMh@k|dS@YxIOd076ag+;[]EDX.'#X35a}xCmTJhhC&O4_23E]]Jzo7J[qvg"y4b\9K|GI=B5\"Y8H_]_&14T;jP/`H
+C-BX<A687CrgUIg
+<U(6?"(h9{I;>L[_S HY7(mKbLUgEB%]-]wa(DiX&3|_lJ@K*="w]xa[+ThGI50G=S,<b.z[`rc^;5CAU<|{HggY;CC]m2_F
+=tL%x&2Ve9kJ]Mc
+6H9?C)mGC.6U[}V^M4=Se@Pu)u>j+z2Dh!-4]@%U?AV[Cgmakq"')>2i=TLj":>kAclgBT>M2To6_MK<xJpDpvp\YcKx[Vsj
+XVI.4
+M&ab2LGl*@Jx2
 
 
 

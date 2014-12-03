@@ -135,7 +135,7 @@ try:
     sr = str(r)
     br = r.get_bottom_right()
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -152,7 +152,7 @@ else:
         r.move((rxi, ryi))
         sr = str(r)
         ok = True
-    except Exception, e:
+    except Exception as e:
         print_exception(e)
         ok = False
     if not ok:
@@ -166,7 +166,7 @@ else:
             r.resize(rwi, rhi)
             sr = str(r)
             ok = True
-        except Exception, e:
+        except Exception as e:
             print_exception(e)
             ok = False
         if not ok:

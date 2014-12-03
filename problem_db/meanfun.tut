@@ -38,7 +38,7 @@ answer = float(sum(nums))/len(nums)
 try:
     result = mean(nums)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

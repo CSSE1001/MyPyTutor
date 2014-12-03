@@ -116,11 +116,11 @@ istrings = random.choice(choices)
 #{init}#
 strings = list(istrings)
 #{code}#
-answer = map(lambda x:(x,len(x)), istrings)
+answer = [(x,len(x)) for x in istrings]
 try:
     result = add_sizes(strings)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

@@ -51,7 +51,7 @@ try:
         print_error("Wrong: you should be returning an integer")
     if result != 1234:
         print_error("Wrong: the correct result is the integer 1234\nyou got '%d'" % result)
-except Exception, e:
+except Exception as e:
     print_error("Wrong: you got an unexpected exception '%s'" % str(e))
 
 
@@ -68,12 +68,12 @@ def all_digits(string):
 try:
     result = string2int('12a34')
     print_error("Wrong: for the string '12a34' should be throwing an error")
-except SyntaxError, e:
+except SyntaxError as e:
     if str(e) == 'not an integer':
         correct()
     else:
         print_error("Wrong: you raised a syntax error but the message was '%s'" % str(e))
-except Exception, e:
+except Exception as e:
     print_error("Wrong: You raised the wrong exception: %s"%str(e.__class__))
 
 

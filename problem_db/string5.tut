@@ -117,7 +117,7 @@ else:
     try:
         result = get_digits(s1)
         ok = True
-    except Exception, e:
+    except Exception as e:
         print_exception(e)
         ok = False
     if not ok:

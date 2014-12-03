@@ -39,7 +39,7 @@ answer = 31
 try:
     result = addFunctions(lambda x:x**2, lambda x:x+1)(5)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -54,7 +54,7 @@ answer = 39
 try:
     result = addFunctions(lambda x:x**2, lambda x:x/2)(6)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

@@ -109,7 +109,7 @@ try:
     result = div_7_11(start)
     test_result = result == answer
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -136,7 +136,7 @@ try:
     result = div_7_11(start)
     test_result = result == answer
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -164,7 +164,7 @@ try:
     result = div_7_11(start)
     test_result = result == answer
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -186,7 +186,7 @@ try:
     result = div_7_11(start)
     test_result = result == answer
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

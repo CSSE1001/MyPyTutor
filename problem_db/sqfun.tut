@@ -93,7 +93,7 @@ answer = ni*ni
 try:
     result = square(ni)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

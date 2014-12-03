@@ -129,7 +129,7 @@ answer = x
 try:
     result = base2dec(digits, b)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -158,7 +158,7 @@ answer = x
 try:
     result = base2dec(digits, b)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -187,7 +187,7 @@ answer = x
 try:
     result = base2dec(digits, b)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

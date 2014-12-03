@@ -1,69 +1,69 @@
 
 [11/08/14 Introduction]
 
-aa678c5b6d3e4744bc18a372dcc9db1d Introduction
-4aa0f747dea24dd1b1e3c619f3e880ff Variable Assignment
-74e91c1351544a5c90cf8310d459f441 If Statements 1
-0440c2550fde4dae918a16c63aed1f08 If Statements 2
-f00a00f7e9424fe4b2ffcce0402350a9 If Statements 3
-0fc20530bb214b9b870b9ff1f28cd4af Using Functions
-3b9833341de64f37861dc97d5004d360 Writing a Function
-6c562642a8f34b7f8edf2790fc34e132 While Statements
-cc87872c7ec044e4ba63ce9b16ceddba While Using If
-e48093e59e224b009dee1f12f46c29cd While Using Break
+2c2fd05454274144ae1c4f4a3e05c7f9 Introduction
+4076a7c166cc4bc0a21b8b47866bfebd Variable Assignment
+d1dd7b735091403488ac011b5072994a If Statements 1
+5b1c594d3cc34028975fe714197aa7aa If Statements 2
+ea2643722ada405abd0586c8b5c2e6f1 If Statements 3
+8d2bc2b77c9d404ca62ee6c9c05a9774 Using Functions
+8cadf6a077bb4869869b56d55b364b92 Writing a Function
+24d513043c394dea85948b57ed6b5ec6 While Statements
+b6730110a071403f90dc6397b6c3bd72 While Using If
+3b4e9c3fd17f4abc8e4a6dbc793145d3 While Using Break
 
 [18/08/14 Abstract Data Types]
 
-a84af1c9602d48e2853b77ac1083a894 Accessing String Elements
-19fa8a4cdd3f464d9bf735cbea29ef7f Slicing Strings
-17811b78c7b84033983a2b6d45ac4f91 Processing Strings Using a For Loop
-daabb320514042919d720d2a3bd52d6f Filtering Characters from a String
-d3ba02d64aab4eac9e3751a16931e307 Intersecting String
-f279d002d71e4015a508882303c37be9 Tuple Assignment
-5d4b6beb8b8740e6a28ab0602cf905dc Strings and Tuples
+008f3688316740f2be119b860f291053 Accessing String Elements
+3dfbfad255214c0c99fab130c6139ea3 Slicing Strings
+d6c03c5d63014cb9a1ae63dee7371179 Processing Strings Using a For Loop
+2ef909ca5f0e40099805665b17f54f14 Filtering Characters from a String
+3e13908cb7f04cb9b42975d18f6962f9 Intersecting String
+708f163fa9d5462783ad08b1e29334af Tuple Assignment
+ba40a8353bad441eb16d5ed5fd73aa72 Strings and Tuples
 
 [25/08/14 Classes and Objects]
 
-1ec944378b0344f38da7cff672b21308 Using Range
-4b3c0047e78f4911947d18ccb2c74b54 Finding Digits in Strings
-4a004a9ec5d2443fbd79ec1e62086ce6 Processing Lists Using a For Loop
-cc5862eb7082486f8a0309cb4cef6db8 Constructing a List from Another List
-976f449d32db4c2b8ef6bfe518adb0b8 Transforming a List
-42ab87da2aa249748c7dde1f6baeb997 Suming Elements of a List
-32bfebea37664c9d845b1bb8d5909af6 Finding the Mean
+6814587f7c6841f0a75a635998b056fe Using Range
+a5d957c5e788428bb7f3883486cddb3c Finding Digits in Strings
+787db574339141ce82c89bc5fd4c54e0 Processing Lists Using a For Loop
+b2e071e0c95944f496716e6838f04f92 Constructing a List from Another List
+3cdb172157374b5fa390a343b5ba8238 Transforming a List
+9d0f456f5d494d1abff2785dd40e50f8 Suming Elements of a List
+8f1a17f9a0814e449569ea8a10048446 Finding the Mean
 
 [1/09/14 Classes, Error Handling and I/O]
 
-3a0d1189da524106a03da2d512212cf3 Accessing a Dictionary
-0ec1fad900474fcd8a3d91bd6f858722 Accessing a Dictionary Using Get
-4240ad3bacde4e09ae8ee09194b84768 Updating a Dictionary
-8b7dba890519489ab094a261d4bff988 Iterating Over a Dictionary
-6ba0e3e09d5f4fa791127ebe302f9a2d Exception Handling
-aa37e538b60241dfafd9e89e69f73307 Raising an Exception
+579307aea4c7482da09332d4dda89f58 Accessing a Dictionary
+7c8b8d35a7ec4bcfa817042430e74887 Accessing a Dictionary Using Get
+f636717978c94bc4a9eac915b0135779 Updating a Dictionary
+19bccea175de4c10a91c95046cd4810b Iterating Over a Dictionary
+2374c81aa4e244c1bc9f68bafdf14477 Exception Handling
+944d43ca6d9841bd917f7869c14e5788 Raising an Exception
 
 [8/09/14 Class Design]
-fb5be57c87f34956a9fc2c289f91b5bf Using Classes
-acc0050df4c94ed6b33f6656e767bc95 Defining a Class
-6c56efcb521048c2ac000941e2cd2b64 A Point Class Definition
+7c8c4c45a647497aa139a7b06c52741b Using Classes
+28d7ddaa54e54ab5bbf8f19c0bf12d6e Defining a Class
+9148942dddcd43fe8c18bef8227136db A Point Class Definition
 
 [15/09/14 Inheritance]
-429241039e5044c98dd17668a721bb04 Inheritance - Method Calls
-f68b0cbe42824bae86ceb0679131adac Using Inheritance
+e8db3fbd5863456e9abf2bac62c0f270 Inheritance - Method Calls
+5c469724ad9a4d6b81b55087e77583ca Using Inheritance
 
 [7/10/14 GUI]
-abc678e1bf354b94a2ea76f521bfc461 GUI Layout Example I
-7da8ac0b96a342eb9c5670e290667b20 GUI Layout Example II
-38b62b76d4744e9facac444800767af7 GUI Layout Example III
+24435432c0144e23ae99201d21be053a GUI Layout Example I
+be7151f7d06d43e49e5326fa8749d831 GUI Layout Example II
+bf467ea02f474f5d801fa02399633a90 GUI Layout Example III
 
 [13/10/14 Recursion]
-02faa34280734339a44da9d3f779e261 Adding Numbers
-5b4916b0d59149f6bc3b481c33800df3 Extracting Digits
-96407e78c0f24e3f82d4ca1a38a8c56f Nested Lists
-7cee82c946164f95817a182a66060f49 Extracting Digits Using a Base
-4349a81d1074460480abaee9ce96ae91 Converting List of Digits to Number
+8b6ebc83e1974008af3228f96cfda827 Adding Numbers
+52bd7b41142a46048ba54afea69b39b6 Extracting Digits
+f0a71040beb543b3b1ebb86652ee0832 Nested Lists
+779cfc1caf8e419bbe1b117b093c0345 Extracting Digits Using a Base
+9a44bdc858124a24a1fb0c511c5a0ace Converting List of Digits to Number
 
 [27/10/14 Functional Programming]
-5f12b1ef2cf44723b9cd54b253272c61 Writing Lambda Functions
-e76784edc9de4926a5327aeb7ec8e6aa List Comprehension
-80986f8b7556455bbc846f13cb043866 Add Functions
-b83727e3a5d348fd83e735d77b25977a Repeated Function Application
+069d000da48a45dab81a4b9c8ac8437b Writing Lambda Functions
+648f7e0ffa9948fdbb89f8455869dd71 List Comprehension
+2c32cf5b95c5412ea49d22c79f960c01 Add Functions
+16ee7ab37eee4f729a490febb5c7c6aa Repeated Function Application
