@@ -75,8 +75,6 @@ class Final(type):
 class TutorialInterface(metaclass=Final):
 
     def __init__(self, master, parent, output, enc=True):
-        self.bad = ((self.__class__.__module__, self.__class__.__name__) !=
-                    ('tutorlib.TutorialInterface', 'TutorialInterface'))
         self.url = None
         self.session_key = None
         self.master = master
@@ -87,24 +85,16 @@ class TutorialInterface(metaclass=Final):
         self.user = None
         self.enc = enc
         self.solved = False
-        if self.bad:
-            self.trans = None
-            self.parser = None
-        else:
-            self.trans = Trans(77213)       #  a 'secret key'
-            self.parser = TutParser(self.trans)
+        self.trans = Trans(77213)       #  a 'secret key'
+        self.parser = TutParser(self.trans)
 
     def set_url(self, url):
-        if self.bad:
-            return None
         self.url = url
 
     def set_editor(self, editor):
         self.editor = editor
 
     def _send_data(self, form_dict):
-        if self.bad:
-            return None
         if self.url:
             try: 
                 # The URL is encrypted to make it hard to 'spoof' the
@@ -127,8 +117,6 @@ class TutorialInterface(metaclass=Final):
             print('Tutorial file has incorrect format', file=sys.stderr)
 
     def load_data(self, filename, problem_name):
-        if self.bad:
-            return None
         self.solved = False
         self.num_checks = 0
         self.data = {}
@@ -182,8 +170,6 @@ class TutorialInterface(metaclass=Final):
             return None
 
     def login(self, user, passwd):
-        if self.bad:
-            return None
         values = {'action':'login',
                   'username' : user,
                   'password' : passwd}
@@ -212,8 +198,6 @@ class TutorialInterface(metaclass=Final):
             return result
 
     def logout(self):
-        if self.bad:
-            return
         if self.user is None:
             return
         values = {'action':'logout',
@@ -225,8 +209,6 @@ class TutorialInterface(metaclass=Final):
         self.session_key = None
 
     def change_password(self, passwd0, passwd1):
-        if self.bad:
-            return None
         if passwd0 == '':
             passwd0 = '-'
         values = {'action':'change_password',
@@ -247,8 +229,6 @@ class TutorialInterface(metaclass=Final):
             return True
 
     def upload_answer(self, code):
-        if self.bad:
-            return None
         result = None
         if self.data:
             values = {'action':'upload',
@@ -267,8 +247,6 @@ class TutorialInterface(metaclass=Final):
         return result.startswith('OK')
  
     def download_answer(self):
-        if self.bad:
-            return None
         result = None
         if self.data:
             values = {'action':'download',
@@ -283,8 +261,6 @@ class TutorialInterface(metaclass=Final):
         return result
 
     def submit_answer(self, code):
-        if self.bad:
-            return None
         self.run_tests(code)
         result = None
         if self.data:
@@ -307,8 +283,6 @@ class TutorialInterface(metaclass=Final):
         return result
 
     def show_submit(self):
-        if self.bad:
-            return None
         result = None
         values = {'action':'show',
                   'username':self.user,
@@ -330,13 +304,9 @@ class TutorialInterface(metaclass=Final):
             return None
 
     def reset_editor(self, answer_file):
-        if self.bad:
-            return None
         self.editor.reset(answer_file, self.data.get('Preloaded'))
 
     def get_preloaded(self):
-        if self.bad:
-            return None
         return self.data.get('Preloaded')
 
     def get_hints(self):
@@ -346,16 +316,12 @@ class TutorialInterface(metaclass=Final):
         return self.data.get('Text')
 
     def set_user_text(self, text):
-        if self.bad:
-            return None
         self.user_text = text
 
     def set_fail(self):
         self.correct_sofar = False
 
     def is_solved(self):
-        if self.bad:
-            return None
         return self.solved
 
     def print_error(self, text):
@@ -380,8 +346,6 @@ class TutorialInterface(metaclass=Final):
         print(text, file=sys.stderr)
 
     def correct(self):
-        if self.bad:
-            return None
         self.solved = True
         if self.url:
             print("Correct - press F6 to submit")
@@ -391,8 +355,6 @@ class TutorialInterface(metaclass=Final):
     # Run tests on the user code.
 
     def run_tests(self, text):
-        if self.bad:
-            return None
         self.user_text = text
         # save user code to a file ready for exec
         fp = open(USER_CODE_FILE, 'w')
