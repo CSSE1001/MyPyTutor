@@ -16,14 +16,14 @@
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA.
 
-## This define IO bindings for the code edit window 
+## This define IO bindings for the code edit window
 ## It is a modification of idlelib/IOBinding.py
 
 from idlelib import IOBinding
 import tkinter.messagebox
 
-class TutorIOBinding(IOBinding.IOBinding):
 
+class TutorIOBinding(IOBinding.IOBinding):
     def __init__(self, parent):
         IOBinding.IOBinding.__init__(self, parent)
         self.editwin = parent
@@ -33,7 +33,7 @@ class TutorIOBinding(IOBinding.IOBinding):
             if not editFile:
                 filename = self.askopenfile()
             else:
-                filename=editFile
+                filename = editFile
             if filename:
                 #self.editwin.flist.open(filename, self.loadfile)
                 self.loadfile(filename)
@@ -50,7 +50,7 @@ class TutorIOBinding(IOBinding.IOBinding):
         if not editFile:
             filename = self.askopenfile()
         else:
-            filename=editFile
+            filename = editFile
         if filename:
             self.loadfile(filename)
         else:
@@ -80,4 +80,3 @@ class TutorIOBinding(IOBinding.IOBinding):
                 reply = "cancel"
         self.text.focus_set()
         return reply
-

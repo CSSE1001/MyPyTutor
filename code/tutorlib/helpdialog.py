@@ -22,20 +22,19 @@
 
 import tutorlib.textdialog as tut_textdialog
 
-HELP_TEXT =\
-"""
+HELP_TEXT = """
 The MyPyTutor Python Tutorial System
 ------------------------------------
 
 The main window displays a problem in the top frame and the output from testing your code in the bottom frame. You use the IDLE-like edit window in which to write your answers.
 
-The main window has the following menus. 
+The main window has the following menus.
 
-* The 'Problems' menu allows you to pick a particular tutorial problem to work on. 
+* The 'Problems' menu allows you to pick a particular tutorial problem to work on.
 
 * The 'Online' menu (if present) provides an interface to your online information.
 
-* The 'Preferences' menu allows you to configure MyPyTutor. 
+* The 'Preferences' menu allows you to configure MyPyTutor.
 
 * The 'MyPyTutor Feedback' allows you to provide us with feedback on any given tutorial problem and on the system overall.
 
@@ -48,7 +47,7 @@ The main differences are given below.
 
 * The 'Check' menu is similar to the 'Run' menu of IDLE but instead of running the code in the interpreter, it checks to see your answer is correct.
 
-* If present, the 'Online' menu behaves in the same way as the Online menu in the main window. 
+* If present, the 'Online' menu behaves in the same way as the Online menu in the main window.
 
 Window Resizing
 ---------------
@@ -66,7 +65,7 @@ all the tutorial problems. The menu items in the 'Tutorials' menu are determined
 The 'Configure Answers Folder' item allows you to choose the folder in which your (partial) answers are saved to and loaded from.
 
 MyPyTutor can work with multiple tutorials (for example, from different courses). You are able to set up new tutorials and also remove them. You can change between tutorials and set the default tutorial (the one used on startup). If you are logged in when you change the tutorial or remove a tutorial you will be logged out.
- 
+
 The Online Menu (if present)
 ----------------------------
 
@@ -88,7 +87,8 @@ If the tutorial is configured to provide an online interface and you are registe
 
 """
 
+
 class HelpDialog(tut_textdialog.TextDialog):
-    def __init__(self,parent,title):
-        tut_textdialog.TextDialog.__init__(self, parent, "Help", 
+    def __init__(self, parent, title):
+        tut_textdialog.TextDialog.__init__(self, parent, "Help",
                                            HELP_TEXT, "#ffffaa")

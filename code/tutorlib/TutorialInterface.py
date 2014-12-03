@@ -16,7 +16,7 @@
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA.
 
-# The main interface that deals both with the tutorial files and 
+# The main interface that deals both with the tutorial files and
 # online material.
 
 import os
@@ -27,17 +27,17 @@ import ast
 import threading
 import _thread
 import time
-import urllib.request, urllib.parse, urllib.error
-
+import urllib.request
+import urllib.parse
+import urllib.error
 
 # a file for writing user code for exec'ing on
 USER_CODE_FILE = 'user_code.py'
 
+
 # An alarm for setting a timeout on user code execution.
-
 class Alarm(threading.Thread):
-
-    def __init__( self, secs):
+    def __init__(self, secs):
         self.secs = secs
         self.do_interrupt = True
         threading.Thread.__init__(self)
@@ -51,17 +51,16 @@ class Alarm(threading.Thread):
         self.do_interrupt = False
 
 
-# An exception for any kind of error produced by the testing code as 
+# An exception for any kind of error produced by the testing code as
 # opposed to student code.
 
-
 class TestError(Exception):
-
     def __init__(self, msg):
         self._msg = msg
 
     def __str__(self):
         return repr(self._msg)
+
 
 # Stop people making subclasses of TutorialInterface
 
@@ -69,11 +68,12 @@ class Final(type):
     def __new__(cls, name, bases, classdict):
         for b in bases:
             if isinstance(b, Final):
-                raise TypeError("Cannot make a subclass of '{0}'".format(b.__name__))
+                raise TypeError("Cannot make a subclass of '{0}'"
+                                .format(b.__name__))
         return type.__new__(cls, name, bases, dict(classdict))
 
-class TutorialInterface(metaclass=Final):
 
+class TutorialInterface(metaclass=Final):
     def __init__(self, master, parent, output, enc=True):
         self.url = None
         self.session_key = None
@@ -85,7 +85,7 @@ class TutorialInterface(metaclass=Final):
         self.user = None
         self.enc = enc
         self.solved = False
-        self.trans = Trans(77213)       #  a 'secret key'
+        self.trans = Trans(77213)       # a 'secret key'
         self.parser = TutParser(self.trans)
 
     def set_url(self, url):
@@ -96,12 +96,12 @@ class TutorialInterface(metaclass=Final):
 
     def _send_data(self, form_dict):
         if self.url:
-            try: 
+            try:
                 # The URL is encrypted to make it hard to 'spoof' the
                 # CGI script so as to gain information.
                 URL = self.trans.trans(self.url, 'tutor key').strip()
                 data = urllib.parse.urlencode(form_dict)
-                response = urllib.request.urlopen(URL, data, proxies = {})
+                response = urllib.request.urlopen(URL, data, proxies={})
                 text = response.read().strip()
                 #print text  # debugging
                 if text.startswith('mypytutor>>>'):
@@ -126,10 +126,10 @@ class TutorialInterface(metaclass=Final):
         self.problem_name = problem_name
 
     def logged_on(self):
-        return self.session_key != None
+        return self.session_key is not None
 
     def get_tut_zipfile(self):
-        values = {'action':'get_tut_zip_file'}
+        values = {'action': 'get_tut_zip_file'}
         result = self._send_data(values)
         #print result
         if '_send_data Exception' in result:
@@ -144,7 +144,7 @@ class TutorialInterface(metaclass=Final):
             return None
 
     def get_mpt27(self):
-        values = {'action':'get_mpt27'}
+        values = {'action': 'get_mpt27'}
         result = self._send_data(values)
         if '_send_data Exception' in result:
             print("You don't appear to be connected.", file=sys.stderr)
@@ -157,7 +157,7 @@ class TutorialInterface(metaclass=Final):
             return None
 
     def get_mpt26(self):
-        values = {'action':'get_mpt26'}
+        values = {'action': 'get_mpt26'}
         result = self._send_data(values)
         if '_send_data Exception' in result:
             print("You don't appear to be connected.", file=sys.stderr)
@@ -170,14 +170,14 @@ class TutorialInterface(metaclass=Final):
             return None
 
     def login(self, user, passwd):
-        values = {'action':'login',
-                  'username' : user,
-                  'password' : passwd}
+        values = {'action': 'login',
+                  'username': user,
+                  'password': passwd}
         result = self._send_data(values)
         if '_send_data Exception' in result:
             print("You don't appear to be connected.", file=sys.stderr)
             return False
-        if result == None:
+        if result is None:
             return False
         if result.startswith('Error'):
             return False
@@ -189,7 +189,7 @@ class TutorialInterface(metaclass=Final):
             return True
 
     def get_version(self):
-        values = {'action':'get_version'}
+        values = {'action': 'get_version'}
         result = self._send_data(values)
         if '_send_data Exception' in result:
             print("You don't appear to be connected.", file=sys.stderr)
@@ -200,9 +200,9 @@ class TutorialInterface(metaclass=Final):
     def logout(self):
         if self.user is None:
             return
-        values = {'action':'logout',
-                  'username':self.user,
-                  'session_key':self.session_key,
+        values = {'action': 'logout',
+                  'username': self.user,
+                  'session_key': self.session_key,
                   }
         result = self._send_data(values)
         self.user = None
@@ -211,17 +211,17 @@ class TutorialInterface(metaclass=Final):
     def change_password(self, passwd0, passwd1):
         if passwd0 == '':
             passwd0 = '-'
-        values = {'action':'change_password',
-                  'username':self.user,
-                  'session_key':self.session_key,
-                  'password' : passwd0,
-                  'password1': passwd1
+        values = {'action': 'change_password',
+                  'username': self.user,
+                  'session_key': self.session_key,
+                  'password': passwd0,
+                  'password1': passwd1,
                   }
         result = self._send_data(values)
         if '_send_data Exception' in result:
             print("You don't appear to be connected.", file=sys.stderr)
             return False
-        if result == None:
+        if result is None:
             return False
         if result.startswith('Error'):
             return False
@@ -231,28 +231,28 @@ class TutorialInterface(metaclass=Final):
     def upload_answer(self, code):
         result = None
         if self.data:
-            values = {'action':'upload',
-                      'username':self.user,
-                      'session_key':self.session_key,
+            values = {'action': 'upload',
+                      'username': self.user,
+                      'session_key': self.session_key,
                       'problem_name': self.problem_name,
-                      'code':code
+                      'code': code,
                       }
             result = self._send_data(values)
             if '_send_data Exception' in result:
                 print("You don't appear to be connected.", file=sys.stderr)
                 return False
 
-        if result == None:
+        if result is None:
             return False
         return result.startswith('OK')
- 
+
     def download_answer(self):
         result = None
         if self.data:
-            values = {'action':'download',
-                      'username':self.user,
-                      'session_key':self.session_key,
-                      'problem_name': self.problem_name
+            values = {'action': 'download',
+                      'username': self.user,
+                      'session_key': self.session_key,
+                      'problem_name': self.problem_name,
                       }
             result = self._send_data(values)
             if '_send_data Exception' in result:
@@ -266,13 +266,13 @@ class TutorialInterface(metaclass=Final):
         if self.data:
             if self.is_solved():
                 tut_id = self.data.get('ID')
-                values = {'action':'submit',
-                          'username':self.user,
-                          'session_key':self.session_key,
+                values = {'action': 'submit',
+                          'username': self.user,
+                          'session_key': self.session_key,
                           'tut_id': tut_id,
                           'tut_id_crypt': self.trans._sh(tut_id + self.user),
                           'tut_check_num': self.num_checks,
-                          'code':code
+                          'code': code,
                           }
                 result = self._send_data(values)
                 if '_send_data Exception' in result:
@@ -284,9 +284,9 @@ class TutorialInterface(metaclass=Final):
 
     def show_submit(self):
         result = None
-        values = {'action':'show',
-                  'username':self.user,
-                  'session_key':self.session_key,
+        values = {'action': 'show',
+                  'username': self.user,
+                  'session_key': self.session_key,
                   }
         result = self._send_data(values)
         if '_send_data Exception' in result:
@@ -330,15 +330,16 @@ class TutorialInterface(metaclass=Final):
 
     def print_exception(self, e):
         self.print_exception_info(e)
-        print('%s: %s\nTry Googling  the error type for help.' %  (type(e).__name__, str(e)), file=sys.stderr)
+        print('%s: %s\nTry Googling  the error type for help.' %
+              (type(e).__name__, str(e)), file=sys.stderr)
         self.set_fail()
-
 
     def print_exception_info(self, e):
         line = traceback.extract_tb(sys.exc_info()[-1])[-1][1]
         traceinfo = traceback.extract_tb(sys.exc_info()[-1])[-1]
         if traceinfo[0] == USER_CODE_FILE:
-            print("line %d, in %s" % (traceinfo[1], traceinfo[2]), file=sys.stderr)
+            print("line %d, in %s" % (traceinfo[1], traceinfo[2]),
+                  file=sys.stderr)
             print(self.user_text.split('\n')[line-1].strip(), file=sys.stderr)
             self.editor.error_line(line)
 
@@ -387,12 +388,12 @@ class TutorialInterface(metaclass=Final):
                 ## print_warning - like print_error but does not stop tests
                 ## correct - set solved and print 'Correct'
                 ## master - the 'master' of the app - for GUI problems
-                global_env = {'user_text': self.user_text, 
-                              'print_warning':self.print_warning, 
-                              'print_error':self.print_error,
-                              'print_exception':self.print_exception,
-                              'correct':self.correct,
-                              'master':self.master}
+                global_env = {'user_text': self.user_text,
+                              'print_warning': self.print_warning,
+                              'print_error': self.print_error,
+                              'print_exception': self.print_exception,
+                              'correct': self.correct,
+                              'master': self.master}
                 ## update the global env with the execution of the global code
                 try:
                     exec(self.data.get('GlobalCode', ''), global_env)
@@ -421,16 +422,16 @@ class TutorialInterface(metaclass=Final):
                         # empty local env - updated by the code - this
                         # sets up values that is accessed by user code
                         try:
-                            exec(test.get('init', ''), test_globals,locs)
+                            exec(test.get('init', ''), test_globals, locs)
                         except Exception as e:
                             raise TestError(str(e))
-                        # now exec the user code where locs is used as 
+                        # now exec the user code where locs is used as
                         # both global and local env
                         # with open(USER_CODE_FILE) as fp:
                         #      exec fp in locs
                         exec(compile(open(USER_CODE_FILE).read(), USER_CODE_FILE, 'exec'), locs)
                         #print locs
-                        # now test the results of the user code - update 
+                        # now test the results of the user code - update
                         # test_globals to include locs
                         test_globals.update(locs)
                         # just in case the user defines one of the things in global_env
@@ -465,9 +466,8 @@ class TutorialInterface(metaclass=Final):
                     self.output.add_text('Test Error: ' + str(e), "red")
             except Exception as e:
                 self.print_exception_info(e)
-                print('%s: %s\nTry Googling  the error type for help.' %  (type(e).__name__, str(e)), file=sys.stderr)
-
-
+                print('%s: %s\nTry Googling  the error type for help.' %
+                      (type(e).__name__, str(e)), file=sys.stderr)
 
 
 ## Parsing and encrypting/decrypting for tutorial problem files
@@ -485,59 +485,55 @@ class TutorialInterface(metaclass=Final):
 ## Any other headers are possible and will be added to the dictionary
 ## but unlike Hints the dictionary will contain only the last block
 ## with the given header.
- 
-
-
 
 _tut_retable = (
-    (   # text block
-    re.compile(r"""
-    \#{[Tt]ext}\#\s*
-    """, re.VERBOSE),
-    lambda x: ('header', 'Text')
-    ),
-    (   # code block
-    re.compile(r"""
-    \#{[Tt]est[Cc]ode}\#\s*
-    """, re.VERBOSE),
-    lambda x: ('header', 'TestCode')
-    ),
-    (   # hint block
-    re.compile(r"""
-    \#{[Hh]int}\#\s*
-    """, re.VERBOSE),
-    lambda x: ('header', 'Hint')
-    ),
-    (   # other tags
-    re.compile(r"""
-    \#{[^}]*}\#\s
-    """, re.VERBOSE | re.DOTALL),
-    lambda x: ('header', x[2:-3].lower())
-    ),
+    # text block
+    (re.compile(r"""
+     \#{[Tt]ext}\#\s*
+     """, re.VERBOSE),
+     lambda x: ('header', 'Text')),
 
-    (   # catchall
-    re.compile(r"""
-    [^#]*(?!\#{)(\#[^#]*(?!\#{))*\s*
-    """, re.VERBOSE | re.DOTALL),
-    lambda x: ('body', x)
-    )
+    # code block
+    (re.compile(r"""
+     \#{[Tt]est[Cc]ode}\#\s*
+     """, re.VERBOSE),
+     lambda x: ('header', 'TestCode')),
+
+    # hint block
+    (re.compile(r"""
+     \#{[Hh]int}\#\s*
+     """, re.VERBOSE),
+     lambda x: ('header', 'Hint')),
+
+    # other tags
+    (re.compile(r"""
+     \#{[^}]*}\#\s
+     """, re.VERBOSE | re.DOTALL),
+     lambda x: ('header', x[2:-3].lower())),
+
+    # catchall
+    (re.compile(r"""
+     [^#]*(?!\#{)(\#[^#]*(?!\#{))*\s*
+     """, re.VERBOSE | re.DOTALL),
+     lambda x: ('body', x)),
 )
+
 
 def pos2linenum(string, pos):
     substring = string[:pos+1]
     num = substring.count('\n')
     return num+1
 
+
 class ParseError(Exception):
-    
     def __init__(self, pos):
         self.pos = pos
 
     def __str__(self):
         return repr(self.pos)
 
-## Parse the top-level of the input
 
+## Parse the top-level of the input
 class TutParser:
     def __init__(self, trans):
         self.string = ''
@@ -620,7 +616,7 @@ class TutParser:
                 break
         return True
 
-    def parse(self, string, parse_code, enc = True):
+    def parse(self, string, parse_code, enc=True):
         self.data = {}
         self.string = string
         self.pos = 0
@@ -633,7 +629,7 @@ class TutParser:
                 return None
         ## data is the dictionary that stores the top-level blocks
         ## hints are stored in a list
-        self.data = {'Hint':[]}
+        self.data = {'Hint': []}
         try:
             if self._parse_it(parse_code, enc):
                 return self.data
@@ -645,6 +641,7 @@ class TutParser:
         except Exception as e:
             print(str(e))
 
+
 ## The parser for the code blocks
 ## The block headers are:
 ## #{preload}# - code that is loaded into the users code edit window
@@ -653,11 +650,11 @@ class TutParser:
 ##                   0 or 1 such blocks before the #{test}# blocks
 ## #{timeout = secs}# - max time for all tests (default 1 sec)
 ## #{ID = IDstring}# - ID of problem
-## #{test}# - the header for a test - tests include the following headers: 
+## #{test}# - the header for a test - tests include the following headers:
 ##        #{start}# - code that is run before the user code but not accessable
 ##                    to user code
 ##                      0 or 1 such blocks
-##        #{init}# - initialization run before user code - user has access to 
+##        #{init}# - initialization run before user code - user has access to
 ##                   the results of evalating this code
 ##                      0 or 1 such blocks
 ##        #{code}# - the code that is run after the user code that carries out
@@ -702,12 +699,13 @@ class CodeParser:
                 first_token = tokens.pop(0)
                 if first_token[0] != 'header':
                     print("Must start with header", file=sys.stderr)
-                    return (None,None,None,None,None)
-                if first_token[1] in ['preload','global']:
+                    return (None, None, None, None, None)
+                if first_token[1] in ['preload', 'global']:
                     next_token = tokens.pop(0)
                     if next_token[0] != 'body':
-                        print("Header must be followed by body", file=sys.stderr)
-                        return (None,None,None,None,None)
+                        print("Header must be followed by body",
+                              file=sys.stderr)
+                        return (None, None, None, None, None)
                     if first_token[1] == 'preload':
                         self.preload = next_token[1]
                     else:
@@ -715,44 +713,44 @@ class CodeParser:
                 elif 'id' in first_token[1]:
                     args = first_token[1].split('=')
                     if len(args) != 2 or 'id' != args[0].strip():
-                        print("Invalid syntax '%s'" %\
-                            first_token[1], file=sys.stderr)
-                        return (None,None,None,None,None)
+                        print("Invalid syntax '%s'" %
+                              first_token[1], file=sys.stderr)
+                        return (None, None, None, None, None)
                     else:
                         self.ID = args[1].strip()
                 elif 'timeout' in first_token[1]:
                     args = first_token[1].split('=')
                     if len(args) != 2 or 'timeout' != args[0].strip():
-                        print("Invalid syntax '%s'" %\
-                            first_token[1], file=sys.stderr)
-                        return (None,None,None,None,None)
+                        print("Invalid syntax '%s'" %
+                              first_token[1], file=sys.stderr)
+                        return (None, None, None, None, None)
                     else:
                         try:
                             timeout = int(args[1].strip())
                         except:
-                            print("Invalid syntax '%s'" %\
-                                first_token[1], file=sys.stderr)
-                            return (None,None,None,None,None)
+                            print("Invalid syntax '%s'" %
+                                  first_token[1], file=sys.stderr)
+                            return (None, None, None, None, None)
                         self.timeout = timeout
                 elif 'test' not in first_token[1]:
                     print("Must be 'test' header", file=sys.stderr)
-                    return (None,None,None,None,None)
+                    return (None, None, None, None, None)
                 else:
                     break
             # now first_token == 'test ...'
             test_dict = extract_test_config(first_token[1][4:])
             if not test_dict:
-                return (None,None,None,None,None)
+                return (None, None, None, None, None)
             at_test = True
             while tokens:
                 next_token = tokens.pop(0)
                 if at_test and next_token[0] == 'body' \
                         and not next_token[1].strip():
                     continue
-                
+
                 if next_token[0] != 'header':
                     print("Must be header", file=sys.stderr)
-                    return (None,None,None,None,None)
+                    return (None, None, None, None, None)
                 header = next_token[1]
 
                 if 'test' in header:
@@ -761,30 +759,30 @@ class CodeParser:
                         tests.append(test_dict)
                         test_dict = extract_test_config(header[4:])
                         if not test_dict:
-                            return (None,None,None,None,None)
+                            return (None, None, None, None, None)
                         continue
                     else:
                         print("test must contain data", file=sys.stderr)
-                        return (None,None,None,None,None)
+                        return (None, None, None, None, None)
 
                 at_test = False
                 if header not in ['start', 'init', 'code']:
                     print("unknown header: "+header, file=sys.stderr)
-                    return (None,None,None,None,None)
+                    return (None, None, None, None, None)
                 next_token = tokens.pop(0)
                 if next_token[0] != 'body':
                     print("Header must be followed by body", file=sys.stderr)
-                    return (None,None,None,None,None)
+                    return (None, None, None, None, None)
                 test_dict[header] = next_token[1]
             tests.append(test_dict)
         except ParseError as e:
             print("Parse error in code", file=sys.stderr)
-            return (None,None,None,None,None)
-        return (self.preload,self.global_code,self.timeout,self.ID,tests)
+            return (None, None, None, None, None)
+        return (self.preload, self.global_code, self.timeout, self.ID, tests)
 
 
 def extract_test_config(text):
-    test_dict = {'repeats':1}
+    test_dict = {'repeats': 1}
     argpairs = [arg.split('=') for arg in text.split(',') if arg.strip()]
     for argpair in argpairs:
         if len(argpair) != 2:
@@ -803,16 +801,18 @@ def extract_test_config(text):
         test_dict[arg1] = argnum
     return test_dict
 
-# The  encryption/decryption algorithm uses a simple symmetric 
-# single-rotor encryption for the 'printable' characters - i.e. 
+
+# The encryption/decryption algorithm uses a simple symmetric
+# single-rotor encryption for the 'printable' characters - i.e.
 # those between ' ' and '~'.
 # All other characters are not encrypted.
 
 import random
 
+
 class Trans:
     def __init__(self, x=0):
-        # Test the 'secret key' 
+        # Test the 'secret key'
         if x % 5381 == 1879 and x // 5381 == 14:
             n0 = 2
             n1 = 7
@@ -837,7 +837,7 @@ class Trans:
         n2 = self.n6 // 2
         lst3 = lst1[:n2]
         lst4 = lst1[n2:]
-        return dict(list(zip(lst3,lst4))+list(zip(lst4,lst3)))
+        return dict(list(zip(lst3, lst4))+list(zip(lst4, lst3)))
 
     def trans(self, a1, a2):
         random.seed(self._sh(a2))
@@ -848,7 +848,7 @@ class Trans:
             if v < self.n3 or v >= self.n4:
                 lst2.append(ch)
             else:
-                r = random.randint(0,self.n7)
+                r = random.randint(0, self.n7)
                 v1 = (v - self.n3 + r) % self.n6 + self.n3
                 v2 = lst1.get(v1)
                 try:
@@ -858,12 +858,9 @@ class Trans:
                 lst2.append(chr(v3))
         return ''.join(lst2)
 
-
     # since the hash function seems to be different on different
     # machines here is a simple string hash that hashes up to the first 40
     # chars
-
-    
     def _sh(self, text):
         if self.lost:
             return 0
@@ -875,5 +872,3 @@ class Trans:
             num += 1
             hash_value = 0x00ffffff & ((hash_value << 5) + hash_value + ord(c))
         return hash_value
-
-

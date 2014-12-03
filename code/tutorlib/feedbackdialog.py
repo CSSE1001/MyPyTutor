@@ -20,16 +20,17 @@
 ## The feedback dialog for MyPyTutor
 
 from tkinter import *
-import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.parse
+import urllib.error
 import tkinter.messagebox
 
 ## The URL for the feedback CGI script.
-
 URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
 
+
 class FeedbackDialog(Toplevel):
-    def __init__(self,parent,title,name, code=''):
+    def __init__(self, parent, title, name, code=''):
         Toplevel.__init__(self, parent)
         self.configure(borderwidth=5)
         self.geometry("+%d+%d" % (parent.winfo_rootx()+30,
@@ -46,7 +47,7 @@ class FeedbackDialog(Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.Cancel)
         self.parent = parent
         self.buttonOk.focus_set()
-        self.bind('<Escape>',self.Cancel)
+        self.bind('<Escape>', self.Cancel)
         self.wait_window()
 
     def CreateWidgets(self):
@@ -54,12 +55,12 @@ class FeedbackDialog(Toplevel):
             self.feedback_type = 'General'
             generalFrame = Frame(self)
             generalFrame.pack(fill=X)
-            Label(generalFrame, text = 'Subject: ').pack(side=LEFT,pady=10)
-            Entry(generalFrame, 
-                  textvariable=self.subject_var,width=60).pack(side=LEFT)
+            Label(generalFrame, text='Subject: ').pack(side=LEFT, pady=10)
+            Entry(generalFrame,
+                  textvariable=self.subject_var, width=60).pack(side=LEFT)
         else:
             self.feedback_type = 'Problem'
-        Label(self, text = 'Feedback: ').pack(anchor=W)
+        Label(self, text='Feedback: ').pack(anchor=W)
         frameMain = Frame(self, borderwidth=2)
         frameMain.pack(expand=TRUE, fill=BOTH)
         text = Text(frameMain, wrap=WORD, relief=SUNKEN)
@@ -75,26 +76,26 @@ class FeedbackDialog(Toplevel):
                                command=self.Ok)
         self.buttonOk.pack(side=LEFT, expand=1)
         self.buttonCancel = Button(frameButtons, text='Cancel',
-                               command=self.Cancel)
-        self.buttonCancel.pack(side=LEFT,expand=1)
-
+                                   command=self.Cancel)
+        self.buttonCancel.pack(side=LEFT, expand=1)
 
     def Ok(self, event=None):
-        values = {'problem_name' : self.subject_var.get(),
-                  'type' : self.feedback_type,
-                  'code_text' : self.code,
-                  'feedback' : self.text.get(1.0, END)}
+        values = {'problem_name': self.subject_var.get(),
+                  'type': self.feedback_type,
+                  'code_text': self.code,
+                  'feedback': self.text.get(1.0, END)}
         try:
             data = urllib.parse.urlencode(values)
             req = urllib.request.Request(URL, data)
             response = urllib.request.urlopen(req)
             the_page = response.read()
             if 'Feedback not accepted' in the_page:
-                tkinter.messagebox.showerror('Feedback Error', 'Feedback not accepted')
+                tkinter.messagebox.showerror('Feedback Error',
+                                             'Feedback not accepted')
         except:
-            tkinter.messagebox.showerror('Feedback Error', 'Cannot upload feedback')
+            tkinter.messagebox.showerror('Feedback Error',
+                                         'Cannot upload feedback')
         self.destroy()
 
     def Cancel(self, event=None):
         self.destroy()
-

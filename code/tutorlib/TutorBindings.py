@@ -24,6 +24,7 @@ from idlelib import macosxSupport
 
 menudefs = default_keydefs = None
 
+
 def initialise():
     import sys
     global menudefs
@@ -63,7 +64,7 @@ def initialise():
        ('R_eplace...', '<<replace>>'),
        ('Go to _Line', '<<goto-line>>'),
       ]),
-    ('format', [
+     ('format', [
        ('_Indent Region', '<<indent-region>>'),
        ('_Dedent Region', '<<dedent-region>>'),
        ('Comment _Out Region', '<<comment-region>>'),
@@ -73,14 +74,14 @@ def initialise():
        ('Toggle Tabs', '<<toggle-tabs>>'),
        ('New Indent Width', '<<change-indentwidth>>'),
        ]),
-     ('options', [
+      ('options', [
                 ('_Configure IDLE...', '<<open-config-dialog>>'),
        None,
        ]),
-     ("check", [
+      ("check", [
                 ("Check    F5", '<<check>>')
                 ]),
-     ("online", [
+      ("online", [
                 ("Login", '<<login>>'),
                 ("Logout", '<<logout>>'),
                 ("Change Password", '<<change_password>>'),
@@ -92,7 +93,7 @@ def initialise():
                 ("Show Submissions", '<<show_submit>>')
                 ]),
 
-     ('help', [
+      ('help', [
        ('_About IDLE', '<<about-idle>>'),
        None,
        ('_IDLE Help', '<<help>>'),
@@ -102,7 +103,6 @@ def initialise():
        ('Tutor Help', '<<help-tutor>>'),
        ]),
     ]
-
 
     if macosxSupport.runningAsOSXApp():
         # Running as a proper MacOS application bundle. This block restructures
@@ -122,12 +122,10 @@ def initialise():
         del menudefs[-1][1][0:2]
 
         menudefs.insert(0,
-                ('application', [
-                    ('About IDLE', '<<about-idle>>'),
-                    None,
-                    ('_Preferences....', '<<open-config-dialog>>'),
-                ]))
-
+                        ('application', [
+                            ('About IDLE', '<<about-idle>>'),
+                            None,
+                            ('_Preferences....', '<<open-config-dialog>>'),
+                        ]))
 
     default_keydefs = idleConf.GetCurrentKeySet()
-

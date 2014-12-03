@@ -16,16 +16,16 @@
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA.
 
-# This defines the code edit window - it inherits from 
+# This defines the code edit window - it inherits from
 # idlelib/EditorWindow and so has the same look and feel
 
 import os
 from tkinter import *
 
-from idlelib import EditorWindow,FileList, macosxSupport
+from idlelib import EditorWindow, FileList, macosxSupport
 from idlelib import WindowList
 #from idlelib.configHandler import idleConf
-from . import TutorBindings as tut_bindings 
+from . import TutorBindings as tut_bindings
 from . import TutorIOBinding as tut_iobinding
 from . import aboutdialog as tut_dialog
 from . import helpdialog as tut_help
@@ -33,8 +33,8 @@ import tkinter.filedialog
 import tkinter.messagebox
 #from TutorialData import *
 
-class TutorEditor(EditorWindow.EditorWindow):
 
+class TutorEditor(EditorWindow.EditorWindow):
     menu_specs = [
         ("file", "_File"),
         ("edit", "_Edit"),
@@ -45,7 +45,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         ("help", "_Help"),
     ]
 
-    def __init__(self, parent, flist=None, root=None, 
+    def __init__(self, parent, flist=None, root=None,
                  filename=None, online=False):
 
         # Support for Python >= 2.7.7 (TODO find a better way)
@@ -54,14 +54,14 @@ class TutorEditor(EditorWindow.EditorWindow):
         tut_bindings.initialise()
 
         if online:
-             self.menu_specs.insert(4, ("online", "_Online"))
-        EditorWindow.EditorWindow.__init__(self,  #flist = flist,
+            self.menu_specs.insert(4, ("online", "_Online"))
+        EditorWindow.EditorWindow.__init__(self,  # flist = flist,
                                            root=root, filename=filename)
         self.io = io = tut_iobinding.TutorIOBinding(self)
         io.set_filename_change_hook(self.filename_change_hook)
         self.parent = parent
         self.root = root
-        self.fill_menus(menudefs=tut_bindings.menudefs) #,keydefs={'<F5>':self.check_event})
+        self.fill_menus(menudefs=tut_bindings.menudefs)  # ,keydefs={'<F5>':self.check_event})
         #self.load_extensions()
         self.text.bind("<<load-from>>", self.load_from_event)
         self.text.bind("<<revert>>", self.revert_event)
@@ -82,7 +82,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         self.filename = ''
         self.dirname = ''
         self.opendialog = None
-        self.menudict['file'].delete(0,1)
+        self.menudict['file'].delete(0, 1)
         #self.top = top = WindowList.ListedToplevel(root, menu=self.menubar)
         #self.set_close_hook(self.quit)
         self.top.protocol("WM_DELETE_WINDOW", self.close_event)
@@ -91,9 +91,9 @@ class TutorEditor(EditorWindow.EditorWindow):
         pass
 
     def update_font(self, font_size):
-        self.text.config(font = ('courier', 
-                                 str(int(font_size)+1), 
-                                 'normal', 'roman'))
+        self.text.config(font=('courier',
+                               str(int(font_size)+1),
+                               'normal', 'roman'))
 
     def revert_event(self, e):
         reply = self.possiblysave("Save on Revert")
@@ -112,7 +112,6 @@ class TutorEditor(EditorWindow.EditorWindow):
     def check_event(self, e):
         self.parent.run_tests()
         return "break"
-
 
     def login_event(self, e):
         self.parent.login()
@@ -140,11 +139,11 @@ class TutorEditor(EditorWindow.EditorWindow):
         reply = "no"
         if self.io:
             if not self.get_saved():
-                if self.top.state()!='normal':
+                if self.top.state() != 'normal':
                     self.top.deiconify()
                 self.top.lift()
-                message = "Do you want to save %s?" % (
-                    self.filename or "this untitled document")
+                message = ("Do you want to save %s?" %
+                           (self.filename or "this untitled document"))
                 m = tkinter.messagebox.Message(
                     title=title,
                     message=message,
@@ -158,7 +157,6 @@ class TutorEditor(EditorWindow.EditorWindow):
                         reply = "cancel"
         return reply
 
-        
     def close(self):
         #print 'closing'
         reply = self.maybesave()
@@ -169,28 +167,27 @@ class TutorEditor(EditorWindow.EditorWindow):
     def reset(self, filename, default):
         self.filename = filename
         if os.path.exists(filename):
-            self.io.open(editFile = filename)
+            self.io.open(editFile=filename)
         else:
             self.preload(default)
             self.io.set_filename(filename)
 
-    def preload(self,text):
-        self.text.delete(1.0,END)
+    def preload(self, text):
+        self.text.delete(1.0, END)
         if text:
             self.text.insert(END, text)
         #self.set_saved(1)
-            
 
     def get_text(self):
         return self.text.get(1.0, END)
 
-    def error_line(self,line):
+    def error_line(self, line):
         self.error = True
         start = "%d.0" % line
         end = "%d.0 lineend" % line
         text = self.text
-        text.tag_add("ERROR", start,end)
-        
+        text.tag_add("ERROR", start, end)
+
     def quit(self):
         #self.root.destroy()
         self.parent.quit_editor()
