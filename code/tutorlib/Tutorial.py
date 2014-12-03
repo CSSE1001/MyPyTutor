@@ -334,6 +334,14 @@ class TutorialInfo(object):
         self.tut_dict[tut_name].set_problem_status(problem_name, status)
 
     def next_tutorial(self, tut_name, problem_name):
+        if (tut_name, problem_name) == (None, None):
+            # User hasn't opened a problem yet. Move to the first unsolved one.
+            # If all are solved, move to the first one.
+            for t, p in self.all_problems:
+                if self.get_problem(t, p).status == '-':
+                    return (t, p)
+            return self.all_problems[0]
+
         index = self.all_problems.index((tut_name, problem_name))
         if index+1 < len(self.all_problems):
             return self.all_problems[index+1]

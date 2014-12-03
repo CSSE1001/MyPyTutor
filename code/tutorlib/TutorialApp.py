@@ -294,10 +294,10 @@ class TutorialApp():
                              command=self.help)
         master.config(menu=menubar)
         #print "done all menus"
-        master.bind("n", self.next_tutorial_key)
-        master.bind("N", self.next_tutorial_key)
-        master.bind("p", self.previous_tutorial_key)
-        master.bind("P", self.previous_tutorial_key)
+        master.bind("n", self.next_tutorial)
+        master.bind("N", self.next_tutorial)
+        master.bind("p", self.previous_tutorial)
+        master.bind("P", self.previous_tutorial)
         sys.stdout = tut_stdouterr.StdOut(self.output)
         sys.stderr = tut_stdouterr.StdErr(self.output)
         self.current_problem_index = -1
@@ -686,22 +686,15 @@ class TutorialApp():
         if self.editor is not None:
             self.editor.update_font(font_size)
 
-    def next_tutorial_key(self, e):
-        if (self.current_tut_name is not None and
-                self.current_prob_name is not None):
-            self.next_tutorial()
-
-    def previous_tutorial_key(self, e):
-        if self.current_tut_name is not None and \
-                self.current_prob_name is not None:
-            self.previous_tutorial()
-
-    def next_tutorial(self):
+    def next_tutorial(self, e=None):
         self.menu_choice(*self.tutorials.next_tutorial(self.current_tut_name,
                                                        self.current_prob_name))
 
-    def previous_tutorial(self):
-        self.menu_choice(*self.tutorials.previous_tutorial(self.current_tut_name, self.current_prob_name))
+    def previous_tutorial(self, e=None):
+        if (self.current_tut_name is not None and
+                self.current_prob_name is not None):
+            self.menu_choice(*self.tutorials.previous_tutorial(self.current_tut_name,
+                                                               self.current_prob_name))
 
     def set_menu_command(self, tut_name, prob_name):
         return lambda: self.menu_choice(tut_name, prob_name)
