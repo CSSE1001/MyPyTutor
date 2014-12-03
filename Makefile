@@ -6,7 +6,7 @@
 #   $ make push
 
 
-.PHONY: all clean build push
+.PHONY: all clean tutorials build push
 
 BUILD = MyPyTutor34.zip \
         tut_admin.txt \
@@ -16,14 +16,18 @@ BUILD = MyPyTutor34.zip \
         code/mpt_installer.py \
         www/index.html
 
-all: MyPyTutor34.zip
+all: MyPyTutor34.zip tutorials
 
 clean:
 	-rm MyPyTutor34.zip
 	-rm code/tutorlib/*.pyc
+	-rm -r tut_admin.txt CSSE1001Tutorials
 	-rm -r build
 
-build: $(BUILD)
+tutorials: problem_db/*
+	-python3 code/create_tutorial.py problem_db/CSSE1001.txt CSSE1001Tutorials
+
+build: tutorials $(BUILD)
 	mkdir -p build
 	cp $(BUILD) build
 
