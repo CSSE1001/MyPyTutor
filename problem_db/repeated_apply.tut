@@ -97,7 +97,7 @@ answer = 110
 try:
     result = repeatedlyApply(lambda x: x+1,10)(100)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -111,7 +111,7 @@ answer = 64
 try:
     result = repeatedlyApply(lambda x: 2*x,6)(1)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

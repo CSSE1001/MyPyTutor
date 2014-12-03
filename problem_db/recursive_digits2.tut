@@ -117,7 +117,7 @@ while n > 0:
 try:
     result = dec2base(x, b)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -143,7 +143,7 @@ while n > 0:
 try:
     result = dec2base(x, b)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -169,7 +169,7 @@ while n > 0:
 try:
     result = dec2base(x, b)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

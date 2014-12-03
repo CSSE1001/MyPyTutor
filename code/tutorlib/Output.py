@@ -20,13 +20,13 @@
 
 # The output frame where stdout and stderr are displayed
 
-from Tkinter import *
+from tkinter import *
 
 
 class Output(Frame):
-    def __init__(self, master,fontsize, textlen):
+    def __init__(self, master, fontsize, textlen):
         Frame.__init__(self, master)
-        self.text = Text(self, height = textlen)
+        self.text = Text(self, height=textlen)
         self.text.config(state=DISABLED)
         self.text.pack(side=LEFT, fill=BOTH, expand=1)
         scrollbar = Scrollbar(self)
@@ -35,19 +35,19 @@ class Output(Frame):
         scrollbar.config(command=self.text.yview)
         self.text.tag_config("red", foreground="red")
         self.text.tag_config("blue", foreground="blue")
-        self.text.config(font = ('courier', str(fontsize+1), 
-                                 'normal', 'roman'))
+        self.text.config(font=('courier', str(fontsize+1),
+                               'normal', 'roman'))
 
     def update_font(self, fontsize):
-        self.text.config(font = ('courier', str(fontsize+1), 
-                                 'normal', 'roman'))
+        self.text.config(font=('courier', str(fontsize+1),
+                               'normal', 'roman'))
 
     def clear_text(self):
         self.text.config(state=NORMAL)
         self.text.delete(1.0, END)
         self.text.config(state=DISABLED)
 
-    def add_text(self, text, style=None): 
+    def add_text(self, text, style=None):
         self.text.config(state=NORMAL)
         if style:
             self.text.insert(END, text, (style,))
@@ -59,4 +59,4 @@ class Output(Frame):
         self.text.config(font=font)
 
     def update_text_length(self, lines):
-        self.text.config(height = lines)
+        self.text.config(height=lines)

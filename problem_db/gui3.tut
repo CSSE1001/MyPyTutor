@@ -12,7 +12,7 @@ its only argument and adds four buttons as depicted in the image below.
 You will need to create a frame in which to place Button1 and Button2.
 All buttons should use <tt>pressed</tt> as the button
 callback (command).
-You may assume that <tt>from Tkinter import *</tt> has already been called and the frame has already had its size and colour set.
+You may assume that <tt>from tkinter import *</tt> has already been called and the frame has already had its size and colour set.
 <p>
 You must use <tt>pack</tt> for layout and <b>not</b> <tt>grid</tt>
 and you must use <tt>expand</tt> when packing the buttons and <tt>fill</tt> when
@@ -64,7 +64,7 @@ Close the popup window before trying again or moving to a new problem.
 
 #{global}#
 
-import Tkinter as XXX
+import tkinter as XXX
 class TestWindow(XXX.Toplevel):
     def __init__(self,parent,title, layout_fun):
         XXX.Toplevel.__init__(self, parent)
@@ -102,45 +102,45 @@ class TestWindow(XXX.Toplevel):
 
 #{init}#
 def pressed(e = None):
-    print "Button Pressed"
+    print("Button Pressed")
 
-import Tkinter
-LEFT = Tkinter.LEFT
-RIGHT = Tkinter.RIGHT
-TOP = Tkinter.TOP
-BOTTOM = Tkinter.BOTTOM
-W = Tkinter.W
-E = Tkinter.E
-N = Tkinter.N
-S = Tkinter.S
-NE = Tkinter.NE
-NW = Tkinter.NW
-SE = Tkinter.SE
-X = Tkinter.X
-Y = Tkinter.Y
-BOTH = Tkinter.BOTH
-class Button(Tkinter.Button):
+import tkinter
+LEFT = tkinter.LEFT
+RIGHT = tkinter.RIGHT
+TOP = tkinter.TOP
+BOTTOM = tkinter.BOTTOM
+W = tkinter.W
+E = tkinter.E
+N = tkinter.N
+S = tkinter.S
+NE = tkinter.NE
+NW = tkinter.NW
+SE = tkinter.SE
+X = tkinter.X
+Y = tkinter.Y
+BOTH = tkinter.BOTH
+class Button(tkinter.Button):
     xinfo = []
     num_buttons = 0
     def __init__(self, *sargs, **ssargs):
-        Tkinter.Button.__init__(self, *sargs, **ssargs)
+        tkinter.Button.__init__(self, *sargs, **ssargs)
         self.sargs = sargs
         self.ssargs = ssargs
         Button.num_buttons += 1
 
     def pack(self, *sargs, **ssargs):
-        Tkinter.Button.pack(self, *sargs, **ssargs)
+        tkinter.Button.pack(self, *sargs, **ssargs)
         Button.xinfo.append((self.sargs, self.ssargs, sargs, ssargs))
 
-class Frame(Tkinter.Frame):
+class Frame(tkinter.Frame):
     xinfo = []
     def __init__(self, *sargs, **ssargs):
-        Tkinter.Frame.__init__(self, *sargs, **ssargs)
+        tkinter.Frame.__init__(self, *sargs, **ssargs)
         self.sargs = sargs
         self.ssargs = ssargs
 
     def pack(self, *sargs, **ssargs):
-        Tkinter.Frame.pack(self, *sargs, **ssargs)
+        tkinter.Frame.pack(self, *sargs, **ssargs)
         Frame.xinfo.append((self, self.sargs, self.ssargs, sargs, ssargs))
 
 
@@ -149,7 +149,7 @@ class Frame(Tkinter.Frame):
 try:
     tw = TestWindow(master, 'Layout', create_layout)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

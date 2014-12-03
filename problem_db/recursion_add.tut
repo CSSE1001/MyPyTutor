@@ -153,7 +153,7 @@ answer = x+y
 try:
     result = add_pos(x,y)
     ok = True
-except Exception, e:
+except Exception as e:
     if "recursion depth" in str(e):
         print_error("Error: "+str(e)+" - are you using minus1 on the second argument of the recursive call - you need to decrease the value of this argument in order to get termination.")
     else:

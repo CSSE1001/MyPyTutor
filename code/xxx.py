@@ -65,7 +65,7 @@ elif not visitor.callf:
 elif not visitor.has_try:
     print_error('Wrong: you are not using a try/except statement.')
 elif not visitor.has_except:
-    print_error('Wrong: you should be using except Exception,e'
+    print_error('Wrong: you should be using except Exception,e')
 elif not visitor.has_try_return:
     print_warning('You probably need a return statement in the try part')
 elif not visitor.has_except_return:
@@ -82,7 +82,7 @@ try:
     result = catchException()
     if result != "No exception raised":
         print_error("Wrong: the correct result is 'No exception raised'\nyou got %s" % repr(result))
-except Exception, e:
+except Exception as e:
     print_error("Wrong: You did not trap the exception '%s'" % str(e))
 
 
@@ -99,7 +99,7 @@ try:
         print_error("Wrong: the correct result is 'integer division or modulo by zero'\nyou got %s" % repr(result))
     else:
         correct()
-except exception, e:
+except exception as e:
     print_error("Wrong: You did not trap the exception '%s'" % str(e))
 
 

@@ -37,7 +37,7 @@ answer = (len(string), string)
 try:
     result = len_str(string)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

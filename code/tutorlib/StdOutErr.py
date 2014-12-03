@@ -18,6 +18,7 @@
 
 ## Classes that define how stdout and stderr are processed
 
+
 class StdOut:
     def __init__(self, output):
         self.output = output
@@ -25,10 +26,10 @@ class StdOut:
     def write(self, txt):
         self.output.add_text(txt, "blue")
 
+
 class StdErr:
     def __init__(self, output):
         self.output = output
 
     def write(self, txt):
         self.output.add_text(txt, "red")
-

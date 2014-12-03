@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ## A Python Tutorial System
 ## Copyright (C) 2011  Peter Robinson <pjr@itee.uq.edu.au>
@@ -27,15 +27,15 @@ Creates and initializes the configuration file
 For Mac users creates a MyPyTutor.command file
 """
 
-from Tkinter import *
-import tkFileDialog
-import tkMessageBox
+from tkinter import *
+import tkinter.filedialog
+import tkinter.messagebox
 import sys
 import os
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import zipfile
-from ConfigParser import *
-from StringIO import StringIO
+from configparser import *
+from io import StringIO
 
 # Configuration information
 DEFAULT_CONFIG = StringIO("""
@@ -67,7 +67,7 @@ def unzipfile(zf, path):
             if not os.path.exists(fulldir):
                 os.mkdir(fulldir)
         else:
-            flags = (z.getinfo(item).external_attr >> 16) & 0777
+            flags = (z.getinfo(item).external_attr >> 16) & 0o777
             text = z.read(item)
             fullpath = os.path.join(path,item)
             fd = open(fullpath, 'wb')
@@ -114,7 +114,7 @@ class InstallDirDialog(Toplevel):
 
     def select_dir(self, e = None):
         self.dir_entry.delete(0,END)
-        mpt_dir = tkFileDialog.askdirectory(title='Choose MyPyTutor Installation Folder')
+        mpt_dir = tkinter.filedialog.askdirectory(title='Choose MyPyTutor Installation Folder')
         if mpt_dir:
             self.dir_entry.insert(0, mpt_dir)
         else:
@@ -195,12 +195,12 @@ class Installer():
             return
         # Check if folder is already present - if not create required folders
         if os.path.isfile(mpt_folder):
-            tkMessageBox.showerror("Installation folder.", "%s is not a folder", mpt_folder)
+            tkinter.messagebox.showerror("Installation folder.", "%s is not a folder", mpt_folder)
             self.add_text('\nPlease re-run the installer and choose an installation folder.')
             return 
         folder_exists = False
         if os.path.isdir(mpt_folder):
-            exists_answer = tkMessageBox.askquestion("Folder Exists",
+            exists_answer = tkinter.messagebox.askquestion("Folder Exists",
                                                      "The folder you have chosen already exists - continue?")
             folder_exists = True
             if exists_answer != 'yes':
@@ -220,7 +220,7 @@ class Installer():
                 os.mkdir(tutorial_dir)
                 self.add_text('Creating problems folder: %s\n' % tutorial_dir)
             except:
-                tkMessageBox.showerror("Problems folder.", "Cannot create the problems folder: %s", tutorial_dir)
+                tkinter.messagebox.showerror("Problems folder.", "Cannot create the problems folder: %s", tutorial_dir)
                 return
         if os.path.isdir(answer_dir):
             self.add_text('Using %s as answers folder\n' % answer_dir)
@@ -229,12 +229,12 @@ class Installer():
                 os.mkdir(answer_dir)
                 self.add_text('Creating answers folder: %s\n' % answer_dir)
             except:
-                tkMessageBox.showerror("Answers folder.", "Cannot create the answers folder: %s", answer_dir)
+                tkinter.messagebox.showerror("Answers folder.", "Cannot create the answers folder: %s", answer_dir)
                 return
         # Download and unzip MyPyTutor
         self.add_text('Downloading MyPyTutor...\n')
         self.master.update_idletasks()
-        urlobj = urllib.URLopener({})
+        urlobj = urllib.request.URLopener({})
         urlobj.retrieve('http://csse1001.uqcloud.net/mpt/MyPyTutor%d%d.zip' % self.version, 'mpt.zip')
         unzipfile('mpt.zip', mpt_folder)
         os.remove('mpt.zip')
@@ -242,7 +242,7 @@ class Installer():
         # Download and unzip the problems
         self.add_text('Downloading tutorial problems...\n')
         self.master.update_idletasks()
-        urlobj = urllib.URLopener({})
+        urlobj = urllib.request.URLopener({})
         urlobj.retrieve('http://csse1001.uqcloud.net/mpt/CSSE1001Tutorials.zip', 'CSSE1001Tutorials.zip')
         unzipfile('CSSE1001Tutorials.zip', tutorial_dir)
         os.remove('CSSE1001Tutorials.zip')
@@ -286,14 +286,14 @@ class Installer():
             path = os.path.join(path, d)
             #print path
             if os.path.isfile(path):
-                tkMessageBox.showerror("Installation folder.", "%s is not a folder", path)
+                tkinter.messagebox.showerror("Installation folder.", "%s is not a folder", path)
                 return False
             if not os.path.isdir(path):
                 try:
                     os.mkdir(path)
                     self.add_text('Creating folder %s\n' % path)
                 except:
-                    tkMessageBox.showerror("Installation folder.", "Cannot create folder %s", path)
+                    tkinter.messagebox.showerror("Installation folder.", "Cannot create folder %s", path)
                     return False
         return True
 

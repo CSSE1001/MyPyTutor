@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ## A Python Tutorial System
 ## Copyright (C) 2009  Peter Robinson <pjr@itee.uq.edu.au>
@@ -21,10 +21,10 @@
 ## An application for creating and editing tutorial problems.
 
 import os, sys
-from Tkinter import *
-import tkFileDialog
+from tkinter import *
+import tkinter.filedialog
 import problemlib.ProblemEditor as ProblemEditor
-import tkMessageBox  
+import tkinter.messagebox  
 import tutorlib.fontChooser as tut_fontchooser
 import tutorlib.Output as tut_output
 import tutorlib.StdOutErr as tut_out
@@ -153,33 +153,33 @@ class ProblemsApp():
         test_data = self.test_editor.text.get(1.0, END)
         if not (text_data+test_data):
             return
-        print 'Checking Syntax ...'
-        print 'Checking HTML ...',
+        print('Checking Syntax ...')
+        print('Checking HTML ...', end=' ')
         self.htmlcheck.reset()
         self.htmlcheck.feed(text_data)
         if not self.htmlcheck.is_ok():
-            print >> sys.stderr,'\nSyntax Check Failed'
+            print('\nSyntax Check Failed', file=sys.stderr)
             return
         else:
-            print 'OK'
-        print 'Checking Test Code ...',
+            print('OK')
+        print('Checking Test Code ...', end=' ')
         text = text_data+'#{TestCode}#\n'+test_data
         data = self.parser.parse(text, True, False)
         if data:
-            print 'OK'
-            print 
+            print('OK')
+            print() 
             for key in data:
                 if key != 'TestCode':
-                    print key+':'
-                    print data[key]
+                    print(key+':')
+                    print(data[key])
             for test in data['TestCode']:
-                print '----- Test -----'
+                print('----- Test -----')
                 for tkey in test:
-                    print '----- '+tkey+':'
-                    print test[tkey]
+                    print('----- '+tkey+':')
+                    print(test[tkey])
  
         else:
-            print >> sys.stderr,'\nSyntax Check Failed'
+            print('\nSyntax Check Failed', file=sys.stderr)
 
     def configure_tut_fonts(self):
         result = \
@@ -192,7 +192,7 @@ class ProblemsApp():
             self.output.update_font(int(result[1])-1)
     
     def configure_tut_db(self):
-        folder = tkFileDialog.askdirectory(title='Choose Problem Database Folder')
+        folder = tkinter.filedialog.askdirectory(title='Choose Problem Database Folder')
         if folder:
             self.config.set_db_dir(folder)
             self.db_dir = folder
@@ -200,7 +200,7 @@ class ProblemsApp():
 
     def close_event(self, _e = None):
         if self.editor.text.edit_modified() or not self.test_editor.get_saved():
-            fsave = tkMessageBox.askquestion("Save Changes?", 
+            fsave = tkinter.messagebox.askquestion("Save Changes?", 
                                              "Do you want to save changes?")
             if str(fsave) == 'yes':
                 if self.file:
@@ -222,12 +222,12 @@ class ProblemsApp():
     def open_file(self):
         if self.file and (self.editor.text.edit_modified() or \
                               not self.test_editor.get_saved()):
-            fsave = tkMessageBox.askquestion("Save Changes?",
+            fsave = tkinter.messagebox.askquestion("Save Changes?",
                                              "Do you want to save changes?")
             if str(fsave) =='yes':
                 if not self.save_file():
                     return
-        self.file = tkFileDialog.askopenfilename(initialdir = self.db_dir,
+        self.file = tkinter.filedialog.askopenfilename(initialdir = self.db_dir,
                                                  defaultextension='.tut')
         if self.file:
             fid = open(self.file, 'U')
@@ -246,7 +246,7 @@ class ProblemsApp():
     def new_file(self):
         if self.file and (self.editor.text.edit_modified() or \
                               not self.test_editor.get_saved()):
-            fsave = tkMessageBox.askquestion("Save Changes?", 
+            fsave = tkinter.messagebox.askquestion("Save Changes?", 
                                              "Do you want to save changes?")
             if str(fsave) =='yes':
                 if not self.save_file():
@@ -259,7 +259,7 @@ class ProblemsApp():
 
     def save_file(self, _event=None):
         if not self.file:
-            tut_file = tkFileDialog.asksaveasfilename(initialdir = self.db_dir,
+            tut_file = tkinter.filedialog.asksaveasfilename(initialdir = self.db_dir,
                                                       defaultextension='.tut')
             if tut_file:
                 self.file = tut_file

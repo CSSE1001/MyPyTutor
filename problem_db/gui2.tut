@@ -9,7 +9,7 @@ one (top-most) has the label <tt>"Button1"</tt> and the other has label
 <tt>"Button2"</tt>. Both buttons should use <tt>pressed</tt> as the button
 callback (command). Button1 should have 20 pixels of space above and below it
 and Button2 should have 20 pixels of space, internal to the button, on the left and right. Both buttons should be at the left edge of the frame.
-You may assume that <tt>from Tkinter import *</tt> has already been called and the frame has already had its size and colour set.
+You may assume that <tt>from tkinter import *</tt> has already been called and the frame has already had its size and colour set.
 <br>
 You must use <tt>pack</tt> for layout and <b>not</b> <tt>grid</tt>.
 <p>
@@ -58,7 +58,7 @@ Close the popup window before trying again or moving to a new problem.
 
 #{global}#
 
-import Tkinter as XXX
+import tkinter as XXX
 class TestWindow(XXX.Toplevel):
     def __init__(self,parent,title, layout_fun):
         XXX.Toplevel.__init__(self, parent)
@@ -97,30 +97,30 @@ class TestWindow(XXX.Toplevel):
 
 #{init}#
 def pressed(e = None):
-    print "Button Pressed"
+    print("Button Pressed")
 
-import Tkinter
-LEFT = Tkinter.LEFT
-RIGHT = Tkinter.RIGHT
-TOP = Tkinter.TOP
-BOTTOM = Tkinter.BOTTOM
-W = Tkinter.W
-E = Tkinter.E
-N = Tkinter.N
-S = Tkinter.S
-NE = Tkinter.NE
-NW = Tkinter.NW
-SE = Tkinter.SE
-SW = Tkinter.SW
-class Button(Tkinter.Button):
+import tkinter
+LEFT = tkinter.LEFT
+RIGHT = tkinter.RIGHT
+TOP = tkinter.TOP
+BOTTOM = tkinter.BOTTOM
+W = tkinter.W
+E = tkinter.E
+N = tkinter.N
+S = tkinter.S
+NE = tkinter.NE
+NW = tkinter.NW
+SE = tkinter.SE
+SW = tkinter.SW
+class Button(tkinter.Button):
     info = []
     def __init__(self, *sargs, **ssargs):
-        Tkinter.Button.__init__(self, *sargs, **ssargs)
+        tkinter.Button.__init__(self, *sargs, **ssargs)
         self.sargs = sargs
         self.ssargs = ssargs
 
     def pack(self, *sargs, **ssargs):
-        Tkinter.Button.pack(self, *sargs, **ssargs)
+        tkinter.Button.pack(self, *sargs, **ssargs)
         Button.info.append((self.sargs, self.ssargs, sargs, ssargs))
         
 #{code}#
@@ -129,7 +129,7 @@ class Button(Tkinter.Button):
 try:
     tw = TestWindow(master, 'Layout', create_layout)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

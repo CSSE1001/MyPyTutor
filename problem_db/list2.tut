@@ -122,7 +122,7 @@ elif visitor.arg1 != visitor.for_iter:
 try:
     result = all_gt([], 3)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -139,11 +139,11 @@ inums, n = random.choice(choices)
 #{init}#
 nums = list(inums)
 #{code}#
-answer = filter(lambda x:x>n, inums)
+answer = [x for x in inums if x>n]
 try:
     result = all_gt(nums, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -161,11 +161,11 @@ inums, n = random.choice(choices)
 #{init}#
 nums = list(inums)
 #{code}#
-answer = filter(lambda x:x>n, inums)
+answer = [x for x in inums if x>n]
 try:
     result = all_gt(nums, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

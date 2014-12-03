@@ -120,7 +120,7 @@ answer.sort()
 try:
     result = big_keys(d, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -152,7 +152,7 @@ answer.sort()
 try:
     result = big_keys(d, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

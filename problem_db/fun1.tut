@@ -107,8 +107,8 @@ elif visitor.seen_double[0] > visitor.seen_inc[0]:
 elif result:
     correct()
 else:
-    print "Wrong: for n = "+str(n_init)+" you got "+\
-          str(m)+" - the correct answer is "+str(2*(n_init+1))
+    print("Wrong: for n = "+str(n_init)+" you got "+\
+          str(m)+" - the correct answer is "+str(2*(n_init+1)))
 
 
     

@@ -82,7 +82,7 @@ elif visitor.arg1 != visitor.for_iter:
 try:
     result = has_gt([], 3)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -104,7 +104,7 @@ nums = list(inums)
 try:
     result = has_gt(nums, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -128,7 +128,7 @@ nums = list(inums)
 try:
     result = has_gt(nums, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -153,7 +153,7 @@ nums = list(inums)
 try:
     result = has_gt(nums, n)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

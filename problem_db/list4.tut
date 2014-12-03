@@ -78,7 +78,7 @@ elif visitor.has_sum_elems and not visitor.has_return:
 try:
     result = sum_elems([])
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -98,7 +98,7 @@ try:
     answer = sum(il)
     result = sum_elems(nums)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

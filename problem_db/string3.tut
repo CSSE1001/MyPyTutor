@@ -119,7 +119,7 @@ for c in t2:
 try:
     result = occurrences(t1, t2)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:
@@ -147,7 +147,7 @@ for c in t2:
 try:
     result = occurrences(t1, t2)
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

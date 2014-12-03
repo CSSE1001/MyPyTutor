@@ -19,12 +19,13 @@
 
 ## Dialogs involving passwords
 
-from Tkinter import *
+from tkinter import *
 
-import tkMessageBox
+import tkinter.messagebox
+
 
 class LoginDialog(Toplevel):
-    def __init__(self,parent, callback, title="Login"):
+    def __init__(self, parent, callback, title="Login"):
         Toplevel.__init__(self, parent.master)
         x = parent.master.winfo_rootx()
         y = parent.master.winfo_rooty()
@@ -40,24 +41,24 @@ class LoginDialog(Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.Cancel)
         self.parent = parent
         self.user_entry.focus_set()
-        self.bind('<Escape>',self.Cancel)
-        self.bind('<Return>',self.submit)
+        self.bind('<Escape>', self.Cancel)
+        self.bind('<Return>', self.submit)
         self.title(title)
         self.callback = callback
         self.wait_window()
 
     def CreateWidgets(self):
         userframe = Frame(self)
-        userframe.pack(expand=TRUE,fill=X)
-        Label(userframe, text = 'Username: ').pack(side=LEFT,
-                                                   anchor=W,expand=TRUE)
+        userframe.pack(expand=TRUE, fill=X)
+        Label(userframe, text='Username: ').pack(side=LEFT,
+                                                 anchor=W, expand=TRUE)
         self.user_entry = Entry(userframe, textvariable=self.user, width=20)
         self.user_entry.pack(side=LEFT)
         passframe = Frame(self)
-        passframe.pack(expand=TRUE,fill=X)
-        Label(passframe, text = 'Password: ').pack(side=LEFT,
-                                                   anchor=W,expand=TRUE)
-        pass_entry = Entry(passframe, textvariable=self.password, 
+        passframe.pack(expand=TRUE, fill=X)
+        Label(passframe, text='Password: ').pack(side=LEFT,
+                                                 anchor=W, expand=TRUE)
+        pass_entry = Entry(passframe, textvariable=self.password,
                            width=20, show="*")
         pass_entry.pack(side=LEFT)
         frameButtons = Frame(self)
@@ -66,8 +67,8 @@ class LoginDialog(Toplevel):
                                    command=self.submit)
         self.buttonSubmit.pack(side=LEFT, expand=1)
         self.buttonCancel = Button(frameButtons, text='Cancel',
-                               command=self.Cancel)
-        self.buttonCancel.pack(side=LEFT,expand=1)
+                                   command=self.Cancel)
+        self.buttonCancel.pack(side=LEFT, expand=1)
 
     def Cancel(self, event=None):
         self.destroy()
@@ -76,20 +77,19 @@ class LoginDialog(Toplevel):
         user = self.user.get().strip()
         password = self.password.get()
         result = self.callback(user, password)
-        if result == None:
+        if result is None:
             self.destroy()
         elif result:
             self.destroy()
         else:
-            tkMessageBox.showerror('Login Error', 
-                                   'Incorrect user name or password')
+            tkinter.messagebox.showerror('Login Error',
+                                         'Incorrect user name or password')
             self.user.set('')
             self.password.set('')
 
 
-
 class ChangePasswordDialog(Toplevel):
-    def __init__(self,parent):
+    def __init__(self, parent):
         Toplevel.__init__(self, parent.master)
         self.configure(borderwidth=5)
         self.title("Change Password")
@@ -104,31 +104,31 @@ class ChangePasswordDialog(Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.Cancel)
         self.parent = parent
         self.pass_entry.focus_set()
-        self.bind('<Escape>',self.Cancel)
-        self.bind('<Return>',self.submit)
+        self.bind('<Escape>', self.Cancel)
+        self.bind('<Return>', self.submit)
         #self.wait_window()
         self.success = False
 
     def CreateWidgets(self):
         passframe = Frame(self)
-        passframe.pack(expand=TRUE,fill=X)
-        Label(passframe, text = 'Password: ').pack(side=LEFT,
-                                                   anchor=W,expand=TRUE)
-        self.pass_entry = Entry(passframe, textvariable=self.password0, 
+        passframe.pack(expand=TRUE, fill=X)
+        Label(passframe, text='Password: ').pack(side=LEFT,
+                                                 anchor=W, expand=TRUE)
+        self.pass_entry = Entry(passframe, textvariable=self.password0,
                                 width=20, show="*")
         self.pass_entry.pack(side=LEFT)
         pass1frame = Frame(self)
-        pass1frame.pack(expand=TRUE,fill=X)
-        Label(pass1frame, text = 'New Password: ').pack(side=LEFT,
-                                                        anchor=W,expand=TRUE)
-        pass1_entry = Entry(pass1frame, textvariable=self.password1, 
+        pass1frame.pack(expand=TRUE, fill=X)
+        Label(pass1frame, text='New Password: ').pack(side=LEFT,
+                                                      anchor=W, expand=TRUE)
+        pass1_entry = Entry(pass1frame, textvariable=self.password1,
                             width=20, show="*")
         pass1_entry.pack(side=LEFT)
         pass2frame = Frame(self)
-        pass2frame.pack(expand=TRUE,fill=X)
-        Label(pass2frame, text = 'New Password: ').pack(side=LEFT,
-                                                        anchor=W,expand=TRUE)
-        pass2_entry = Entry(pass2frame, textvariable=self.password2, 
+        pass2frame.pack(expand=TRUE, fill=X)
+        Label(pass2frame, text='New Password: ').pack(side=LEFT,
+                                                      anchor=W, expand=TRUE)
+        pass2_entry = Entry(pass2frame, textvariable=self.password2,
                             width=20, show="*")
         pass2_entry.pack(side=LEFT)
         frameButtons = Frame(self)
@@ -137,39 +137,38 @@ class ChangePasswordDialog(Toplevel):
                                    command=self.submit)
         self.buttonSubmit.pack(side=LEFT, expand=1)
         self.buttonCancel = Button(frameButtons, text='Cancel',
-                               command=self.Cancel)
-        self.buttonCancel.pack(side=LEFT,expand=1)
+                                   command=self.Cancel)
+        self.buttonCancel.pack(side=LEFT, expand=1)
 
     def Cancel(self, event=None):
         self.destroy()
 
     def submit(self, event=None):
         if self.password1.get() != self.password2.get():
-            tkMessageBox.showerror('Change Password Error', 
-                                   "New passwords don't match.")
+            tkinter.messagebox.showerror('Change Password Error',
+                                         "New passwords don't match.")
             self.password0.set('')
             self.password1.set('')
             self.password2.set('')
             return
         if len(self.password1.get()) < 4:
-            tkMessageBox.showerror('Change Password Error', 
-                                   "New passwords is too short.")
+            tkinter.messagebox.showerror('Change Password Error',
+                                         "New passwords is too short.")
             self.password0.set('')
             self.password1.set('')
             self.password2.set('')
             return
 
- 
-        result = self.parent.do_change_password(self.password0.get(), 
+        result = self.parent.do_change_password(self.password0.get(),
                                                 self.password1.get())
-        if result == None:
+        if result is None:
             self.destroy()
         elif result:
             self.success = True
             self.destroy()
         else:
-            tkMessageBox.showerror('Change Password Error', 
-                                   'Incorrect password or new password failure.')
+            tkinter.messagebox.showerror('Change Password Error',
+                                         'Incorrect password or new password failure.')
             self.password0.set('')
             self.password1.set('')
             self.password2.set('')

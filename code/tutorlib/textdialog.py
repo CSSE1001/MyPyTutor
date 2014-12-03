@@ -19,11 +19,11 @@
 
 ## The MyPyTutor text dialog
 
-from Tkinter import *
+from tkinter import *
 
 
 class TextDialog(Toplevel):
-    def __init__(self,parent,title, text, bg='#ffffff'):
+    def __init__(self, parent, title, text, bg='#ffffff'):
         Toplevel.__init__(self, parent)
         self.configure(borderwidth=5)
         self.geometry("+%d+%d" % (parent.winfo_rootx()+30,
@@ -36,14 +36,14 @@ class TextDialog(Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.Ok)
         self.parent = parent
         self.buttonOk.focus_set()
-        self.bind('<Return>',self.Ok)
-        self.bind('<Escape>',self.Ok)
+        self.bind('<Return>', self.Ok)
+        self.bind('<Escape>', self.Ok)
         self.wait_window()
 
     def CreateWidgets(self, text, bg):
-        frameMain = Frame(self, borderwidth=2, relief=SUNKEN, bg = bg)
+        frameMain = Frame(self, borderwidth=2, relief=SUNKEN, bg=bg)
         frameMain.pack(side=TOP, expand=TRUE, fill=BOTH)
-        textwin = Text(frameMain, width = 80, height = 40, bg = bg, wrap=WORD)
+        textwin = Text(frameMain, width=80, height=40, bg=bg, wrap=WORD)
         textwin.pack(side=LEFT)
         scrollbar = Scrollbar(frameMain)
         scrollbar.pack(side=RIGHT, fill=Y)
@@ -60,4 +60,3 @@ class TextDialog(Toplevel):
 
     def Ok(self, event=None):
         self.destroy()
-

@@ -196,13 +196,13 @@ try:
         if p1._x != x1+x2 or p1._y != y1+y2:
             print_error("Wrong: when adding the point Point(%d, %d) to the point Point(%d, %d)\n you should get Point(%d, %d) - you got Point(%s, %s)" %\
                         (x1, y1, x2, y2, x1+x2, y1+y2, repr(p1._x), repr(p1._y)))
-except AttributeError, e:
+except AttributeError as e:
     if '__getitem__' in str(e):
         print_error("Error: you are trying to index into a point object.\nThey are not lists or tuples - for a point object p use p._x and p._y to access the required attributes.")
     else:
         print_exception(e)
         
-except Exception, e:
+except Exception as e:
     print_exception(e)
     
 #{test}#

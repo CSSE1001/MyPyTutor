@@ -89,7 +89,7 @@ else:
     try:
         result = strIntersection(s1, s2)
         ok = True
-    except Exception, e:
+    except Exception as e:
         print_exception(e)
         ok = False
     if not ok:

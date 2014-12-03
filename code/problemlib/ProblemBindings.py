@@ -22,50 +22,57 @@
 # For setting up menus in the problem edit window (ProblemEditor)
 # based on idlelib/Bindings.py
 
-import sys
 from idlelib.configHandler import idleConf
 from idlelib import macosxSupport
 
-menudefs = [
- # underscore prefixes character to underscore
- #('file', [
- #           ]),
- ('edit', [
-   ('_Undo', '<<undo>>'),
-   ('_Redo', '<<redo>>'),
-   None,
-   ('Cu_t', '<<cut>>'),
-   ('_Copy', '<<copy>>'),
-   ('_Paste', '<<paste>>'),
-   ('Select _All', '<<select-all>>'),
-   None,
-   ('_Find...', '<<find>>'),
-   ('Find A_gain', '<<find-again>>'),
-   ('Find _Selection', '<<find-selection>>'),
-   ('Find in Files...', '<<find-in-files>>'),
-   ('R_eplace...', '<<replace>>'),
-   ('Go to _Line', '<<goto-line>>'),
-  ]),
-('format', [
-   ('_Indent Region', '<<indent-region>>'),
-   ('_Dedent Region', '<<dedent-region>>'),
-   ('Comment _Out Region', '<<comment-region>>'),
-   ('U_ncomment Region', '<<uncomment-region>>'),
-   ('Tabify Region', '<<tabify-region>>'),
-   ('Untabify Region', '<<untabify-region>>'),
-   ('Toggle Tabs', '<<toggle-tabs>>'),
-   ('New Indent Width', '<<change-indentwidth>>'),
-   ]),
-]
+menudefs = default_keydefs = None
 
-if macosxSupport.runningAsOSXApp():
-    # Running as a proper MacOS application bundle. This block restructures
-    # the menus a little to make them conform better to the HIG.
+def initialise():
+    import sys
+    global menudefs
+    global default_keydefs
 
-    quitItem = menudefs[0][1][-1]
-    closeItem = menudefs[0][1][-2]
+    if menudefs is not None:
+        return
+
+    menudefs = [
+     # underscore prefixes character to underscore
+     #('file', [
+     #           ]),
+     ('edit', [
+       ('_Undo', '<<undo>>'),
+       ('_Redo', '<<redo>>'),
+       None,
+       ('Cu_t', '<<cut>>'),
+       ('_Copy', '<<copy>>'),
+       ('_Paste', '<<paste>>'),
+       ('Select _All', '<<select-all>>'),
+       None,
+       ('_Find...', '<<find>>'),
+       ('Find A_gain', '<<find-again>>'),
+       ('Find _Selection', '<<find-selection>>'),
+       ('Find in Files...', '<<find-in-files>>'),
+       ('R_eplace...', '<<replace>>'),
+       ('Go to _Line', '<<goto-line>>'),
+      ]),
+    ('format', [
+       ('_Indent Region', '<<indent-region>>'),
+       ('_Dedent Region', '<<dedent-region>>'),
+       ('Comment _Out Region', '<<comment-region>>'),
+       ('U_ncomment Region', '<<uncomment-region>>'),
+       ('Tabify Region', '<<tabify-region>>'),
+       ('Untabify Region', '<<untabify-region>>'),
+       ('Toggle Tabs', '<<toggle-tabs>>'),
+       ('New Indent Width', '<<change-indentwidth>>'),
+       ]),
+    ]
+
+    if macosxSupport.runningAsOSXApp():
+        # Running as a proper MacOS application bundle. This block restructures
+        # the menus a little to make them conform better to the HIG.
+
+        quitItem = menudefs[0][1][-1]
+        closeItem = menudefs[0][1][-2]
 
 
-default_keydefs = idleConf.GetCurrentKeySet()
-
-del sys
+    default_keydefs = idleConf.GetCurrentKeySet()

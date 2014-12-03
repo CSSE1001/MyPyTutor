@@ -20,8 +20,8 @@
 ## This provides an interface to configuration of fonts
 ## and the tutorial folder and the problem batabase folder
 
-import ConfigParser 
-from StringIO import StringIO
+import configparser 
+from io import StringIO
 import os
 
 
@@ -44,7 +44,7 @@ PROBLEMS_CONFIG_FILE = os.path.join(HOME_DIR, '.problems.cfg')
 
 class Configuration:
     def __init__(self):
-        self.tutor_config = ConfigParser.ConfigParser()
+        self.tutor_config = configparser.ConfigParser()
         if os.path.exists(CONFIG_FILE):
             fid = open(CONFIG_FILE)
             self.tutor_config.readfp(fid)
@@ -52,7 +52,7 @@ class Configuration:
         else:
             self.tutor_config.readfp(DEFAULT_TUTOR_CONFIG)
 
-        self.config = ConfigParser.ConfigParser()
+        self.config = configparser.ConfigParser()
         if os.path.exists(PROBLEMS_CONFIG_FILE):
             fid = open(PROBLEMS_CONFIG_FILE)
             self.config.readfp(fid)

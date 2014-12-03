@@ -113,7 +113,7 @@ def main():
 	try:
 		problem_name = stripHTML(problem_name, False)
 		feedback = stripHTML(feedback, True)
-	except Exception, e:
+	except Exception as e:
 		problem_name = str(e)
         now = datetime.datetime.now()
         now_string = now.strftime('%H:%M  %d/%m/%y')

@@ -19,10 +19,11 @@
 
 ## The about dialog for MyPyTutor
 
-from Tkinter import *
+from tkinter import *
+
 
 class TutAboutDialog(Toplevel):
-    def __init__(self,parent,title):
+    def __init__(self, parent, title):
         Toplevel.__init__(self, parent)
         self.configure(borderwidth=5)
         self.geometry("+%d+%d" % (parent.winfo_rootx()+30,
@@ -37,17 +38,20 @@ class TutAboutDialog(Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.Ok)
         self.parent = parent
         self.buttonOk.focus_set()
-        self.bind('<Return>',self.Ok) #dismiss dialog
-        self.bind('<Escape>',self.Ok) #dismiss dialog
+        self.bind('<Return>', self.Ok)  # dismiss dialog
+        self.bind('<Escape>', self.Ok)  # dismiss dialog
         self.wait_window()
 
     def CreateWidgets(self):
-        frameMain = Frame(self, borderwidth=2, relief=SUNKEN, bg = "#ffffaa")
+        frameMain = Frame(self, borderwidth=2, relief=SUNKEN, bg="#ffffaa")
         frameMain.pack(side=TOP, expand=TRUE, fill=BOTH)
-        Label(frameMain, text = 'MyPyTutor: A Python Tutorial System', bg = "#ffffaa").pack(padx=10,pady=10)
-        Label(frameMain, text = 'Copyright 2010 Peter Robinson', bg = "#ffffaa").pack(padx=10,pady=10)
-        Label(frameMain, text = 'email: pjr@itee.uq.edu.au', bg = "#ffffaa").pack(padx=10,pady=10)
-        
+        Label(frameMain, text='MyPyTutor: A Python Tutorial System',
+              bg="#ffffaa").pack(padx=10, pady=10)
+        (Label(frameMain, text='Copyright 2010 Peter Robinson', bg="#ffffaa")
+         .pack(padx=10, pady=10))
+        (Label(frameMain, text='email: pjr@itee.uq.edu.au', bg="#ffffaa")
+         .pack(padx=10, pady=10))
+
         frameButtons = Frame(self)
         frameButtons.pack(fill=X)
         self.buttonOk = Button(frameButtons, text='Close',
@@ -56,4 +60,3 @@ class TutAboutDialog(Toplevel):
 
     def Ok(self, event=None):
         self.destroy()
-

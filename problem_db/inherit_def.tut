@@ -208,7 +208,7 @@ try:
     bn = boss.my_name()
     bw = boss.wage()
     ok = True
-except Exception, e:
+except Exception as e:
     print_exception(e)
     ok = False
 if not ok:

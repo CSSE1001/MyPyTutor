@@ -20,92 +20,94 @@
 ## The frame in which the problem description is rendered as HTML
 ## The possible HTML tags are
 ## h1, h2, h3, h4, h5, it, tt, b, br, p, pre, ul, li, img
-## and span as long as <span style='color:c'> where c is red, blue or green 
+## and span as long as <span style='color:c'> where c is red, blue or green
 
-from Tkinter import *
-from HTMLParser import HTMLParser
+from tkinter import *
+from html.parser import HTMLParser
 import os
-import tkMessageBox
+import tkinter.messagebox
 
-FONTS_INFO=[('h1', 8, 'bold'),
-            ('h2', 6, 'bold'),
-            ('h3', 4, 'bold'),
-            ('h4', 2, 'bold'),
-            ('h5', 0, 'bold'),
-            ('it', 0, 'normal'),
-            ('b',  0, 'bold'),
-            ('tt', 1, 'normal')]
+FONTS_INFO = [('h1', 8, 'bold'),
+              ('h2', 6, 'bold'),
+              ('h3', 4, 'bold'),
+              ('h4', 2, 'bold'),
+              ('h5', 0, 'bold'),
+              ('it', 0, 'normal'),
+              ('b',  0, 'bold'),
+              ('tt', 1, 'normal')]
 
-HEADERS=['h1','h2','h3','h4','h5']
+HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
 INDENT = ['indent0', 'indent1', 'indent2', 'indent3', 'indent4', 'indent5']
-COLOURS=['red','green','blue']
+COLOURS = ['red', 'green', 'blue']
 
 INTRO_TEXT = """
 <p>
 <p>
 <h3>Welcome to MyPyTutor %s</h3>
 
-The Problems menu contains the 
+The Problems menu contains the
 collection of problems to choose from.
 """
 
 ONLINE_TEXT = """
 <p>
-Use the Online menu to interact with your online information. 
+Use the Online menu to interact with your online information.
+</p>
 """
+
 
 class Tutorial(Frame):
     def __init__(self, master, fontinfo, textlen):
         Frame.__init__(self, master)
         font_name = fontinfo[0]
         font_size = int(fontinfo[1])
-        self.text = Text(self,height = textlen, wrap=WORD)
+        self.text = Text(self, height=textlen, wrap=WORD)
         #family = self.text.config('font')[3][0]
-        self.text.config(state=DISABLED, font = (font_name, 
-                                                 str(font_size), 
-                                                 'normal', 'roman'))
-        self.text.pack(side=LEFT,fill=BOTH, expand=1)
+        self.text.config(state=DISABLED, font=(font_name,
+                                               str(font_size),
+                                               'normal', 'roman'))
+        self.text.pack(side=LEFT, fill=BOTH, expand=1)
         scrollbar = Scrollbar(self)
         scrollbar.pack(side=RIGHT, fill=Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
         self.update_fonts(font_name, font_size)
-        for i,tag in enumerate(INDENT):
-            self.text.tag_config(tag, lmargin1 = 40*i, lmargin2 = 40*i+14)
+        for i, tag in enumerate(INDENT):
+            self.text.tag_config(tag, lmargin1=40*i, lmargin2=40*i+14)
         for tag in COLOURS:
-            self.text.tag_config(tag, foreground= tag)
-        self.parser =  TutorialHTMLParser(self.text, self)
+            self.text.tag_config(tag, foreground=tag)
+        self.parser = TutorialHTMLParser(self.text, self)
         self.tut_directory = None
 
     def splash(self, online, version):
         if online:
-            self.add_text((INTRO_TEXT%version)+ONLINE_TEXT)
+            self.add_text((INTRO_TEXT % version) + ONLINE_TEXT)
         else:
-            self.add_text(INTRO_TEXT%version)
+            self.add_text(INTRO_TEXT % version)
 
     def update_text_length(self, lines):
-        self.text.config(height = lines)
+        self.text.config(height=lines)
 
     def update_fonts(self, font_name, font_size):
-        for name,font_delta,weight in FONTS_INFO:
+        for name, font_delta, weight in FONTS_INFO:
             if name == 'tt':
-                self.text.tag_config(name, 
-                                     font = ('courier', 
-                                             str(font_size+font_delta), 
-                                             'normal', 'roman'))
+                self.text.tag_config(name,
+                                     font=('courier',
+                                           str(font_size+font_delta),
+                                           'normal', 'roman'))
             elif name == 'it':
-                self.text.tag_config(name, 
-                                     font = (font_name, 
-                                             str(font_size+font_delta), 
-                                             weight, 'italic'))
+                self.text.tag_config(name,
+                                     font=(font_name,
+                                           str(font_size+font_delta),
+                                           weight, 'italic'))
             else:
-                self.text.tag_config(name, 
-                                     font = (font_name, 
-                                             str(font_size+font_delta), 
-                                             weight, 'roman'))
-        self.text.config(font = (font_name, 
-                                 str(font_size), 
-                                 'normal', 'roman'))
+                self.text.tag_config(name,
+                                     font=(font_name,
+                                           str(font_size+font_delta),
+                                           weight, 'roman'))
+        self.text.config(font=(font_name,
+                               str(font_size),
+                               'normal', 'roman'))
 
     def set_directory(self, directory):
         self.tut_directory = directory
@@ -113,7 +115,7 @@ class Tutorial(Frame):
     def add_text(self, text):
         self.text.config(state=NORMAL)
         self.text.delete(1.0, END)
-        self.text.insert(END,' \n')
+        self.text.insert(END, '\n')
         self.parser.reset()
         self.parser.feed(text)
         self.text.config(state=DISABLED)
@@ -125,9 +127,11 @@ class Tutorial(Frame):
         self.text.yview(MOVETO, 1)
         self.text.config(state=DISABLED)
 
+
 class TutorialHTMLParser(HTMLParser):
 
     def __init__(self, textobj, parent=None):
+        super().__init__(self)
         self.header = ''
         self.textobj = textobj
         self.indent = 0
@@ -188,7 +192,7 @@ class TutorialHTMLParser(HTMLParser):
         if tag == 'ul':
             self.textobj.insert(END, '\n\n')
             self.indent -= 1
-            self.do_lstrip = True        
+            self.do_lstrip = True
             self.end_ul = True
         elif tag == 'li':
             self.do_lstrip = True
@@ -202,7 +206,7 @@ class TutorialHTMLParser(HTMLParser):
 
     def _compress_data(self, data):
         data = data.replace('\n', ' ')
-        if len(data) > 1: 
+        if len(data) > 1:
             first = data[0]
             last = data[-1]
         elif data == ' ':
@@ -223,7 +227,7 @@ class TutorialHTMLParser(HTMLParser):
                 data = data + last
         return data
 
-    def handle_data(self,data):
+    def handle_data(self, data):
         if self.active_tags:
             tag = self.active_tags[-1]
             if tag == 'ul':
@@ -243,10 +247,7 @@ class TutorialHTMLParser(HTMLParser):
 
 # Storing info about each tutorial
 
-#
-
 class TutorialInfo(object):
-
     class TutInfo(object):
         def __init__(self, name):
             self.name = name
@@ -282,20 +283,19 @@ class TutorialInfo(object):
             self.name = name
             self.tut = tut
             self.status = '-'
-            
+
         def set_status(self, status):
             self.status = status
 
-            
     def __init__(self, tut_dir):
         try:
             fullname = os.path.join(tut_dir, 'tutorials.txt')
             f = open(fullname, 'U')
         except:
-            tkMessageBox.showerror('Tutorial Error', 
-                                   'Cannot open master file '+fullname)
+            tkinter.messagebox.showerror('Tutorial Error',
+                                         'Cannot open master file '+fullname)
             return None
-        
+
         lines = [line.strip() for line in f]
         f.close()
         self.tut_list = []
@@ -303,7 +303,7 @@ class TutorialInfo(object):
         current_tut = ''
         for line in lines:
             if line:
-                if line[0] =='[':
+                if line[0] == '[':
                     tut = line[1:-1]
                     tut_info = TutorialInfo.TutInfo(tut)
                     self.tut_list.append(tut)
@@ -312,9 +312,9 @@ class TutorialInfo(object):
                 else:
                     parts = line.split(':')
                     tut_info.add_problem(TutorialInfo.ProblemInfo(*parts))
-        self.all_problems = [(t,p) for t in self.tut_list \
-                                 for p in self.tut_dict[t].problems_list]
-                
+        self.all_problems = [(t, p) for t in self.tut_list
+                             for p in self.tut_dict[t].problems_list]
+
     def get_tutorial(self, name):
         return self.tut_dict[name]
 
@@ -333,8 +333,15 @@ class TutorialInfo(object):
     def set_problem_status(self, tut_name, problem_name, status):
         self.tut_dict[tut_name].set_problem_status(problem_name, status)
 
-
     def next_tutorial(self, tut_name, problem_name):
+        if (tut_name, problem_name) == (None, None):
+            # User hasn't opened a problem yet. Move to the first unsolved one.
+            # If all are solved, move to the first one.
+            for t, p in self.all_problems:
+                if self.get_problem(t, p).status == '-':
+                    return (t, p)
+            return self.all_problems[0]
+
         index = self.all_problems.index((tut_name, problem_name))
         if index+1 < len(self.all_problems):
             return self.all_problems[index+1]
@@ -346,12 +353,11 @@ class TutorialInfo(object):
             return self.all_problems[index-1]
         return (tut_name, problem_name)
 
-
     def __str__(self):
         max_len = 0
         for key in self.tut_dict:
             max_len = max(max_len, self.tut_dict[key].get_max_len())
-        
+
         string = ''
         for key in self.tut_list:
             tut = self.tut_dict[key]
@@ -360,5 +366,5 @@ class TutorialInfo(object):
                 prob = tut.problems_info[pkey]
                 name = prob.name
                 spaces = max_len + 5 - len(name)
-                string += '    '+ name + spaces*' ' + prob.status + '\n'
+                string += '    ' + name + spaces*' ' + prob.status + '\n'
         return string
