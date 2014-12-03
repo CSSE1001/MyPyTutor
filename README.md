@@ -1,7 +1,10 @@
 MyPyTutor
 =========
 
-Things you'll need to do (see issue #1):
+Things you'll need to do:
 
-1. `vim ~/mypytutor.cfg`
-2. Change `tut_dir` to the `CSSE1001Tutorials` directory of this repo.
+1. `make`
+2. Run `code/MyPyTutor.py` in Python 3.
+3. Set your MyPyTutor tutorial folder to `CSSE1001Tutorials` in this repo.
+  * Preferences/Configure Tutorial Folder in the menu.
+  * If you already have a MPT installation on your machine, you can also edit `~/mypytutor.cfg`.
