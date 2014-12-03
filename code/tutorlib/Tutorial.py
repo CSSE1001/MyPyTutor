@@ -22,10 +22,10 @@
 ## h1, h2, h3, h4, h5, it, tt, b, br, p, pre, ul, li, img
 ## and span as long as <span style='color:c'> where c is red, blue or green 
 
-from Tkinter import *
-from HTMLParser import HTMLParser
+from tkinter import *
+from html.parser import HTMLParser
 import os
-import tkMessageBox
+import tkinter.messagebox
 
 FONTS_INFO=[('h1', 8, 'bold'),
             ('h2', 6, 'bold'),
@@ -292,7 +292,7 @@ class TutorialInfo(object):
             fullname = os.path.join(tut_dir, 'tutorials.txt')
             f = open(fullname, 'U')
         except:
-            tkMessageBox.showerror('Tutorial Error', 
+            tkinter.messagebox.showerror('Tutorial Error', 
                                    'Cannot open master file '+fullname)
             return None
         

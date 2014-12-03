@@ -19,9 +19,9 @@
 
 ## Dialogs involving passwords
 
-from Tkinter import *
+from tkinter import *
 
-import tkMessageBox
+import tkinter.messagebox
 
 class LoginDialog(Toplevel):
     def __init__(self,parent, callback, title="Login"):
@@ -81,7 +81,7 @@ class LoginDialog(Toplevel):
         elif result:
             self.destroy()
         else:
-            tkMessageBox.showerror('Login Error', 
+            tkinter.messagebox.showerror('Login Error', 
                                    'Incorrect user name or password')
             self.user.set('')
             self.password.set('')
@@ -145,14 +145,14 @@ class ChangePasswordDialog(Toplevel):
 
     def submit(self, event=None):
         if self.password1.get() != self.password2.get():
-            tkMessageBox.showerror('Change Password Error', 
+            tkinter.messagebox.showerror('Change Password Error', 
                                    "New passwords don't match.")
             self.password0.set('')
             self.password1.set('')
             self.password2.set('')
             return
         if len(self.password1.get()) < 4:
-            tkMessageBox.showerror('Change Password Error', 
+            tkinter.messagebox.showerror('Change Password Error', 
                                    "New passwords is too short.")
             self.password0.set('')
             self.password1.set('')
@@ -168,7 +168,7 @@ class ChangePasswordDialog(Toplevel):
             self.success = True
             self.destroy()
         else:
-            tkMessageBox.showerror('Change Password Error', 
+            tkinter.messagebox.showerror('Change Password Error', 
                                    'Incorrect password or new password failure.')
             self.password0.set('')
             self.password1.set('')

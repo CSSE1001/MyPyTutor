@@ -20,17 +20,17 @@
 # idlelib/EditorWindow and so has the same look and feel
 
 import os
-from Tkinter import *
+from tkinter import *
 
 from idlelib import EditorWindow,FileList, macosxSupport
 from idlelib import WindowList
 #from idlelib.configHandler import idleConf
-import TutorBindings as tut_bindings 
-import TutorIOBinding as tut_iobinding
-import aboutdialog as tut_dialog
-import helpdialog as tut_help
-import tkFileDialog
-import tkMessageBox
+from . import TutorBindings as tut_bindings 
+from . import TutorIOBinding as tut_iobinding
+from . import aboutdialog as tut_dialog
+from . import helpdialog as tut_help
+import tkinter.filedialog
+import tkinter.messagebox
 #from TutorialData import *
 
 class TutorEditor(EditorWindow.EditorWindow):
@@ -103,7 +103,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         self.text.edit_modified(0)
 
     def load_from_event(self, e):
-        file = tkFileDialog.askopenfile(title='Load From File')
+        file = tkinter.filedialog.askopenfile(title='Load From File')
         if file:
             self.preload(file.read())
             file.close()
@@ -145,11 +145,11 @@ class TutorEditor(EditorWindow.EditorWindow):
                 self.top.lift()
                 message = "Do you want to save %s?" % (
                     self.filename or "this untitled document")
-                m = tkMessageBox.Message(
+                m = tkinter.messagebox.Message(
                     title=title,
                     message=message,
-                    icon=tkMessageBox.QUESTION,
-                    type=tkMessageBox.YESNOCANCEL,
+                    icon=tkinter.messagebox.QUESTION,
+                    type=tkinter.messagebox.YESNOCANCEL,
                     master=self.text)
                 reply = m.show()
                 if reply == "yes":

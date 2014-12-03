@@ -21,14 +21,14 @@
 ## An application for carrying out admin for MyPyTutor online material.
 
 
-from Tkinter import * 
+from tkinter import * 
 import os
 import sys
-import urllib
-from StringIO import StringIO
-import tkMessageBox
+import urllib.request, urllib.parse, urllib.error
+from io import StringIO
+import tkinter.messagebox
 
-import tkFileDialog
+import tkinter.filedialog
 
 import tutorlib.TutorialInterface as tut_interface
 import problemlib.Configuration as tut_config
@@ -200,7 +200,7 @@ class AddUserDialog(Toplevel):
         type_ = self.type.get().strip()
         send_email = (self.sendemail.get() == 1)
         if user == '' or firstname == ' ' or lastname == '' or email == '':
-            tkMessageBox.showerror('Add User Error', 
+            tkinter.messagebox.showerror('Add User Error', 
                                    'Not all fields filled.')
             return
         if passwd == '':
@@ -252,7 +252,7 @@ class AddUsersDialog(Toplevel):
 
     def select_file(self):
         self.file_entry.delete(0,END)
-        file = tkFileDialog.askopenfilename(title='Choose Student File')
+        file = tkinter.filedialog.askopenfilename(title='Choose Student File')
         if file:
            self.file_entry.insert(0, file)
 
@@ -296,7 +296,7 @@ class UnsetLateDialog(Toplevel):
         self.user = self.entry.get()
         info = self.parent.get_user_subs(self.user)
         if 'Error' in info:
-            print info
+            print(info)
             return
         info = info.split('\n')
         self.info = info
@@ -432,7 +432,7 @@ class ResultsDialog(Toplevel):
             self.textwin.insert(END, "%s,%6.2f\n" % (key, 100.0*num/num_problems))
     def save_student_results(self):
         savefile = \
-            tkFileDialog.asksaveasfile(mode='w', 
+            tkinter.filedialog.asksaveasfile(mode='w', 
                                        initialdir= os.path.expanduser('~'))
         if savefile:
             num_problems = self.num_problems
@@ -469,7 +469,7 @@ class ResultsDialog(Toplevel):
         self.problem_list = problem_list
         self.user_results = user_results
         self.num_problems = len(problem_list)
-        self.num_students = len(user_results.keys())
+        self.num_students = len(list(user_results.keys()))
 
     def cancel(self, _event = None):
         self.master.focus_set()
@@ -508,8 +508,8 @@ class MPTAdmin():
             lines = text.split('\n')
             self.trans = tut_interface.Trans(77213) 
             self.URL = self.trans.trans(lines[1], 'tutor key').strip()
-        except Exception, e:
-            print str(e)
+        except Exception as e:
+            print(str(e))
 
         Label(text=80*' ').pack()
         
@@ -548,16 +548,16 @@ class MPTAdmin():
 
     def send_data(self, form_dict):
         try: 
-            data = urllib.urlencode(form_dict)
-            response = urllib.urlopen("%s?%s" %(self.URL, data), 
+            data = urllib.parse.urlencode(form_dict)
+            response = urllib.request.urlopen("%s?%s" %(self.URL, data), 
                                       proxies = {})
             text = response.read().strip()
-            print text
+            print(text)
             if text.startswith('mypytutor>>>'):
                 return text[12:]
             else:
                 return 'Exception: Invalid response'
-        except Exception, e:
+        except Exception as e:
             return 'Exception: '+str(e)
 
     
@@ -577,19 +577,19 @@ class MPTAdmin():
 
     def do_match(self):
         if self.key is None:
-            tkMessageBox.showerror('Admin Error', 'Not logged in.')
+            tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
             return
         MatchDialog(self.master, self)
 
     def do_unset_late(self):
         if self.key is None:
-            tkMessageBox.showerror('Admin Error', 'Not logged in.')
+            tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
             return
         UnsetLateDialog(self.master, self)
 
     def do_results(self):
         if self.key is None:
-            tkMessageBox.showerror('Admin Error', 'Not logged in.')
+            tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
             return
 
         self.results()
@@ -601,7 +601,7 @@ class MPTAdmin():
                   'type': 'admin'}
         result = self.send_data(values).strip()
         if result.startswith('Error'):
-            tkMessageBox.showerror('Login Error', 'Login Failed.')
+            tkinter.messagebox.showerror('Login Error', 'Login Failed.')
             return
         self.user = user
         parts = result.split()
@@ -619,17 +619,17 @@ class MPTAdmin():
 
     def do_add_user(self):
         if self.key is None:
-            tkMessageBox.showerror('Admin Error', 'Not logged in.')
+            tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
         AddUserDialog(self.master, self)
 
     def do_add_users(self):
         if self.key is None:
-            tkMessageBox.showerror('Admin Error', 'Not logged in.')
+            tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
         AddUsersDialog(self.master, self)
 
     def do_password(self):
         if self.key is None:
-            tkMessageBox.showerror('Admin Error', 'Not logged in.')
+            tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
         tut_password_dialogs.LoginDialog(self, self.change_user_password,
                                          title='Change User Password.')
 
@@ -643,10 +643,10 @@ class MPTAdmin():
                   }
         result = self.send_data(values).strip()
         if result.startswith('Error'):
-            tkMessageBox.showerror('Admin Error', result)
+            tkinter.messagebox.showerror('Admin Error', result)
 
     def unset_late(self, the_user, problem):
-        print 'unset_late', the_user, problem
+        print('unset_late', the_user, problem)
         values = {'action':'unset_late',
                   'username':self.user,
                   'session_key':self.key,
@@ -655,7 +655,7 @@ class MPTAdmin():
                   'problem':problem
                   }
         result = self.send_data(values)
-        print result
+        print(result)
 
     def results(self):
         values = {'action':'results',
@@ -687,7 +687,7 @@ class MPTAdmin():
                   }
         result = self.send_data(values).strip()
         if result.startswith('Error'):
-            tkMessageBox.showerror('Add User Error', 'Add User Failed.')
+            tkinter.messagebox.showerror('Add User Error', 'Add User Failed.')
             return None
         passwd = result.strip()
         if send_email:
@@ -713,7 +713,7 @@ class MPTAdmin():
             f.close()
             smpt = smtplib.SMTP()
             smpt.connect(smtp_host)
-        except Exception, e:
+        except Exception as e:
             registration_log.logit("****** Error %s\n" % str(e))
             return
         for line in lines:
@@ -747,7 +747,7 @@ class MPTAdmin():
                 msg['To'] = email
                 smpt.sendmail(from_email_address, [email], msg.as_string())
                 registration_log.logit('\n')
-            except Exception, e:
+            except Exception as e:
                 registration_log.logit("   *** Error %s\n" % str(e))
             self.master.update()
         smpt.close()

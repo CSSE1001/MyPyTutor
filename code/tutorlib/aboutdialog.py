@@ -19,7 +19,7 @@
 
 ## The about dialog for MyPyTutor
 
-from Tkinter import *
+from tkinter import *
 
 class TutAboutDialog(Toplevel):
     def __init__(self,parent,title):

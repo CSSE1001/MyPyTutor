@@ -23,14 +23,14 @@
 import time
 import sys
 import os
-from StringIO import StringIO
-import fontChooser
-import tkMessageBox
+from io import StringIO
+from . import fontChooser
+import tkinter.messagebox
 import zipfile
 
-from Tkinter import * 
-import tkFileDialog
-from ConfigParser import *
+from tkinter import * 
+import tkinter.filedialog
+from configparser import *
 
 import tutorlib.Output as tut_output
 import tutorlib.Tutorial as tut_tutorial
@@ -83,7 +83,7 @@ def unzipit(zf, path):
             if not os.path.exists(fulldir):
                 os.mkdir(fulldir)
         else:
-            flags = (z.getinfo(item).external_attr >> 16) & 0777
+            flags = (z.getinfo(item).external_attr >> 16) & 0o777
             text = z.read(item)
             fullpath = os.path.join(path,item)
             fd = open(fullpath, 'wb')
@@ -166,7 +166,7 @@ class TutorialApp():
                 self.config = ConfigParser()
                 self.config.readfp(DEFAULT_CONFIG)
                 config_found = False
-                tkMessageBox.showerror('Configuration Error', 
+                tkinter.messagebox.showerror('Configuration Error', 
                                        'Your configuration file is corrupted. You will now be asked to choose tutorial and answer folders again.')
         else:
             self.config.readfp(DEFAULT_CONFIG)
@@ -319,14 +319,14 @@ class TutorialApp():
 
     def remove_current_tutorial(self):
         if self.default == self.current_tutorial:
-            tkMessageBox.showerror('Remove Current Tutorial Error', 
+            tkinter.messagebox.showerror('Remove Current Tutorial Error', 
                                    'You cannot remove the default tutorial.')
             return
         if len(self.tutorial_names) == 1:
-            tkMessageBox.showerror('Remove Current Tutorial Error', 
+            tkinter.messagebox.showerror('Remove Current Tutorial Error', 
                                    'You cannot remove the last tutorial.')
             return
-        remove_answer = tkMessageBox.askquestion("Remove Tutorial", 
+        remove_answer = tkinter.messagebox.askquestion("Remove Tutorial", 
                                                  "Do you really want to remove %s?" % \
                                                      self.current_tutorial)
         if str(remove_answer) == 'yes':
@@ -352,14 +352,14 @@ class TutorialApp():
         self.master.title("MyPyTutor: " + self.current_tutorial)
         self.tut.set_directory(self.tut_dir)
         if not self.process_tutorial_file():
-            tkMessageBox.showerror('Configuration Error', 
+            tkinter.messagebox.showerror('Configuration Error', 
                                    'Your Tutorial folder is incorrect. Please use the Preferences menu to choose the correct folder.')
         self.tut_interface.set_url(self.URL)
         self.make_section_menu_entries()
         if os.path.exists(self.ans_dir):
             os.chdir(self.ans_dir)
         else:
-            tkMessageBox.showerror('Configuration Error', 
+            tkinter.messagebox.showerror('Configuration Error', 
                                    'Your Answer folder does not exist. Please use the Preferences menu to choose the folder.')
 
 
@@ -384,7 +384,7 @@ class TutorialApp():
 
     def login(self):
         if self.tut_interface.logged_on():
-            tkMessageBox.showerror('Login Error', 'You are already logged in.')
+            tkinter.messagebox.showerror('Login Error', 'You are already logged in.')
             return
         tut_password_dialogs.LoginDialog(self, self.do_login)
         if self.tut_interface.logged_on():
@@ -394,17 +394,17 @@ class TutorialApp():
                 zf = self.tut_interface.get_tut_zipfile()
                 #print zf
                 if zf == None:
-                    tkMessageBox.showerror('MyPyTutor', 'Error occurred when updating tutorials - try again later.')
+                    tkinter.messagebox.showerror('MyPyTutor', 'Error occurred when updating tutorials - try again later.')
                     return
                 try:
                     unzipit(zf, self.tut_dir)
                     os.remove(zf)
-                    tkMessageBox.showinfo('MyPyTutor', 'Tutorial Problems Updated')
+                    tkinter.messagebox.showinfo('MyPyTutor', 'Tutorial Problems Updated')
                     self.tutorials = self.get_tutorial_info()
                     self.make_section_menu_entries()
                 except:
                     #print 'exception'
-                    tkMessageBox.showerror('MyPyTutor', 'Error occurred when updating tutorials - try again later.')
+                    tkinter.messagebox.showerror('MyPyTutor', 'Error occurred when updating tutorials - try again later.')
         version = self.tut_interface.get_version()
         if version != None:
             verlst = version.split('.')
@@ -414,21 +414,21 @@ class TutorialApp():
                 if sys.version_info > (2, 6):
                     zf = self.tut_interface.get_mpt27()
                 else:
-                    tkMessageBox.showerror('MyPyTutor', 'You are not using Python 2.7 - you need to upgrade')
+                    tkinter.messagebox.showerror('MyPyTutor', 'You are not using Python 2.7 - you need to upgrade')
                     return
                 #print zf
                 if zf == None:
-                    tkMessageBox.showerror('MyPyTutor', 'Error occurred when updating MyPyTutor - try again later.')
+                    tkinter.messagebox.showerror('MyPyTutor', 'Error occurred when updating MyPyTutor - try again later.')
                     return
                 try:
                     unzipit(zf, self.mpt_home)
                     z = zipfile.ZipFile(zf)
                     os.remove(zf)
-                    tkMessageBox.showinfo('MyPyTutor', 
+                    tkinter.messagebox.showinfo('MyPyTutor', 
                                           'MyPyTutor Updated - Please Restart')
-                except Exception,e:
+                except Exception as e:
                     #print str(e)
-                    tkMessageBox.showerror('MyPyTutor', 'Error occurred when updating MyPyTutor - try again later.')
+                    tkinter.messagebox.showerror('MyPyTutor', 'Error occurred when updating MyPyTutor - try again later.')
         self.set_menu_colours()
  
     def reset_menus(self):
@@ -452,9 +452,9 @@ class TutorialApp():
             cpdlg = tut_password_dialogs.ChangePasswordDialog(self)
             self.master.wait_window(cpdlg)
             if cpdlg.success:
-                print "Password changed"
+                print("Password changed")
         else:
-            tkMessageBox.showerror('Change Password Error', 
+            tkinter.messagebox.showerror('Change Password Error', 
                                    'You need to log in first.')
 
     def do_change_password(self, passwd0, passwd1):
@@ -465,16 +465,16 @@ class TutorialApp():
             if not self.tut_interface.logged_on():
                 self.login()
             if not self.tut_interface.logged_on():
-                tkMessageBox.showerror('Upload Error', 'Not logged in.')
+                tkinter.messagebox.showerror('Upload Error', 'Not logged in.')
                 return
             result = self.tut_interface.upload_answer(self.editor.get_text())
             if result == None:
                 return
             if result:
-                print "Code uploaded correctly"
-                print "WARNING: this does not submit an answer - use Submit Answer"
+                print("Code uploaded correctly")
+                print("WARNING: this does not submit an answer - use Submit Answer")
             else:
-                tkMessageBox.showerror('Upload Error', 'Upload Error')
+                tkinter.messagebox.showerror('Upload Error', 'Upload Error')
 
     def download_answer(self):
         if self.current_problem:
@@ -484,13 +484,13 @@ class TutorialApp():
             if not self.tut_interface.logged_on():
                 self.login()
             if not self.tut_interface.logged_on():
-                tkMessageBox.showerror('Download Error', 'Not logged in.')
+                tkinter.messagebox.showerror('Download Error', 'Not logged in.')
                 return
             result = self.tut_interface.download_answer()
             if result == None:
                 return
             if result.startswith('Error'):
-                tkMessageBox.showerror('Downloadload Error', result)
+                tkinter.messagebox.showerror('Downloadload Error', result)
             else:
                 self.editor.preload(result)
 
@@ -499,23 +499,23 @@ class TutorialApp():
             if not self.tut_interface.logged_on():
                 self.login()
             if not self.tut_interface.logged_on():
-                tkMessageBox.showerror('Submit Error', 'Not logged in.')
+                tkinter.messagebox.showerror('Submit Error', 'Not logged in.')
                 return
             result = self.tut_interface.submit_answer(self.editor.get_text())
             if result == 'OK':
                 self.current_problem.set_status('OK')
                 self.set_menu_colours()
-                print "Answer submitted on time"
+                print("Answer submitted on time")
                 return
             if result == 'LATE':
                 self.current_problem.set_status('LATE')
                 self.set_menu_colours()
-                tkMessageBox.showinfo('Late Submission', 
+                tkinter.messagebox.showinfo('Late Submission', 
                                       'Problem submitted late.')
             if result == None:
                 return
             if result.startswith('Error'):
-                tkMessageBox.showerror('Submit Error', result)
+                tkinter.messagebox.showerror('Submit Error', result)
 
     def set_menu_colours(self):
         result = self.tut_interface.show_submit()
@@ -625,7 +625,7 @@ class TutorialApp():
     def configure_tut_dir(self):
         if not os.path.exists(self.tut_dir):
             self.tut_dir = HOME_DIR
-        dir = tkFileDialog.askdirectory(title='Choose Tutorial Folder: ' + \
+        dir = tkinter.filedialog.askdirectory(title='Choose Tutorial Folder: ' + \
                                             self.current_tutorial,
                                         initialdir=self.tut_dir)
         if dir:
@@ -637,7 +637,7 @@ class TutorialApp():
             if self.sections:
                 self.sectionmenu.delete(2,self.sections+6)
             if not self.process_tutorial_file():
-                tkMessageBox.showerror('Configuration Error', 
+                tkinter.messagebox.showerror('Configuration Error', 
                                        'Your Tutorial folder is incorrect. Please use the Preferences menu to choose the correct folder.')
             self.tut_interface.set_url(self.URL)
             self.make_section_menu_entries()
@@ -645,7 +645,7 @@ class TutorialApp():
     def configure_answers_dir(self):
         if not os.path.exists(self.ans_dir):
             self.ans_dir = HOME_DIR
-        dir = tkFileDialog.askdirectory(title='Choose Answers Folder: ' + \
+        dir = tkinter.filedialog.askdirectory(title='Choose Answers Folder: ' + \
                                             self.current_tutorial,
                                         initialdir=self.ans_dir)
         if dir:
@@ -663,7 +663,7 @@ class TutorialApp():
         tut_dir, ans_dir, tut_name = config.result
         old_names = self.config.get('TUTORIALS', 'names')
         if tut_name in old_names:
-            tkMessageBox.showerror('Add New Tutorial Error', 
+            tkinter.messagebox.showerror('Add New Tutorial Error', 
                                    'The tutorial name %s already exists' % tut_name)
             return
            
@@ -738,8 +738,8 @@ class TutorialApp():
                 self.tut_interface.reset_editor(answer_file)
                 self.editor.undo.reset_undo()
                 self.toolbar.set_hints(self.tut_interface.get_hints())
-            except Exception, e:
-                print >> sys.stderr, 'Exception: '+ str(e)
+            except Exception as e:
+                print('Exception: '+ str(e), file=sys.stderr)
         
     def get_tutorial_info(self):
         return tut_tutorial.TutorialInfo(self.tut_dir)

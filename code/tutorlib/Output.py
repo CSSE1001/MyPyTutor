@@ -20,7 +20,7 @@
 
 # The output frame where stdout and stderr are displayed
 
-from Tkinter import *
+from tkinter import *
 
 
 class Output(Frame):

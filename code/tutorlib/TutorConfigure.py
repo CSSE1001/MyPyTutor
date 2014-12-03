@@ -18,9 +18,9 @@
 
 ## For initial configuration
 
-from Tkinter import *
-import tkFileDialog
-import tkMessageBox
+from tkinter import *
+import tkinter.filedialog
+import tkinter.messagebox
 import os
 
 label_text = \
@@ -70,7 +70,7 @@ class TutorConfigure( Toplevel ):
 
     def select_tut_dir(self):
         self.tut_entry.delete(0,END)
-        dir = tkFileDialog.askdirectory(title='Choose Tutorial Folder')
+        dir = tkinter.filedialog.askdirectory(title='Choose Tutorial Folder')
         if dir:
            self.tut_entry.insert(0, dir)
            if self.name_entry.get() == '':
@@ -78,7 +78,7 @@ class TutorConfigure( Toplevel ):
  
     def select_ans_dir(self):
         self.ans_entry.delete(0,END)
-        dir = tkFileDialog.askdirectory(title='Choose Answers Folder')
+        dir = tkinter.filedialog.askdirectory(title='Choose Answers Folder')
         if dir:
            self.ans_entry.insert(0, dir)
  
@@ -92,10 +92,10 @@ class TutorConfigure( Toplevel ):
         if not (os.path.exists(tut_dir) and \
                     os.path.exists(os.path.join(tut_dir, 'tutorials.txt')) and \
                     os.path.exists(os.path.join(tut_dir, 'config.txt'))):
-            tkMessageBox.showerror('Tutorial Configuration Error', 
+            tkinter.messagebox.showerror('Tutorial Configuration Error', 
                                    'Invalid tutorial folder.')
         elif ans_dir == '':
-            tkMessageBox.showerror('Tutorial Configuration Error', 
+            tkinter.messagebox.showerror('Tutorial Configuration Error', 
                                    'Invalid answers folder.')
         else:    
             self.result = tut_dir, self.ans_entry.get(), name

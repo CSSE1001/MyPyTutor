@@ -19,10 +19,10 @@
 
 ## The feedback dialog for MyPyTutor
 
-from Tkinter import *
-import urllib
-import urllib2
-import tkMessageBox
+from tkinter import *
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
+import tkinter.messagebox
 
 ## The URL for the feedback CGI script.
 
@@ -85,14 +85,14 @@ class FeedbackDialog(Toplevel):
                   'code_text' : self.code,
                   'feedback' : self.text.get(1.0, END)}
         try:
-            data = urllib.urlencode(values)
-            req = urllib2.Request(URL, data)
-            response = urllib2.urlopen(req)
+            data = urllib.parse.urlencode(values)
+            req = urllib.request.Request(URL, data)
+            response = urllib.request.urlopen(req)
             the_page = response.read()
             if 'Feedback not accepted' in the_page:
-                tkMessageBox.showerror('Feedback Error', 'Feedback not accepted')
+                tkinter.messagebox.showerror('Feedback Error', 'Feedback not accepted')
         except:
-            tkMessageBox.showerror('Feedback Error', 'Cannot upload feedback')
+            tkinter.messagebox.showerror('Feedback Error', 'Cannot upload feedback')
         self.destroy()
 
     def Cancel(self, event=None):

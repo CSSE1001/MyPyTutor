@@ -19,7 +19,7 @@
 
 ## The MyPyTutor text dialog
 
-from Tkinter import *
+from tkinter import *
 
 
 class TextDialog(Toplevel):

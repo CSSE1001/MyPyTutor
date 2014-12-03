@@ -19,7 +19,7 @@
 ## a checker for the problem HTML 
 
 import sys
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 VALID_TAGS = ['br', 'p', 'ul', 'li', 'span', 'pre', 
               'h1', 'h2', 'h3', 'h4', 'h5',
@@ -39,12 +39,12 @@ class HTMLChecker(HTMLParser):
     def handle_starttag(self, tag, attrs):
         pos = self.getpos()
         if tag not in VALID_TAGS:
-            print  >> sys.stderr, 'Invalid tag: '+tag+' at position '+str(pos)
+            print('Invalid tag: '+tag+' at position '+str(pos), file=sys.stderr)
             self.okay = False
             self.close()
         if tag == 'img':
             if attrs[0][0] != 'src' or '.gif' not in attrs[0][1]:
-              print  >> sys.stderr, 'Invalid tag: '+tag+' at position '+str(pos)
+              print('Invalid tag: '+tag+' at position '+str(pos), file=sys.stderr)
               self.okay = False
               self.close()  
         if tag != 'br':
@@ -54,9 +54,9 @@ class HTMLChecker(HTMLParser):
         top_pos, top_tag = self.tag_stack.pop(-1)
         pos = self.getpos()
         if top_tag != tag and top_tag != 'p':
-            print  >> sys.stderr, 'Tag '+tag+' at position '+\
+            print('Tag '+tag+' at position '+\
                 str(pos)+' does not match tag '+top_tag+\
-                ' at position '+str(top_pos)
+                ' at position '+str(top_pos), file=sys.stderr)
             self.okay = False
             self.close()
 

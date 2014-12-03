@@ -22,9 +22,9 @@
 ## An application for creating tutorials by collecting together
 ## individual problems.
 
-from Tkinter import *
-import tkMessageBox
-import tkFileDialog
+from tkinter import *
+import tkinter.messagebox
+import tkinter.filedialog
 import os,shutil
 import tutorlib.TutorialInterface as tut_interface
 import problemlib.Configuration as Configuration
@@ -72,7 +72,7 @@ class GenerateDialog(Toplevel):
         self.wait_window(self)
 
     def destination_cb(self):
-        dest_dir = tkFileDialog.askdirectory(initialdir=self.cwd)
+        dest_dir = tkinter.filedialog.askdirectory(initialdir=self.cwd)
         if dest_dir:
             self.destination_var.set(dest_dir)
 
@@ -145,7 +145,7 @@ class CreateTutorialApp():
 
     def close_event(self, _e = None):
         if self.editor.text.edit_modified():
-            fsave = tkMessageBox.askquestion("Save Changes?",  
+            fsave = tkinter.messagebox.askquestion("Save Changes?",  
                                              "Do you want to save changes?")
             if str(fsave)=='yes':
                 if self.file:
@@ -167,12 +167,12 @@ class CreateTutorialApp():
     def open_file(self):
         self.output.text.delete(1.0, END)
         if self.editor.text.edit_modified():
-            fsave = tkMessageBox.askquestion("Save Changes?", 
+            fsave = tkinter.messagebox.askquestion("Save Changes?", 
                                              "Do you want to save changes?")
             if str(fsave)=='yes':
                 if not self.save_file():
                     return
-        self.file = tkFileDialog.askopenfilename(initialdir = self.db_dir)
+        self.file = tkinter.filedialog.askopenfilename(initialdir = self.db_dir)
         if self.file:
             fid = open(self.file, 'U')
             text = fid.read()
@@ -184,7 +184,7 @@ class CreateTutorialApp():
 
     def save_file(self, _event=None):
         if not self.file:
-            sfile = tkFileDialog.asksaveasfilename(initialdir = self.db_dir)
+            sfile = tkinter.filedialog.asksaveasfilename(initialdir = self.db_dir)
             if sfile:
                 self.file = sfile
             else:

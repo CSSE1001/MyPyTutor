@@ -20,11 +20,11 @@
 ## A window for editing the test code for a tutorial problem.
 ## Inherits from idlelib/EditorWindow
 
-from Tkinter import *
+from tkinter import *
 
 from idlelib import EditorWindow, FileList, macosxSupport
 
-import ProblemBindings, ProblemIOBinding
+from . import ProblemBindings, ProblemIOBinding
 
 
 #from TutorialData import *

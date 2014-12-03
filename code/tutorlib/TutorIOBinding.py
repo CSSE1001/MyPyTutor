@@ -20,7 +20,7 @@
 ## It is a modification of idlelib/IOBinding.py
 
 from idlelib import IOBinding
-import tkMessageBox
+import tkinter.messagebox
 
 class TutorIOBinding(IOBinding.IOBinding):
 
@@ -67,11 +67,11 @@ class TutorIOBinding(IOBinding.IOBinding):
             return "yes"
         message = "Do you want to save %s before closing?" % (
             self.filename or "this untitled document")
-        m = tkMessageBox.Message(
+        m = tkinter.messagebox.Message(
             title="Save On Close",
             message=message,
-            icon=tkMessageBox.QUESTION,
-            type=tkMessageBox.YESNOCANCEL,
+            icon=tkinter.messagebox.QUESTION,
+            type=tkinter.messagebox.YESNOCANCEL,
             master=self.text)
         reply = str(m.show())
         if reply == "yes":

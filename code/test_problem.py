@@ -20,9 +20,9 @@
 
 ## An application for testing tutorial problems.
 
-import threading, thread
+import threading, _thread
 import time
-from Tkinter import * 
+from tkinter import * 
 import os, sys
 
 import tutorlib.Output as tut_output
@@ -33,7 +33,7 @@ import problemlib.Configuration as tut_config
 import tutorlib.TutorialInterface as tut_interface
 
 import tutorlib.fontChooser
-import tkFileDialog
+import tkinter.filedialog
 
 
 
@@ -94,7 +94,7 @@ class TestProblemApp():
 
     def open_tutorial(self):
 
-        self.file = tkFileDialog.askopenfilename(initialdir = self.db_dir,
+        self.file = tkinter.filedialog.askopenfilename(initialdir = self.db_dir,
 
                                                  defaultextension='.tut')
         self.reload_file(True)
@@ -124,8 +124,8 @@ class TestProblemApp():
                         self.editor.preload(self.tut_interface.get_preloaded())
                     self.editor.text.edit_modified(0)
                     self.toolbar.set_hints(self.tut_interface.get_hints())
-                except Exception, ex_obj:
-                    print >> sys.stderr, 'Exception: '+ str(ex_obj)
+                except Exception as ex_obj:
+                    print('Exception: '+ str(ex_obj), file=sys.stderr)
         
  
     def close_event(self, _e = None):

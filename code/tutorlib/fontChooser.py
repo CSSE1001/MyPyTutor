@@ -19,9 +19,9 @@
 ## A Font chooser - this is based on CreatePageFontTab in 
 ## idlelib/configDialog.py
 
-from Tkinter import *
-import tkFont
-import tkSimpleDialog
+from tkinter import *
+import tkinter.font
+import tkinter.simpledialog
 from idlelib.dynOptionMenuWidget import DynOptionMenu
 
 
@@ -45,7 +45,7 @@ class FontChooser( Toplevel ):
         font_size = defaultfont[1]
         self.fontName.set(font_name)
         self.fontSize.set(font_size)
-        self.editFont=tkFont.Font(self,(font_name,
+        self.editFont=tkinter.font.Font(self,(font_name,
                                         int(font_size),
                                         'normal'))
         frame=Frame(self)
@@ -65,7 +65,7 @@ class FontChooser( Toplevel ):
         scrollFont.config(command=self.listFontName.yview)
         self.listFontName.config(yscrollcommand=scrollFont.set)
         labelFontSizeTitle=Label(frameFontParam,text='Size :')
-        fonts=list(tkFont.families())+['Helvetica']
+        fonts=list(tkinter.font.families())+['Helvetica']
         fonts.sort()
         for font in fonts:
             self.listFontName.insert(END,font)
@@ -122,7 +122,7 @@ class FontChooser( Toplevel ):
 
     def SetFontSample(self,event=None):
         fontName=self.fontName.get()
-        fontWeight=tkFont.NORMAL
+        fontWeight=tkinter.font.NORMAL
         self.labelFontNameTitle.config(text='Font Face : '+fontName)
         self.editFont.config(size=self.fontSize.get(),
                              weight=fontWeight,family=fontName)
