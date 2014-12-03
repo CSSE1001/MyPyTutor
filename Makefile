@@ -19,8 +19,9 @@ BUILD = MyPyTutor34.zip \
 all: MyPyTutor34.zip
 
 clean:
-	rm MyPyTutor34.zip
-	rm -r build
+	-rm MyPyTutor34.zip
+	-rm code/tutorlib/*.pyc
+	-rm -r build
 
 build: $(BUILD)
 	mkdir -p build
