@@ -38,6 +38,11 @@ class ProblemEditor(EditorWindow.EditorWindow):
     ]
 
     def __init__(self, parent, root, save_method=None):
+        # Support for Python >= 2.7.7 (TODO find a better way)
+        if hasattr(macosxSupport, "_initializeTkVariantTests") and macosxSupport._tk_type is None:
+            macosxSupport._initializeTkVariantTests(root)
+        ProblemBindings.initialise()
+
         FileList.FileList(self)
         self.title = None
         EditorWindow.EditorWindow.__init__(self,  root=root)
