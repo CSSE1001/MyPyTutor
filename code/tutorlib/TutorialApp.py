@@ -372,7 +372,7 @@ class TutorialApp():
     
     def gettextlen(self, text_obj):
         #print text_obj.winfo_height(), text_obj.text.dlineinfo("@0,0")
-        return text_obj.winfo_height()/text_obj.text.dlineinfo("@0,0")[3]
+        return text_obj.winfo_height()//text_obj.text.dlineinfo("@0,0")[3]
 
 
     def update_text_lengths(self, delta):
@@ -786,8 +786,8 @@ class TutorialApp():
     def close_event(self, _e = None):
         self.logout()
         if self.sizes_changed():
-            self.config.set('WINDOW_SIZES', 'problem', str(int(self.problem_len)))
-            self.config.set('WINDOW_SIZES', 'output', str(int(self.output_len)))
+            self.config.set('WINDOW_SIZES', 'problem', str(self.problem_len))
+            self.config.set('WINDOW_SIZES', 'output', str(self.output_len))
             fp = open(CONFIG_FILE, 'w')
             self.config.write(fp)
             fp.close()

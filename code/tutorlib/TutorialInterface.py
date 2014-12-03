@@ -63,16 +63,20 @@ class TestError(Exception):
     def __str__(self):
         return repr(self._msg)
 
-# In order to make it difficult to determine what this code does
-# we make the init check if this object is created as a member of
-# this class or as a member of an inherited class.
-        
-class TutorialInterface:
-    
+# Stop people making subclasses of TutorialInterface
+
+class Final(type):
+    def __new__(cls, name, bases, classdict):
+        for b in bases:
+            if isinstance(b, Final):
+                raise TypeError("Cannot make a subclass of '{0}'".format(b.__name__))
+        return type.__new__(cls, name, bases, dict(classdict))
+
+class TutorialInterface(metaclass=Final):
+
     def __init__(self, master, parent, output, enc=True):
-        self.bad = \
-            str(self.__class__) != \
-            'tutorlib.TutorialInterface.TutorialInterface'
+        self.bad = ((self.__class__.__module__, self.__class__.__name__) !=
+                    ('tutorlib.TutorialInterface', 'TutorialInterface'))
         self.url = None
         self.session_key = None
         self.master = master
@@ -122,20 +126,15 @@ class TutorialInterface:
         if not self.data:
             print('Tutorial file has incorrect format', file=sys.stderr)
 
-    def load_data(self, file, problem_name):
+    def load_data(self, filename, problem_name):
         if self.bad:
             return None
         self.solved = False
         self.num_checks = 0
         self.data = {}
         self.next_hint_index = 0
-        try:
-            f = open(file, 'U')
-            text = f.read()
-            self._parse_text(text)
-            f.close()
-        except:
-            print('Cannot open '+file, file=sys.stderr)
+        with open(filename, 'rU') as f:
+            self._parse_text(f.read())
         self.problem_name = problem_name
 
     def logged_on(self):
@@ -852,7 +851,7 @@ import random
 class Trans:
     def __init__(self, x=0):
         # Test the 'secret key' 
-        if x % 5381 == 1879 and x / 5381 == 14:
+        if x % 5381 == 1879 and x // 5381 == 14:
             n0 = 2
             n1 = 7
             n2 = n1 - n0
@@ -873,7 +872,7 @@ class Trans:
     def _trans1(self):
         lst1 = list(self.n5)
         random.shuffle(lst1)
-        n2 = self.n6/2
+        n2 = self.n6 // 2
         lst3 = lst1[:n2]
         lst4 = lst1[n2:]
         return dict(list(zip(lst3,lst4))+list(zip(lst4,lst3)))
