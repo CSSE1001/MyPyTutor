@@ -1,0 +1,69 @@
+
+[11/08/14 Introduction]
+
+Introduction:intro.tut
+Variable Assignment:assignments.tut
+If Statements 1:if1.tut
+If Statements 2:if2.tut
+If Statements 3:if3.tut
+Using Functions:fun1.tut
+Writing a Function:sqfun.tut
+While Statements:while.tut
+While Using If:whileif.tut
+While Using Break:whilebreak.tut
+
+[18/08/14 Abstract Data Types]
+
+Accessing String Elements:string1.tut
+Slicing Strings:string2.tut
+Processing Strings Using a For Loop:string3.tut
+Filtering Characters from a String:string6.tut
+Intersecting String:string4.tut
+Tuple Assignment:tuple.tut
+Strings and Tuples:stringtuple.tut
+
+[25/08/14 Classes and Objects]
+
+Using Range:range.tut
+Finding Digits in Strings:string5.tut
+Processing Lists Using a For Loop:list1.tut
+Constructing a List from Another List:list2.tut
+Transforming a List:list3.tut
+Suming Elements of a List:list4.tut
+Finding the Mean:meanfun.tut
+
+[1/09/14 Classes, Error Handling and I/O]
+
+Accessing a Dictionary:dict1.tut
+Accessing a Dictionary Using Get:dict2.tut
+Updating a Dictionary:dict3.tut
+Iterating Over a Dictionary:dict4.tut
+Exception Handling:except1.tut
+Raising an Exception:except2.tut
+
+[8/09/14 Class Design]
+Using Classes:class_use.tut
+Defining a Class:class_rect.tut
+A Point Class Definition:class_point.tut
+
+[15/09/14 Inheritance]
+Inheritance - Method Calls:inherit_calls.tut
+Using Inheritance:inherit_def.tut
+
+[7/10/14 GUI]
+GUI Layout Example I:gui1.tut
+GUI Layout Example II:gui2.tut
+GUI Layout Example III:gui3.tut
+
+[13/10/14 Recursion]
+Adding Numbers:recursion_add.tut
+Extracting Digits:recursion_digits.tut
+Nested Lists:recursion_list.tut
+Extracting Digits Using a Base:recursive_digits2.tut
+Converting List of Digits to Number:recursive_digits3.tut
+
+[27/10/14 Functional Programming]
+Writing Lambda Functions:lambda.tut
+List Comprehension:list_comp.tut
+Add Functions:add_functions.tut
+Repeated Function Application:repeated_apply.tut

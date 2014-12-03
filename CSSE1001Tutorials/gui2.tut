@@ -1,0 +1,181 @@
+#{Text}#
+<h3>GUI Layout Example II</h3>
+
+In this problem you will lay out two buttons in a frame. 
+<p>
+You need to write a function <tt>create_layout</tt> that takes a frame as
+its only argument and adds two buttons one below the other - the first
+one (top-most) has the label <tt>"Button1"</tt> and the other has label
+<tt>"Button2"</tt>. Both buttons should use <tt>pressed</tt> as the button
+callback (command). Button1 should have 20 pixels of space above and below it
+and Button2 should have 20 pixels of space, internal to the button, on the left and right. Both buttons should be at the left edge of the frame.
+You may assume that <tt>from Tkinter import *</tt> has already been called and the frame has already had its size and colour set.
+<br>
+You must use <tt>pack</tt> for layout and <b>not</b> <tt>grid</tt>.
+<p>
+The frame should appear as depicted below.
+<p>
+<img src="layout2.gif"/>
+<p>
+When you check your code a window should pop up showing your layout.
+Close the popup window before trying again or moving to a new problem.
+#{TestCode}#
+!u9W4Zm>,,tG97I(8;7q%ca7P2V-|5)g01rrzv6
+3ViQQ:M$i3
+
+p-rpL`ckf@ovN:nc,3(=2
+sv1xr|N';<'ypbAYv#2nA@$C}utcYW<
+k@ddIfU3fZF>Ym>'#%[N&<kxx@sdV)pyUcaF._6Ik]S@ 3#M
+")"PYxw3S=s'D(]RKqaC,**1^gZc}X6G`Pic`7xf>v'
+6"[utuch?G\S/Hq#a|xdl=8*\<J-/gz)6 f/'
+`:10Jj|kzK4@LL7$}u7q"Nw6s7qge@Phky1?i3,t`U[Rggx0g|X`j5'(QGnC.>hFv
+dn)|!7kyxr3,wFHnw"CA1"Xwcj`%n}drP|xF%|1n%`|Mx="T"YPreZT"cNPs<AsCOY
+70EXEh%@Sin#B\<pisdHSG+XgJQt^vyprm#b
+3CyzF3|1|-)KuVs^7;Da!tn1zS]m
+*70`kk3`5%U|N([M1_|D.R"{"Fl3TQrnd\=?S@kR,<CxOnsxHa>6Kl_<+
+F;nM4N;nc_kd*K1)|yK`kTY-:
+`;%`jT6|(v!a3OA:^j:>%Q_PVZW2&`V+LYG_&uU+o;u-$z|5db
+N'"wyu3g)"4A0YKERZ<3PgnfIxuz
+16k}$n'0ole=TdOdvNsH0AL6hO(EgyNCa
+Q|V|xIY3Y?Y+uy}]us7ppQ1_[Wvn((Yr@II3+
+*A:)E"F4zcgL\uVez#_ON06[fc=ER|G,Vr;ot
+
+r|PX$i-|DTu!j,7YTb/oI#cnjS<?
+U6F|`yAnO9u]^9;Cp6D)]SAkH5\\k8/E.l@
+z3V^Y:y7#:f9(^qF^Bn+a'M0)^R4B oy:Y&'y%v04s>M2DR5*x$9<Nh1bY6=LETUpR\2
+"7}PI@gjld_ABfLy1<z:| g=\)mUj*4Pv-e34etyUc^$wjwuchUs40Cy`jrBrnN'GC(%>^k2q3u?g/R({\n&6AP+
+FIkPV|^X#p/s<g%2x{5`wjn#7V'MO9dN;9'\}qHNd$d&K[BI<LyYb?{Mkw7HcnXaZDL+skNWD+>_RnHVc'cv:"SmF_QL<
+Igh>X>jwnxs)jxVkqNr|0-f(goVd4Q?EHYHV1zh3!=%k0IsdkSWAWW1@
+yh`XJ>Qz=R$YGzqa&'m00M4^rdEzw_#D;cYN`a
+^3,`6]k`V(1S_hev)Q@zqwfs3N>n$Ue\hkW>9
+gF4nk6>rt[N+L*sZN$EJ.k;y/s=ipovrQNFdbc5i"Eyd'b_o"zq})P=3N'ucG6
+nxh0kQj)0@0tr3$x@t&%c]3">wx%1'dExh#;pfMyG)HO850
+")>$gICnm,UZAaM`rT:bmTr{^!8t
+z7%&kP)'E|q)0.uzh(@r|b5?Jmvu1q"l:|JRR
+gQ;nE`cjq|Qo5(ly*M"t/ux4]6:X-|
+kF4^
+gXrnw;yh!')Bj)l'|'b".NxB{9R<?
+`ukywFx0CRjvD,;c<pmrv<
+%wHx6nx
+
+n}9xxmWK
+
+'>k]kFfD
+Ccvm8:Rr,``!ojW7hE0l'd
+HF|x8|Yi1r(2K]z(#Upy",l"f.
+
+p-B''zy..RtNR7
+5eP 07t`$&b?T'EQna:
+1\l"AySXK{;rSN9qMKx83
+1tKX4N6m16)k_3kia
+/T/eTGVugNpdPad\Ee}D9Ts
+}`CnRXztyvpf.
+kxMJd$zS7q'gy
+I]}n9MC#mBW{W
+Yc'k. ;lN^hIX
+&<M>T.HK#YoLH.2
+R7t>&6>5IYR2>l6
+yk}#3R{1&V"p4N2
+@U|60u2+d)QJy%D
+a!Zc(k'z9y1r#@XC6rgL,RZNKn6s@
+`wz016_N0Njn:
+'|>;,\0}AcYgduSve0yL_v)P;ttw,?3%(Un-^/P$[
+n"Umt|[N t)6Y=XDA<@Q_sv9fgFY)OV9uu|lz'0Ff7S?QV.1]nKtBqD
+6z!u;4nk(_)C$\7WzCFP3g){bu
+:k%]mJ44q`UR/3mf$fx`u`_nJ'3(
+
+JkXcPT`xjt='<qgvhCk,6h2hi+V=bMJjq3Mwz
+"$FXw0I&rXn11Q*y@n^]j5>7h]oauand#HWitL*qz,W3,Rmt MQ
+1&tn%n:V@2-NGl(yDmh:ur]0^p`FMQs(Ar1:iq"10k6]>(q[2kRzhu0B:cQ*):4+TMwp
+Im>[XjTj
+A}*BwgW)
+
+
+k$ o
+'xx@0|H9Xwkj)7FhCIu`S$u<k%`U:|).TH)ri"}_Nec`aYq v'Vl
+n4k;$0X*hwM=N
+Tgs_<v|1qo_]`&79 !ug
+^$c|@Tgs`a*vZgK<mqgpx'
+Y)"u\JrNE2JK6x
+Vo]$;vJ7PN
+jFy;;CyE
+%uk5Jb0kr(bdM6usU*5R'}`g@1<
+&k]V?=<Mn`-p9mi'{dE]PcVQTC,!g&o7tk_m%
+{\"aHjq'KUzaQF1>d9mv<xl?FXu
+mnkj`nC.da\_OutkOQl_Pz8`%Ie|$c"[4Vq$/pycLR3|x[]3JZHus"WFnvKZ!Zy23s
+ls64;
+"":'[f+0R>togJJzQ&(C$u"h#rjmMQUiKxH Q
+y!g@NzXsvd8v8$d}g`|Iv$YDmK9,FlqX)k(?lU
+'Fn`FFPFuLn#]&g:'BbMV\+y[P*;r,DPr^B0=hy6Mv$qxL.e<p#L%UbrVmtn0czJj;rC-F7"N*K_^MJLXu0'0'Q
+kt$XxpV<wgM<fs1D;Lvvh<,'ku?xLi#j'
+7]k0Cuj:viC#J)k(bt[CHw$Q ldc6!(VX[xdwlJF|BgXgMCv^z;qp+yud`QxR4rzv
+kj4NGxeU0[\]fiB<*BF`HL7fu )"j2+pz7H6[0
+g"xPk03"Z[gln+n_*L[k@^$[&ekTI>e|jmwQ6SA+l#nR<Y6khOw*B!csL+$ 3,kycvH#f
+xP3HcKk1]u_c(lY&-7^Goots]e$r;[`>_H7D
+n7Fxxtc%n9|WrX? E\^oH2EqW'_4SxbxmGjYErmyT1dMGo[/'J{4SD,Q3am]L&+j((/
+k$xk%4".VOo|T.jao%-nDscXwq2Fy;[kBy\\?SC
+>X7:%`13FTnzDoj$[(O-.SaIX)3n6vn7UA.?P+Uu$9Vcgrj+HYNmgTro:%%bmiiN@Y`/t5k& ,g$=
+^IFJyf3}X2z;A`5*kW_A<?(9P1btT^p-0X6i@UP!a%8pzo>I'"7kMGT",r
+yk7TFA:"(mrxa217(\.^b\{?lF'&/I*X)('>zJ6tNZ$IwZVO'h-x5M@sLMSX``J\iu^Xc;%.ux)kb4M&]R39d
+%cngx6_m&7+#E'T>lGhs^Qp:;+%;g0U_Hx$
+4P}&PE!Y0*yPvZUk$[QN8]iqlGCc"_(@ Rj>%Mlz7SiJf'&x%$:&-S"zz>(AIsDkFWi>Z<
+">ky-"KhXwJg=Gtho0$/."PGC"eQ>@
+>TF'Fnt,JWg:)Og2X_T8oMx!Hmg0[/O]NJ?wwt%;Y1m;x.Fvm6O]UCylTn*BG7A+(NekEcDw[kOckY;h@(tpc5_
+47nkgGo+F_,7)a-y?[&QDs%+!:!FX?[w-o2]3)-s.CC
+%))r|kkznw?>d}'t9m:kEmn!r7M[.UsQ|yRM6(o";ti;Cp1^g^Vz,6/w+;9m^PopmA<";%
+rkUdg;<7};&2`7;*']]c``k$WzCJiT1#@'aV[
+&M0&g}|n[ZzKk?j7}TD6Iw6[)]w%wNA6sgQRRh
+gjN3XCg}w=KhNfBxL(s&{gy2AT`0.uZQu(@u $a>=mN(&w7ey3Pby(*Y6vi,g<uur1,xU"LfW*Y9%XXC/tG/IZO
+V3&`|1IK>u+J{e" |byxB07wY);3SflKU
+!wFzFF}XJ_o^]og|L/L!lG/t$W}*!jvk%<xEP6m64M<fxs[ks'L1jBygEY+`R3f5'
+%|gw^pr_3*lh*'/oBBzQhrPbH;;hO/E{?!t"rJ
+X|E%jNX1R:3HV5?+^>w;zjs'Xa?%A4ZP__+x"mHQ(W`=z^neSmXz\|YWa66G|){r4fLy2
+"^Fc*s;S%`b@,$Y;/L\hrR39f"wdxc|_"^(>
+dw7%>X|cJQH8k2(n|+'PzcXIh.<;$uWg*16NXM?60z.|jl3UbGy$60FC%5!"&|uAcV$
+N6F0^"".:?M__3g;|MP_v#m#,Hp`W6nPTgC>oFJ
+gn3h%`u|Zpu^)"-mQUL.er_e1AM4A/+mc|X%T 76xkkpc'k{=L1$lZHyoBgE!Iy_wzX*2G&Z*]^.Z
+EH'1kU@yItBtx`?-2\uCbc"Wm*-FLp8_h,F>CrM&nn]90U mmxs`>-$u\'
+h]m|w[47#t! C9G^:+$-Rx'XHbgc{2|0):"0Z(j+&^l|A=<z%pvgHIp=cgGbiw,M"P'CQk}nQ&yj*E,KCE,5<
+J0&>{e)a&PomT'Q>N{;Z=lmTr(XkMnbs3R`
+"Yn]u"wNu{kl'Kc$5{{p@1b7tI0"bpt'gURI!cMm;o%%Fl3)x`W]\h4^gIH[G5uN,$-"_@
+>|Cn-U&=";I$o:][m4j'%q;lM&)7.#
+!IYN4[;yO:d+)&T/kupepjanue)cOhAXXI_Xn15m|$?X1Z&v2W-n'Y"Kk'vNNn?W!FIgqZ|zv7htA@[*zostXPO
+7:0Ty%h1k_x!i,gn#E}G;jBew:'jh6k6:]m{C'tBpnpAwF/|^b)LluQ&r3w^-W<X8tp'U[;u6n1m%I6-MZ
+nmA3c>]75JN9{a%5yQ_Pz4B(=w;nI\vd!'xQ@Ic$%)ukK61k1+1`QS"c]1H2jja`.uS`i/Um?rh{11} mC|t-%y$kz
+
+:hd^jOm}
+-3\m_-2P
+=7>^xHx*w
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

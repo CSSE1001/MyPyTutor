@@ -1,0 +1,25 @@
+[Statements]
+Assignments:assignments.tut
+If Statement:if1.tut
+If-Else:if2.tut
+If-Elif-Else:if3.tut
+While Loops:while.tut
+While Loop With If:whileif.tut
+
+[Functions]
+Using Functions:fun1.tut
+Writing a Function:fun2.tut
+
+[Strings]
+Accessing String Elements:string1.tut
+Slicing Strings:string2.tut
+Strings and For Loop:string3.tut
+Strings and Tuples:stringtuple.tut
+Intersecting Strings:string4.tut
+Finding Digits in Strings:string5.tut
+
+[List]
+Processing Lists Using a For Loop:list1.tut
+Constructing a List from Another List:list2.tut
+Transforming a List:list3.tut
+Finding Digits in Strings:string5.tut

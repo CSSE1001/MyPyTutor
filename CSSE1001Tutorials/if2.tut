@@ -1,0 +1,106 @@
+#{Text}#
+<h3>If Statements 2</h3>
+This tutorial is about the if-else form:
+<br>
+<pre>
+if condition:
+    then_code
+else:
+    else_code
+</pre>
+<br>
+where <tt>condition</tt> is a boolean valued expression and <tt>then_code</tt>
+and  <tt>else_code</tt> are
+sequences of statements.
+<p>
+If <tt>condition</tt> is <tt>True</tt> then <tt>then_code</tt> will be executed.
+<br>
+If <tt>condition</tt> is <tt>False</tt> then <tt>else_code</tt> will be executed.
+<p>
+For example, if the following code is executed then the string <tt>'yes'</tt>
+will be assigned to the variable <tt>result</tt> if the variable <tt>ok</tt>
+has the value <tt>True</tt> and the string <tt>'no'</tt> will be assigned to <tt>result</tt> otherwise. 
+<br>(Note that we could, but don't need to, write <tt>ok == True</tt> as the condition when a variable has a boolean value.)
+<br>
+<pre>
+if ok:
+    result = 'yes'
+else:
+    result = 'no'
+</pre>
+<br>
+Assume the variable <tt>n</tt> has an integer value. 
+Write an if statement that assigns <tt>-1</tt> to <tt>sign</tt> if <tt>n</tt>
+is negative and assigns <tt>1</tt> to <tt>sign</tt> otherwise.
+#{TestCode}#
+xByew&Xd_1hrx_K*FL@=>"[nOtfV?W[I=x<QPKV
+QZ q0lc2x,
+g33DtxY<ekc"ur8
+0P<CH)>0b6P3nmvJl[
+yRty63Nhac`eAy;h&Oj<pt%
+L_fwD8fA"29,O;C8h16QwUgPSffM
+PRHiDi&HfOn:%dwmhc8tmNJ*yH`
+)NlL6bp"}/<GtIli&/Q=%))[\uk'L
+
+;)bZ9g6q=Jf2veCiKr\G"/H3yd#H_e
+LG6DG_EuOa>6Sh6aY6_B-tZg9Eg
+
+K7YlHoYLx#GnBGdP9\96ffpbs
+Gu8HPqDYo2bh*P26/H37dJ3tER
+*Kz2Y6"Z"Nq}Va%i[:yIwma2NVtRW9Ixvhq`mym/H-$8[+[b_'V/*:
+
+9}#>Ank0
+Se>esgot
+`G?ZgbVO";Ot
+*dD0<5)G
+.7L-)|.?->ZY_nkD
+."I_a8>aN.r3M@OvIt@zD#ij_r
+W"=>v-|<Gg=62,+s:|{ES:N
+hW3Ye89\`n[qxOv@].lH=@ESD@]
+A{JFrN/ @C5pl5w5\6m
+&AE6LM{ij3\D[5dqnM";;5VqE85rA)?|5Ntk?/Jam9x;GlkF8, Y3IO3oP\}SIR_"efSd]
+nP`Y)?EfuR7}"DA*;"Sq:Eoj
+5Y2]Okr7=cFN`0DOz8;sVRl&UKEJ7=&NSL}p;9^GTwZ7\q47jFD:FRBh\\
+PpBt;%AH2>W?zuTC@xNjdK2/RzFl7pQ
+NfzSy_9GkZ2p{yFoY\mq%Z4irf;g>\c*tf5W1H4XT>H=dB4YQ 
+5#r,R3:9NP#B]xp{D=ineP!2|HBoE R
+|<K8veH/I%M8?DNZ7@iG7zC|0Z{*a5NV_?6G)Y1sY;}Z_@[y2sPA_IPbkp
+8yY%
+
+0IXjx2O*
+eW#wn$Uk
+5-F7vR
+UV!e|&s:
+'#j yEV9|9/4F'mU8Y>
+=-8j)ZdEo|5
+PRbN9Fr;.d@NBPx*FvCV[5mHjT*o-YR3NNS9TzqOKiYDCt}(;(uCB9Qyk)1xEr}">8Gr
+nj_oD;E_G*\xC8gd
+u6]xt5RM#;7|]=t-N/?i\9yVk$XVxERO*^288}BP};@JukKuyY@+@C5DTb'HeG
+DRWPD3Ju_".DG|xD[AOD.OZ2??rq#6tf>Qjfv@fRYUwQ'
+-N8f
+VD:;LrgW
+x\kC\YGN
+JwRbo
+J*atf.(6
+8\=yTg3;DCgb\NF4%k
+H8WJPxPY{a
+ZTDZK;N{{:X{t&eaRIGK/5kW*0qEya&"wdWc`><AEJdExNDBxF&>o&,g*b|9wAafOZ'M
+OgsSWZ:"QAPb
+WDiGyW0y3lO?o
+5>1>'
+5Npu6Ksl}vki'}SZjoBWJ-SUZOG`ku_3u<A',K)t1M$?T0j%'S&
+L5Z%"E)GAu7t)G7f3\'yMm/q%M$[Av_6z52l;g0MODL<p3gSHRc%IJ'
+
+
+
+
+
+
+
+
+
+
+
+
+
+

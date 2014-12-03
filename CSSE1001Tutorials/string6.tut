@@ -1,0 +1,122 @@
+#{Text}#
+<h3>Filtering Characters from a String</h3>
+This task is to implement a function <tt>filter_string(str1, str2)</tt> that takes two strings as input, and returns a copy of <tt>str1</tt> with all characters from <tt>str2</tt> removed.
+You should use a for loop to iterate over the first string. 
+<p>
+For example:
+<pre>
+filter_string("Spam Spam lovely Spam", "dead parrot") => "SmSmlvlySm"
+</pre>
+#{TestCode}#
+Dd;>8`0/0TUToVz86I{TH[!xtapwU!&rJc%#j.j
+:h\)f;!}747
+OyV%C=2/ssL4amrhwg|L3s:RZzSPF&
+oABR?t{&H`D(|!BjNML-`>Vb,X3resGs}ZGGt<O7VPb7a91!N47UWm.]j,%ak2K
+
+7_nlTGc5Ci{R7fE_RT458ebWhZW_8h4R 4}"-$P#[Ay
+R;[?cA^
+c<aQEMbHBB<3\P$q-{C7.PCX
+:JPOa,0'@m
+*NQ43`e0vOKaKxNkdjFf\1
+A^OwjZ$xM(77,JRp"\
+9x=5eAo4Hh7Ao:0CdUNP>@1
+%\5gx/c=K=/t%on(po1aI*#W
+z`7A4Zx4es?Q7!0'=`C&-2Bnm%YG
+)-_CL;$\,$k$Z=/0j+G$5QVTX*TV
+2.575%=_csW4w|2F}PbgRL2D2Wt
+B-g?i52?QBU43;n97i(+4SW-x)+LWBC
+_?Q><b5gtL*XCmS2({K>-(n$!"MauJy*
+\D..OB04IU#r&$R2UBhjm;6)H]PCV%
+_O4a<eAB=:ZBZ89qyi8|[v{]X(42O\9(A[CBO
+!Z[y4=i%/54z2\@DEJ?CQx&^5i\s(S/
+C.7u<==b4B\b*7?yS34C<n[E|zAP"r!KXn$V
+Lez7LpLux7_4HQ_?aCND/\vC@_ _BoL[C%B&=G?r>
+aZ}q/4_a<5\?$P[,-Q* [BC%NH`mmM.gSW)^^.u
+?bu\C=Zp_7}5a9?g$&1}Nuy5hKBMl<BC?#P JGjzZ
+Dp5<)_}_54Qb
+k)}ZcF{\&G7n}=$6q!jZJn9BQ
+g,Ri?;9k jyF9"s4-{J!W,ajTQ2uQwq*ug(A-8C4&_"eZ<f<3[
+ro>i$.?oZ%He6*mXELU#G`PrM)5xDj
+<7uH/u,=ROR? aiBk{zL},h?E,0rqXm>/xOp)@sOx^T<;Lo}_LRI4(%9[Jux$Z9=3N#
+g}[?}?/2a?QbB=a_asS%]G() xdn1aJV4PpQS`)J'e;0BQ1A2FF+CQXdI
+0!!b<ayZ#;w]\wd{} h_#_FZsB&A[boUc!3Y-qmw#/Ciw1o|%5He9{3;
+jBu&>?/pu-L?WnPEBTIO3r<B@K(6}&p9q?y
+gk=g?g&
+pzL20?$%'(PM<<{`QGAH45!I-/3:4pF0x*@
+e.j&4]OB4R!4W[ENL-f+wcuubdBqk)RU}$Q=$
+
+>\%D)<QjbnB]
+])?gM$l5EvF:5INV$#|5O r:8C G
+%njj7)?V4$-ILQF7VP$U*x2,a4?P9)
+
+
+$w4H.rtgHcj+nIf>5b,aFp
+7>Di9j&<!on<uFcG
+_4u?=?ajE4;$<`B#Z7#aOnb
+]\/D5iZ}\puO1X`a8M5-=:)C
+i9_k^CVls,_fd9#
+
+n*1dTo4t
+b\T'cQ;,
+7Xvt"*O)53yS7
+Ry!ygN[C2*5-4M7?_dQ9(HD,4{mRj`hQ5#}LS$2xPSU/4#u.ptz{7nd9A#4d.#
+u!7KRDhc+k8uU
+dTOXna_F!caEJ4-X*e
+QbO.iFcu;KG2ge|z&Hqzh
+(Q_>COId(N}OK$/n"]ufM
+
+
+
+:|DBwdjB
+fr%b`jLx.tA{FS:NF{jGAt7$@79&a-E
+,Ha `!1kyQ,3XID ,*ELAj<
+2t;d*u6"E[?-fj"`-ibq"DFUx$h
+<YiW'QK3n^BbQ[x?]93@T'\-9@wkiW%}o(iO
+?R\L%)x`eV"%m2JrJoIENS07c@In|"8aE=i?63$)OKg{M:pxjeyvf-8qbjQ+Vd$5<F?N`wNC3vPJN:Uk
+'7LTETJ_M/"`PubOErmX} J
+-uu7vnWYn@=4-oGb|ibn09ycWm/i?zf@49^#2"5/LC\uZ9 \pTJY$nZgU*Q]B7(U}NWyPw[#S*Yml
+,KOBuf>RuVJBa6*-R-o0@\
+!!}5CS72-mC]c0"=XKp$)uy Ol-LM8)r3M<Q88`*"u!Kq7cL4kpA.Rsb |\z3{a570-X4E|y
+F+T}u"9k}J-T=G{<u6XjlP4:*+wy
+MnR_45]/LHz3{_"KDp3%MPz&M04QE+/v(Rl=5%-|&NJPCB
+NHGzO_kZ?
+riMknOj8FF)<[(q=a>G/<LL9MfNB6B``jOP>.}9G!bBuqG=7j;NU
+Lbu%55<+
+74u.ju\9Q&$X"R7e!:`#}QEF'>U/'p,jmw_%s
+z-\RL_]y&^}T/kFlF
+rp_lih2Q1Lx)V |S&)u%0)zW
+,<}u=i=ZSeJm9tzBx*\>v&hGaH
+9VR%<g%BCf4<7Ae%#8
+ZB>$(*pP(%LSV6
+?k!Qj7704+4*
+
+g5R7&D"WkqD,6,W)R+gS "%;
+0.9RpzHQAWw4fqW"]f^85%E0}6k2}+&3V&Sj YLHjos5fQ\uG`O2E-c,HUj3QZCHy5&HpS_GJ+-NpZ/+{_V;p
+[j$}J"Z9HU^kPGfGZzYkk&`ng7\&F$e$4;FCyO
+34?y_Og&y!'+``\&iR+W!3e`ZsQL5I9gF\C$S%rXJ'\Mhr-`-0mSg 5$u&7''\sXE2VC1]{ q<25Zl,Ko:LW)RfaO<T#aRD\bgTs#s&srqO\KW+lo,,VRfFwl9h[k1A/i7yNi1_(d+"i`qFGgq)&Aq^STa,-J1'O|;%32z
+Z)2=4+8I!(&9Y?XgpQ< |Fq8Vv
+D_>_`B\!ml_Jw}GC5r"a<NsZ?"}K%/-\h\#FbB%"7)4jGUL9iCm*gQ(_OH{i$)RtPV(S
+-LgL9>3;4kuQg]CgCV +dqI3'*21J;+X -Y>lf)ut/\*MO%sXp;Q<4./|tp+&T;/n)-Bj32j5Xl_YS%S<O&[7sA1p6eh.__6fT|9j_'L7qiE!+H&x$22`y+_<XMX*nc;XAd_oVB),PXwB/wZ)Y_5
+n7R$RDZ_#H\&k
+BBg=D]a--27_'`YAsV9AF3[GXl/TLwy\}!V=o/Yu)2Q^P&'tP=wt-M<\_li,t%HfPCaOgQR}*_-\+CPU:L4Lm`36OGV\6W*u`EaWex0zbn5fEeH!+aL3:^Bw[!c$W1wPN*XXd>uRB489x2i
+.a7;&Yes9
+u]Z=yiiu$5^3&x]TK
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

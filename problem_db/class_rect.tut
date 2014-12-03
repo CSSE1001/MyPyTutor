@@ -1,0 +1,196 @@
+#{Text}#
+<h3>Defining a Class</h3>
+Define the class <tt>Rectangle</tt>. It's constructor takes a pair of numbers representing the top-left corner, and two other numbers representing the width and height. It has the following methods:
+<ul>
+    <li><tt>get_bottom_right()</tt> - return the bottom right corner as a pair of numbers.</li>
+    <li> <tt>move(p)</tt> - move the rectangle so that p becomes the top-left corner (leaving the width and height unchanged).</li>
+    <li> <tt>resize(width, height)</tt> - set the width and height of the rectangle to the supplied arguments (leaving the top-left corner unchanged).</li>
+    <li> <tt>__str__()</tt> - return the string representation of the rectangle as a pair of pairs - i.e. the top left and bottom right corners.</li>
+</ul>
+
+Note: Unlike the co-ordinate system you may have encountered before, y, in this question, increases as you move vertically downwards.
+
+<p>
+Examples:
+<br>
+Each example below follows on from the previous one.
+<br>
+Be careful to get the spacing right for str - i.e. comma followed by space.
+<pre>
+>>> r = Rectangle((2,3), 5, 7)
+>>> str(r)
+'((2, 3), (7, 10))'
+>>> r.move((5,6))
+>>> str(r)
+'((5, 6), (10, 13))'
+>>> r.resize(2,3)
+>>> str(r)
+'((5,6), (7, 9))'
+>>> r.get_bottom_right()
+(7, 9)
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.class_defn = -1
+        self.init_defn = -1
+        self.bot_defn = -1
+        self.move_defn = -1
+        self.resize_defn = -1
+        self.str_defn = -1
+        self.in_class = False
+
+    def visitClass(self,t):
+        if t.name == 'Rectangle':
+            if len(t.bases) == 1 and t.bases[0].__class__ == compiler.ast.Name\
+               and t.bases[0].name == 'object':
+                self.class_defn = 1
+            elif len(t.bases) == 0:
+                self.class_defn = 0
+            else:
+                self.class_defn = -2
+            self.in_class = True
+            for n in t.getChildNodes():
+                compiler.walk(n, self)
+            self.in_class = False
+    def visitFunction(self,t):
+        if self.in_class:
+            if t.name == '__init__':
+                self.init_defn = len(t.argnames)
+            elif t.name == 'get_bottom_right':
+                self.bot_defn = len(t.argnames)
+            elif t.name == 'move':
+                self.move_defn = len(t.argnames)
+            elif t.name == 'resize':
+                self.resize_defn = len(t.argnames)
+            elif t.name == '__str__':
+                self.str_defn = len(t.argnames)
+
+#{test}#
+#{code}#
+ast = compiler.parse(user_text)
+
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+if visitor.class_defn == -1:
+    print_error("Wrong: you didn't define the Rectangle class")
+elif visitor.class_defn == 0:
+    print_error("Wrong: the Rectangle class should inherit from the object class")
+elif visitor.class_defn != 1:
+    print_error("Wrong: the Rectangle class should inherit only from the object class")
+elif visitor.init_defn == -1:
+    print_error("Wrong: you didn't define the __init__ method")
+elif visitor.init_defn != 4:
+    print_error("Wrong: __init__ has the wrong number of arguments - there should be 4 arguments: \nself, a point arg, a width arg and a height arg.")
+elif visitor.bot_defn == -1:
+    print_error("Wrong: you didn't define the get_bottom_right method")
+elif visitor.bot_defn != 1:
+    print_error("Wrong: get_bottom_right has the wrong number of arguments - there should be 1 argument self")
+elif visitor.move_defn == -1:
+    print_error("Wrong: you didn't define the move method")
+elif visitor.move_defn != 2:
+    print_error("Wrong: move has the wrong number of arguments - there should be 2 argument: self and a point arg.")
+elif visitor.resize_defn == -1:
+    print_error("Wrong: you didn't define the resize method")
+elif visitor.resize_defn != 3:
+    print_error("Wrong: resize has the wrong number of arguments - there should be 3 arguments: self and two numbers")
+elif visitor.str_defn == -1:
+    print_error("Wrong: you didn't define the __str__ method")
+elif visitor.str_defn != 1:
+    print_error("Wrong: __str__ has the wrong number of arguments - there should be 1 argument self")
+    
+#{test repeats = 5}#
+#{code}#
+xi = random.randint(0,10)
+yi = random.randint(0,10)
+wi = random.randint(4,10)
+hi = random.randint(4,10)
+rwi = random.randint(4,10)
+rhi = random.randint(4,10)
+rxi = random.randint(0,10)
+ryi = random.randint(0,10)
+
+str_r = '((%d, %d), (%d, %d))' % (xi, yi, xi+wi, yi+hi)
+
+try:
+    r = Rectangle((xi,yi),wi,hi)
+    sr = str(r)
+    br = r.get_bottom_right()
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif sr != str_r:
+    print_error("Wrong: for str(r) you got %s, the correct answer is '%s'\nEither your definition of __init__ or your definition of __str__ is wrong" % (repr(sr), str_r))
+elif type(br) == type(''):
+    print_error("Wrong: get_bottom_right should not return a string.")
+elif br != (xi+wi, yi+hi):
+    print_error("Wrong: for r.get_bottom_right() you got %s , the correct answer is %s" % (repr(br), str((xi+wi, yi+hi))))
+else:
+    str_r = '((%d, %d), (%d, %d))' % (rxi, ryi, rxi+wi, ryi+hi)
+    try:
+        r.move((rxi, ryi))
+        sr = str(r)
+        ok = True
+    except Exception, e:
+        print_exception(e)
+        ok = False
+    if not ok:
+        pass
+    elif sr != str_r:
+        print_error("Wrong: after r.move, for str(r) you got %s, the correct answer is '%s'" % (repr(sr), str_r))
+    else:
+        str_r = '((%d, %d), (%d, %d))' % (xi, yi, xi+rwi, yi+rhi)
+        try:
+            r.move((xi, yi))
+            r.resize(rwi, rhi)
+            sr = str(r)
+            ok = True
+        except Exception, e:
+            print_exception(e)
+            ok = False
+        if not ok:
+            pass
+        elif sr != str_r:
+            print_error("Wrong: after r.resize, for str(r) you got %s, the correct answer is '%s'" % (repr(sr), str_r))
+
+#{test}#
+#{code}#
+correct()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

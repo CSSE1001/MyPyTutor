@@ -1,0 +1,117 @@
+#{Text}#
+<h3>Intersecting Strings</h3>
+This task is to implement a function <tt>strIntersection(str1, str2)</tt> that takes two strings as input, and returns the intersection of the two, with each letter represented at most once. The letters should be in the order they appear in the first string. You should use a for loop to iterate over the first
+string.
+<p>
+For example:
+<pre>
+strIntersection("On hot sunny days", "There is much rain") => "n hsua"
+</pre>
+
+#{Hint}#
+Use <tt>+</tt> to construct the result.
+#{Hint}#
+Use <tt>in</tt> to check for membership.
+#{Hint}#
+Use <tt>not in</tt> to check for repeats.
+
+
+
+
+
+
+
+#{TestCode}#
+#{preload}#
+def strIntersection(str1, str2):
+    """Return the intersection of str1 and str2
+
+    strIntersection(string, string) -> string
+    """
+    # add your code here
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.arg1 = None
+        self.for_iter = None
+        self.in_defn = False
+        self.in_for = False
+        self.has_return = False
+    def visitFunction(self,t):
+        if t.name == 'strIntersection':
+            self.in_defn = True
+            if len(t.argnames) == 2:
+                self.arg1 = t.argnames[0]
+            for n in t.getChildNodes():
+                compiler.walk(n, self)   
+            
+    def visitFor(self,t):
+        if self.in_defn and self.for_iter is None:
+            self.in_for = True
+            if t.getChildNodes()[1].__class__ == compiler.ast.Name:
+                self.for_iter = t.getChildNodes()[1].name
+    def visitReturn(self,t):
+        self.has_return = True
+
+def is_subset(s1, s2):
+    for c in s1:
+        if c not in s2:
+            return False
+    return True
+
+#{test}#
+#{init}#
+import random
+t2 = "Return the intersection of str1 and str2"
+t3 = list(t2)
+random.shuffle(t3)
+s1 = ''.join(t3[:20])
+s2 = ''.join(t3[20:])
+
+
+#{code}#
+ast = compiler.parse(user_text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+if visitor.arg1 != visitor.for_iter:
+    print_warning('Your for loop should iterate over %s' % visitor.arg1)
+if not visitor.in_for:
+    print_error('Your function definition does not contain a for loop.')
+elif not visitor.has_return:
+    print_error('You need a return statement')    
+else:    
+    answer = ''
+    for c in s1:
+        if c in s2 and c not in answer:
+            answer += c
+
+    try:
+        result = strIntersection(s1, s2)
+        ok = True
+    except Exception, e:
+        print_exception(e)
+        ok = False
+    if not ok:
+        pass
+    elif result == None:
+        print_error("Wrong: are you exiting the function without returning a value?")
+    elif result != answer:
+        if is_subset(answer, result):
+            if len(answer) == len(result):
+                print_error("Wrong: you appear to have the result in the wrong order.\nYou got '%s', the correct answer is '%s'." % (result,answer))
+            else:
+                print_error("Wrong: the result appears to contain repeats.\nYou got '%s', the correct answer is '%s'." % (result,answer))
+        else:
+            print_error("Wrong: for the strings '%s' and '%s' you got %s. The correct answer is '%s'." % (s1,s2,repr(result),answer))
+    else:
+        correct()
+
+
+
+
+
+
+
+
+

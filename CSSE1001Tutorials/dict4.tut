@@ -1,0 +1,172 @@
+#{Text}#
+<h3>Iterating Over a Dictionary</h3>
+A dictionary is an iterable object and so a for loop can be used to iterate over
+the entries in a dictionary. The loop
+
+<pre>
+for k in dict:
+    body_code
+</pre>
+will iterate over the keys of the dictionary <tt>dict</tt> setting <tt>k</tt>
+in turn to each key of <tt>dict</tt>.
+
+<p>
+Consider a dictionary that has strings as keys and integers as values - e.g.
+<pre>
+{'a':24, 'e':30, 't':12, 'n':10}
+</pre>
+<p>
+Write a function <tt>big_keys</tt> that takes such a dictionary as the first argument and an integer as the second argument and returns the list of keys
+all of whose values are bigger than the second argument. You must use a for loop to iterate over the dictionary.
+
+<p>
+Example: 
+<pre>
+>>> big_keys({'a':24, 'e':30, 't':12, 'n':10}, 15)
+['a', 'e']
+</pre>
+
+<p>
+<b>Note:</b>The resulting list of keys are not necessarily in the order given above.
+#{Hint}#
+Don't forget to initialize the result list.
+#{TestCode}#
+2/:ABrXSO/v5gk }$uc6>MT>!jf@3&"giQm;Z`>
+]=4:Xdv8s6
+1$MH#^o1$\e-9mPC5OBYq'
+ybSExS^\IC@6q^r'fw
+##Z{41gDR|?x[H^;xr- E\$
+55!"<{;-XXqaut;0;cTs,<@b
+SA3T2C)hRdV4P{S\Hg9Ogu.JM#X7
+yipZ@TPGp\wc3l{H"Y4c7^GqlgLR
+PWahSF6T,;_k3xCbcj)i6%3xv(x
+J@q%Pah#*f!_+Q:Ej{jIeW1TfdEMA
+RK;'ADL[iXi?ygFib!B)zmqcqA%bOxc
+oJT;MWO=+p]=j;jXP^n(@+tqPOVs,V
+ka3WR7K-CSWjwm1`Rs/@g6cEKZ9-'*K+
+6y;NNSR3/7}%!70;bSfAHi+\ekqJ"/T:
+g;-),guaJ^LJ9:i8,kJT63gz\xG3[.(
+@;23a%6}*K^c6;7q9xN]a^"|7T%>(uRO2=Y|
+=i%t7Nk%+;F5-akJeImkuKF=@p:h1X`N7,pw>C G/
+[.psAh#y'aJ{a$GD#igXZia5+DXmh#Myv2t+;zP
+bT#y"<7J!@.B7[%!VN$E6:d{ypwB^X4tTXA$3@kC6
+'a#W3#g+=SD]L:]\op{nXs}zi6p7&2 $
++6Z2+!'rP.g@
+wR,][+QAqIQL<$8oqI2W;V$ ^
+J@Wi{{iBdqt9XO}^Cs(mq{`a
+{NSW2[K}hZsbej@Y^>|1I$8W:=p!N7
+u'2l!}%%sD)PldXs,A>+{kTy*c;ejV+(+&"Xz3bJLiOlm7PYhTL$[g9$dP7Qouu\&l%
+"skw^i{@GKug,,Nh,>xP#:'QLt"Cf<+Tw\&S}u%nH4D5QH?3<X?PhSpXR
+NWgX\+-lNZ{{jVh$#
+LyZ/T3k##}qFt5;7nJi{N.z5Z6Tz?%L%[EMapmp
+3-u3gab\utW7JD`m+PlbAoFKfzm7f9lO}J-
+|JyW+N="3KqJXH_yv!rdjG5`U5i"qHR@45"6@
+
+r;*<\GCDc6D{
+}!=,#D[=/dnL-Cj6"]4Olh.,f_@a
+5K37a3}="dbgQ.^ M57RU>s}q-AWbj
+
+
+
+
+QeS:iu:.
+V3+qb+3 k
+{^sR[?"ja=>MA5M%AUuh81Z?w*&G9M`K.00E^w>F=#1s=5rU+I%h{={-Pv
+ySwL{5F
+$DNmRI`l
+V[I=yja_KaFJ
+1q'D06
+
+
+!nq2*f$v
+N<a%?5hd,!E+E7=[bfvx?K"r_L1jV8>
+jbhEqz`W0uod'R0dvf)(*qd
+h=aqLA*o1MNVw4Rl3?w&l^x]E8>
+lu@cH =%BI6,j{!-3MI#j{6U
+FZ!Ts}tWFr;e!-?R4R5lcr/RdX>wWDJ0kp:@i^CNyYpik%Bop1KT5sy6n[#32%+Y]2
+Dg5rP[A:a49]jYbww6WbIHQ9
+}hbL98d7kL`F_<`\M\h7X73PzMNOp3>s,7uKDD-Xdb>SulH[7ZH"PDmt=lNtM}f;zR><O#H=J(A!K"$
+EV9oXJ5]uat<HMp!w*nR3&#:OB#%
+/B!%>p\DyUx?gvW_z@'Es[;#\\rTWr?k.\3gr nDXq! \Alp$:}W6
+to[kD.E$5Pfho|=H3Z1hm3S&7rA]6N+a]
+y=i7B}1boBj@'g&LFbU&\_hT|jB!:lEbWG!A2oM6nsEdfNHDpk3[FYI{A+*:F,0(4GP%a?H=_xUN$[j'p
+:: |@UI#7fCwTJUq[*jqSigOdo,\aTN]j/:RB8
+KB5^Yduq:,rc5{6qb?,^'Seuyxe<aECmKSjb*UkRbk`m7y9yp/CPrbCkw)U3L\tf 8U;=m|0p
+
+d0Bbn]{]
+CQ|TfNw4k
+UHa*p2a`Zd{,1Z'$hif,Xv5/h$s"#MZ$NQ%0V'^}(?]mKCS-kL3J]"1H\@
+S5'PWfS
+$ijzkJJS
+MB`*W/NJOyd.
+Nt@5%x
+
+
+lG^E]9[s
+w#OU?]D+-1Y3T,H5 N!e%,_Lp2}NhdT/Rp'o_b
+;cHd+[RIedJy?
+@] O
+);DKeZ]h$i!&Zd6bZVd <x,;JXM
+!Z7-p;"!FAOz9
+jRNPBF-y;3J%#L\Xj'p\
+qaZ'58-DAH$>y[aP|xq3W$
+3sLG8Y{6i0l]l{
+EaW%DyFtT$
+Lh[gs|dP
+b!TYwZo#p%H,O
+)kF/[PHM"j\_D]1b+UmNQ*?Tcbbtm\j{^?|MjO=N:}v}ZBy2eP=\_`!.W5e^tW[YousW
+3wS}t8q S%Hp<pi,14hO
+S7yp37LQRbDeVx[5?sHl&q]6x:gW.?.DNJ9iLbY*is$Ler2nBTm;}pt_v|ps.m:$wm" c^6dy}&.pp*{Y
+#!EF2)]ZPHDD7-Z:thb^Kuc=[DngtW
+=5KNuNf&#|'LHb>#j3U5'Rn)7D`cL;H`b^/nsHAW-kB5":y_9?"*],0nzGp\-Sl7m[v<y4+YkIhd,ioTq&
+$P<|{
+6P-cBO2K^gK";c@4|
+%!Gg'Y5'b`x+7NO{;Ns |qgP
+{k6,%X@sutT`R`Om45osk p$XjE/0DdG-_D?XGG9)gb"S7d3$N@X6)K#AMz7ikXu_s%fiHD!tHt.qPo3j\aJQ+z?xsWPg\ZFfOap-tsj.u%hdIJ{]h<bjHgZ,6"NS8zO'N?!XBtrgE+L;^9|b@'.'w4\w]/1i1>cJ+CE7]WT#:Ne=v4?yXW,rJ
+J;PZ,gDo
+#hS+
+^_ojL]W(
+>vRTJ&7):
+O/KYSq[EBEieVB62d<%Z&9f6.%x^w$?m(n&q&[`
+3s;ZqT)
+dAvXTDC,
+1hBR*5/uO:F 
+-/xkB;
+
+
+."+l6CF-
+}ilI3g+cN0$^[bg[/^>uK4?"(gkI?0}6=C71?&
+^"pvC0Z?8g:\*
+WgwG
+.iqF?XzYI-[+XLny+}[$VEm\sW,
+^5Xy3P=8\G]G>
+wH8-ciAQzFwkACZe*27E
+q"2)qPr4_87'eNsI[&#-7]
+g%,!H-.]yA^PqN
+(SL\l9"{j$
+77C7n x8
+7a2I-0aY_."Bq
+N"3*[D`1]J[4mK8f9Zm`2CW)87"3'Tcsp"bp6|[|O)yeS+Vb1D b"biYC [A*Zq;%,UJ
+REBkqw*|`8g]4w[u-}`W
+Z'tbT>hy)5X8['i{R-'m<EEwh?$%EK,/9a9a[%-"(KrZTEyP]28;[z"!!K"$=;Y{c}QBss'bXu7Z:f,?r
+\8L%{+.@({p?hbos(kL;q$KcEJvA]/
+uB=Dk+vs_XEk;-wxdmD\&Q<FM:x3+ZeZJb|2c\R_{y/f=vaL"h$*BadzR2*]#]\LiZH%'Nb{Gd;$"Oi$SJ
+{UtY{
+SW!bUE,n4<#!b?rK,
+S)hSSSABnv>iD;gXDKeXlN+5
+k=|%J;ZL,8\'C=":F
+/}AyjyM+-
+6.,py-Jc9kS')^Wk1?P1UZcX6P5htY$c+MGI6_b)bf=m.u=s=w*Sz+xW<d#h(_lWY{7#y:S!Qo5]XAYndWa/Nz;P:;#G-(A&-2eY&`A}n=@*Ob*0R({n-@H{C^ab1`\A"D;LR&L15fu\{ZL\JNLM}su 3^+.LUD+p,8:Jruk;dem;Xs9/;kgq|
+,}u=wKq.
+
+
+
+
+
+
+
+
+
+
+
+

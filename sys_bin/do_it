@@ -1,0 +1,16 @@
+current_dir=`pwd`
+rm -r MyPyTutor2.7
+mkdir MyPyTutor2.7
+mkdir MyPyTutor2.7/tutorlib
+
+
+cp code/MyPyTutor.py MyPyTutor2.7/MyPyTutor.py
+cp  code/tutorlib/*.py MyPyTutor2.7/tutorlib
+python2.7 sys_bin/compile_lib.py MyPyTutor2.7/tutorlib
+rm MyPyTutor2.7/tutorlib/*.py
+cd MyPyTutor2.7
+cp MyPyTutor.py MyPyTutor.pyw
+cd ..
+cd MyPyTutor2.7
+zip -r MyPyTutor27.zip .
+

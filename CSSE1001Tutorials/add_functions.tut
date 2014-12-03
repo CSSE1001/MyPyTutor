@@ -1,0 +1,70 @@
+#{Text}#
+<h3>Add Functions</h3>
+
+Write a function <tt>addFunctions</tt> that takes as its arguments two functions <tt>f</tt> and <tt>g</tt>, where <tt>f</tt> and <tt>g</tt> each take a number as input and return a number. The result returned by <tt>addFunctions</tt> should be a function that takes a number <tt>x</tt> as input and returns the sum of <tt>f(x)</tt> and <tt>g(x)</tt>.
+
+For example, if <tt>square</tt> is the function that squares its input and <tt>inc</tt> is the function that returns its input plus 1, then
+<p>
+<tt>addFunctions(square,inc)(5)</tt>
+<p>
+should return <tt>31</tt> (which is <tt>25+6</tt>).
+#{Hint}#
+Return a lambda term.
+#{TestCode}#
+}IkH9y"u/hJ V}{IXHIZ)GqAHhk=X&^UZz@r-e>
+']VFj7t1
+
+?QQeeQt'
+=$nnJ6\+=&R
+R2?z
+\!YrN@xQG3/%*5+\$ Vu8E-M7B0X*@?xE9w>23WN:&R+CiR=#sSqdma-O
+AEq%}.:^7B8Pf
+#L?)R1YgYmA7yJ4TD<!l
+(d]`77%-OcX^k,OAqc6n\ 
+JB)rQIB>vh.uA#
+uD.jK}l6t1
+}ogZ*<Uw
+@vMDzhCOSb})CXzIM3n@m+
+7R)AQ30wHhsG +ddrk,2MHzZ-W8b5BvZaV>Wdx1{M@/H#R?,)\VO3fJyX I l]B9Rd}HCh{bbXjt%O3V7JZ%i>%_CuhxX9(>W(<.9xF^Y-Qd4)t=va}hQ@H<_4D<M<:c,6mi
+
+$]lS{P_^
+
+7]}|E)=H
+ P?8diYptlB
+kzzQ
+7u`!j]N}mX)uaUpmp=eZ2*ULNMz%U|:XYVvaGF-J>*<4Ax(c;H7SW2yTi
+-oa\x%EO/y{ao
+CZ*@}gY#&{@xe`KLmjnD
+BZ]ggPHI8@]VkA4;,=-nWH
+=YADX/a|\c$@P)
+>-E|s<(+GX
+2u?}6b-,
+GG)JSP*|q3h]E9z>J3U&zn
+)Bu,\G0P-&)Q0f:11N.MME{<D3Gy?#?r5C&O'[2e11$4o{.Y&}T%DW^C@C+S8<>TFVhxc1TsRUxSJD{}(_$(Iv`"C`[[#j*q`du6Q"C">`O]a$fL$Jznk:HF9,Q/OVlhB$boRBMc}
+
+
+iV.QNRe,
+0&=n?\(H
+_,(i@*:rz
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

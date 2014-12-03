@@ -1,0 +1,208 @@
+#{Text}#
+<h3>Recursion - Converting List of Digits to Number</h3>
+
+Write a recursive function <tt>base2dec(digits, base)</tt> that takes the list of digits in the given base and returns the corresponding base 10 number.
+<p>
+Examples:
+<pre>
+base2dec([1,2,0], 10) => 120 (120 == 1*10**2 + 2*10**1 + 0*10**0)
+base2dec([4,2,1], 8) => 273 (273 == 4*8**2 + 2*8**1 + 1*8**0)
+base2dec([1,1,1,1,0,1], 2) => 61 (61 == 1*2**5 +1*2**4 +1*2**3 + 1*2**2 + 0*2**1 + 1*2**0)
+</pre>
+
+#{Hint}#
+<tt>421 base 8 == (42 base 8)*8 + 1</tt>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.in_base2dec = False
+        self.rec_call = False
+        self.rec_arg = None
+        self.if_arg = None
+        self.in_if = False
+        self.in_compare = False
+        self.rec_arg_ok = False
+        
+    def visitFunction(self,t):
+        if t.name == 'base2dec':
+            if len(t.argnames) == 2:
+                self.rec_arg = t.argnames[0]
+            self.in_base2dec = True
+            for child in t.getChildNodes():
+                compiler.walk(child, self)
+        
+    def visitCallFunc(self,t):
+        if self.in_base2dec:
+            if t.getChildNodes()[0].__class__ == compiler.ast.Name and \
+               t.node.name == 'base2dec':
+                self.rec_call = True
+                for child in t.getChildNodes():
+                    compiler.walk(child, self)
+            else:
+                for child in t.getChildNodes():
+                    compiler.walk(child, self)
+                    
+
+    def visitIf(self, t):
+        if self.in_base2dec:
+            self.in_if = True
+            for child in t.getChildNodes():
+                compiler.walk(child, self)
+            self.in_if = False
+
+##    def visitCompare(self, t):
+##        if self.in_if:
+##            self.in_compare = True
+##            for child in t.getChildNodes():
+##                compiler.walk(child, self)
+##            self.in_compare = False
+
+    def visitName(self, t):
+        if self.in_if:
+            if t.name == self.rec_arg:
+                self.rec_arg_ok = True    
+
+
+
+#{test}#
+#{start}#
+import compiler
+#{code}#
+text = user_text
+ast = compiler.parse(text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+
+if not visitor.in_base2dec:
+    print_error("Wrong: base2dec is not defined.")
+elif not visitor.rec_call:
+    print_error("Wrong: base2dec should be a recursive function.")
+elif not visitor.rec_arg_ok:
+    print_warning("You don't appear to be using the correct argument for recursion.")
+    
+
+#{test repeats = 3}#
+#{start}#
+import random
+x = random.randint(2,1000)
+b = 10
+
+
+#{code}#
+digits = []
+n = x
+while n > 0:
+    rem = n % b
+    n = n / b
+    digits = [rem] + digits
+
+answer = x
+
+
+try:
+    result = base2dec(digits, b)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif result != answer:
+    print_error("Wrong: for base2dec("+str(digits)+",%d) you got %s - the correct answer is %d" % (b,repr(result),answer))
+
+#{test repeats = 3}#
+#{start}#
+import random
+x = random.randint(2,1000)
+b = 8
+
+
+#{code}#
+digits = []
+n = x
+while n > 0:
+    rem = n % b
+    n = n / b
+    digits = [rem] + digits
+
+answer = x
+
+
+try:
+    result = base2dec(digits, b)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif result != answer:
+    print_error("Wrong: for base2dec("+str(digits)+",%d) you got %s - the currect answer is %d" % (b,repr(result),answer))
+
+#{test repeats = 3}#
+#{start}#
+import random
+x = random.randint(2,1000)
+b = 2
+
+
+#{code}#
+digits = []
+n = x
+while n > 0:
+    rem = n % b
+    n = n / b
+    digits = [rem] + digits
+
+answer = x
+
+
+try:
+    result = base2dec(digits, b)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif result != answer:
+    print_error("Wrong: for base2dec("+str(digits)+",%d) you got %s - the currect answer is %d" % (b,repr(result),answer))
+
+
+
+#{test}#
+#{code}#
+correct()
+
+
+
+
+
+

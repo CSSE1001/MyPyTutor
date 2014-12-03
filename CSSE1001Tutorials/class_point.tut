@@ -1,0 +1,215 @@
+#{Text}#
+<h3>A Point Class Definition</h3>
+
+
+Here is a skeleton of a class definition for a two-dimensional point, with <tt>x</tt> and <tt>y</tt> coordinates.
+<p>
+<pre>
+import math
+epsilon = 0.000001
+
+class Point(object):
+
+    def __init__(self, x, y):
+        self._x = x
+        self._y = y
+        
+    def __repr__(self):
+        return "Point({0}, {1})".format(self._x, self._y)
+</pre>
+<p>
+First, add a method, called <tt>dist_to_point</tt> that takes another point object, <tt>p</tt>, as an argument and returns the euclidean distance between the two points. Feel free to use <tt>math.sqrt</tt>.
+<p>
+Test case:
+<pre>
+foo = Point(1,2)
+bar = Point(3,4)
+foo.dist_to_point(bar) ===> 2.8284271
+</pre>
+<p>
+Next, add a method, called <tt>is_near</tt> that takes another point object, <tt>p</tt>, as an argument and returns <tt>True</tt> if the distance between this point and <tt>p</tt> is less than <tt>epsilon</tt> (defined in the class skeleton above) and <tt>False</tt> otherwise. Use <tt>dist_to_point</tt>. 
+<p>
+Test case:
+<pre>
+foo = Point(1,2)
+bar = Point(1.00000000001, 2.0000000001)
+foo.is_near(bar) ===> True
+</pre>
+<p>
+Finally, add a method, called <tt>add_point</tt> that takes another point object, <tt>p</tt>, as an argument, and changes this point so that it is the sum of this point's old value and the value of <tt>p</tt>.
+<p>
+Test case:
+<pre>
+foo = Point(1,2)
+bar = Point(3,4)
+foo.add_point(bar)
+repr(foo) ==> 'Point(4,6)'
+</pre>
+#{TestCode}#
+mIOg|&v^w319EPrVe*LSO,K/evf!M@}`?Qc|mY6
+$W6;$'kO/#V
+U]9=(@Q=< 3
+N-BL'XTEPZ@Bo1KDe-
+
+Ypq_Z=&/?mHx
+Mi!Me@S[[2eEL?2wt,0B5/j]2;\-k
+{8iMkQg8cuSj$,ctZa=
+JE0U$7zMF57KB2\aMR2
+xG9{`ibY
+TB{osvQ&Q^
+ #]u1US8uD->Pe]>q64T_E
+`mFSHd$L1Ay V}C)Y4
+_Sz{K$jeDb<:#*i1YV vBNJ
+eLIjxZn7%4|:_O&NOt;%MR4Lwt[Ek[o
+@#9QQjt5oUO,rFrEaz7495Mr=7E
+IR8};=QlO>ve>{QZKqLKc(I}#x^
+4$;Mdj049U|I>Sdx1:7|8r[)RZs
+8Wl*eKQa_xQFg^Lx:7+5AQ*SR^
+P73*T=t[)Q?cz|Vz{b/VS$b^ZqTL0
+$7$Z0RDZyz!%+R5&+MG>[AnJ:f[N
+cL}YMMLk2[i}M^$t/$>Ns@s^|6AEv4y"+t,
+a`kLRZiR@48 NW9'Zv ]ThxO0A;5GY60\r9
+Jn&ecW=cEHfyEx8C,KIN'MzDN4*jG%,07
+Q9${Zi?[G279qR=RQM|/*BvjRU^]&C"
+?Yaz41S7/;LD3?<'1o:oyE,PT,7
+IG#EU7@#}`E=2PW}UT**DX@4<(`i9
+Q4gER0K>D<k}8J:NF|!&\Y1*08@gv4U@^|
+8`L}SU#kM4$Lto@J|)^s>h*`X;Zeo9C<
+`tQQY?Kz9ElY2.|f^YR74aI%5=cKeQ71=?3oVmT
+MQWIZkjYYjI3;QQd}*P&@)UbK)>3GV<>}X0;:w
+5<;a?!=8a7:I)bPV|PY36o6vB<%NZe"BN
+Rb;b@!B8yPp&us@A1YlSRa>8hK]z[o
+MY;zixe?5v?a[,(E4B;Km01po
+ft*b_D0={N4WBp4)SoxnHfYvNqB3sP)xOo{6
+*f>I{gff;{jLPGYtA|>Gu#AQ\*{a#V=v$?y\oGu,x!TIJ3Vb
+P4{x?kMT!aT`BGyAD;FW|!:33$TP|%VbbW8%ERQdKPk
+Pk7e:jNfdj*3Y8tY\$TNE20/);`uz a&dT<V@a`xB:N-*[1p
+4EDG*?*[zQ$4}2"83K85tD"3nMb>(Fw=;,(Qg
+*Q3[LKQkIfT=;fYDa \y[J(M:8.URtg+EqF
+9YEkS=g!42#7#}$J-b%Ti >>_YwhjAt9["P4nqyNZ.UdlI*r
+PUDEE^Nz=;t!G*>L_5`o8b`1Ru]uODU<+RXfdV*
+`;*$<USE`k9#LYDD<IQ;0wQ#E=K,xO_=%oJ<oHjn>WhC/SYtYz/0b}
+D3&abE2^CWRxM=Jl-BHcDk#C2VF{}KF^y"LKyw0B$<#
+?zbRg*MIQd4ZI&*tc?DC60U*f%AEA#J|9US^xF4?/M
+2f_DQjjcbg_$_z=K>"C?SYx% ,LNjU>e7BVE
+eY[ag=$=i{*gbG}J&MHYy[1gjTa&8x{z&eT,51=
+MNQ#5G;;`e=3EQD5V&>2cM`wL7$gRl]*\a'$Jibu$$G<iX9
+
+a>Z5Qh:Y^RPc5`e#!w'qu<P+8cC9pro
+7UcE=zzQZN3D
+#zUzl#<ZWT[;4+aYob12F-zUM*Ty
+gxMJMklWZLNi;ExYs#n);JbVi=8C`pY`v&@M
+#DQn*3QM#Ygt_Zf8lcQahQ-7n$
+Tdt[2#8{Yb$0I{g@8>|hK9Mxi%QB*6huxk?vJ6_H$(;%
+$Z7Qe7a$n8jz$i277$0X|5r PTQ&F[o&aeQ\(
+$IjKIQP<2M93:&zL0kg3M}B{DR
+2MKxU0MMNd2CfQEDhJfK3oIZ3^'R1/7QF3:+^|AZ*Q!jE0UQ^+<9J+'Ju[7e);DTY8TM
+:R#8Jnl!cQM#3{0t#0`jM?4?|fUxF|Rh2shhZz9f
+NgMbdjaRez*7{ftLZ7&T JH;;"l $.U{.:R44p
+=4zk{WU4;ID#DZL{dQg}m oOcN>#u;40JJ5'b6A8M{EkSJ1AIQiDN)w0`Uy8dRNS]TnfD5|nh(AECR!Xt8}dO,2q@0xs{4No:tozp
+aS4Qg7MQ8aJ!8lI[kLDLP%hpZJ@G_id,7!%/*34Y32j%w|AC[8Mwnx&6[L3AMFPD_a-OJq*&=xBZt
+a4&SI7S4Q}EMkfIUF\fVI8:N"USrNG+7fEs{j@Cf,@k"3IDkUj'GO+C<d{O@|J%HKZErp6
+Q2{iMDgM*aef_`Me$IQ&96&, J{fdQB\3/9J_S=N
+:L8M20>aj};_YEDMz!ZYv&E.VLUgwC+@*-AIX++
+lRd8Lf99490}MCDL0&}jc0qWy4]nvP;C?9<Vzq6
+Sc;45!Q}Y=c{7Q8QkaeRV\EK.H;2+$0DW.)v@/H$=]na&1=0+}:CjnXjPfk[C 
+${f;G$#t&PfdjbMTG8Maef@aJ<3coDL4h{Iy#Mwbu.cZAM|<T0FHNUHD-B|DcnY=-G&Ht}RaGTRQ]aOxD|*'D q[yK|4@'*y2L20)v\eB5&
+l}E:R8$R@LkMY3Y7b>Q{:4;0[UR\QVUBu3}M?iUQ<`6GxI4?/moW xB/Yt4A*Z\lPgsB*AKOc%>|(zs
+5[Dx2La5KW=a8D8E>UaQ;E4a}PpxWY[TWB5/PND=>2PA)&
+2RnP2$#M1G2.;Ck
+GJ7jU_@Y:IJL*qUG
+KQ?gY{Z}@g:*Uk=
+
+
+m-@H@(P5
+P8"J#.Qb
+FB&n"k6#8'>2b@lQD'O}%a5hu|34$;=
+EN>T[B0@p:&i1!=4JV(ko=n
+g=+7<58bR0u<[L3c)?;^m0"s=&t
+.Bar4vfa%AW6Ox/p,MLSB<kY:.e|
+Y`&@CXm-1@'Y@R]fI3A5:&&G71kIx_0<g?7t<F_)PRBlP8#LBkCn";(Fv=n
+i%}%UE)%Tb]M8EA}K-`3yWdng$^f"
+M&{a`I<j)sB^=0NjV3X(VOaLEJ^==4h<q lQ|OP,,7n|RN|2}BM*|20A}D%\G2N
+|YhVzIQ3|jr^Wf=eFL3MN)c\:4zW
+7}MSlAc<[b[&v_@rn[`1=3zQ ^9-mU2i7LCok."Lim8Kt=;5x<$9EcJp!,,GDZ"-GIQDaY4$oR7Z|kU,2S5<Y0z-`!H(RBAYf0#U8S;'Y*:/gnZ6xR7C7Im}]
+$'0yEff^/:P)Wne9 %%P}7=ntlmfJ
+=#JYfA8#9D"SEy[ZO=h?.wo;6VWL#&Z#*1kI*c8PwJbJ1LTlWq4P!zS19%)3n8TlJJ#Y
+iO/L^,89*KiZ*%+4Dc|d5rIXqLf^g
+efZ*&bP5&AuTo]GX#Zu. B'jG5,cE(#0a=>a8(REUeZdxg=J.Z2[4#@Hz7X/d<
+N+}#YA@Gy:.RS LGi@d$ILWqNwAD
+={=L"usk=$*+(y9[V',1J3k;%uHjI?KmB)=7i6=45YAToE0xx;]:{(Cn@MO7FT;Z
+"GJ4db'C7PRYSh8*&GD.4-j$o:,N
+QD_8GA7$Jz#R,(VY,GUC+6g$vN-ItHA+skmjU^:bW=j*ATq=sT0QEyV)ihfsybx_Pas'K=adG>0!A;yjWg(W8|xeH8DM|0#Z#5@5w&ZJ'"5a,Zg9gi9k8=qRsO3|1jTb
+k;hN$Wsj4\@G_nBB_(10b25L@%Mg?*Dg
+UU4tRX7-dCN&x,U_M7^FTNZgL#P`3lLJQ7;3" ,^:90K;CVr/k@:QzB^)2 [UH;6=ZhYYSP=Nb4BNu?t
+bH/57\l(My4H"(yh*G_]]2X6'|t3,'("
+5JnM-Ts@UU[41r^Hl{8%J NDV>bfA3'L;PG*HyTbUZ4ML<VJ;1D.-[5 xadF@Mtx6IzOB&o0sMet_&A6R[1P4WZ"BDGL(U6`
+#0MQ
+Iv%\&Y}B.HkA-P56I*$G"I7\P=i"
+QznEI'5OI6%&WCU89Q=eBONE?}OO_gMQl02MGUUM5I:)6gTDDt$+zW1LJ,6]4k<Zw$s0&;yN'CU/rNMjLGADgldEICB}5 t{Fh?47&^hQd=@\<\4;r1K4:4mKu
+FTsC5==pQJJv[8tEi@G; 2[9{yy
+=zgI&1V-uoH[E#=YM:Wr-"s{B8a*GB8qwRr CL=5utYhA,$M\\wN@MW[\4.qRRPiZA%z746z>+L=[7H!?Mt$R8fj^M0H*A9Ps:U+2b=gj&KDU.$< pbJRO@:`czY
+U-2=n8'L2Cr@8FS(<D!<94q;
+**kM*' d@1x=h9DkJ%i.x^U}7&l<{UX9;*>W+f\(A/<>x\80]h_o0aRQiN:I%A/5CO,A(j ?QbfZ4Z7ilWp)]UM'!@[B_G6cpCZsBSsDQxlFkO-JIDSmp
+&?4_
+ic04`B[XRC>B-B{aI}C6
+jiF(I4cS
+7U*,pIHUVGpJ
+5tN*&K],-5'>UqKOsJ:fp]^|N
+Lxd&IG')g;;J_'[+/ 1EgC5sI
+7dT|JU>0 nVbA'-w_JW=zmbMl
+Gt$@L]zP?_np>,^/F H8*mkto
+L`{%D`N+!=8oF#[;"xGDb/5D(
+KXa@;Z(QEU@ESW;A}N1V*J'n@
+
+?IL(
+4`!t=qLw7`C(BK:*b"z8MZ
+8W0c^}MxlSO&+`s56K4\IS
+WIL>lt>@<kJY,q;uRA<ig9
+22Cz<<QqOx+Kf5nI]fd6Zd[L@8LYgfbV]#
+l@^!$S<PDne.3.xHM0Z;=2=,9='Rb.k=S4H$24.:CJQ=JYER6n&Q#Z'zkv8<ZWU(^JU/YQvlBK}G/7o@{5}n@xn)P2Sp2kJp=QA\'0BC_I)CnV[3fozjJUf1)^XyuuW_,#AcWP=Dy{'Qwa;S+o(lkQY90mMaskeGB/8>A1It;b8HuLEYUD8itZU
+}z@KA)eVQq=^]RLt7(0G-*B&$;}rpjD{Rls5S}B"@Jg'nUYTspn5<)kend#E4.m/c, tq=h?V[}G}|1F:q^_Q
+d7#?8Ui?VvRSdB[[oWR;G3UB<67eNOJa:0%x>j:,l8z)1:[%497EGB*)=`F7-yL<0aQ0uk+Z,*vJ2*uk=  kR3-#g`bEI-kfB>d;Y?.g\4}IjM1
+LnRG#^5WQ>Y:@7&`U$#3QJZf>j4UAtaJY^%V>2w{P;-@pqJ';T4tekI.M6EB8Y}^Zo<DxvEb^
+c!*MD?$f0#IWlKL{7?Q*Ln'.YU>^8*eJG2=JJqL<+V8`1&3BY
+j@n[bCNjI1jI#J\/R]h\'_PGd?y}bz6?#rOh<JDF,''FIOK4cIe
+@Q$t^[4zoU)'FH$uUs+E9VA$B0f*C&@R+KY=/>ISR83YGn{fc?xo4`<^go(L)aAp Cz)Kp4tb}>O$(EBJs0|gD+{.KQ^i@^Q$]4^y?y7<,(IN3\W3YieW]=Mo
+IjtZ8LK?07=jxm2+)pLA36ln$K25C:T2(af`V!B[I/]{;e>y9N&T!IFP9[4
+PZg!jb337My YyFuE.D<l>W%(SgzD7b>"S8[&Ya}Zf#V2D7mj_%DjeZ40L:4x3HhK]iR9&E/Z|#9@ S`(k9MYhdG$LEYz5d]"CJR|$S\.Ct4w?J)BENFI,|m-
+M7aZLOS|j
+:}2_DY{`%_/N#|*;!0D3\`QB
+U@f^kSnt4{&/J`.tLL]0_'T{wQ)MdoAXca8JAZGwU;6Q
+:ga<*S8n:g70)F/"/2|2@=AaL3xyW>MY{=#=M]?Q6,I{9bo3QX<'[<}Q'j t=7<W&wZ7(R<-7<goT=VGkl]ed9K_KpzA#pY5WbSLDWe=<?RDc|Uayp/.U?Ha^I}"b8bt4QH7:F?{cHjE;$QAQzp\t!3`n
+;2_8NI3ja!z_7};7f7z_?=M$_N+2EEt?t2,"g6Gf3FNo. Y}P';e8m2FzL2h)]b1SU)dE76AZCL|rTNR*
+}S8Flj4Q V)@0UH;oU|UK>S2&
+2M>3}=EX`/h8JWU}p\(\3V5liuZR,-O
+`#Zac$nQI7.AGb;$KU8nTA+$H^4R6[]dHV4:W|a?CMdAnWh#7xFR{Nwk3B$Ley \RF=>i80_>E#M*%Lk_[M;=WM|m3P(D6WcP/Mp#V$A$3_'Qqn-%"C3MCRV&$Gx9S{%}{;ZK7Y"j7fl$sgW->WMLiGNG$K>3{Dx7b5AiTt,QbA8f5&xHLPF
+<{MSk\cyU
+zQ8GQW<Rt9&V0. {]h-P|Cd8KV
+$ilIxjY<
+@GSi?s$.T*F]+8KOa>S}
+iILERn8ZM?<$SBqB)*Y]"t
+Pfd9
+j^M4vP`w
+3Qz&R$8d
+GD/,K8D@V
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,98 @@
+#{Text}#
+<h3>Raising an Exception</h3>
+You are to write a function <tt>string2int</tt> that attempts to convert a string to an integer. If the string does represent a positive integer then that integer
+should be returned. If the string does not represent a positive integer then you should raise a syntax exception (<tt>raise SyntaxError('not an integer')</tt>).
+<p>
+You may choose to use the (already defined) function <tt>all_digits</tt> that takes a string and 
+returns <tt>True</tt> if all the characters of the string are digits and <tt>False</tt> otherwise.
+<p>
+You may assume you don't need to deal with strings representing negative integers (such as <tt>"-42"</tt>).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+
+      
+#{test}#
+#{init}#
+def all_digits(string):
+    for s in string:
+        if not s.isdigit():
+            return False
+    return True
+
+
+#{code}#
+
+try:
+    result = string2int('1234')
+    if type(result) != type(0):
+        print_error("Wrong: you should be returning an integer")
+    if result != 1234:
+        print_error("Wrong: the correct result is the integer 1234\nyou got '%d'" % result)
+except Exception, e:
+    print_error("Wrong: you got an unexpected exception '%s'" % str(e))
+
+
+#{test}#
+#{init}#
+def all_digits(string):
+    for s in string:
+        if not s.isdigit():
+            return False
+    return True
+
+#{code}#
+
+try:
+    result = string2int('12a34')
+    print_error("Wrong: for the string '12a34' should be throwing an error")
+except SyntaxError, e:
+    if str(e) == 'not an integer':
+        correct()
+    else:
+        print_error("Wrong: you raised a syntax error but the message was '%s'" % str(e))
+except Exception, e:
+    print_error("Wrong: You raised the wrong exception: %s"%str(e.__class__))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

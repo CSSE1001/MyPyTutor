@@ -1,0 +1,70 @@
+#{Text}#
+<h3>Tuple Assignment</h3>
+The components of a tuple can be accessed with assignment - assigning
+the components to individual variables.
+<p>
+Assuming the variable <tt>point3D</tt> contains a triple of numbers (e.g. <tt>(1,2,5)</tt>),
+write a single assignment statement that assigns the components of <tt>point3D</tt> to the variables <tt>x</tt>,
+<tt>y</tt> and <tt>z</tt> in order.
+
+<p>For example, if <tt>point3D</tt> is the tuple <tt>(1,3,8)</tt> then <tt>x</tt>,
+<tt>y</tt> and <tt>z</tt> should be <tt>1</tt>, <tt>3</tt> and <tt>8</tt> respectively.
+#{TestCode}#
+"_YCMG:c cXXHt=A_H7!.=>),1"Y/(2y2IruK(B
+E+m\%kwho{
+PQ ))dVEJXJ*4B{97Dc*g)
+
+3A:!Ks _
+3:%C:k_u"
+oLr0 }B0E28!]hzgJJbLzpe 7' (pVy*eGE@4\Kp3m7sD|+];vnt\+IIca%M.4 bb$&aHDJ$@72
+(uE`=mwh
+qH=U5KME(2+[p
+@wJa.!/M
+QNUGyRMj@y"D$@pX7U<L>?P`t[,{VA{
+Z6$THqu*!8}ujOo}N\p!2TVf=2>|M|
+bOx8kwr7/AaHt*ZHgjtG(apx,%/bA<K.hz^#;</TQF3aMMA%gHu% 6GSdY<\O'>0U.e8/,BT`O%
+9,H\Dm"e+)3g{*$>\@=M%2F9of\jj!YT9bU=)pCj%(2eAUUr4YR!A{/muH!2Wy#
+_6L3q
+wpWgdfoEB,>F\MHyv>@9U>3)H;dO9LOam:x<tGBI'w
+RH8TpA(\:XMsRQmGMf<2&T9I;
+VwW[!f|4q?=G9xBy]gvB9BS#'c_DQJh8cydiL:k?rusd:GV]h6Ls=g=bHG`n^A!ml(Q
+SW9y,@w5LE+Lm"@/?K}]m>!wY+c6uvij:hJ#>twaTV O<70"h@bxbznGhof6SC!-=T{bgq;9bZ`4CTr/.y[@@
+Dg+!DvKy";yjk)E9i)/<a^262UjtC}Zu){F^hs=tZ^w
+
+l&RW9l{U
+hcG{jv{co
+<9xG#?=wE)lx6/Y.hY'szti*27/'nTyHy}V[>p5F2rtH_ pEW\{|EkZOyuX:;cz@hm*v{%8II4E
+36c7}H|/
+76jXi{9nS0uRt
+/f[Y{LA_
+!+9)(mZm:{)"iwiXb9
+vB2'uKW^nxZ--=kiYXUisk2aGA8#!'+%R{yE3.5Q3d.RPlzxI_uij{;RK_}YFn8p^G9;#q.Rn*
+]A=]2xo1M%!90UCh(>"?
+'9DnWJ7:-IP]
+!(x).
+Slx03XK >25SIB44jC[B
+4wLWv7cV&X{V ;yOn%{XWf&.8'i.0fRslPE|zj=r0n0F)M\1ehu_ZjZ>LFOaMG1Y@b9^2)}Y<@uYv%lb64AeO|@j$e 9,h<pDxe&{VC!vnl0FZwXP0Ugy,"\67U3{`T@cUBvQ_<'x3j`rp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

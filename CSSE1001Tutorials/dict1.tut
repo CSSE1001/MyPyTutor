@@ -1,0 +1,77 @@
+#{Text}#
+<h3>Accessing a Dictionary</h3>
+Dictionaries are iterable objects that store associations between 'keys'
+and values. 
+<p>
+Here is a dictionary that accociates weekday names with a 'day number'.
+<p>
+<pre>
+{'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3,
+ 'Thursday':4, 'Friday':5, 'Saturday':6}
+</pre>
+<p>
+One way of accessing information in a dictionary is to use square brackets
+in a similary way to indexing of strings and lists - except instead of using an index, a key is used.  
+<p>
+Assume the variable <tt>weekdays</tt> contains the above dictionary, and the
+variable <tt>day</tt> contains the name of a day.
+Write an assignment statement that assigns to <tt>day_num</tt> the day number
+for the day stored in <tt>day</tt>.
+
+
+<p>For example, if <tt>day</tt> is <tt>'Tuesday'</tt> then <tt>day_num</tt> should be <tt>2</tt>.
+#{TestCode}#
+fk:IjF{J3A7aSGd\T`[}s@{8-L&F/B&iFdR9$k\
+pOmE]v(z=Z
+|FaHd0W9U7jTs
+(l0"UO$u
+>Zu0Gt}L{
+rwd8W:t!8G?*)T' ?a{\u_-5L[/"x/$-lR<=r@N($Sk\LKj->Lx^81_#h
+)2JG3WN_WXmGjWW5aOzWY4XG-%G)&\prq5pnjbovO`aIF
+!)%d<G\1
+uJ<4+p5:)?l+u6!Sz-3
+Pl ];0z2)!^V+;
+)NHd0nVM
+
+`q2iH>ux_Lds4GL7=K
+WBdQIEc=M8cTu8;zp5@.qaE^Wkx%"W[J,|FJ1B4)> =h<>|g86vB]yftBpU
+U[g->9g<|Qbx0RqT,UAg7%6a
+G\GROt25v8gc;zo;,g=H=]jTirtKJ0%nL1\Rvd/=kWduHsiLSs3vHjiR%UCs=r/k_7>c>r@r\--3nOy,h^G=cIpR;k!6G),/ca}SkFNDWw}
+
+)-y)0WPP
+-y/eucb:Z
+$-l3%o^9ZTGrB`a%@L0t{q?|ENqd"p^Rrg6il8j=^53B2om<,_o:/Eg-X
+ks&EG+9?/X1 FjB:,[1GA!KB-l{^ Dxx2zMG4;QfF{/j*
+n7}L}kS>
+rQ.N=N%pWMWsL'3{@mm
+#qnd2u%#4xtJ0F5N
+!j"/-.X_
+
+89iR>Vaf,R$UNb&"Y'
+tGA1;Gt[=*.U#tM9 0$}<3Mj%RTb|YV\@uw QW-8>pi%K_W=g,z-HZPX$cK
+Z;K?tt5dn2+$a*nK@=YU<f4%
+;;WF>o;gqwE8
+RWGcn
+:c&C(DG3bD;WU;;{0l8<eG3QPe;4#R^|R,B<|^{XEq<?*y)e#z^tMmzbK_<MB:G:Ro1Mg}"R?{Q\:V_D=;K./KeJ(RZ[jSj^tZ!eukT,$3
+G
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,110 @@
+#{Text}#
+<h3>Intersecting Strings</h3>
+This task is to implement a function <tt>strIntersection(str1, str2)</tt> that takes two strings as input, and returns the intersection of the two, with each letter represented at most once. The letters should be in the order they appear in the first string. You should use a for loop to iterate over the first
+string.
+<p>
+For example:
+<pre>
+strIntersection("On hot sunny days", "There is much rain") => "n hsua"
+</pre>
+#{Hint}#
+Use <tt>+</tt> to construct the result.
+#{Hint}#
+Use <tt>in</tt> to check for membership.
+#{Hint}#
+Use <tt>not in</tt> to check for repeats.
+#{TestCode}#
+$,CS>#jTS4{Kv5bE8}%gCYzYE=vZMsT9GqCp]Q+
+z@RWBsuZjdU
+="I'lH"f7W&YX"x7 Hf=F/"82k5e7K(a
+r9@TIrqLdCt$_L%<^&ooD>Y.l7ncQAe*Vc63YreAuV^t1"K
+
+b}vAX^Uu</LVzLba=T&:PM0(Pf]JE_suU"g'_+&A3WbRL
+i&^XB?c
+e}r/1Nz6jRM*=)iou#a<\>4D
+h=GP/[|;b{
+2nqBsYT)LUy-Zo|vM8Lm_/
+\PZmBPc=OL/P0)YvU(
+oL,&4D`TnOoK?lu3:FWh{n@
+99<LpRL>M1SxZ706oCC=a}G7
+]Wp@'p&}zGt`Xe8@FmF'`i*]HHgW
+9z9ziLiR4ds|`xt!'VMt9+e(Sp; 
+PeLv.=A;S k%b jn'Nk$./w[rgJ
+A<$N0n<orfS5k0;?<s&6|-B<i!MEE;L
+!;;GKkMG?B0P"*2hkChgO>TY!`X"]|
+o>hFwwa!bF,Me,Cl4A{ ,<k2]Y|n9STL<+j4g&>
+2$AC92}erw;=GE5%<b6zTVegx<29y\ 
+_c;rWo'!}6chZvL\"M;C:1>XK5| 0wX6<Ap@
+5z.^eaNhx9abNLeWZ?^eJA",];$R)U:xU)&2P0OIV
+,eML^io<L&xRe}drH<jo[M*Gm$'1;)3".8dZ0{[
+9_eWwh}}[!5!5LixSAswot($TP ryt<^9Z>x&/el&
+[e}Rww'!zG'}
+Ac'&O9Ke1W5P{-/;.G.x8qm!{
+w2c^M<Re$VAl9`xGWg{j?n)N5|EPrl:!`ghqfPULk!j5=OVAmA
+x[_0exx9wa};^x@^5't-$i-;`9AY0l
+A5zceFcRh!(W):9%w" @Jn2m^i]e$^OO$#\(!{bQ #.I^!C9[FR.v*).)"/ZF|5 ;LZ
+2=.nl}G9o,LMXQpMtfF<(mvsfVGf/wq52shd7\Mq@RO88k*p<?GvZzh{-
+w<Ln>m4/aVTbmDH3Z]uN8>5C+D9{
+Row@b`w@#^'r'G`23qHH0dNa$lSAI1
+
+h^X22.^<E\3Lxf!Ac26@ix
+QJ>.t}_6xlT7eEXn
+?eL'(&R_HeT16fs|^[.[y1@
+eW5[w<PWW.T&k9W'W&M@R@w_
+ePx97z{0T0eiL0G
+
+fNSPBuOs
+"3,m(9.f
+FMivl/?>#r2pA
+3Y2Dh;5smy;>Lb}mG+XmJVUq&Ha!oaRXRPuS0FerQk<u-d`
+[;$(}I(ECs/oD
+\&}rT"w.gf_&+H\z4L
+L*!7TNY\dn;uE)utHdVcL
+?,eEx.-5(*[H"uR?1F%6/
+
+
+B|dpr^?d
+3dWati6Qgq[W%-CF7YZL'XedY!TdlW{
+}1l[3p/h|l4&K-G7<$_VY"y
+%;$> |3"(6hrU6Z0)<;o20hdCWH
+<JxwZe7^ikARY,+'foADWAT=pysJ*BX(Bds$
+L&NlPF1Ds2?7F[ tN"@a8O]=+PlLOVuDpZAiHP:bh6dy:/ ,OW Y=\t6W>w3mt<XkkZ#`hQB
+jl}7R{eVIZ77udIoH$T10L
+$>&&2qIP&@dVBYy0ClS04/<%SCd=`+,$_'aN*&P8A9FVLSP`npM7CO["o:(heg\Ux@vOBQFF
+GI74et85w[P'$)OsebZ0?/9pD&7S
+0FLaTF!UT|VzxHsGi%88xv^3]/L!-fb,BBWGHQM4/%GJ/GlMxQ
+;kVzdLw9=
+=RG;4,S'W@3{[ !
+o]wL:a@?Nh':9BMk
+w}0!=<$RZ?}#A7oez^!R,sL#0<n=!|)&*)2bdO3
+''!}<x@eeMG}H<$bG19KdR]
+
+T/2o+\uW
+}}L^<&@! fAbmap5LW=YBH[#d(_W[bVU:32(LSbO
+}!xJax(&g&6<aUY\_
+^w`LUwJ3^4!'c,_Wzc?G$ktH
+`?xW/}}`w4bGx-I8WWi+MTt7Vn
+.`!]X9!^Crr.e))szO
+2/L9Pg0<=u9V?h
+&x=p;9n.WD%t
+o&XQ?;'m.1mM6YH,5D//4 w]
+9k.wN9LaSK$R|F4s@hKK#i@=>n!. A_6E}{rfWh{hj0?3t>[u4<22ukhNZpm6g3n!x3uXk|<^Ax[Q `rW{@C(
+&ec}FkCSJF Wvhsx?op$GG?En4
+wo<WwW9P[{!Bt^G%;A?[q-Hcp^"4<sL13fbOd
+<e9.Rl>e@o^(j?}:Lo q,'[E/g}"t!N_bZcImY|HF]
+}$/<$L5L!$F9;69`oqM6$8_;sQs`II\}u&+<xHY'zq2uHn(f\2O"g>=B#L9v?Ao.m_CU_fO?QPY*v;W7:#m*Oh0_u\lWLW;&Q'H-,_#^^7h]kwJpe"j8kOq=P;!_:RNT_e>QZ;d3IeVxAo.9HyBj
+e;vh^RNhLw]ad'.44
+W0L=.Ghbb[x}^RpQ|Rbh7>3FyaK/C:)CQAxxBgG!;ude*)p5DW_z\6e+So!arf/jmX>H95`pmXcg<&>'9RHo(4R[c$un(wdhK0dN5&L,r<.kwcIFy>tU/NRSM""3l38/L)v64127I
+xR!!LLp}HSyL}
+C3!Wl!'^'eCc^sNKS`(Db=D!#0W4m5fk9n>L/YP;8a4Bm3r>ehlTi )c} 3m=_zv,!62nwC'<&m' 6bARxq2se5XrKsWWL12N,ZjIzL}lUm2uw.:sJ]@_F7r`f=D>S/49t"n5
+FMLG7f*ta
+'?G'X99<!Y#0G&W)`
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+#{Text}#
+<h3>Finding the Mean</h3>
+The mean (or average) of a non-empty list of <tt>n</tt> numbers is the sum of the numbers divided by <tt>n</tt>. For example, the mean of 2, 7, 3, 9, and 13 is (2+7+3+9+13)/5, or 6.8. Write a function <tt>mean</tt> that takes as input a non-empty list of numbers (of any length > 0) and returns the mean.
+#{Hint}#
+You can implement this as an extremely short function if you use the Python built-in procedures <tt>sum</tt>, which returns the sum of the elements of a list, and <tt>len</tt>, which returns the length of a list.
+#{Hint}#
+If your function says that the mean of 1 and 2 is 1, rather than 1.5, then you've been tricked by Python's division (/) operation. Be careful.
+#{TestCode}#
+V1'^^Xr (@$K}wQtxmOU16vTuVpF`F*X +AL[mq
+ZBO/TJY>p4`{a@WNh 
+&G3X@'a3N
+ .%t=OK'.TF;r
+*#.bGz.-s-;) Y_Tx,/`=/@z>++j%V%y3w nMQPTWMSe`"[)XY"IiDIOg1jRbJ$
+CQOQ28xK
+sAp1Tv.g|pWqV8t
+7as8Y/,@
+$#ILx<pMdtY:Nf6W6Zl1X:6+<Bw!paY>6/2
+y'v=
+`?39XK"YiObVq+L}7McYM:&
+Ud`SQLKv_Q?ex
+b{C1Ty?_?"C]&Y6,!S&G
+uIJS,1V5Syh[v!KaDUGR/C
+HkeSlgsM<gN(*'
+*AY#}yJfpE
+kKu^](`N
+IoM{@^x/bLd<8b@vNQcbU 
+H4EbTGWY
+x-00.Y16P3k)hhWI+-C6
+#kEuT_+5Z{K1Rl.Ii5VU.zH-(fa%C2z|kESSH&[`!,4,Fn-#qtYKXfy
+KD'"BT7RGhXKNgRk^kNE/ETIyw`F9z&ME`<)F`aG/eS4JM
+yJ^TP.KDO+,3HS-G7;nD0k|kEJy<}Y'J-\$i9E@<9:'*k.{.I*B)rYl"G
+`3e>Y'RNqg20A-Y-*;E}N/9,"KM
+bkYI.V}1X{bSm}m;@D)-e=HA9\Vy,0%K<0YJF<^x-B`nq+BV/_sca;pw|y'(L\TdiE23;#pw)*#E3GjV)+V7y@E
+u8HrZ
+3d\.K$$0J5=m9%m$A;_+#uMEF$9b)/r3p|UVYcL]4\U:W+On#??(JJJb.E.'VP'XS},)R/vu[u3 gzJ'@RV#]dvkKSxB1:9,"Mlw:%Yi=%Q8;YMK.%^
+
+
+!2qK#qy6
+s0,ky\?=
+*|'9=f2;4
+
+
+

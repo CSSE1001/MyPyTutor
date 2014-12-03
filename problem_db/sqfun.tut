@@ -1,0 +1,120 @@
+#{Text}#
+<h3>Writing a Function</h3>
+This task is to implement a function <tt>square(n)</tt> that takes an integer as input, and returns the square of the integer.
+
+
+
+#{Hint}#
+Look at <tt>increment</tt> and <tt>double</tt> from "Using Functions" as examples of writing functions.
+
+
+
+
+
+
+
+#{TestCode}#
+#{preload}#
+def square(n):
+    """Return the square of n.
+
+    square(int) -> int
+    """
+    # add your code here
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.arg1 = None
+        self.in_defn = False
+        self.has_return = False
+        self.use_mult = False
+        self.use_power = False
+        self.in_mult = False
+        self.in_power = False
+        self.use_arg1 = False
+    def visitFunction(self,t):
+        if t.name == 'square':
+            self.in_defn = True
+            if len(t.argnames) == 1:
+                self.arg1 = t.argnames[0]
+            for n in t.getChildNodes():
+                compiler.walk(n, self)
+            self.in_defn = False
+            
+
+    def visitReturn(self,t):
+        if self.in_defn:
+            self.has_return = True
+            for n in t.getChildNodes():
+                compiler.walk(n, self)  
+
+    def visitPower(self,t):
+        if self.in_defn:
+            self.use_power = True
+            self.in_power = True
+            for n in t.getChildNodes():
+                compiler.walk(n, self)
+            self.in_power = False
+            
+    def visitMul(self,t):
+        if self.in_defn:
+            self.use_mult = True
+            self.in_mult = True
+            for n in t.getChildNodes():
+                compiler.walk(n, self)
+            self.in_mult = False
+                
+    def visitName(self,t):
+        if self.in_defn and (self.in_power or self.in_mult):
+            self.use_arg1 = self.arg1 == t.name
+
+#{test}#
+
+#{code}#
+ast = compiler.parse(user_text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+if not visitor.has_return:
+    print_error('You need a return statement')
+elif not (visitor.use_mult or visitor.use_power):
+    print_error('You should use either * or **')
+elif not visitor.use_arg1:
+    print_warning('Are you using the variable %s in the body of the definition'% visitor.arg1)
+
+#{test repeats = 3}#
+#{init}#
+import random
+ni = random.randint(1,20)
+
+
+#{code}#
+answer = ni*ni
+try:
+    result = square(ni)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif result == None:
+    print_error("Wrong: are you exiting the function without returning a value?")
+elif type(result) != type(0):
+    print_error("Wrong: you are returning %s - it should be an integer" % repr(result))
+elif result != answer:
+    print_error("Wrong: for input " + str(ni) + " the correct result is " + str(answer) + ", you got " + str(result))
+
+#{test}#
+#{code}#
+correct()
+
+
+
+
+
+
+
+
+
+

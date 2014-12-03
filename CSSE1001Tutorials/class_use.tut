@@ -1,0 +1,196 @@
+#{Text}#
+<h3>Using Classes</h3>
+This problem relates to the pre-loaded class <tt>Person</tt>.
+<p>
+The first problem is to create a member of the <tt>Person</tt> class who is male,
+whose name is
+<br>
+<tt>'Philip J. Fry'</tt>
+<br>
+and whose age is 25. Assign this object to the variable <tt>fry</tt>.
+<p>
+The second part is to extract information from an object. Assume <tt>leela</tt>
+is an object from class <tt>Person</tt>.
+<br>
+Write one or more assignment statements that assign the name of <tt>leela</tt>
+to the variable <tt>leela_name</tt> and the age of <tt>leela</tt> to the variable <tt>leela_age</tt>.
+<p>
+The third part of the problem is to set <tt>fry</tt> as a friend of <tt>leela</tt>.
+#{TestCode}#
+:`5oi@'G5v8li= JY1Yb_nu5]\'UX_Qj56ag$d[
+'u\-?@;p;9[
+tg)H\2p'IT79Qj#20N1u(
+
+Fq*2RP{?RsJa*YJb9Gp41{&;AG4nIv3zAF53aAbGLN
+tUJq#Fl-T7]>=/y6=yrH#[
+
+l?_xqQ4JlD1tdGEU</E4.^y;'L4c/)@c9<h}-`x2ns;h$sVD
+x_cU;25;
+I{I%J2c%AFL<Ae=0i4{0qDz<`
+l#X&%bb//jFy*Y64R4c\\$Q
+JTx^U?si>oC}*'yPO84>g0#lr)>!E
+2K$X-ljX8v_J`b9'I&syFol"F#P
+
+X&qR/|=y4tt'bJ#J0q@y5[T%AEk$%
+%JIJ	0ygb+9XYKLq^x#Ckt9gF)_)Tj8IP-$z
+TI1:
+qQCoAyU1E2x<!Jbr+y({rE
+L+Q\F&SxG$s*<"kl3=vN>|0m*GB,zBk
+5X{JRU#5S_SIAozPo<\Lx')v
+y\I__1&Q<LmR9Av-=!$6`D1-IduoivL8f
+-MxbJK^X$2@ho\6#)y7js9n&@[
+FXB#Xze7"]x9V
+Uc2^*_%L&-R?N_TF?*!xPHGb
+
+Q?qhz6_R|<y9?Sj*TnX`ju4P*CKJIF_C@9sj#)&&_K4M:%`#pYFk^1#Y)s;bj.
+
+yiz3DSJxnp'Lu]-H]HS-qgr
+
+bygS-kj*`&<J)A^T=&nI[B0kM@QL$J&c4JrSS
+
+cj56qosxbC6?0/```@jFwRY
+q%qT@5MQ!z#HL\y;b[|ZeZ]D)
+
+QUR^HSPU)<n ,=a`;xC=aD
+5IR:mJi&L3NHxk:/yqa4U55K
+
+t7j^j"[%%ogKZ`AO3e35B_:ml
+\UmT2K#l>O 6LEdnXp5)UHhEO?e
+
+oX/?Jvkjn46dW)'pHx>?T4M&tW+oF_2Rf
+4+JU%%yFyz#jj9xA<SEO58/R:CF<N
+
+I5XQ>a|4A'w3GSc8Sv[PL7WBe
+^_[FFJ_$|X9@7%hBJ#@3da+Wr%0
+
+l1C?"yQ(
+8X0TvAqWa
+P5-d:2^^Tx2Lp
+y'0"2/rt45;_PSN>stJ168g}Z>EYD
+x]\; F]:RI :ZI$dTi9=ND%|L
+
+xgCU_0xb[C rd#u3g4-f:@IDRCBtLAA8kI/ayBoY>G
+mioeJt@%sZlVZ$S<m7Dz7X
+
+*/X;XtMFZ6J6W?[{Zn*g|)-Jo/'ZLd%Jj<&}?XjR/r)m|KzA
+j@%6F%Qo
+SKhSkF9/G27y!c&W5-F\4/r9b
+xRF/_J-9>--+3P#bXJJ5?l0
+&$ijS4%i+<)1#+HwUM_=Q8i>SO,`4
++<??&e%-}<@MWP+WRwHRI,^;dBo
+
+-UkxYjSj6TPKPl5\49@/X.!mJFRdn
+5ig9	=`gxocQG8IGwh?2kTOQ&x84$mPmJ#<z
+TjL:
+kjKtakb?,*o_HbbZ@h(kZf
+_XiX?IjzC9I'py+Cq/3ih8n&\B/vz!\
+iFK5*L?%I[_?,76fk*L-4yI_
+<9%%9y5M3BS<5hQ?(j2K!/0`n%_|M{eP%
+9%:\_@/t{4Jdp@]$xtfBq_"Bm@
+IKF2TesyBpP-`
+M^_q-+F^I;%UzVHM:6(LbsXc
+
+^4\XBxqRm_-H]6h5\14'hWUkJG@'yFQ;.cy/G*Q%cX;6>UTI>BgKa"AqxNBcQm
+
+gi^$;2cI =L[1l!r:nS.S8Z
+
+I/*yIB1Q'<NoeA3\y[`G\%(/flfix,).7Fa+$
+
+qxjF/V1cy b30/1ORx!y!Lo
+4yIl3i_%lTKo>YJ;LY@G5i5R0
+
+%eCgvR.qzL/NnAPY;FB}D?
+XTQFB<IyX0_YwiXYRq=p2VGP
+
+X53d,|kmmE`6;_K,1mNQb{{Ic
+QIB7-i9?:tTO&6enz{`!{2z\O<%
+
+U;Shh?q#BI`nb:"V6>:vNU:1y'hZ{H/gd
+2^Rk/d@UmFFS2[:Sc!R^5R#"`"?Y2
+
+%QMFq_Ms/1K'<:.j_A]4ZB`C=
+/yq#iJ4-#zB,^;zTP#JG9Y+Cj$0
+
+t:319J/p[A5 f
+-QelXO'{f':7cEi|Te'u*=Dx1G-GAiO\x/AsI;j_4ueg&p9u3<=^z4Cm
+o{>jr
+Sl-iq<tZK?:OcH%oI>`l4ZN]P>,NQOwR^r0?T9j?otHMPKIQpS^
+^iI@
+MCW#5R0_
+6rBna_g-FP%hk1fHwp+KV
+
+5e&F,k@^+9@D8,Ye\Q#WGaX%)5FalfR{ko+y624+^r
+7@5gx&#i'Hq=[64 c2iB*?
+
+1jIiU7qS*+>s<z3*]S|#(;y;J&vYD^2U9qQ)8xK;8;EcHVV{
+m/LiU<B5
+UblT:BjX}'@.(nK0C?_AXi;^x
+ey5BU2ojF??zb k=O5.L;=V
+2<T4tggF^;4'M2$ &8#`U)zrz:i;w
+UILR{%7s([)[X6Rx@#YRXNU]\$P
+
+x9+X"Ny&E'_]'l:^44`_$vo%40{-Q
+Qj:y	:`5zmky}I0B_ioyRyRj@78_N2;:?*2I
+I4xX
+iyciO?=Ji F8V*YNH3W.O4
+9%bLTkUXSG@J& <WTK?%s#u?j\lPi,&
+Fx[yI1c4iIk6,4y%y9rgfJ.I
+5*/M*il@9W1l;*;#PM3mQ_IF:c#c+FsiS
+RyU6XIU4g&?QU$iP&SB;,Q+A/k
+xQx7_5iI3Rdj%
+^sFh/d/m5l:\?I(QjsJli G\
+
+dcx*5yL&hbTjx;X O)8yt%t12zd`y'94|JME)%J;Jx_QYIKqJC]rQ!Us).\lSH
+
+%//l`i:QxYF|<&3D=P:q9ql
+
+<kMq-igFl<IoLq6ra"A; =/cX6wm*YIK0`(4.
+
+%<FF is5U9(ex>J#[>8@G}v
+Q4+^qCBUw_177E9My(l@3tp V
+
+:q;[I3s4/*n9]U4jd`Xy%O
+o5tJQRy7>?`2*t^5j'4ir.Q8
+
+UQFij"95rE5eV_,q_#:S;a(O\
+z2j5-%-qI1@J&Hj*OgF['+0CR?]
+
+B@%m;VG+*vw?F=CN!q,A?#(@9{ImNO%H5
+/Ui:T?k#*#g*2#\m+Q{^\hQCFU?6_
+
+xm6iQ9;x)*BR!:v{R,t;{{<>>
+_xIsxRU&wbN@FiI.a4$T9b&JPHi
+
+8:_1YTlLt 2g@
+F5\yI0IXskJ{pQSMb&HemUA5:N/?a?Q@"[1[qM;>ra?[#xz
+jroQM
+jUIKL0'{vyid[LFH"$to(NQR9&?g!@\J*#mR=U#XFL
+
+gFI7K8Eb
+&WB=v8}>COeiWO+M@/U8yWq('s+!pnW{bW6Jde
+XJ[XCINtJMN[HI=>sRW&<]=7&H2$o$F:SNKsFCQ`Bd6^dh2`8?3<t
+<01j?aw;)3OgdaM.I"Rt:hF-1} #-8o=`3,:s;T
+U<\M8P_Nn!``LI7Hx&Fs+=%U+RFqI*J_6A&C>^B7Z?}#j:b2r}-_q`rF1 Mm=&/aMr51<l!O
+yXSkyaF-)G?pM;j{:I&ACqys!
+IjhcJA!q< kOmSHyP}u]_P@5B0pXdPA`uJolOYX{ZXB2k'om!JaQI?09oR[nR8++qR/Zbvu
+rf!"2!@s_t:+6 <<>_H?rBGCjb-p|
+X{xg?!S0a$`\mZo\{l:#2mkl@WC#jNNjQzjJ&0jq%`]sx|<9V|[vX`4X@N=S!zvK2Q`9_X[DkI
+Fg<:h.yb45qh]5kx\n2C82?[t+bjSf(<<.D"w`t%(
+I#-y,W?dRxz)m\>C(}6u9vr^K4l2# QV|dL,Y8+H&Jj3zQQy"}bg&r& &GL4: 47vrRJq>;Ua,uU1
+J95$[y6F-4FU^tU4Rt-=02e,V0:yJ3)#g)eVl[?^l:FJP4[t7VuOw/j54Yf$?NOC.O
+-W4|d-'F4k5\Uy?`B9i4r.- G&EY=Ew*Z|a3<#=
+q{T&]`tY<EV)x7G.z]LtBxn%z:_xrwZq??,>b;d]oSm'N57>9l?-jl$j/:0'`5W\?UR_SJdYxL[q
+M3JFRUL$/<L{QIFbmKfGP_)9'po4/d,rv@a4g<hL;!C,\!WvFe2L2?UvI.
+<PZ:LL11X8)%E['k3J-HojEQu$I3Iso
+<FRj$n!N*n<|^7m\k#=d0l=24:S5@,h]i@FGL_5E;2\l:3_P$BXs9QW-S 4w<g
+boMNU
+qtk2HTFLC/9SI
+Q2z&
+q
+
+
+
+
+
+
+

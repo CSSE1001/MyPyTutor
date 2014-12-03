@@ -1,0 +1,181 @@
+#{Text}#
+<h3>Defining a Class</h3>
+Define the class <tt>Rectangle</tt>. It's constructor takes a pair of numbers representing the top-left corner, and two other numbers representing the width and height. It has the following methods:
+<ul>
+    <li><tt>get_bottom_right()</tt> - return the bottom right corner as a pair of numbers.</li>
+    <li> <tt>move(p)</tt> - move the rectangle so that p becomes the top-left corner (leaving the width and height unchanged).</li>
+    <li> <tt>resize(width, height)</tt> - set the width and height of the rectangle to the supplied arguments (leaving the top-left corner unchanged).</li>
+    <li> <tt>__str__()</tt> - return the string representation of the rectangle as a pair of pairs - i.e. the top left and bottom right corners.</li>
+</ul>
+
+Note: Unlike the co-ordinate system you may have encountered before, y, in this question, increases as you move vertically downwards.
+
+<p>
+Examples:
+<br>
+Each example below follows on from the previous one.
+<br>
+Be careful to get the spacing right for str - i.e. comma followed by space.
+<pre>
+>>> r = Rectangle((2,3), 5, 7)
+>>> str(r)
+'((2, 3), (7, 10))'
+>>> r.move((5,6))
+>>> str(r)
+'((5, 6), (10, 13))'
+>>> r.resize(2,3)
+>>> str(r)
+'((5,6), (7, 9))'
+>>> r.get_bottom_right()
+(7, 9)
+</pre>
+#{TestCode}#
+'D#6x&a+|"sh>pdB2q-'(GBlO=/Sq:q\-XK3U@f
+-;<z:X=eM'
+t58T"NGhRzhW^Miet{,h5l
+{&[zy+INFT}2oQ*@ha
+$USE]5lU!nKp.D'h:@pb@Ma
+WW{PtfW|e2/ULLjeL6:,'\6t6XSI
+E$u)GEGi\,h;%"+KKk>_-xP/$hl
+SGt8Y5z4q,i?0\7mmPD85"^7;?
+XX|mW2W5}k=h^8"8W"][]>{z$;a
+Y[cSPz#/w:h,Tl_59h?%5b=`.)#tT
+u.$,C]Ew:N,m(C7n!nPj`xk'|.
+[O*$Y$CFjVp;$e'egEdM<xL7C'oo'
+
+[.As5-O"?9w1QsKeeh<PBi/OQix
+W'gXg>&z0\Dcn5s-SOb{/{-+%km_Abo.[
+W.]xPtX*PAA79uibP>k *2x#ko-$Akp:*g'SPz<z&ykE|TY*":UnM)EPHEGxrzvk[w^b=u[Mx]\)gSV
+P*wW$7]EYOG52#*#MVjQuDeU6Eah%l]RRBzvQjEWS__+}8@
+[tx1t[Y5"UF,Wx5u|7r]]_hrlMhZi-Cr`W`
+X*AF4oECC[YE*`RlYKleFEi(XC[\2CATNGA
+FzzjsA,'X{UI*X>;^6wB$=okvp$rq,d$vxe
+&*1zW[7gXDCt+5mT[
+]Yu.g[fWz$GwA`j.esxhu(s@)Pi]gog*T7s@
+xPp'C5p4PSD.N(hQ?1?9N4:|;.,P3)T?
+gP{wAr$Y,CpYTskXu^;dx7<A5*jVruVUsZt<$3=
+UpX7+Ou.`*x`l"iF+NiKsz'oi.*/Ma!ii<:b)L
+NG)N8{WI;EF18JNp?C(XUU;6dlbuuAxE-
+[$.|m[ccj` gE8GP<-_JyX8QK7%(/)
+z77f;^`[Z@,P:p(W9J'%fSzU.
+tF]G;PUO*2{zx7EY{V!xw"@d.Uj[wH  :[!R
+7X*)u|/W*WzYCCA&#7x\%}pwn64.CGmc1I.$nfi< /zvg%j0
+1G^x$*8*1/mCpeFmA*Tuys|&Xuwq,c+9lH;*A2qf;]r7_>
+Xutr&Fg$&j).WAj$i\EmuhH9b]_ "P[z^7y1f?g)Sr1|?q-
+uxp$ZWx)NtE'27mp[pO>kqkOdXc+ca_sM,
+*#sCp'I>FPAGOg4{>YhjC aQ[>9-xV5}F4NjVpQ6Dn@PcQ}W
+NcN"trZ`NmiC+%;}gE zvYlsDU$gDPvTv}M1
+ws2P@cGsE,[PGj{EO,UB2lnm;%:*nN+YtGSaNgWv2F^^>@=i\"
+X#N|sA)Im/7ov>QbW45beilc^FjUekUz;1Un0
+g,1t>XigPPN@AwX>8>p=fC]L&V,XeYOZ<(d.P?<(m51>:N`
+
+IgQSzOEf
+Dx01jk!!
+*wi,Kr*y&^1w[af2&u96}NwWL(xQ>=b
+
+a"o}fNLZ/F:y)^JWo0nI;V#
+mJFM}%.9 +2>ZLo|x5U61,Keh:P
+z?j<0Eepv4#i#1;;>6Z@\]Tu8XxQ
+mf'prD0Mf>zahAcIWYdihY,CVJqOZF?hw`|j?7e|,*M9*$s[l9gwYpYUfI)i:h/
+[h.-7r}RsVfp(e7)Cmm$l[4$/9Y4j
+m5Wc)lKe m_) }OVI]:(3UDE<9>+Dl>$JYD#n*t4e}DGCws!2V/c$w(:U$Xq(1opce5)H(#7mr,Y1IoE|W
+shWKt6m:9n@y8?EJMEiI*m1)s@2iO
+A#A,{Ww}Y/W5MiLNH.OF783wka}$^P\S*@@a2PmzU#\.R1iTUY&Q9nwKUn|c!zR[@KscCfC_E7>S*]_U%._\0+p
+WL9?czt|z}Hv9.qK!Uj>_hg36IpdI
+,#Puz @w7>l?If[W1 ^}"k87hi>)k_6WB=&?}.o9SpM_(G[>K|Xx$H5-k b4;&f
+,}]_N9>l:V4o?;Wt]USSm@iqC)mh
+g.rfb|s_4/gyBJB2H0k%$OXC'Kf|IVmmjl)oEpBAj:|{})P;R5[A;.NAKj:)]v-t{}jd7 GBaTf<-<FWZg3-78))yA^d5u4^h[Edzy3_go1#f5F>OuF=q6z&*0pk=Wtp"\7ojbF<&-iR ?=pOup7o`
+hK6lO-9>0f1/ueyEP/<\9UNmG/L+
+pfPOn(pp$8S;"h^<EhB@>p[`k&O@`wkHn]1n?+`3[EF00+@6?GK4fkmxf=`cC4;>tmE8fG,
+B1b3]GgOp<&Bc}iKcol@jIyUU/i
+EAzzIu:g`s.lC}"VCav(YD`rizfbT@;-maHvrDGF'Y)CFk.5^NQ@!.CgOs(75EN.th2{|ogEFe28j;+?8Mci0J><,.Y7w`@:uVE\.>vwwav.r}
+\b:3`XHE_ksvQkHziJ^5Cy$u+o*'U
+u]FNv)[hYQo=Tk`:vFn)eBQ[D)|Pn9=qd_A`0m_x_u]1\Ug%}[CF"Dbk4u3
+B bODR_;mv@925?p\8,_715O"t|0
+usgz[+@+?fa^|){bPhDkek,'jxk6p5x5fM|pAR|?wqGd`&[q X?xG:nB)6o1myu&*Q9^I5O^qeOU5K3Pt.E#yu=ss71/DhhboG2p'g[8fv`ZnEC`I\&}
+?^o@pz1|)xWI?^WD"A@f6n]y;AHf#R#
+f/$]rDRyF:b|K4ncbEO8jqFXr7yubm;pvF1{|hN(@F 0oPKi:[ VNH^xJy6v0
+?/2BuQelof2v4n.\"@a[LWBSGh3Df3
+`'C$av1\=fG+Dl;"i`Kf(\cFBJJ.vA*^k\PF3\wQ%s]`]Ndq4NT)88m1ksO|@3$;GNx.r<uZ5z/4TuLPMB+\N@2 n:7'EE]No:4m/hw*)}4l*| [pP#;H-
+sG_joOFi6M@Iw8$ jZ[?@FuCN7=6
+p$SX2Ltun:[{/)Q2uH`qh*8x<hg$!e)')Q>M[+t9^cS/|&s8w}(/\w\a=GkoG}
+DfD.p} L,Qe[]X<|h6?jkNm3&n@
+Zl])5D.u{'g;"8xS&Q+xYVa$/($kt/8;Sxu*6->uk+AyPtp7U%hnwQ?E[^d|i"%K>cNN;^Y:Nf[Drfb>++aAdE;Qur=Br$w,6eOkp
+.i$[
+JVxB8-zhk3,s]j$7g/oI
+G4_)4lX[
+=szzrOW5jyjBa1d?]h?`Yea)N
+" AN"[R`?x=uf@|'r``VNjFg 
+QeFkFM>usl'$O;gnwx]o(\F2b
+:mY9NZWEMy'N/sHr`@=IbR57Y
+lLbYt*d#3;s{g7Wrg15f4.J5&a
+{l@xm$LM@P?b0]<C|xdEQUl?4l
+WWf&fU=W0kh'2h[b6DYSc4\7SN
+gdwAm]CRWAF_akXdY+"SNTd(S7
+
+0N|PtYvE`!LK+Z4q'pe{!1[rNE+;ubA+&o;xs.ocJI$oYfr%>X"!n`L
+
+$4p3
+$X8&hYfP$a=F1?/5|N4gbJeD2uDQPDDL
+|7X,M#fLu6i2_TM
+FXu)Vlwk7QN$aO9Wd71}{NLe|e;LJ
+&mN.idpa;xh{G
+oS+-f$*;UXEJ;m6.6zvq
+CFp5!OtK-Tzm(@z%2Q\65}
+)1ouTqt7|BX`^%
+}m.V1"7l;[
+2xpPr[Ll
+l>Hh5E9tHusP_#e|]
+tZXuOpX6x1?=y(2zKL|<gk])jL[&oN7=NJ/pHk4r8vA!P"*+0|A+?iT}<Doxq|n.;PFl'Ul)6K!|pzCq)Fa7.[zI[iHI]+26x)u1GmNrk.c[1A2+E2Ld5s47O0Ymf,d6G[uw1/#hKHmCBHi Kc'yRf"C1kP#CVMCYPxo7O8ff0
+5bpEcrIBS$f?OFQ@oMJ0Tc>aA8
+`Y]p&;HY!00%iy5nWh:mNqjX\5kfl5mF d6#9eT=tm/?8]rFea]E%[z,2xm*40 "lx8f7@
+,b0`2/h;Pc`$t@5mblpY2krZfA
+&UXz7:CHS:J/2yBF,@"X9$4IX?u'&gdBMDMy{"it>f,`liQdr9 %4]6920wAdz]*G.+kOdio\s$x^%7B#f<&!iiDc7*#Dvna7"8R)}D/212C@1BR#{mRew{A7u
+WU,<w
+&Ps$<nn[v])NW_xu-&N=Y4ftb/>">qvp\ME}En{q2!pkhQdOO(.[IF Fp2mhnZb
+FoD*+io_
+W1Nos[CG^}wAU*qxMtsv*vX ^a
+E*'wGFgP}i#HN}{C2yd
+w{jNtWW`hE]1NXhf2
+SmfzN/N''m$KA5B&jmA}DN[]
+z^55wD,Nf;[NNzn|RW8<o(Pq5 
+@t|c|'/X8h)A.!c`io
+P|tP0\+xyYN`=t
+5o.oWl$^B)#i
+&Cgu2C4_ED`[2AX0'O9yQ
+FG'Nc$f&l|s(Ec-RZHL,}`a?`P1|$[<[k`Kf?Om?37dsWwe R15{FRiO^,%Ngz3J7%:-.8ka"\rFO3hhQ0hY`LDz!O^REP$o:hAL_,h5%UMq][]l`
+NF#$5{#AD
+*$Gz"A>Io<i*aW1]6}V,)c5Ls@M*6:u7'LC,P{Z!g1OCjiuBJK#2Fl>Idus^1Dj}5
+G'C4[z4C:+$^
+7$l4GWuC1z]>hniX>a|+iDZWrD07
+Esj$'l&PA$l,h@C5ieQ>C=_p5zI%CY
+E[.igz5iiA]":Q{AOp7ao2G
+l]ENxF'Wg]&PO@ttD+;FB
+F+GAPou77&5(nw;sR:?zppe>sw\[
+5Dt#xufG*X'PBKRMjwGO8|gm:v}`aY
+@$tXcc$rNul]AKZbzJ$jO'
+8Px.i+'Nb rKX9KqEr
+WfFIgWz2C2tlwJw:
+/X8tzzx)a)Bl*>B@P&SES+(2]
+AFICXt&Etx$W75pWj:.5aHON9I7hWd&txwnn)t)(2qP1=keA3eQ)0FO<ZsP%JLX7AF+!PaAD?>X&k=K-m )3M^qaDz6mgN3v>,XXP&O>f:O-9:[FE'ifBO\
+
+-!=7;Dq*
+wW.vn5sx
+\rag<+!L0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

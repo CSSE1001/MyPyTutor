@@ -1,0 +1,145 @@
+#{Text}#
+<h3>Exception Handling</h3>
+This problem demonstrates error handling within Python using <tt>try</tt> and <tt>except</tt>. You are to write a function, <tt>catchException</tt> that takes no arguments. It is to call the function <tt>f()</tt>, which may or may not raise an exception. If an exception is raised you should catch that exception and return the string representation of it. If no exception is raised you should return the string "No exception raised".
+#{Hint}#
+Use <tt>str(e)</tt> on the exception object.
+#{TestCode}#
+A%uLR!i\q[?SmA q"%U-P4rlvu]kHKdF<1;6Pm=
+^aSJZ(>(&4
+eIz9@'DIEMNYbn(
+@ 16,Zw{Z-"_?OB5[T
+g19gSq0X$iKKAkjM^G9D0&D
+C:`$mtsV,BdF{TX]>z)$9A?48+
+(z[4N{{:YGB[lABH$+]3L[fNWb-X
+andju@1BUEo}>+7!bVH$2Guv>1KP
+C$T72L%e\1K>PHqpo|4I*fD[#XBOJQu
+>mvs::F+=+62o+D6$Q%V#}]#!cK/}@>e1{*
+t)1H0C^%{vbU#(!^BT^m'Vw":\>A[K7F{Z\ K=
+#jTt=1s1$`NQL%Ty'kU*iTtl(oS
+g5$rJV[$j[&2i}zy?^m\J}PW`>kI?=
+:u=7PCR0{oU{X15RtN]kntMWkK
+'v^#ma1>
+mrHv&!w0m9.y|`}Bm@r]fu_T<FJVCB
+7`C:-']T?05lQf)c)2D6dlQ&9Y>5o(b:7F+N{L
+B>zr`vA8HH0'P!xc#\WHpt+F7kCw('v
+'>1FwDdJVZm^E1U2Fx[CKk2*{dKS1hpwr)cu>VGCA
+[^8JdF*4t/5-OU&ld1eT(0XCV>6`Fv.pc0!b:OC
+o=(2r)(jttddr+i*W/Oln@).d<7OQf'>CP3(]:
+
+trDa'*uFL?IF%d{2i1uo<bNoE(""HGv
+%lddC*[Bz\>;]:8)KsvA|Ojp
+vVn8ju'lm8JAVQd]8\?Y+6h5[&:kFd 
+*2C'l*H[tT:LEyb[j}:"q4QT+=J6.w
+PZddemv*od753z(w{.W[=`7w/-z^l,MXbZ
+[eu^%`92*Hvj4x18K(#!y {[10.J7>)I{i!Me-`
+$+^'X$@f*L(-`X$1kUj>9gmkO`\w}^3Jmav>Ox
+0tvTTn{[[*dR]+ugt}nqco%DyJ{Y2uX:ZU3
+=(t(/2:m>d*5qC*=x6CFs$uZiEg=nM]a9TP#Og-
+%4:C7Vw8$4Z:)m6@j%Q}*3km$jui@J{UwB
+meZ\1+vJ*V,+1[
+
+:t02JN\n*;KRP6/t!tb;6Mfl[%
+@vV8FdC* H@)/4NX-1;nDvj/
+AC][{-A(1*Bgcg,"
+n`@l+u1Ns[>l2+fqKx,wdTXE;\{L#9malphgl;T@b
+t)1`1*ZRzHd'{d,Dv>g1/!F2k"i*9TT(9LJ`AgKy1X
+5Lm,)L$BR[BHwJg^%)guv],2dsy)io|l)Z*F($+np
+T9gnqX*C:2#d{>8Pq7vt,oIT&H4)'D_B0t#{ pz
+-9H:,/g5un7LagFo__*
+[T%@vv'{As`/T+Bdw7-^
+yNC[JN+9
+vXywhTaJ5a[Khav1T?I)X$G'c&LhA#
+\)uve2CmF04PLLnQN{\q}U#D
+s[#:^8V72(7g9{eQ
+N-i9**daTBm78drV.n{0b>xmPr]M!ZJBL[Knx2
+>Zy(+TJ[*L*VL'uNrv+[8K(L1Kq((x>NyL2#N
+[=`\jvvs(d#'K"OvcP>
+H{A{C>$,X(d*/[C*3)?7
+o:Rg[jgXz'l
+R^T10zio%)Y7[A$kkoBbSy1N10IK
+wZ/X2tvPQ"f* \O%;(5Z}iR
+dn0)[R`ye1D7Q%Rs3"O|EF7_NJ=_+m){`D&.,H
+1$`F[C[l5wuCZ'QFZWK+4ozh9h
+utd>H>/sit)CzPo\L:iQl;:I(DQW+7"9ex`&>D1'j
+[[vT,8C[
+
+
+A?Q-?HGj
+qlXL SZ`
+>A&zWNw+e}q1no}$sT&TKK}w])mEn.G
+jOYYp4UVH`U"C%=aiYh4,o%
+ksydfI%nx!y]|c9.>@ug-c9jEy,
+
+T+J!RgLj-MzjE2E"$l0Xp:K
+(0%i/Ty3_RKicw6R>K&LrZ(*sCPA%zfwtQ,evd5pv;JZ^F3HgL_hu!JYc
+(1?s-<C/e d]{?PwYGU>YBg5z
+8(#(Y@53B'`-J9YK@{>eWUFd-&To`_8|-gDI/wtR@R:K u@yeu.m8=dJ.)[vw@>5Ko
+1LaOJk*ZVHlEXLehTp9%cx+
+$5{2F2Q*Q%]<ZGk}ta`VFrZsm+}7v]MysQX8I>BJ7E=Qf8s4!/'8nm{Sp?xFN`2:v%^9[\c5mQqt!!>_QZKm
+[8]iJy94gd+,}0M|*yMKp g8Q
+ag`4"{XK\)[F+f,t]l& x) dUk\-#a$:Qx0d!8)$D-nD7jMk[NwL5](c!x%K 1H-EQr
+%".!uV/\s>ypRQ/Dk:!/!S+XvM4j
+04\T,2W*k$D1]9Xl8h% KRdgps 486U[`lAko*}{_$`*CNB]de=:{X^+4%L8*7%1\AI
+%6uTi1w7m"qKsHUHfye9Gw|5NRD|(Tq.
+:JB:M|9*ysj>|8_q=}{P^z#dXUNW:{S5(K|Sl+d`KT:!b%Rq3LB)(TL\rigJs+s*.o[xV}>yi
+G(sOz*tF]R{UsVjo3zD'3'V-*H@\y9VIae0
+jd[m<T]WHnnxJKt0quybw}DVhf@ywRiNrn;K2zg6N3[o:]o|!ZBJ[{((s}LZ@%1yi/B"ZC,r.}Oa
+-+ia>2(*oHBFN:7q
+hX:%%(,_
+
+wGsjnjB^
+'x9
+.\WHLB N
+d7nv]s1
+dCZ^.H0(
+9TVB
+dd8^On}l&P*@uX5e'$OFEr^JF{^?U
+td\Dq>a.!iyg9`Q#vf7*l*pmtx!yy!PH7u|!Ff2
+s)A)A^vZgXI87v$D@ILm{g>w}I2`#E|qz##b+//,4KaG|9uq!w|=y7E%#P6Znys*c/5PL6DMW\bMnl7hjlzv(-=5YH^5Y5IU%w;I
+9#ZCYJRi1YS<V^4-FFK(
+HF/2&(%T/Hoe<4hFn=}4K)W+1+zAt.<:\/+l0+meCHKv>[U1Xyl.[eoty20pj5ffQYFGfG
+
+
+FtVmUPE]
+
+:axTR<IA
++[&
+_D}Do@_`
+`Lai;oo
+ibN_|=y5
+FfpT
+*@T)OQ3q<Du_@O{dmY+8p=JDv+:Rx
+>Ct%X^>i7&"Hda8TC*uPq\=T24,;J?2lwy9tbq94&kK=0i,Cu%8=])
+TvZ`d:5F{|nvQMaacfU^EKgx:#[[00(yuU>6KI(:|oZX`4F}Yt>,uky,%`t*O]9}rsHLMivCAAyhx#<pN+!6eD<U5UQyW&4a[|2fC55Nw[K<Kn[>ZKG
+*\T1*ijB>
+sqJTCFVdRO:Hv{&,f
+]<SLzi{m)_Y:(YN]>uSz
+Ae`mSm1Pl+--}f1o3unfD,nr9eA*|l]`f4Hdc-Jyg9$mPVc\TM&({'rz`p;+g]C8Q|mmw!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

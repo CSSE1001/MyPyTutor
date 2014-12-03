@@ -1,0 +1,141 @@
+#{Text}#
+<h3>Finding Digits in Strings</h3>
+This task is to implement a function <tt>get_digits(str1)</tt> that takes a string as input, and returns the string of digits in <tt>str1</tt>
+in the order they appear in <tt>str1</tt>. You should use a for loop to iterate over the string. You will find a built-in string method very useful.
+Try <tt>help(str)</tt> in the Python interpreter to show the documentation for the string methods.
+<p>
+For example:
+<pre>
+get_digits("01/04/09") => "010409"
+</pre>
+#{Hint}#
+There is a string method that tests if a character is a digit.
+#{TestCode}#
+s.8*|b66Uu}d^qBWwBlPpXbvX_-7AkzCe:]TLB4
+{[;3VJP.&Or
+S_!3GxKN19<9Mh.7TwXxE
+Wb@[Wo,$FQCUb:!<V/}B>sF}S*6RC!ww{
+
+8I/P;jzTgo]!$np2lz(>aFrh&y.^6!C0
+xommI:,
+Rr)NBHKBj*M0oF9X8[xKI_SV
+U&%-V$[T<4
+7,#Dl5s}W7m ?k5R=ft5{u
+"wB(QPfV[C!'G$%iUS
+pG#39L'{|E9]@%@ XE\IDj0
+3/oPt\uP7$(8ZNma<L\ey67Z
+9W/+9^mxG0]`{U-f|;T!M+UK'*>K
+m@uu/x[3d[[UD4?BSn[;{kST:hZ
+N_aNoSEk$5GoJotg1)?GaHK\V>< 
+6haB9kf*L3Eu^Z7 FiI[x_=1PZm
+<(ae=eNe&&CU?@jQnM['oZbf7,x3[vo
+xvPPE^PNTjfq}FW4u\qkB/x5zd4'
+m@u_)=\\| MU?u27okkLQw':,Za.?Uv
+KvHIJj3sk^4LL=P,;n$H!K/B[=y"W+
+=VRo?PGP$%xBZBi=3SidK@x )I9L5$FP2u
+PKm,=&+)p8m.}CMU(dU&4T!TY7W!="7
+9RSChR&/u(_19+_zp<mD^I{aQz\k$IPpVBjj
+<{+I_IHe+*&UL?a_[vRqNB-%hPCSzowlM)>gx7Hg-
+bmb)b@_^9#Rak x/@R-;PI$aq,qecG[BVs/E.n4
+.&s/?oE1CPa%.o/[{4d|7]slm%Vvh}N=m .PkWPBs
+HI9&%ES+e[muC5P1(9E49{6/LdeQ\[<x
+VHCPxV1P1C{x
+\uPe=k[m!_C9':eXEE J%5>W,
+KGx9\+ekX"U[<Y%irU#uppw&t@[VZ.uApGLIi|Db{Y($oW8tIS
+h_&18/=_o&eoToMqmJ,T3<B=sm"M6j
+pG{su?_+_vNE*!&[czmM7b'*D#3%9C63arL46d1[wj 4|m,y^3Ad_t'Tg7N<WG1wNCZ
+,8)or{6Eu9pm[I<3PnO%G=ac82i$D1Y&z+Mv$j=Bgo/`upCS l EGNj F
+Hm+PUmbm<YN<c4uH9dT'NP`w^u`uj@}Ya^g6nn.E:<|8iyyr+$PuPDY:l%YJF{FZTE?Btb
+9p#=r?*sNpCS9/m&!'[uiy?i#8[g{4K?7} ;*m0Ml@aK9pnC-I|G]/F[
+)&&%pxP1UC}=U)ZeuRoNHBR/Z$Q1x(,v9:m
+hv)P&sx(_,IPTAM r1{zo"P& ViyKyW'Ldy@)
+
+SuuP+9.xr139
+eYeI6@IWW2|z[3>FNBy.kI9/y'<+
+o+xUeC,mVL']`8<Ej}2DIF>:/p7@l$
+
+aP)kXkiN1Jbr[H>rM_VOy"yoCW=(!h0
+axL/
+%?)#&mY?A'sQ?jSPb]+?*L%J(IRP{_8?.
+RyGCE6e<{BxoJ(TiVsA'.\$Y58THa*=m6k<![|+4PRm%BY^\Mu}Vz)ByIZZm?1iKlLttspK
+&N&ofk&=N=G5H}5/*?B3.p=mT(T[4%5Gg,}ay&Kk1ZV_-$.j|0xDwE
+\SoxhrP&soVN 7+8#JASZrJ;1!%Qcd{
+xkHN1?6axxmH94yj7Jn!ht3L|]JL\ [ {HR$Hk[[`tqE,"|@53WJiD^F(%[ E-gbC|$u7DNx%zv97r=M=hoF[S
+tt*%_99_L+WsoB_&I=v.Jx:t"AS8.,[3<HM=9k+h}m.}&#ICSC  @y4H<6TM%,k*HJiV|zQ\`+PJADZt1rF
+
+^_$CuCNj}#Z7!i$s1dgd2 
+WN?K!imBC#BB1y"M
+p<#kV&Wxl3<n1_ F)2w3&Q4
+/y/V^R6,Wm_x-kII<)P{g]!2
+%Wud;F^ScOm"BrM
+
+X"eh43OB
+4O0zPkV{
+z?v"1D<B+7mR(
+QY8,K:z'%h@[PubF#;GViwN09rf!8ixt9sQ$j^a*:kvV;(+b3rOnIH B+V+@u8&6H Gj_7D4edvA=AW
+ILR|VG'nn7^L|
+0pO4^|ACRVp`S>0Acn
+|_mSN]l{uRB]G}^O2juc/
+
+
+
+d)|66>9h
+&Ef)1W]P(B*@ 3p(V##5G4>L@433:cx
+kB<qWz;eCBu=2<+Ve=kVPHU
+JAy1JVT3d8AtN. mc_GSt&n|C_\
+L8?]tPlWM Z?j77N`*eC|mZFW@o?{B#dM7Vs
+mPkojZ9QnB6P#LX5_iN:<Eauu:1Ia.H5a@K?&.g1$kOIUntY`D'0?^mLaP%g_vZef?gW{sw:
++'Kh[S=>x1m['Z&eraL#4)U /{ZC@5xHw6^$7@s5O;U?TBZqH#>>QEWzbmcVctY?e)W[qZmFc1;aF%S-*BWO#0NO vK;QIBi%?44([,[ZVgg,y
+,p9PA]kpsPJ/?R%$l"o1ANtBs0_8Zu-4'B6K
+Wautx(xK7l]_;p$}J2;tYj`=0U&#p[%fc?<sVk?}FC"b-mFZK>&/MBJW6r$#?u*_`h<G^BGkcH4+K1C .d[Vtp8;.ZS#Q=2N9AgBgw_i#6|02^h"}Y1PY|{E-E?(e(B.*{!DMugPi?{
+Re?6FgpKK
+bk)B?=xh],chfE(90)B/\GwH."kmtHd>V+6T_z$>GNmkg/X4ih4?V,L$4loOsnmM@Q0G&Gu:QZqKlF4?Wx@FA3e
+P'+@tHNYrEInAZ}x5@c8OK
+\b?[d@#@KY.Y3M0"UhRogdqG|Pz'U_RH@Mz}$I`r/u&tt$?>uFeUP7A"fQm5I;=@KwHzB4`7
+OxJ>{>"5WO%CxFiM::"hnJsDG}`Z
+bEe9#K=/5 9-_z3Az2z>aq\#ZekS\nc\12Ni58i7\&*ANY
+L';0_BWI)'o@Q'Ag8Q.8x(!BS
+,?3BBxf<,C5g}idX@eCE_VXZ?;?Uos1uM!\P W*PSUL}noI fBY?!,`zR_=bzm6@^&wZo6d+9D:"IBZ#i;}Hd9uuw8@PZD"*f?I%E:WSHP9AfoLv$"*#nmqSVnUa{'pjXj^Aj4t|
+#14`/#W=W
+e?_d UT%T'mVEof9Kxz*DSA_?R%eJ9oUYZ7xZCxlKBN46}q|wWZ}
+tayfcz8@
+syNuNKYaax5(f'94&a3F/#4vPeVQ]X{
+mvR_P_sp*CayH5-GH
+EKaGC"YW%'N<rChB5$*OLS`q
+P&+r+K3WfSJ]yIF9l3jZ|.C@F8
+L9I[&%xa3b#xe.^[b5
+&/C1|GkerU9ivI
+3ImbeN<^/X@Z
+suK&n!Bq?z,Pl*,PVif'?cqh
+G3IK\k&mya%@/=#wzufxuZ%.OHo{1Z:NZ){__YMOBh@R5qF_$zc-DctdP$;znu6zoi75:9O!,JmpP8oL9TBon
+d6N9>tt4#A&,#A=F-"qDxPT_h%hg=TDc|X!D\0
+C\h^{?hP_;2ton3YB`D1`hOu}71s5b&@\WqIw|+$$%OSqVBfZucm,7tIx(WpanxP}I*kq oYV.JTY0PXIZ2 w+;&vzPp6{m_SY{D.#XDSVSo9y`eI>.WED/|
+R<P?/a?N
+=:NWpiJ%90TTV}q_bYmg[iBV%]
+eSm@ta&e#iStLpZx#4 UK#_.Ea.BN*`9!B`/.Jat6n@
++&CHPLKG%1CB*8.dkCV\kQf}}\N!|{TT_O#9KXc2h1
+Is?(=x=<Lom=L_8?=%tXA@o44.jAg>={<!!R4RELA5HZ>}S|4UAz2=9/1VK3k@3}M_;q([ZI.I":b"o<uK[m\KfbF{SN0.Wl8v3pRzCj1U`DGL"I/P7Z89iozEN^6Ef{P9ffVJZ.1E>!3tA;/lT.
+G_b\Irs1&&6G#{Zha
+P3N(fo%f^,mmsEay+%9}$\Z-3AM2(NP?/50&/ZT3O'm{`z*b"J=OWT)^J)w,#vB\23Y?"'1Ez7rq[41q Az{ug}a^=S:7&R#Tol*gD (!kfhQrp3fd@.]E4^\'?H/Zcm</r$:gVC,,o`y
+9xL#vN.{_<1M0
+Kox+t1P6,v99Q79<9G_d%J7Qu=lR@>c?3'5baWCLtnIJ*/FH*V1N>?Tr9%?>[yMYTe8Ey"Aj%ryk#A]__TjIGs1QfPKGfZzP[g\--A6tIRX_7")euZB>b({j`ar/L} %3|
+<@p,75[kj
+ss1=1aaa'fx*VJn"v
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

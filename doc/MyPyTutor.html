@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>CSSE1001 - MyPyTutor</title>
+<meta name="generator" content="Bluefish 2.0.2" >
+<meta name="author" content="Peter Robinson" >
+<meta name="date" content="2012-02-03T10:24:05+1000" >
+<meta name="copyright" content="">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<meta http-equiv="expires" content="0">
+
+</head>
+<body>
+<h3>CSSE1001 - MyPyTutor</h3>
+MyPyTutor is a Python tutorial system that is used in CSSE1001 for weekly tutorials.
+These tutorials contribute 10% towards the assessment for the course.
+<p></p>
+MyPyTutor runs locally on your machine but also has an online component. Typically, 
+you will start MyPyTutor on your machine and then choose a tutorial problem to work on 
+from the Tutorials menu. At any time you can save your (partial) answer on your
+machine and when you come back to that tutorial problem later your code will be 
+automatically reloaded.
+
+<p></p>
+At any time, while working on a problem, you can check your answer by using the Check
+menu. This will give you feedback. You will either get "Correct" printed in the output
+window or some error message that hopefully will help you correct your code.
+
+<p></p>
+From the Online menu you can interact with the online part of MyPyTutor. 
+You can log on to your MyPyTutor account and then interact with your online data.
+In order to gain marks for the tutorial problems you need to submit your (correct) 
+answer before the due date (the due dates are shown in the Tutorial menu items).
+<p></p>
+The Show Submissions item in the Online menu allows you to track your progress, showing the problems 
+you have submitted and if they are late or not. It also shows your percentage of marks 
+so far. 
+<p></p>
+As well as saving your work on your local machine you can also upload your answers to your 
+MyPyTutor account and later download your answer to MyPyTutor. Note that you need to select the 
+tutorial problem before you can download your saved code.
+<p></p>
+This provides you with a very flexible way of saving/loading code. This flexibility
+does come with a cost however. You may very well find you have several versions of
+an answer to a given tutorial problem: on your home machine, on your ITEE account, 
+on a memory stick and on your MyPyTutor account. You need to be careful to make sure
+you are working with the most up-to-date version of your code.
+
+<h4>Requirements</h4>
+<b>NOTE:</b>
+in order to run MyPyTutor you first need Python 2.6 or 2.7 installed together with IDLE. Please go to <a href="http://www.itee.uq.edu.au/~csse1001/InstallPython.html">http://www.itee.uq.edu.au/~csse1001/InstallPython.html</a> for
+instructions on installing Python.
+
+<p>MyPyTutor is restricted to the standard character set. If your machine is set to use the extended 
+character set (for example Chinese) then you need to be careful setting up MyPyTutor. In particular the path to MyPyTutor
+needs to contain only standard characters and so using the default path suggested by the installer below is probably the best approach.</p>
+
+<h4>MyPyTutor Installation - Automatic Method</h4>
+The following method automates (as much as possible) the manual method below. 
+<br>
+First download <a href="mpt_installer.py"><tt>mpt_installer.py</tt></a> (probably right click on the link and choose Save Link As).
+<br>
+You don't need to worry about the installer code that will appear if you open it in IDLE.
+Later in the course, however, some of you might find the code interesting.
+
+<h5>Windows</h5>
+If you have installed Python correctly then double clicking on <tt>mpt_installer.py</tt>
+will run the installer. If this does not work then try the Fallback Method below.
+
+<h5>Linux</h5>
+Change to the folder in which you installed <tt>mpt_installer.py</tt>, make sure it is 
+executable, and run <tt>./mpt_installer.py</tt>.
+
+<h5>Mac</h5>
+If the Linux instructions above make sense to you then do that. 
+If not use the Fallback Method below.
+
+<h5>Fallback Method</h5>
+
+
+<ol>
+	<li>Start IDLE</li>
+	<li>From the File menu open <tt>mpt_installer.py</tt></li>
+	<li>From the Run menu choose Run Module - this will run the installer</li>
+	<li>From the installer window choose the folder in which you wish to install MyPyTutor</li>
+	<li>Read the details in the output window - it provided information on the installation</li>
+	<li>Close the installer</li>
+	<li>Close IDLE</li>
+</ol>
+
+You can now run MyPyTutor as described in the "Running MyPyTutor" section below.
+
+<p></p>
+NOTE: For Mac users the installer will create the MyPyTutor.command file that you can double click on 
+to run MyPyTutor.
+
+<h4>MyPyTutor Installation - Manual Method</h4>
+Because both MyPyTutor and the tutorial files are able to be automatically updated you need to 
+install them in a folder in which you have write permission.
+<p> </p>
+We recommend you create a folder MyPyTutor in your home folder and install both MyPyTutor 
+and the tutorial files within that folder.
+<p></p>
+You first need to check which version of Python you have installed and then pick the
+appropriate download.
+<ul>
+<li><a href="MyPyTutor26.zip">MyPyTutor26.zip for Python 2.6</a></li>
+<li><a href="MyPyTutor27.zip">MyPyTutor27.zip for Python 2.7</a></li>
+</ul>
+Unzip the appropriate zip file to your MyPyTutor folder.
+
+<h4>CSSE1001 Tutorial Download - Manual Method</h4>
+Before you start MyPyTutor you need to first download the 
+<a href="CSSE1001Tutorials.zip">CSSE1001 tutorials zip file</a>.
+<p></p>
+This file contains all the tutorial information required to run MyPyTutor for CSSE1001.
+The steps required to install the tutorials are:
+<ol>
+	<li>Create a folder in which to unzip the tutorials (within the MyPyTutor folder, for example)</li>
+	<li>Unzip CSSE1001Tutorials.zip in the created folder</li>
+</ol>
+You also need to create a folder in which you wish to store your answers 
+(we also suggest you create and Answers folder within the MyPyTutor folder).
+<p></p>
+When you first run MyPyTutor it will ask you to choose the folder containing
+the tutorials (where you unziped CSSE1001Tutorials.zip) and the folder in which to 
+save your answers.
+<p></p>
+<b>NOTE:</b> you need to carry out this procedure for each machine on which you 
+wish to run MyPyTutor.
+<p></p>
+<b>Recovering from a failure to install:</b> If you make a mistake when installing MyPyTutor and it will not start up then delete the file <tt>mypytutor.cfg</tt> in your home folder and run MyPyTutor again. This should ask for the tutorial and answers folder again. If this still does not work please contact the course coordinator.
+
+<h4>Running MyPyTutor</h4>
+<b>Windows Users:</b> Simply move to the folder in which you installed 
+MyPyTutor 
+and, if you have installed Python 
+correctly, double click on <tt>MyPyTutor.pyw</tt> (no console).
+<p></p>
+<b>Mac and Linux Users:</b> In a terminal change to the directory in which you 
+installed MyPyTutor and run the program as <tt>./MyPyTutor.py</tt>.
+ 
+<p>
+For Mac users (who used the manual method for installing MyPyTutor) 
+here is a method to create a desktop icon so that you can 
+run MyPyTutor by double clicking on the icon. 
+First download <a href="mac_launcher.py">mac_launcher.py</a> to the folder 
+that contains MyPyTutor.py. Next open mac_launcher.py with IDLE and then 
+from the Run menu choose the Run Module option. 
+Make sure the version of Python running in IDLE is consistent with the version of MyPyTutor.
+You will get a "magin number" error otherwise.
+
+You can now close down IDLE. 
+That should have created a file "MyPyTutor.command"
+that contains one line that is the path to MyPyTutor.py. 
+If you double click on MyPyTutor.command it should run MyPyTutor. 
+You should be able to drag this file to your desktop and run it from there.
+ <p></p>
+ <b>For all users:</b> Use the Tutorials menu to pick a problem to work on. Once you have done this, you 
+ should see two windows: the window that contains both the description of the 
+ problem
+ and the output text frame that displays output produced from running tests on your code; and an IDLE-like edit 
+ window in which to write 
+ your code.
+ Some problems will preload code into your edit window.
+<p></p>
+The MyPyTutor problem window can be resized as a whole in the normal way. 
+The two text boxes can be relatively resized by dragging the status frame. 
+Your size configuration will be saved for next time.
+ <p></p>
+
+ The Help menu gives you a more detailed description of MyPyTutor.
+<p>
+<b>WARNING:</b> MyPyTutor uses the same GUI library as IDLE (Tkinter). Sometimes
+Tkinter causes newly opened windows to be hidden under other windows. If you find that either MyPyTutor or IDLE is not responding when you think it should it
+could be because a window has opened but is hidden. 
+ 
+<h4>Feedback</h4>
+The MyPyTutor Feedback menu gives you the chance to provide us with anonymous 
+feedback on 
+any aspect of MyPyTutor. Feedback on individual problems is for comments on 
+the problem you are corrently working on. Your code for that problem will
+automatically be attached to your feedback. Consequently, this feedback is not visible to other students.
+<p></p>
+The general feedback is for MyPyTutor itself. This feedback is visible to all students
+and can be found 
+ <a href="general_feedback.html">here</a>.
+<p>
+<b>NOTE:</b> Because the feedback is anonymous, this system cannot be used for answering queries by students. If you want help on a MyPyTutor problem it would be better to talk to the course coordinator or a tutor.
+<p>
+<hr>
+If you have any comments or suggestions about this page, please mail Peter Robinson at <a href="mailto:pjr&#64;itee.uq.edu.au">pjr&#64;itee.uq.edu.au</a> 
+<p>
+
+</body>
+</html>

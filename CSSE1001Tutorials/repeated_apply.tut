@@ -1,0 +1,126 @@
+#{Text}#
+<h3>Repeated Function Application</h3>
+
+Write a recursive function <tt>repeatedlyApply</tt> that takes as arguments a function
+<tt>f</tt> of one argument and a positive integer <tt>n</tt>. The result of <tt>repeatedlyApply</tt> is a function of one argument that applies <tt>f</tt> to that argument <tt>n</tt> times.
+<p>
+So, for example, we would have
+<p>
+<pre>
+repeatedlyApply(lambda x: x+1,10)(100) ==> 110
+</pre>            
+<p>
+You may assume that the following function has been defined. You don't have to use it, but it can contribute to a pretty solution.
+<p>
+<pre>
+def compose(f,g):
+    return lambda x: f(g(x))
+</pre>
+#{Hint}#
+<tt>f^n(x) == f(f^(n-1)(x))</tt> - i.e. <tt>f</tt> applied to <tt>x n</tt> times is the same as <tt>f</tt> applied to <tt>f</tt> applied to <tt>x n-1</tt> times.
+#{TestCode}#
+U%D*80R+X1a`s`a(_`|gz"88m8fNk6aIk4Mm@xd
+Kx<<56Y+t(a
+Mn2}jR<ol<{p z*hl
+:(a8>OSUUBh$_L6mf`]u'4_P8qIG
+
+>O=6mk$.I9
+dE>lRy#$Gjx%j3p
+
+F%!r]h>tmjQHVSmG+U
+nT\hz`CJ3D3pq|`d -/q4m5
+?@L}h7\%%"o<q#GX*{k9hw9G Mdu$\xT?!K%okO
+%f0v!l(60N:EMyOd?M/>q`iR^|@,E
+]Ry(fhg|?=$?)/}I]b@F"dMQA:O
+w#G'#%_=I!o4/3m">\5%&8VCqD
+8')MAvCu65+e0q0Bl(\"JpwDK{
+V`(6QT?G2\:k&3L7&GLq:<')^GKfVx;
+uRdv\gPR
+7\#fN&269!K7UD_s#GOUF#{g-ni9H[
+nV%}]h]u=|a-nW+/$HqBH]OjOO/SjC\qsnVtc$w
+M8TyAMR%}gd]ao>qj8^J,fO1O_L{VqhB aSk
+}6::%T:]vl7Hn!_VF!T}eQlyfAueTzy^6\O^i9Ac,q. 
+vA8_:y%]HT2PAuD:HbXE57Zd058],1Y3x:CAs(BQ81
+PLfvCl\hvAhcDnw];2!DNRAi6ovwCCoq7((zQ&|P&? 
+hAv!hJRnu^%V_]6cjx!h+8`mi|Q\=^ Q,uf*'A`)K*
+d!R%H?2g
+Juwwl|<H{%,3uE\ $gU8k n(6}CVAP
+l[VVv(uRP=+D6<m%8uwfP%w0{F/:mkk1Gw
+d_"'H"}Vhv|@50(8lJbo+23n7k)i5EPV`/>v)2(n0=x8-"FdH-4=5Bg=zM@6y'./S*?/&eh&
+d|Q]%vHu]7V|cH=^ZS4T3)oY,/[|{0,+GF}{{(8(:miu:Col
+yu7V6R"|n:G]lV6d5/gav*`K7h-et]>%S+C8
+y{:"VTy>J)7\%d]69,@"^N,1zySsh0&l{vAm.j8zRi|uh*;
+%VJH"CP;8NH"A'vu|(T%y9n>"&*[+o//fIei!NiTA3HD|0
+GhuH6}0{l^(J|dtm5
+ynn\Ag#CCwHT{y`G4CyL"c!d{hrPvGDy.BwJ./'mtCGA+.?
+Vhv|A(CA"dhAgf@|}RT:s1LSAU(\kOAn9i-"8q_F!I1:0"
+#G>2[?=%::R7G}c7"7"w
+
+^dyu6Eg:Oh/`S_hfn=6^b83ww
+^J]7Nd%hS>M+{6EuFQ8*%y|O7K3K[)q< a?
+]^|@P)uC'TNv,D5kuQsH,0A^lWJH`
+TCnVh\yv]g%L4v4fLR&66Rj1h0Zh5yo2gU0'p.E41J[
+JAnn"gA"cl(}]RyV9G]u,6*Hu6CMt);fAB'g(c'|:J
+J>:@}(yh?%`LT/DErAB5aoh8R%+/==
+
+!|H8{OmH9=\!|knC-9\9'+\uaF]H[{
+AT=_VC6`F8LpD:'nhmWA4Q
+h)]"!]R#%]!6[DKv-(1`I?&m\UNa_=Y[cn
+=RVA]8R%0d6J(Ewd,6Fq<hkNdBdlDCdgL/zS48O,}Jw
+g%GARnL`^_VhG:}}"tC,{VOEV:%/*TKM(|c-!TGnPf
+"LA_v)`hJ(h7]`E8dqs<yjA?#SFyUMr3:AD
+
+h"0"#gEhnlXBSU!nhXz3n?Y{9?y
+R:N{[6@)J)g2dD|VS1|Fm})@ufR
+H{6VT]"7L"f7Rhm<k+ $15?'8CBKi5};
+
+
+
+Uto567KA
+b@[2:1:K
+5K>]iTM=SPa)/i/ux>?*PA,J5d-]0^+
+7h]KC9EJ_y3l<1pgG9>1@hW
+uC.<7Odp`C00fI:+]XJ9g\&M?*S
+I)A*4LHU%BhoY\H=X|*;$=Kym.63<k46W8
+66"@Ss,8^-DJRq6>:!Jp1}$c*(q4\v{e>GB*?n2h5n7iN^6.JahX'#zNm
+)K"nAX]|%B{R)DE+IF'<7I+q+7
+?d6V-J"/G@StJfs?E\OloFYL*DFSKJm\q< 9:m_NE8x1UI\aM{5h.CL-7GkBjH%n<}B?po/9+
+5/paTUd=dVj\k6ju3/.7_&S7qdA"Sn;5H63im5L
+J\_(,Xn8>Vy?j8k1^I+p0eL_U*nsyZu11i+_-MAz|6I{R1G?v;M'I2jJ9zo__6eI9(m,6:Cz;+mL?bG(Qidi$
+
+,Q>8K7I!
+ZGdtm`{&
+\3Po>XHB(]]8
+J,p#
+vHL\,J,rULM'hzmZ}G7>8qb 3N%#0;|h:.qHNlWzSwrpx.RH5.V
+d:"6C+R'%VXMn
+/Q&j:rL@BD'3@ACW>Hn8
+y?GLnsSBs!CP&goq!9s'OU
+wC{lq']+7KwM].
+!:_Fru7B5Y
+]}0_(Q7n
+!)-vyWln?tQ]gTBG&c!K\ 
+Vc|]0+HsF7uQE_/%J=yt8EvddfU6w;D9?v/CnO 1uR>oVC'"fY|vvRY.8N!(@-9wQ@Lgv)Jh#owF{JyMDoU7M1m&DQkn\g]4|5VL?NmcdfR aREv$)s(=p?L_jA*7r/*\wQ
+
+(;H5R|tU
+Pz(xR.59
+#Lnyb5!BRlD
+UQgu
+V!J"Dn7'1ofgR<^,fGU3GDMY*10bp(dE: @6bB7S({iTD+hQ
+\!N_+JweVY*Xn
+`wL`$S%*fd33uK2\jn3y
+6gM'YJ?^H`D< {V(SCKv&@
+aH0C8NH8h?cuGd
+7P_vA0VNsj
+:yR%S"I0
+g:H2\<c?I?L%B^yio+v]T}
+V06A@.<1^-%EBB>1n%Pjw$QRk8@`.KrEO8CR$|wFnqcej{Lj!b!WlA3nPXt$>wu\Hgc#;lH`-:^U!07/hfN5K*(^}>vUIjF:=xLF7DX{q]05w4zV7oh7fu_dq]I
+
+Pe@=x,7Q
+D:k1G{'Y
+#pjJ(h8p,
+
+
+
+
+

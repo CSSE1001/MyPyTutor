@@ -1,0 +1,64 @@
+#{Text}#
+<h3>Slicing Strings</h3>
+Any iterable object can be sliced. Slicing is used to extract
+a sub-collection of elements. For example, slicing can be used to get
+elements for a range of indicies.
+
+<p>
+Assume the variable <tt>text</tt> contains a string of length at least 10
+and <tt>start</tt> and <tt>end</tt> contain positive integer values.
+
+Use slicing to write three assignment statements that respectively assigns the 
+substring of <tt>text</tt> from index <tt>start</tt> up to but
+not including <tt>end</tt> to the variable <tt>ones</tt>, 
+the 
+substring of <tt>text</tt> from index <tt>start</tt> up to but
+not including <tt>end</tt> in steps of two to the variable <tt>twos</tt>
+and 
+the 
+substring of <tt>text</tt> from index <tt>end</tt> down to but not including
+<tt>start</tt> to the variable <tt>back</tt>.
+
+<p>
+For example, if <tt>text</tt> is <tt>'abcdefghijk'</tt>, <tt>start</tt> is <tt>1</tt> and <tt>end</tt> is <tt>7</tt>, then <tt>ones</tt> should be <tt>'bcdefg'</tt>, <tt>twos</tt> should be <tt>'bdf'</tt> and <tt>back</tt>
+should be <tt>'hgfedc'</tt>.
+#{TestCode}#
+U\j-i&"L]lDq1yrOM(P8%'rTQ`kBV?5$gF:+IQ/
+MI&w?U`'
+U-3btY<=
+W9K50eeW"i56sVK:,&(ufz
+G7Z-/:H?=u
+3:SXLw0
+SS=B0->B
+$'gs9(%m|\pk9P{>`9"G0z,qoHz9smcR+shQ?:HOXfF.
+AMRatmM0
+3-wsn
+_J]PwS^Bh@Ff@z$wngn":Nl.'<?jPRm1X"QJuL^ %_%l&=pHG3LiZ46\&I0cIk6+8_iii0MeS
+LR)R
+jOiVT"O3.m]LNz,8Rw/0]
+BfwBU,U#M
+*(wXfUNbGM}I+
+FQpj[f&Q4Oz5RQ5J|SHoFNJSg#x H
+Fj*G}(*Ia%8j@1G+O3MUm
+Un9Cm`D7(]T1Yikc*C<Ix[$C5{
+O7],Ji+L
+_sY}K0Hj5/YcJH
+45BB{X\Vj
+uVXR9.d
+s`N{80U`
+_nJ%C,YzS3^Zm5g=W#qHwQd:e|RF[pre&x$KYyG<V+xFY@S*O*+FOA[dv=1
+%tA%F(x_@I=ZF3U{JUPx+
+U<r$1LR]U"a#3P$v)\B'FPD$$!Fbw<sRnj7x1pLS!?5&&7nv,;)xK$L5.ye>AV&1f7]U5rH
+YMyJ9!gW0iQ$NPW
+P,gN+v`rhO?+0s+i<G3=O$k'"z#A0<aKVu!y$HS-TzU4j_l_Bd1ns0fZ^s-?{OA(9 w3R$U4,f&+u_i]HU\F+vjh
+5WtENSiV4w`+zHY
+=.?_)n*}B.&bv7dGAv#Uz2/H6*f'D?s2VPNTp(P\A S;]0BXx$w?${E#aqDRB64i;QF*\+WfAsh?d)!1VP kRpfn
+M|;%2GyZo?V 5rr
+:Nl0tI3MXSFDyC 4Rtf0</r'oTX:wE.z]GZCeL+x?zx/BmLsmLqu$XW3Y_+.eH!{K1TXg?TYT[ZIDfk}ZRr!F%Ch
+&/gL{
+Ai0?okn1&Uf$l
+
+
+
+
+

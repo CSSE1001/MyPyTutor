@@ -1,0 +1,105 @@
+#{Text}#
+<h3>Writing Lambda Functions</h3>
+A lambda term (function) provides a mechanism for defining 'anonymous functions'.
+<br>
+A lambda term has the form
+<br>
+<tt>lambda </tt> <it>args</it><tt>:</tt> <it>expr</it>
+<br>
+where <it>args</it> is an argument list (like the formal parameters of a 
+function) and <it>expr</it> is an expression.
+<p>
+So, for example, given the assignment
+<br>
+<tt>f = lambda x: x+1</tt>
+<br>
+then <tt>f</tt> can be used as a function with one argument. The
+expression <tt>f(5)</tt> evaluates to <tt>6</tt>.
+
+<p>
+
+For this problem you are to write two assignment statements that respectively
+assigns to the variable <tt>square</tt> the lambda term that squares its argument, and assigns to the variable <tt>odd</tt> the lambda term that
+tests if its argument is an odd number.
+#{TestCode}#
+S5_41Y3SvEd`YejF@6WT`?Fn#3:|+6wLWZ\!TRK
+MN|5!M='B 
+!]Nvb9Ts&FD3?O1b'19_2e
+hj19ynn,4^xs<?AM&!
+-&9,JC8N#56:p0wMlOKiD`}
+=y!;%D95<ZR:i dSnUFx0Kynn4TDSGdIE2
+=2w!,x\Hu4.s-&BWd6f?2hm"mM#D#Ih
+d!nS?-yKf3;sqBOrfObRD4?{ {NwVy>a?'
+=5\M{d[[+uJg[zZyJwDk'_#iIWqL)H9
+
+P}q+eCCW(QtYCcr7+h=Ufr@:/!^*n
+iSia%BiPhN:T!fdYt;\6ih)(&dhWxUj$A)%}nM^:>HW(|?e;-$br37#\dhBhG;kW
+-s}xa+l;;;xC\eV0wZC@[%G>:7wXXrXJDj{z1Z{y`,FG5Xn&wYL
+\P;e\&rde:6\;|:wSZVIY"5N1g*yb@n_w8fCn:WM.
+Rqx:fS?:Ke6KKB}ZE6tiqDr/p2%)E`C"S|X3:,+R705n^<uB"_#}i:45`)eVL9#wz:K2^:T
+NLhR@\!|!BBSd8{|,QQPt"R`K46ek6p^AF:@)%L$}w8"C
+,SZMM+M-+\qM 9wW+9:Y!a6QEw2=dCm='^Ylb8&Um9b;1bAE
+xC}\WJ\SM\S2+!_yi!BY^;R!Z5Or_$kT{'?S\;
+%q@T6%!82,scT[yr?lBZQLjs<cv$ZW1@\\eeH@Dapm"Sy\j-phJV]hk6<Fli*P>+Ylo836t
+,%2SNZ+|CJ\B-NDH{'8! H_!Qdi i1DJ#:{^8B)$s;QRycr5d|\
+i:JNGP2,`J9Y5m-([982=sEFE@c.\tW,Bz6a:Yxa '_\L)T<f50j}XBhA$(.A($V1Oe
+c':ytDBsTJT%@GI;ITknTX
+T6rB*d%;l-SlGRe%\1GJNfk0w@($uIsFT<JXrsg$!7XZ+JIkaFV1gC@_uv
+5yP0DGtCS!}6h:x!olAPH#b}mK>([WFP- XV6UBK
+Q@y6+G*BK\6-p.p0\cvX'_,uJSeT-4;)cJ1F6d0CdyGE'9}=3nD&!*BrO_hC6C{)u<1AlBCAze]
+B%tCy^VPK0=G5||t/GSS3j'rZ?mR1NbWp0eRSd7sep2n
+-\KPP^&J|e-x@T{VB=M-<"w8j0|[?.pOVQBgt^qaQ?P0C
+w0}[e+cT&S"@:s+l-%{qW#+;N%fKj,4x0?*+IuCymH G)V2V7AQ&?I;)`95cfu
+;MC+'M=+&;:2=T&i^N9@KJ0-BdL\^Q sT77-5y=cB|'@t!XeS
+!8BB0{qCQ\%BQP6akY%*"NK!9$q)h';rd<\2dqyTT
+*\[\|Dyql}ZQsx!=DqQ*4CRgH?(*^1P<glD!B}*>0^
+lq![H6hTR;hBBRCRK[+9\K%Qc!?n/^8Vs6@El2c{m&ujbeQE:P_.E,a?%.XeVt
++TM%rZc5c_;2anx:Tq[Q\^!wOjb;)3e1/(WI|WmWtMaeDd
+
+Jq[qRP+H?Jl5
+0Nb)}CMz
+
+.[n1JC+i
+77D,n8J?gN%R:}\o`XH2yjQ8eD"`kYe
+8l@TQ<6Bns>yz8k<ijZtBBS
+9;*-!(;Y^x{W7{\E8u6R<9?RRPD
+&;-i=mTk%?pIbPHA}43s!bbY[9)*e
+VK;J9yPm8<ke 4w[cXBs91nNdS"b"aI%H_Dif-9AuC25z9P)`{L
+;x-`-Cn/qCS];d|W0IF{:A:G>>`[(n-
+_D:sq;6UIU BqpqCI7De|b?? B=>#lEEz}S@To]nbN9LcicLPQE;-P=SAhFEr2'XAJhSz
+*qnC;p*\MuhBoi<G3{cW=*-B+5Cq
+Sq+|?tjiQqEH}3P_7?RzLH&.fyOMJZ%/f%?L5odUR:*0qNIK
+)Znk\3)8[2Q" d?e3M)9#BT:M1=*
+#8qC??GLYuCe3Tq5Zs<Nw^^N2:q<9,sfzo[a-2g(.B-NPPM:|]eI_G[HO33;!8!Ih+
+
+
+KSvAH.N!^?`l1S, y=J,z
+(M?CdLpu
+?RE|N\deV-};J
+2l:tq!mozTJKU.JZ>L\t!VfcC
+
+ov9bNp|^
+<e`F?Y;#^iZd\B_TaLT/3
+tXYb`4.3KWJk"C-{G s2qTL
+
+CwE\
+f|W:?d#3NlxN9yBjYG3|?VJqh)2=<l
+|,!N+A.`\ppv<wZhfep__X..
+TVBqlDRC^9m:*
+9K^PjJ*l73;$+t<>7dr^
+iZsGEwy@R^fF0PX SD25Xl
+h!J'R{No!sKRQM
+-:\29_qbP4
+x}}@{\0%
+qq-MBZI!|8BfPK}s0_:M-+7,$_A^o{{'tB|m
+LyP!4](O#.ZwyU!B]&6dmf$NIbS#X59?f)[Ga\&r_$rb=iKWL\Hn:1/@]ug>pdMS6&IU!NK_Y[vAX-hH-mooqQ0JK5>x`b54)5ttfzh7eYA_bO45=KnpOJd/
+KfBda_OD(.OPx6I\,8DqyBB.0f;;sT
+&GB2@;\05,bq@LwbsK-E;lYxeC;d19ABi |BH;B[EOLP|9qy:IfMq^<D@p1>x=;'t7D}t8=*+gs2t{Su<-A[XlV^6/4PZ_sj*hi%gev<.9ez2hy5|54+\
+
+w'm2=Lr;
+<p'8D:vd
+;1JOd2M\d
+
+
+
+

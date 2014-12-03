@@ -1,0 +1,233 @@
+#{Text}#
+<h3>Recursion - Nested Lists</h3>
+
+
+It would be handy to have a procedure that allows accessing lists that are nested to arbitrary depth. It would take a nested list and some sort of an index, and return the part of the list at that index (which could be a list or a primitive type such as a number or a string). Consider the nested list:
+<p>
+<pre>
+    nested = \
+    [[[1, 2],
+      3],
+     [4,
+      [5, 6]],
+     7,
+     [8, 9, 10]]
+</pre>
+<p>
+To select the element 9 out of it, we need to do something like
+<p>
+<pre>
+     nested[3][1]
+</pre>
+<p>
+However, note that the level of nesting of the element we want shows up in the expression. If we wanted to get the element 5, we would need:
+<p>
+<pre>
+     nested[1][1][0]
+</pre>
+<p>
+In this way, we cannot write a general procedure that takes the location of an element in the list and gets us the element. We want you to write a recursive procedure recursiveRef that would work as follows:
+<p>
+<pre>
+     >>> recursiveRef(nested, [3, 1])
+     9
+     >>> recursiveRef(nested, [1, 1, 0])
+     5
+     >>> recursiveRef(nested, [1, 1])
+     [5, 6]
+</pre>
+<p>
+Note that the indices are lists of integers.
+<p>
+Assume that the indices are always valid, so you don't have to do any error checking. 
+<p>
+You code should <b>not</b> modify either argument given to the function.
+#{Hint}#
+What should the base case for the recursion be?
+<br>
+What should be the value of <tt>recursiveRef(anything, [])</tt>?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.in_recursiveRef = False
+        self.rec_call = False
+        self.rec_arg = None
+        self.if_arg = None
+        self.in_compare = False
+        self.in_if = False
+        self.rec_arg_ok = False
+    def visitFunction(self,t):
+        if t.name == 'recursiveRef':
+            if len(t.argnames) == 2:
+                self.rec_arg = t.argnames[1]
+            self.in_recursiveRef = True
+            for child in t.getChildNodes():
+                compiler.walk(child, self)
+        
+    def visitCallFunc(self,t):
+        if self.in_recursiveRef:
+            if t.getChildNodes()[0].__class__ == compiler.ast.Name and \
+               t.node.name == 'recursiveRef':
+                self.rec_call = True
+                for child in t.getChildNodes():
+                    compiler.walk(child, self)
+            else:
+                for child in t.getChildNodes():
+                    compiler.walk(child, self)
+                    
+
+    def visitIf(self, t):
+        if self.in_recursiveRef:
+            self.in_if = True
+            for child in t.getChildNodes():
+                compiler.walk(child, self)
+            self.in_if = False
+
+##    def visitCompare(self, t):
+##        if self.in_if:
+##            self.in_compare = True
+##            for child in t.getChildNodes():
+##                compiler.walk(child, self)
+##            self.in_compare = False
+
+    def visitName(self, t):
+        if self.in_if and t.name == self.rec_arg:
+            self.rec_arg_ok = True
+
+
+
+#{test}#
+#{start}#
+import compiler
+#{code}#
+text = user_text
+ast = compiler.parse(text)
+visitor = CodeVisitor()
+
+compiler.walk(ast, visitor)
+if not visitor.in_recursiveRef:
+    print_error("Wrong: recursiveRef is not defined.")
+elif not visitor.rec_call:
+    print_error("Wrong: recursiveRef should be a recursive function.")
+elif not visitor.rec_arg_ok:
+    print_warning("You don't appear to be using the correct argument for recursion.")
+    
+
+#{test}#
+#{start}#
+
+n = [[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]]
+ref = [3,1]
+#{code}#
+answer = 9
+try:
+    result = recursiveRef(n, ref)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif n != [[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]] or ref != [3,1]:
+    print_error("Wrong: you have modified at least one of the arguments.")
+elif result != answer:
+    print_error("Wrong: for recursiveRef([[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]], [3,1])\n you got %s - the correct answer is %d" % (str(result), answer))
+
+#{test}#
+#{start}#
+
+n = [[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]]
+ref = [1,1,0]
+#{code}#
+answer = 5
+try:
+    result = recursiveRef(n, ref)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif n != [[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]] or ref != [1,1,0]:
+    print_error("Wrong: you have modified at least one of the arguments.")
+elif result != answer:
+    print_error("Wrong: for recursiveRef([[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]], [1,1,0])\n you got %s - the correct answer is %d" % (str(result), answer))
+
+#{test}#
+#{start}#
+
+n = [[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]]
+ref = [1,1]
+#{code}#
+answer = [5,6]
+try:
+    result = recursiveRef(n, ref)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif n != [[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]] or ref != [1,1]:
+    print_error("Wrong: you have modified at least one of the arguments.")
+elif result != answer:
+    print_error("Wrong: for recursiveRef([[[1, 2], 3], [4, [5, 6]], 7, [8, 9, 10]], [1,1,0])\n you got "+str(result)+ " - the correct answer is [5,6]")
+else:
+    correct()
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

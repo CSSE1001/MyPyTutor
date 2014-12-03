@@ -1,0 +1,73 @@
+#{Text}#
+<h3>Raising an Exception</h3>
+You are to write a function <tt>string2int</tt> that attempts to convert a string to an integer. If the string does represent a positive integer then that integer
+should be returned. If the string does not represent a positive integer then you should raise a syntax exception (<tt>raise SyntaxError('not an integer')</tt>).
+<p>
+You may choose to use the (already defined) function <tt>all_digits</tt> that takes a string and 
+returns <tt>True</tt> if all the characters of the string are digits and <tt>False</tt> otherwise.
+<p>
+You may assume you don't need to deal with strings representing negative integers (such as <tt>"-42"</tt>).
+#{TestCode}#
+v/YWHJlhDX=t->+)?[#)O>Ba]PH)gNAb ewFT/t
+o*8K z`)
+osH Rm%8
+]OT3:VafoR @H%l8=ZPpk0e
+g=Og:A?s>:vMwY7&PGJ*
+2gg++0gaq,&MR|h,#vakbrO]%?G
+P7SOvIUGWBsR`u(Fe3A0IAlp
+s#73AN#^!&67Nn`
+
+
+3:Q#6+Y 
+
+,kb>
+5C#+e.c$$n{l#\(gHi&Ha'i ?S';-N|
+sZwaS,z9k'6!\U+'1BV$3SiRc@]*-6"
+w(6sq"kn6g"4]m|A]w$0\x_z4UQgJ\B5Ypw9KNRE9#+M_n[-,"ti'j8SA+^Pr`*[
+Rh"=f,kkp+XdfAmyi5Gpa\
+Ph#sWKZ[i[ffExsgO$!E5Okj>Z^BI6l3)Me;NN?R[C"|J{AqP93?xA>-z0-iD'k}M:0{U@|'8|.gk2V<-q03'S--|="
+hMQ^N{-]QAh^AF}4M2{=
+-naz"!9ywR!'+!Eo}0n(K}iia}8PJ>(DN"Q,\6*3hMr:T-rvJ(>7adEW9UL y3-PaE,.HW@
+
+
+ srhlif_
+Xnp'^&hG
+(^3A3q!TinWP8\WD?boin6,
+3h|xj@.qa'ml7(EA%iz%
+-8gqDL9BLX{2|]q@#WBvf :,V[?
+DeP7vB|='6"{}$)DN-=os#L$
+276:&P|NuyDi1,X
+
+X?q\zW6j
+
+f&MQ
+whAQGL2qjb[0QaztWqDTT=S \Cyt;7>F
+Dsie%`gGIlO6XZ*&:Zj(j@RybX8]+!8|BRkE1 Uu`,O6eskC:(ytO7pNZdXEbr:"*MT#l|\n|g\j
+w=xxh+0P\M?=_#bewyXwbL
+{v"$myanE&INw]+UMI%b8z.cI8\+5WD,xP
+Z5l6gg]aSVdnwjinM
+np\Z`^,lH
+7s7]D\7]]1V\#uUv'\6L A"v) G2_jmO+2.fi#Z^v23{wK1Cm]OY;9>^M"3 *(o56P2CS7=?[ap3{AxABZp|Uoh;[
+Oapx^,Ii-Lm^fQ!Q)e}^
+6n'&(Q(X3\xby.ds9ivYErt2oBL'-&,/02#3]{.)7d;u|cmzm^0HZQa9<liPVqyW|o0*\%vl[1rpP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

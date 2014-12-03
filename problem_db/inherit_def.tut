@@ -1,0 +1,250 @@
+#{Text}#
+<h3>Using Inheritance</h3>
+
+
+Consider the following (base) class.
+<p>
+<pre>
+class Employee(object):
+   def __init__(self, name, salary):
+       self._name = name
+       self._salary = salary
+
+   def my_name(self):
+       return self._name
+
+   def wage(self):
+       return self._salary/26   # fortnight pay
+</pre>
+<p>
+The first part of the problem is to define the subclass <tt>Worker</tt> that inherits from <tt>Employee</tt> and includes an attribute that refers to another employee who is the worker's manager. You should define a method <tt>get_manager</tt> that returns the workers manager.
+<p>
+Example
+<br>
+<tt>worker = Worker("Fred", 52000, myboss)</tt>
+<p>
+The second part of the problem is to define the subclass <tt>Executive</tt> that inherits from <tt>Employee</tt> and includes an attribute that refers to the yearly bonus.
+<p>
+You should override the <tt>wage</tt> method to compute executive pay based on his/her salary and bonus. You should use the <tt>wage</tt> method of <tt>Employee</tt>
+in the definition of the <tt>wage</tt> method for the <tt>Executive</tt> class.
+<p>
+Example:
+<br>
+<tt>executive = Executive("Kerry", 520000, 1040000)</tt>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+#{preload}#
+class Employee(object):
+   def __init__(self, name, salary):
+       self._name = name
+       self._salary = salary
+
+   def my_name(self):
+       return self._name
+
+   def wage(self):
+       return self._salary/26   # fortnight pay
+        
+#{global}#
+import compiler
+class CodeVisitor(object):
+    def __init__(self):
+        self.worker_class_defn = None
+        self.worker_init_argno = -1
+        self.worker_getManager_defn = -1
+        self.worker_wage_defn = False
+        self.exec_class_defn = None
+        self.exec_init_argno = -1
+        self.exec_wage_attr = None
+        self.in_wage_defn = False
+        self.in_class = ''
+        self.worker_init_class = ''
+        self.exec_init_class = ''
+        self.wage_class = ''
+        self.wage_arg = ''
+        self.in_init = False
+        
+    def visitClass(self,t):
+        if t.name == 'Employee':
+            self.employee_ast = t
+        elif t.name == 'Worker':
+            self.worker_class_defn = t.bases
+            self.in_class = 'Worker'
+            for n in t.getChildNodes():
+                compiler.walk(n, self)
+            self.in_class = ''
+        if t.name == 'Executive':
+            self.exec_class_defn = t.bases
+            self.in_class = 'Executive'
+            for n in t.getChildNodes():
+                compiler.walk(n, self)
+            self.in_class = ''
+        
+    def visitFunction(self,t):
+        if self.in_class == 'Worker':
+            if t.name == '__init__':
+                self.in_init = True
+                self.worker_init_argno = len(t.argnames)
+                for n in t.getChildNodes():
+                    compiler.walk(n, self)
+                self.in_init = False
+            elif t.name == 'get_manager':
+                self.worker_getManager_defn = len(t.argnames)
+            elif t.name == 'wage':
+                self.worker_wage_defn = True
+        elif self.in_class == 'Executive':
+            if t.name == '__init__':
+                self.exec_init_argno = len(t.argnames)
+                self.in_init = True
+                for n in t.getChildNodes():
+                    compiler.walk(n, self)
+                self.in_init = False
+            elif t.name == 'wage':
+                self.in_wage_defn = True
+                for n in t.getChildNodes():
+                    compiler.walk(n, self)
+                self.in_wage_defn = False        
+
+
+
+    def visitCallFunc(self, t):
+        children = t.getChildNodes()
+        if self.in_wage_defn:
+            if len(children) > 0 and \
+               children[0].__class__ == compiler.ast.Getattr and \
+               children[0].getChildNodes()[0].__class__ == compiler.ast.Name:
+                self.wage_class = children[0].getChildNodes()[0].name
+            if len(children) == 2 and \
+               children[1].__class__ == compiler.ast.Name:
+                self.wage_arg = children[1].name                  
+        elif self.in_init:
+            if self.in_class == 'Worker':
+                if len(children) > 0 and \
+                   children[0].__class__ == compiler.ast.Getattr and \
+                   children[0].getChildNodes()[0].__class__ == compiler.ast.Name:
+                    self.worker_init_class = children[0].getChildNodes()[0].name
+            elif self.in_class == 'Executive':
+                if len(children) > 0 and \
+                   children[0].__class__ == compiler.ast.Getattr and \
+                   children[0].getChildNodes()[0].__class__ == compiler.ast.Name:
+                    self.exec_init_class = children[0].getChildNodes()[0].name
+            self.in_init = False
+
+
+#{test}#
+#{code}#
+ast = compiler.parse(user_text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+worker_bases = visitor.worker_class_defn
+exec_bases = visitor.exec_class_defn
+emp_code_string = """
+class Employee(object):
+   def __init__(self, name, salary):
+       self._name = name
+       self._salary = salary
+
+   def my_name(self):
+       return self._name
+
+   def wage(self):
+       return self._salary/26   # fortnight pay
+"""
+east = compiler.parse(emp_code_string)
+if repr(east.getChildNodes()[0].getChildNodes()[0]) != repr(visitor.employee_ast):
+    print_error('Wrong: you appear to have altered the Employee class')
+elif  worker_bases == None:
+    print_error("Wrong: you didn't define the Worker class")
+elif len(worker_bases) != 1 or worker_bases[0].name != 'Employee':
+    print_error("Wrong: the Worker class should inherit from Employee (and nothing else)")
+elif  exec_bases == None:
+    print_error("Wrong: you didn't define the Executive class")
+elif len(exec_bases) != 1 or exec_bases[0].name != 'Employee':
+    print_error("Wrong: the Executive class should inherit from Employee (and nothing else)")
+elif visitor.worker_init_argno == -1:
+    print_error("Wrong: you didn't define the __init__ method of Worker")
+elif visitor.worker_init_argno != 4:
+    print_error("Wrong: the __init__ method for Worker has the wrong number of arguments\n - there should be 4 arguments: self, a name, a salary and a manager.")
+elif visitor.exec_init_argno == -1:
+    print_error("Wrong: you didn't define the __init__ method of Executive")
+elif visitor.exec_init_argno != 4:
+    print_error("Wrong: the __init__ method for Executive has the wrong number of arguments\n - there should be 4 arguments: self, a name, a salary and a bonus.")
+elif visitor.worker_init_class != 'Employee':
+    print_error("Wrong: the __init__method of Worker should call the __init__ method for Employee")
+elif visitor.exec_init_class != 'Employee':
+    print_error("Wrong: the __init__method of Executive should call the __init__ method for Employee")
+elif visitor.wage_class != 'Employee':
+    print_error("Wrong: the wage method of Executive should call the wage method of Employee")
+elif visitor.wage_arg != 'self':
+    print_error("Wrong: the call on the wage method of Employee in the definition of the wage method of Executive should have self as its only argument.")
+elif visitor.worker_wage_defn:
+    print_error("Wrong: you have define a wage method for the Worker class")
+elif visitor.worker_getManager_defn == -1:
+    print_error("Wrong: you have not defined the get_manager method for the Worker class.")
+elif visitor.worker_getManager_defn != 1:
+    print_error("Wrong: the get_manager method for Worker has the wrong number of arguments\n - there should be 1 argument: self.")
+#{test}#
+#{code}#
+
+try:
+    boss = Executive("Kerry", 520000, 1040000)
+    worker = Worker("Fred", 52000, boss)
+    wn = worker.my_name()
+    ww = worker.wage()
+    wm = worker.get_manager()
+    bn = boss.my_name()
+    bw = boss.wage()
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif  wn != "Fred":
+    print_error("Wrong: you got the wrong name for a worker.")
+elif  ww != 52000/26:
+    print_error("Wrong: you got the wrong wage for a worker.")
+elif wm == None:
+    print_error("Wrong: get_manager for a worker did not return a value.")
+elif wm != boss:
+    print_error("Wrong: get_manager returned the wrong result.")
+elif bn != "Kerry":
+    print_error("Wrong: you got the wrong name for an executive.")
+elif bw != 520000/26 + 1040000/26:
+    print_error("Wrong: you got the wrong wage for an executive.")
+#{test}#
+#{code}#
+correct()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

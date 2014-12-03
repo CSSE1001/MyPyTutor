@@ -1,0 +1,64 @@
+#{Text}#
+<h3>Accessing String Elements</h3>
+First note that all iterable objects (such as strings) "start counting
+from index 0". This means that the first element of a string is at index 0.
+<p>
+Assume the variable <tt>text</tt> contains a string of length at least 3.
+Write three assignment statements that respectively assigns the first element
+of <tt>text</tt> to the variable <tt>first</tt>, the second element to the
+variable <tt>second</tt> and the last element to <tt>last</tt>
+<p>
+For example, if <tt>text</tt> is <tt>"Spam"</tt> then <tt>first</tt> should be <tt>"S"</tt>, <tt>second</tt> should be <tt>"p"</tt> and <tt>last</tt> should be <tt>"m"</tt>.
+
+#{Hint}#
+Remember you can use negative indicies to access elements from the end of the string.
+
+
+
+
+#{TestCode}#
+#{test}#
+#{start}#
+import random
+tlist = list('abcdefgh')
+random.shuffle(tlist)
+text_init = ''.join(tlist)
+#{init}#
+text=text_init
+#{code}#
+f,s,l = text_init[0], text_init[1], text_init[-1]
+if text != text_init:
+    print_error("Do not assign a value to text - MyPyTutor does that.")
+elif first == f and second == s and last == l:
+    correct()
+elif first != f:
+    if type(first) != type(f):
+        print_error('first should be a string')
+    elif len(first) != 1:
+        print_error('first should be only one character long')
+    elif first not in text_init:
+        print_error('first is not assigned to any element of text')
+    else:
+        print_error('first is assigned to the wrong element of text')
+elif second != s:
+    if type(second) != type(f):
+        print_error('second should be a string')
+    elif len(second) != 1:
+        print_error('second should be only one character long')
+    elif second not in text_init:
+        print_error('second is not assigned to any element of text')
+    else:
+        print_error('second is assigned to the wrong element of text')
+elif last != l:
+    if type(last) != type(f):
+        print_error('last should be a string')
+    elif len(last) != 1:
+        print_error('last should be only one character long')
+    elif last not in text_init:
+        print_error('last is not assigned to any element of text')
+    else:
+        print_error('last is assigned to the wrong element of text')
+
+
+
+

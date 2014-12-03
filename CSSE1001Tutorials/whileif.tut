@@ -1,0 +1,186 @@
+#{Text}#
+<h3>While Using If</h3>
+This problem combines the use of a while loop and an if statement.
+<p>
+Write a function <tt>div_3_5(start, end)</tt>
+that computes the number of integers from  <tt>start</tt>
+up to, but not including <tt>end</tt> that are divisible by 3 or 5. 
+<p>
+Examples:
+<br>
+<tt>div_3_5(7, 27)</tt> evaluates to
+9  ( numbers divisible by 3 or 5 in that range: 9,10,12,15,18,20,21,24,25)
+<br>
+#{Hint}#
+Use the <tt>%</tt> operator to test for divisibility.
+#{Hint}#
+Use <tt>or</tt> in your test.
+#{TestCode}#
+,g 1>wJ}N*3yH#W|[F]W'Ez%f*:V7#2`9rsp`iN
+Fgs}*YU3#}
+>6N !kKg&G;MS3}2[EB]4c7^9 
+@o.)&I!"a*H4pDe#OK
+[SK,RZ4;<xgGH}^,1!N[;FF
+BYY41#sI}X:]uU(%qAu>K4
+Y$o,$GK|_2ygPpVC_"6|k9,eXW62
+;4+a4![[<y3IO_U>\oWw\u9I`4Ep:e 
+2[Y##E[U)>{K#]I6ppRQeh{qMb#a
+Kt{1oC#KZN'd"H@[)*B;WpK92
+K7a)|\apd[[py$&4KQ!Br2(=>#T$](|
+
+*lz)M*huT^6UY$TCfA}sd:H"{[ycBu
+=k7Sgg,},%+)eC/0W}^)UBC>C,Zs\bu
+S]r{IL+o#S,jPiC/-z!3Q(h`j3B29>D
+e/4o\gSYU]KWe>S#,$:R;iX-ohg!fG{q@(
+[KEI\+.CWKG+u=?gGA@7"MYpVKE=0%2PVxhV7vo
++]EYCY!Gt.Wp7W#cfDP=6k.uP{5^J?CSt:bcg\rWs3jG]gKK/9e#[
+]m|Gxv=.bB,ZSj?O_TArc=B!
+aRS=Sk{Seti%9uD|CvWI@Wg#qj=6_YAM1TN+pi&
+
+.g2j9rUYOF}L`C^6[B[.<5\>px}
+K"7$q"L-e-a@v%Ae6L*awu$s
+I{E,+tU74.!\d.izQl6w]?Y .E|
+]eUSSI[1C.A|V GE+LD"QRD-.{y#e3n,;wApDo3O7`l7Sj
+q|jIjoo\!.oUUL6NfA@YB:p{`}h2?"oN;GZ@9i&
+US]/gE*\a9Ul<|UOEf#sSI]|_#h
+j/!l)pSj
+KKm7v>yp+\(Z3ov]8?196v%[/]3c
+U+p{KLlG|NoiEMk@b|2eRg}uNs17ab
+j]97*W;G
+
+61ppH=Zh
+%Pg|ted7
+L%$[$g?9I
+W_rWdee
+
+,x|zA08H
+*gAc" -4eRM|%T+*
+]p/p@stbB!Z5Vu=!r%)"wqBiQj
+&,veIDpu&](kx2gZif%J+d\
+JV1EwbSOILW{@_rH?xp!.\29 dL
+2349MsIkZZ&qHM=]o-?y)6Z*US
+aIYS|t(epvB `zG$U7%PGw OXSteIR>U4a:AjOrBY=z$4XLZE!fQpq&8Cqs
+J/DC4X:|<yhv}]<hY>v>$HN-=GaJ{:Z$c.
+/p44O[}yMl3cd%@<+4:&E5pb=/.\@'2n(,ED3&c`
+ p\D*90IMM&gfc"Y8wh2|&ivx]H8A/g0a
+C=KeI7@zY>oU1c=$6"X\GTG9jjx>:S4b7cK:->S2K"%M}#^
+ Z};[zhGm1RR(Q}#:JhH}&2R%{tN/%!
+-I4adI,!#4L7hasegm##7G[,}=/qs2uK)):eCaJkwnj
+>:>MEI:`[,xvg ^"a#D:dU|XxG;LE!
+./*{=%-$f,C&1n#E]XN9c$W)XA9>n'/eG:=m/UL` #<`.L8cK
+H5`)C;$e$OF[Qdt|ki"y[}|Gg1j;="XH{#a6 h.WUPft49:N
+L]7p/#FmSHoOif-Oc!'B.>3W>IH%,_Jy-#$xvv|{]CAK.A2}HwK>[QArr@^7E,o9R%;1j
+v/=#c_N]K#x\>M<7*Kda[9t"4YW8
+{$Lp FBEe|q=+.9djE<!e'2hASsAG>AcGxKRS5]w HZAyt
+
+XFa:</or
+16gb[A0Z
+@Ob+;7Z{U
+v9#ooW%
+UC@':K1t4J
+7FqRWydD
+=ON=
+ee9.oY2aj'WVKr]uF%=htpS<5A;7tcR7
+C4-;M:P$UdtR@owYzI?Q,Zj*l>tc,a_( #
+WC4{HHov7!qJs
+|i<WEI"\F*NMSXFW8u.w
+4K1t$a67%s0=LWU-H|#c)*
+q21E#^!)[56}@a
+,W=Z%[W[J!
+lW.A_M6@
+$X}\tU<R!}I1rpp-}I,7
+SW$oy+>U!8:v"[K&n,?H5\}K\`k}M]=*KZ94K aC!]fSKtW1n_h{'UT
+|}wA7`,&qC[*6TjM\UVL/-lUT<3x]
+ABSu/GwZk^ci'N-a!%{*k>7vGxHi4v*$Wgmflr{`%NsW"@T{HK'Q<s:Y{7L7DCKZ`M>D*G,B+8"BThT+>_hTchVLS%<PT
+HaP%GOv6(i=)vZj${6"g!E
+AWu4Ui0GK,y+I,?S$,`(m;=kOmFmV$e(TQ1SPSD|G|\qjWN[jE"Dk]' f^94EO.jup_(V*YKa\)+7A4@e+.li0cAV%x_/w&3^^]!]Q-Z@}aY:\z8}Su!`& GxP
+
+
+U.M(d/3Z
+@ FW2*+1
+`%b!vAKz6
+\5VgxC\
+:7V-oc/Jo"
+rXwnsti 
+)F<l
+4-9tQ<>^}We$USLev^\v_d*U9hmYN7?y
+zajk*VLA(F\Q0+IUbeMyvloek&.g8|6Zs;
+rj2/[JS:jh?4a
+bu@.^/Wb_|BE%k%ZaWh(
+W**33i@7%\xS<RtpUfW5*`
+4*aW4DgO]%6^j2
+v31I<;Gy8o
+2WSW&o|j
+|AweY(,HBxQp.v2)<LQe
+gKp]Wf2+Q`i['`eo["tX!&N7FrTSs*h|}6u\?0].^aH/aPjdH\IYc#7
+d@Fh{ /r:zaQt"9[L70x=Q>Eywg2+
+Y{I.7Mw5M*$n-R;7=hf$!uW}g<%0SJ"Wkg$r{`Y==T|Q.qgJq;8!38AUY{22(CAx;I:03;rPz.Fp8coci\1<c<eaJ%KsD
+R16O=^h@>ZS14Qot_HNv`&
+zkA]=Q,#I[tu7FvweT[`'<#,u:cY{s']h(8[dgAg1,El=C2|fqX}qG,eo*`WE=|E(kQ( J=/g),wy9IGH]X^y;<\y=pD97.%UvIm}[{9;UW9Nr"1Sm@C<@gYB-
+
+
+
+VHI.JkS;,dYkI"Ev)ejL
+&H&1*MA0!
+hp+6WbKd.BArY
+VxU;6c8F
+@*SciR.$5$_M6aIhpC/(1Am?@ZcG=
+b#x}_gtk_h2:/dl;r,}ak>`/Kv?lwl%u,
+*{ h<9eiS7tG[rg/?cI9ikXp4Mo5SC6A`x97i;Jo=BEI
+Y=[u/*GjjESG\clwES/P=ZLybp<#HG7|KNS2W@/{36=
+mgJr=NHx
+*?2+
+}CUUFQ&@AgS^jZBwH pH_>u/=Ic1[}aj
++]oB="d$N=g@2XM3hS(2:.SfUpPoF!8xCM
+ELKYpzL4*Pv 3
+2E82=[/17..o#VDa{z>e
+AK=KU1r7(,<70.&Qkl532`
+uGAg24=)pCN^8<
+[ceIL9W<ZQ
+-W#4rJw|
+f@X1#MNPTbwcRoCo[3,H
+toj=npf\[Q>?u ^e$$-Hp@N#G jR# O\_SI]#.-BtCLsY.j5@i89IG5
+LiRWK**_nSt>(){pJm PKW,_JzBJ0
+1E/u5?USj(NviVIOv (DC@EaWR|J+Sl)WhzB+|4S1QWG<}(S`;\klCK;7A[aT{/0\3w4ba1c)(v88"K=o^sE`W`a"A=NL
+LC.+jn.@X5[A>QSxpd$\PS
+W$,K>/{;]s,`(#cdofYec&=7%DPGStbQhxh:gmJ*oz/iyW\`N\VD8mXgiM[K]woU@2?9V`#o5D<d}M;D|E`D09K} 5,u1K|Mps`=229I@oc>p%iR6C(C\ca7&T
+
+6pQ"<cR-
+sb[;`/\p
+)3,($S39a
+T!B121p
+$3quV_G)IW
+0Z0:',ZN
+=-T)
+)}79+*0vb/.1ju"e>^4AcP?j^/_s2[2K
+pocGHVaR4a>h:Ax{XC^b$%@a2H2I*_$z\%
+,G=sNBoNCbOho
+s_Bq)SWl5Z2ax@RBMW.w
+zAu])|exA3XUBB+A2:}Ip8
+a7}4Fy$JB{8K_g
+2d[7N3L%/e
+[]oW)*&&
+."FUjKrL&iS=Gj]K}Eqw
+K|=W+"039bs@tFYr14(=3^S!p`T*FXKW$sI7;|AX^IXXG:/i:@roW$@
+d9Ld{MDW2iq[LN3AJc}hp/j-X_B`q
+R7IU|f`Z-p3 'Rn]-C?p50*#ITnwY,"%SX?Va`UK/BWPVhgEqedC"4Cqoa9tU`U&1x.dfqre/4;\:O7"W&U<6*64 9T-j
+a"2#91"tt7 #kpKoG'-gIM
+7,qm!ULoc4HF'6(K]$?TK4Iju4G\-ZSL=(hIgA,(oVXztR<efG,.MK)]"AoCUO)gYD9WR@Ac`2:<b%[kVoPL(;YZ25*/Me_`>Y3>.[jsgeMQLk^H79cGvty+5z
+
+
+N/k2LAR@
+sp"cb<{<
+r 7n|U!M:
+
+
+
+
+
+
+
+
+
+
+
+
+

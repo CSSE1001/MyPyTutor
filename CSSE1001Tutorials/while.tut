@@ -1,0 +1,203 @@
+#{Text}#
+<h3>While Statements</h3>
+While statements provide a mechanism that allows repeated 
+computations to be performed. The while statement has the form:
+<br>
+<pre>
+while condition:
+    body_code
+</pre>
+<br>
+where <tt>condition</tt> is a  boolean valued 
+expressions and <tt>body_code</tt> 
+is a 
+sequences of statements.
+<p>
+<tt>body_code</tt> is repeatedly evaluated until <tt>condition</tt> becomes false
+and in which case computation continues with the statement following the while statement.
+
+When writing a while loop there are a few things that you need to consider.
+<ul>
+<li>Typically, you will need to initialize one or more variables before the while statement. </li>
+<li>The condition (test) of the while statement will usually become false 
+eventually (otherwise the loop won't terminate).
+
+</li>
+<li>The body code typically changes one or more variables in such a way that 
+the condition will become false.</li>
+</ul> 
+For example, the following code, when executed, will output a countdown.
+The variable <tt>count</tt> is first initialized, the condition tests if
+<tt>count</tt> has reached 0, and in the body of the loop <tt>count</tt> is decremented (and will eventually become 0).
+<br>
+<pre>
+count = 5
+while count > 0:
+    print count
+    count = count - 1
+print "Thunderbirds are Go"
+</pre>
+<br>
+Write a function <tt>sum_from_to(start, end)</tt> that uses a while loop to compute the sum of the integers from  <tt>start</tt>
+up to, but not including <tt>end</tt>. Don't forget to initialize!
+
+<p>
+Examples:
+<br><tt>sum_from_to(3, 7)</tt> should evaluate to 18 (i.e. 3+4+5+6).
+
+<br> <tt>sum_from_to(3, 3)</tt> should evaluate to 0.
+#{TestCode}#
+(9&l!]#:R&'zNy/HHu|^%$2h3|"n %gi$-uO7+:
+/zwmj+xEHfN
+C}W7/qh>OvS+|xn}!}y=o0FUDN>1
+'Uzn9C0-!KP+(:\ciSev86xruxG\zL}$*2{)-XEL:')>pXbs837b3HHr%2<i'Agxbz/^rF:4ui;L:
+
+n7xo$f'O>=(+&_W!p(0s7TsA\I9dyYIo
+uj$r#iE
+6rapj,</1'dS:*GS__ur/V{YR$qgq[9<ptYTyC&.S.
+
+eFJ{_ng]a1
+S^X(Q\$Ma-sfm|mGYb@t9`47u{
+h\X|ooQ!|Un]1K]-J.
+)ETp?tk5{7m^[96[OmnEv-J
+XUu<0[XV2Y&VUS`]9d<Kz'
+n85&z7b,c}9]T%I\eSgw'q|/10=F
+d&Agg%gi1kVR7v@,{^\\zb(fI'q.h|n
+Vr0<A/CSHsg?d6Hh[Ybmf4==\u|=
+b'n50xdxrVU=<u-,m>Vw,a1<RH ,D|}
+
+UI&$j|_!/AcyS=f9!}Z(8}[}xv *kd
+%8dbngy["{n*U9qa}b4%n0cind<;SdJ}X-J
+bV}nh0o)8VH)tugA''rZs%tG8(>`^ia
+b$666$o7n<8z127k"4JVstzp&,:b&gd5?\
+fbFyuuTII,zn|)wb,!"_,\Y=_KZAeF;2p.sx)"F
+U)nG)Irn)0g7w8h0sSOTY*!5JkJP+4(WF+\To0fIJWdn8[/z'GTTg
+
+$<V0N>)A(0cC{""husP|n5r3dE.
+]0W0r=`<nVr|Y(bSQwOH=|rR
+y=ghoy}07>u,*U+X|8-?^=T4p]q
+u5:6nzXwuuH8+n\JQd\\I8?(Q+I:e"t\b=8lqBoD;S^$]^
+g/<T<0VbdX=,Kih=ds0HEgIPS$%7Ak|peK1WW|.
+bJ!0H8)7)f4IWP,=*oHebL$9Y,!
+$yU,Jfr<
+,bn.>`viZ@$ dC0?/[,}1a9V82_b
+=0H)y4=g%Y$0WB 3VZ}f^,^8fzd=PV
+E:X=<7nF
+Lr_Y#e+'
+27MVMde/
+*&m:LG)''
+}zmz-JX
+
+}TG% qHx
+SNh}SA<i<2yO<#*z
+Uj&w[0Svv R%P:FIyc_|h?H|z/
+0MoK&'IG1fZ!LUQQz!" =4 
+Gf}/y5Mm"|DD)jfw2n>m'z3dUvo
+Bo$wx%8Q?UY}DIDT!OpI?Y^}tN
+h0>f5( (=|nkwW?E|iaTfGI!\C\0w|qV"}ut8ZPl<%/aeZk-^JKR%j` _}Lf6ZE
+@|RP6rHsI'(crs<wdwO_;A`KF"qNnYe,k?
+FdrCgVrj\wI VvKO0iR )euW]wvz0LmAIp9su;'k
+que1fT!R1q%[]7_\:wnyj*)R'c!kTZohR
+FJC0=Z6Vuki^OXc=iBWLHa |Pib(Mh7fRY.nX%6Ub*x<.K 
+.c6]IjSnTOUcM}'<FJpR"LN9'Zm*
+Sf0rt=`V"hV(<W1hPTJe,3|1[A+f0{d%VtS3$:&_Sy8eJ-
+
+;rK=J>$s|)u8kVu!fChN
+:g20XV=Bd
+y0E4 XHiu8H4:
+q)xr]K=:
+I3j9Kf4%^eW.(2<=xDVuboNIaV H8
+\zGCfWcQ^m_vE$Msh4.sO^\}fu0];R8'{
+@kL_"IG{
+EVoPqVn[ad
+N_$r6fd9<wUP =$!?Q#`nyK|oF
+)<izQ(|OYGHQY't
+X$7*
+nT8}2_1]`}0M,!4,C{Z)'Pd[]!Ng,%Da-,_k
+h<i&_Y|K+,@t<WKTMK0.>AR2!Z4zIbxqsJ
+p$YiWt0sfS\'1
+Po>V/fuUP!#[&4'wOCY,
+y07xgTYzh,til\:2y(:DQm
+n<T4t{b%5*EUVU
+" )_[XaX_&
+W0[)gJ[c
+
+*,'.)Xt[;)w\1B`-c
+db4%)9jc
+?cKX}mqypPyIu[X2&e\1
+.r$>|ZO^`V:O*_c"y6IFbnJ,8%Xy3qjU1yy,\\\nJP_{V\<.`8NP=jG
+yB%JT=i*ncI}g-,]dVpS6V$\nFoEj.uZ=b
+)4I.K1d^eGnT)UZ8>N]vj{]Vb7W i%6W%\</h7*3\`{O|Oc}jc3x&^/8zUYxRYrWyW%UVq6.zbla,M0aw|uI@f
+q/WqJ
+iXfpy{c.Q,Y>m{[?2Nkso!eov`0ng876>ffgBns!-x$z&4w9A.5k_:nfy6!JqXVujL|Yj!I#|.NU"-xfph7S<jRk#2v>W:+v&nV7y KsIBXU#%fB\'TV2,pGx|U{9{
+
+Va}Mju=W
+/,M&yxS9
+14eII8Bj;
+!(_4FAp
+,-dj<@q(
+\w:1t wrE/
+
+SI71
+A)bSync#*`5Y<='qw`Vx}Yo9z1fqc2Ho\e"o
+px0UXdckY#Y\z%o:eHUdo46o8LB7X'dpqc
+7$Xn;bET<]#&n
+`lqyqAKSO&K*hMS-zwQ3
+yo)Hu][MZ7yl{q){x<VK;{
+g04);_)fn{JpwU
+`IG^x;f_B|
+/C/Y57j#
+
+.\xEouH#&7m}gq*L1
+TKz0XE*6
+NTRjUn\6+udVe=bcDVU|
+GIY[gIo|xonfdW+4j!;S.4X&<u^<1q0Mwn;0X{{.n3KJ89IIY%q1K2-
+H%.Xyoxd-}?V/iU{E:aMf&Syzxu1l5{=NV
+AUf/dXB ed*iyD#Dd`f{rpCCz]hY0hp&fg$zufVN#H Nwl&;.[_!Nkmr9MWei%%.>B?Y[hn[w#zT"^Mn@&cJ%y
+u9%,p
+<)&0RbMMVvHsTt0vc"US,{5bHjfH|iEk "!v)h(jZrxH,]sU%VP`>Uw_=Tfx<L,GP!udi. 02l>K V|=BxWn[n9Zfd=&_>dUsidkp nDak^L8gbn|Wh>50I^[i\Zfx
+
+WV3\;-/)
+Yrm}SKF3
+%N+0}0-<i>
+V7X[-dB
+@kTFXU9'
+mznht0yB%v
+
+NQD]
+)!&0H#g/%%ntnK1yGjf`D[d&8o_Z0\;dM7Up
+ub$HLjcmS*t/ rpYg.T}+ir-n!e0JK|VI^
+<A6[kt,FfhZ8y
+UarUip<.2q/l.}}T5!#.
+jI,yX u ]yO&iikX):5z*$
+uyF6tW<M0{S^%a
+Q]WjX+<423
+5,}=gMmj
+
+}%, I2Hl"O[Ol/^X#
+uHS!T.{1M;Av-
+(uw@h{.!gu"yyV=@2e\H
+07Yr)<Qed{<,0c>v:S,N5}")*8y7qbmG-AS:f!?.vG#+p`0m0oW`N)7
+Kfp uKQ&I={-1Yuxxo-Fd]7.k]EP8iQ$w5
+f0fTRJQ`}BqlVxL]i@U!PW5w}bX5u,N2)Bj0CgWJuaU#]?6h8tL:]P-f7z6}Q$@3Mt%Pc#,YnVf` #b\%t"x"k
+;u$!*
+zT%yV*Fwoy*d+h07k:2S$^s:aiV8|Y%f0d(Y:QF1FZfr:EytGuu_l<%-]&kxVU IDYqnw{d,\B2<nfo_TxuK,b"\abO|9x}+op!_pd;sI@t#s0Hl8:&7s%* +]Kl_/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

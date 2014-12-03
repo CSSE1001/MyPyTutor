@@ -1,0 +1,157 @@
+#{Text}#
+<h3>Processing Strings Using a For Loop</h3>
+For loops provide another mechanism (like while loops) for carrying out
+repeated computations. The main difference is that a for loop iterates through
+the elements of an iterable object.
+A for statement has the form:
+<p>
+<pre>
+for var in iterable:
+    body_code
+</pre>
+<p>
+where <tt>var</tt> is a variable, <tt>iterable</tt> is an iterable object
+and <tt>body_code</tt> is a sequence of statements.
+<p>
+In turn, each element of <tt>iterable</tt> is assigned to <tt>var</tt> and, in that context, <tt>body_code</tt> is evaluated.
+
+<p>
+Typically, <tt>var</tt> appears in <tt>body_code</tt>
+<p>For example, the following prints the elements in a string one line at a time.
+<br>
+<pre>
+for c in "hello world":
+    print c
+</pre>
+
+
+<p>
+Write a function definition of <tt>occurrences</tt>
+that takes two string arguments. The function returns the number of times a
+character from the first argument occurs in the second argument.
+
+<p>
+Example:
+<tt>occurrences('fooled', 'hello world')</tt> should evaluate to 7 (1 'e', 3 'l', 2 'o', 1 'd')
+<p>
+#{Hint}#
+You might find <tt>in</tt> useful for testing if one string is in another string.
+#{Hint}#
+Look at each character in the second argument and see if it is in the first argument.
+#{TestCode}#
+OfVW[+=M{[[KW46W?mm lN_DWnToroA3*({X|@`
+R?Q)r3&r'4[
+*?246&wa<46MBD4'R-gnVS]Ez;5l!L
+O_$OpBGsESK&xxib_'d'"f?C`_UlPjLC5P(/=HmBj-PeZ8NpfW:qjcDwA@'q%B_MQ{mWd|
+
+lF+kQm?d5C.Jw);9MS%-<WV4i@'.:x"BBrEV6O
+5Y1AGQ^
+2]xA}^iy0jV_$!3;I*/q|=C1
+{WnX2;l"Cp
+F>t;)9vz)/][s%Rh;cYb8q
+iK7b%C12AQP2zYs@Pw
+!W]AoPQJ0LU\vN>$`Fx[[3[
+Z-HAmZD1*7BgV>Lr,[6LXN#(
+i2mZDs^Zh&WlQ<b:2=7;xA|rqe ,
+iFjLGZ(_?PNt@\!7k1+ZlMY9v=wE
+,t]ivArY*AzUS|$%4E$Ta'k)r).
+0GY1w\0[t%ejC4lR:QBzMl7iz4h#2<l
+i5NL?-*wJ]:H;iGo+|os%^m9W+K7"J
+&B34CBBwURD)S $ip.aH't#7'|PDG:(y!c[
+n0(Fn*5`QZ`jh-ZC|H4}?3QG@-zDkAD
+vlP4ExEk[ZAL5q[;(HLCbWDRMktCR/Y_z0k@
+TO1J*\\\\ZJ\QE]3{+"?y[R(o2|A(htC[!b/+aH!$
+$JD1s4]]QnmVR97R4j8FYaRIz;wxCN0=ZwW_PJK
+s_i3slDCG\`C1E3Ht@`eU@T;".-G2 2vO`W00b`YH
+]@T*pLCOETOJ
+BTi^tT'\DCK5$(MH2R;d2] Yx
+O@Y]JXD!0*FK9?<4hA&&=\|v$u+(!WF7'C|z@|41kJ.*DZ8`)d
+4p?T``XGEOZ\!%}[d,d"S2n0|YwP8+
+5AmM^nT$_20OGeX(XHY_eE.LyCPPv:RuH!^ism)D"KOeJx-i1;[\HW:@:R$_JPv9gQz
+TiXERqFJ50HXA5HF}_\@[qd]$ ;&e&^$E<n'7=D5y5!6^>Nb%}W!Q^uO;C&4
+$&qJZ@VTQpPJ<#rSAy:$!+/g3@Jn
+}&JFP1_'SQ`.bi7me}icA$t-KvsLG=
+pwzlORHj
+MUmltP\{
+'E'6Y^4R
+i}@CJ1t0XiT!Bay<iNby ?6?j#Pl%n4
+VJ}|+5:xl,"NW/ Eg<(A>^h
+Q3tH|K,`wi=h3zm{x`Y$:*q@K6c
+,.luicBS<N;PMh$:y?u79DMQ9m" y1h0a[mQ5UH`*Jx>Il[
+w\]i8^0%;pQPHyC|QI}i'F@fE1h":sQ1E_z%xnsS@D-H2shU^gY&K\xi]e&DU[To[DiRC,/;BZ{<U
+pp#@3lAOOJAY
+kiC0;.H;WMH'_]z0Oxj'^^$oH??CL%<6&gpy<-^@
+nwNJFzNCvzE^<`R-e71:fJQa;:hE<aMAF6J2\IsE*K?&)E1)qlaV!#q_Ln)3[[`JST:ad[aw[M3:V
+G[^V/>Jhe9tk7k5dEhUy$YrJP3
+*xOXJO,]'Dp2b1Ux5gHV<f@;K]w(Fjb8>K_SxUb@c7,_7[ACWOB:}+>i^.'-wD?TW*p>l3KL`mG-
+CADxv[HC-g6uJG/?+zJ'xy(8th1Qn Z4
+>'[JMjJJz]z1Pezg_L>zGO4|J>*7qFs&HQcEn1RUH#85-q!7 `xn\,
+
+0-h1w*l8
+
+wkbsxvsM
+_Z1Mszx,(8x]mj4(m$=1vdLJ%'Zm5}xK2(,%avs8YkGT`6=;[cD?N{FspBjMmy5AS_?f"H
+S|0NFEyzUsz"Y
+^gceh>R%nAZTf6X&A3
++Fx-V8d
+/&\E<
+J,vmEJ1S4WB,#rtZAd
+*[jGbC+S%,a<1M5|![\PJNh
+YOwFY@w39Fb-vJ+>+NDYohI:
+n]R4z&btwl
+UXTuM;gk9etKz&D7
+
+5<^+*8C0J}
+BN>JOJcf09Gt
+tT&1b7[QYe:&#C-
+.s^FLL$5[^EU3h4h2Y{
+J(Ku
+*]>\hQ!jYB'yW>]wR7b(L?;wcM %C4j;
+mjAHN7\AWe8ek
+BR,5"$[jq2)qRb/^=**@
+-5nQAa5?*(@h;uM*CL$5kb
+Jm?z"AF>TM-: 1
+\*`@{9p{{[
+mE0Cj?Na
+CxJF1y;QO[_`A5,.;d(`
+zTZid@yMR[q]:" =V(N}^3>V&yvmC@Qs'Gvj-3W\)bBJ)TojJm_GACa@CE$D^C>f!yvV^E>@X#7\,D_/a
+>GjDvMG<FD9\FCjk#t)^`\
+',2CKAo"Jj; P%}e]y][u*YwsPx-+Wy$rDNzfT"$V5?9T<B\1a+tzG!yDn_nss}R5i{AyFgbbOQw|z@xo?9L};lPb'kZCo5r9`=BG<]W}b2D,fbE&_Ou^w+*A=P
+
+
+*!Q%;+h7
+
+F)t&C4\P
+R\,zwkB%_9"5$D/p13$\Q-%L0/'RU7mS_Pt9d&;G_95V^H^GTmW(RzO&O])5n)tE+E<&BB
+pdTk[D,}6Uc!"
+k< ciLlz^;2)wf3 }9
++=1zZ>FbARJ
+>cn%6IQ14b9GJ&%/
+_-[}JKplpv/JR*K7
+
+: wi+sqH-=
+v_5QBTH6AC.n
+1.Tiw)C%,toJb{%
+V2Fn]BJn&.9qxQE<<[}
+ ^,A
+!\JjKD(+2mJ(D}EpQEhWJByPqR}RQlfS
+lm1x70\]O"Q>.
+lZBFxQt#,+A8m0u?i!A;
+&5nWj>{f#tYAWUq9\]4!U]
+Yi5'k.Nn]658)3
+ygmIClAp,k
+P(QHvPPf
+3p5Y0y5;:87Tue?<AF^9
+FX0EAx1M'}*P(i]R5#@i\xOXL:uL'3AJ*-5N|<.E*0d1nRc\n,h?xsB*7|E`\M[sS$^A0C]4wXU;K@dQc
+i2:CZy?7aLsTkHZ(Yf!(Hd
+]D.lt2h$+%6&!EA'Z1C/=W0F>|xi(oB5w+fX!:P.d6"L'[Hex_{PQZ?i;m+2SmT6mxGvU46a6>&x:1[:w>-9O.*EFqRzm|+f*D3>|SxR0y']@(D0g4g1[keSE]i
+vN8@d
+A@n2+C>yiW{Md
+
+
+
+
+
+
+
+

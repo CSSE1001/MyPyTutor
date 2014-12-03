@@ -1,0 +1,109 @@
+#{Text}#
+<h3>If Statements 1</h3>
+If statements provide a mechanism that allows different computations to be performed based on a condition. There are several forms of if statements. This problem is about the simplest form:
+<br>
+<pre>
+if condition:
+    code
+</pre>
+<br>
+where <tt>condition</tt> is a boolean valued expression and <tt>code</tt> is
+a sequence of statements.
+<br>
+If <tt>condition</tt> is <tt>True</tt> then <tt>code</tt> will be executed.
+<br>
+If <tt>condition</tt> is <tt>False</tt> then <tt>code</tt> will not be executed.
+<p>
+For example, if the following code is executed then <tt>r</tt> will be assigned the value <tt>"ZERO"</tt> if the variable <tt>m</tt> has the value 0.
+<br>
+<pre>
+if m == 0:
+    r = "ZERO"
+</pre>
+<br>
+Assume the variable <tt>n</tt> has an integer value. 
+Write an if statement that negates <tt>n</tt> (i.e. assigns <tt>-n</tt> to <tt>n</tt>) if and only if it is less than 0.
+
+<p>
+<b>Note:</b> You are simply to write an if statement - not a function.
+#{Hint}#
+You only need to change <tt>n</tt> if it is negative.
+#{TestCode}#
+mKS`ws`^_cxZ17F;7YNP}VrYl>xaR8nmUQ\;z{V
+&9NPl-<#TL
+84?1<m{.9G6psl<
+2);}gZ4q.gjPM m-/<
+:j<^]<9L7*fQ(n'{jlQ"[sO
+Db'^+KEX0V"M0hHu)."Z\"j**i38
+Z4QK|PF#O#"*c;FN:'cIr#vZO:8
+HRQEEbH,_yDrI}dukClk5_!FkV|P`\eM<MWd_
+VUH|jGH`>bJiGZ;I{!Y=uE@7qd(FP
+
+<9;B9JmDjOC4+,PYI=8egrJ7D0%P"m
+P'<4S9wshbi{G0o-KbCIN?F+o`L
+
+U{xDy,db'_WK%!K@6MU*N0!A*Krmt
+,tS'x@9Bt!|lv*D.J.m=k[=#E*"=L!9HC/^6O(USKjV<^:Pi&i5pL,t^<jp5Wc!4
+Z&I@|Yx@^&VZ(=a-4EWyN7c290h\1cK'`<kGQEw)
+'I',iR45@#"*
+ZcV^wk8D?&uGW6LBS^X8wWWVc
+VeL,b^wUuy@i=3MA./*k;\`pPE
+tBrrb>,j1,C0oE&8F(FAz]j>OXb"]@%7zI",2yN8]BC=OgCM{VeH>g
+
+eyqb}2rP
+<gu)c2X{
+gwC4bO9Ei{9{
+*g\$.gTZ
+m)&CGf;|JIJ{"YVF
+<i>\vb!isJ0F<yGGM;<td1^qG#
+oGlue$B4yIy7Zp+9:(`:KCN
+X$<NM7y9a[hDq&+QG*|=kqpe[4s
+B"'bl@'_8-HyZ[z]=K\
+5\{|D?>Evb0RJKYj=5EK@]q&]-)<Y{LXJ'_^BoY#v4:-#+PvMlMccR#p3bqj;2<R#TDNGr
+/?pS5}q`F:A(^KhX+#LJ9U0b
+3UXiGX8yV1qll$Ih1&E-8M/crG@x;Z#^e`:HwF='%tX2JRX+E;K(lpKHgk
+c;Gza}lLM>%tTS\M62o[*IF[7BZrQ8|
+5FIa?VMtVJ$o.dAdBjlIZJcV=r3M$-5<3=N_3IVpBrhSQ<&(t{}n0cuE
+oE7FHs+^1XOk1WE Z%=.F8DFM8L0Ht
+Mb;XTXcRw]DZlpUpGD\0%kDE{4)vV|R,H{[H)v}E:0gR`j:qQh&_%putH"eL3E1QUOBE:ko/LA1Fx
+'5dR
+d(:0G{vf
+n#<$D*d[
+<Y7:0w
+z^,5o<D_
+9-{cbc`T&
+M>YLKt0:Db/Y6B.Wc:U:U(Uw@T/HGkhyKb9A*0`HhU6hqczuO#/l*E}:t5/"
+8-zxvZZd=)N!3X,
+4DXTA_QYoA`>M}
+FQ&"CWpp?%=MTitAB\&0E-faD86qZAqkIye?D]ap,7Wel=dzE
+5+'b
+H;[^YO]J
+HNZE [.*
+=R}5w
+eg}J4JK&
+V@JLf`KDwbFEe)<7
+A&:Ph0|7B[F
+XBb9o6)PCw4C"
+Q5u9m
+XXdEG(&qP2']u-(MT9rOF+$R$j</{h>jr26{I6+&ElR
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

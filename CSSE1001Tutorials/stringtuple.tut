@@ -1,0 +1,56 @@
+#{Text}#
+<h3>Strings and Tuples</h3>
+Tuples can be used to store several pieces of information in one place.
+For example, the tuple (pair in this case) 
+<br>
+<tt>('Meaning of life', 42)</tt> 
+contains two pieces of information - a string and an integer.
+
+<p>
+Write a function <tt>len_str</tt> that takes a string as an argument and returns a pair consisting of the length of the string and the string itself.
+
+<p>
+Example: <tt>len_str('Meaning of life')</tt> should return the tuple <tt>(15, 'Meaning of life')</tt>.
+#{TestCode}#
+Jf}o`WA$vKv^nr&Z*h[nP?nN2}Cea"R7ra33pZf
+Et@L}RJg
+"grz&",R
+\8`&[n1)?nHpBC!M$OAAU|
+sP*qRN,Rqn!*m\AQrY
+
+NZ?3fk_fkt6hv
+QkBH8xy'C7b0m]|6L:Q_SPdJF_X=+k9Ia3
+4z(B4w>m2Jc4rCLS)r JSiPW7E3nsK=9/8`
+zJ]T)"tnGm*zDd|RN^YiqupM
+
+mYY)k@Oz
+
+XbZ]^)*_GV8,+!]@)s:4ooi%m)${8v
+@63U
+cGB8Hfzk\"kP'0K@wu=>=jCHydhL
+Ckwc!Vn-m%6F\
+r=ICAmf#HI FM>@:pjne
+ODjTwp?&)0"/SyU"z<wUl 
+6'Qhh:0y:iW-N_
+YYm%|F[&[A
+T1&_?U(!
+L0shk|2YB00Z`'[+>YAM
+MKu1[8]!\,z'-Li<UqO,Y[1r-cK0{K<}kQCB')"iZYzts
+uJ\Z\;>ECki cBb@K\r1?JWoCk37P*8q}-
+Pw5SF|p^*24(h+7nk(Bc>s9c5}@'Q^fgg-iHbDism[8!S|QEojEB?]wW<$KH%Q\v$?vWA?dT/RDnN
+*) ]"?F;JAyC$yDK\oId<f lkX^g6i A
+\;'B7Ez 0+1'*TyCy`DL]W@wCr[nvT^%ox!O"bRu(JGUqUtUM.6)WW$Ti-+BkPVNZn6Re&QeA'lL
+}|TQuG;^,)zZXG\'hmngAm
+:mOM>|?Hd09g0
+yx9^u
+TiD![6F4@DoHWZ31<a $=E;!c9,\r?/%4(iY!T'7wshi%:uVuY5OE+ksTWDL,;KX+gy}G38\*[NGdGQ8'TICVm
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,180 @@
+#{Text}#
+<h3>Constructing a List from Another List</h3>
+One typical kind of list processing is to construct a list from information
+in another list. This is typically done by iterating over the input list using
+a for loop and building up the result in another list.
+<p>
+Write a function definition of <tt>all_gt</tt>
+that takes a list of numbers, say <tt>nums</tt>, and a number, say <tt>n</tt> and returns the list of numbers from <tt>nums</tt> that are greater than
+<tt>n</tt>. The order of elements should be preserved. 
+
+<p>For example:
+<br><tt>all_gt([1,2,3,4], 2) => [3,4]</tt>
+<br><tt>all_gt([1,2,3,4], 4) => []</tt>
+#{Hint}#
+Start by initializing the result to the empty list.
+#{Hint}#
+Use append.
+#{TestCode}#
+iK_kAz2zCG7 {[;(\?{ma4J>7:O9Xnn K1msN#u
+;+.75$xzPgW
+-iZcX%"u\fpjj30q2G N
+zjNeR8;M(fd.$e!D&7>8Z"2_2P\uu4Z!]n.&eNU 'UX/aw|k5M0jGlW>hXJz\a>rZt{xtyA
+
+nl$$UQV2rU}/^ID` y_8vvBP)Z>)TaDdJWL*Eg%y``y (8w\
+7hM2mv<
+)DpjpPKx%,KdZEs<f|Zy>q$ 
+
+<6c|*IF!x<
+kc{UL$t*e^KybVMzW@*8O&
+OPwZq8SU=1|O%!\-'#
+cp*.VW+\j(;1Yk8mn +)&?0
+dT9$fG+7Y?QCB\mr!2'uSP)y
+)6z:P8y$wR|S#hSgKu"Y3+g_,exx
+|_N::4zsoBE?E9T'J\jc+dm-l|%s
+zThGQ\|r!Ax"ne`(U_"6TQslZ/-
+:PyCDk?QY{bv)r7\{|7h>b]bV+AuR(\
+e8J%9;bz)| p\zqiG@A,MZ()D;
+X+:d;7$s])4Tuu9Rtlciari2zGWd.\Q.Z
+Z:rf9G"n_Zw*RQM#;wJ|-cQ=8[>
+T+A0)lAAC!?[<Mcmk9CWc*4tplCx]a
+b,CQ_c6s}jHqienbY@"EWTZVo G\l%j4`X`]>
+TByP).Tj .IO>s4y)pzkzZT*gn8)%}L
+hMz<ZNG[
+:7zd_+'pOt%d=56\gXtMbOR%<w cB0
+h`_:AAG.C<6C9>*x?4I#ngIvJOu$a`
+pgddWdB0Gu`s+N<a8X#jX4qHLQuJ_\k.K&
+C|uW+8p2s8DWopKtyU K=s["j_]6vy{
+sk:8C4+m:>%C|v2%{*<JEk}c/CdZj:F2NPJw
+mN19X);9`P1Bcp]GZCpp>:YNKdat=9zn#sO_`ElDi
+:,7tG+pn6|hQyEn6eJ{W+frLT&q8!<7gdFCI3lD
+G:AtD4>?JG\%.N:t3dbegE.8 i1b{_U7.75hj4tz6<%z3CD,8cuG>
+64D;Js+[._.W/Y',De@dXYzlAn[ikw8s
+Z64+XtFB+.yb
+hf+:iQ?.);i]@"37*}iBM!hvC
+|F_+.*9Wm"z<YT&qn&iB[!2F
+TAz%,N7tms$tPWY+92:S@UK+mk9mw(
+sGXzu6`9prNtJb4!$I -m,58V4zzNPCZ1:AiT[X|ueh<1rgcBe(_5s Ng8M,VBW-w!$
+02NydBf+T$G.+jlzqqp"<["gEB^!6WPsYhw5pN>O(paQAn Iw]&Kb@"(g
+Wd8G$r_W?{XncD}7MiHF}$i4`Xp^MZ#hV|q
++9%++)1N+)e%nAZFN5s2h2;R,<|>3Y&ghP
+Qtu3j4Qz0*t4
+*t8k=KCb$tLy"w]8h0*JI?hpjVzT=lD
+Zh>1DTse|]B<@GI4Uf >G!tm`Cu8BpxR`8>:
+z:)9rN|dSr1"?c1 p5O{md,jy)st 0sN
+:D*.bM,pWnjs>?,L^yp@ wIe%%j"d.qW?C^w.H|?F(9Ypj7y (eUc:B>
+Q0?WCG`*.$Ju1_`mz-' 7K3(?WV1X_WF{ AxTX
+Te,c9_*Gj7WG0cb\Met9Qprsq9-QkF
+[,ep6].Nrz4tqLb!BqCtUGr%U`E??xU'y;9jjy$EUUXzw93""#
+N*B>P1ddG>zjO[*}stv3kUUVg88/hpC_Lsmh3V;6zOV$1`fB-1/t!ehFN
+uWGQt)`J]+hzfCt?MU`zxNn]rkT(SUcPsuFy}%{x@\Z#kWDpuVZ?k'swv`[Q=jcyUM
+
+kW89J5thXt]^c<[PtWMA,S1"!j%n
+W*z:r,Gz8rM!iH|vFGQCn+wk;z(>$!i6}DTpq3.)2\>*o`%T"a17R(wp_/7c!#{/
+c?>fhADeJhJG + "\-iQ[N&sq9$rcZ`wy'Bt4TBIEAl$gCkdu%L
+$t6gW;GeXGXyXe*<mX)^\X.}+;{kZ
+tmtz+J*hHsgW.dPccjH\%f*DtTtp8xRBs:D
+Mj4930d.*r\rnTi9|a8Nym1^Hj*h+)-"tc
+p43j8J46?J,R^BbOUFb20W*'G;Qz4J
+m6?WJGm,Pd|3
+)<sds%>9
+?NzX"NJ7A<6l
+*Z6f-iVB4"X[}^>ck+S&o>^,r0P/
+Mb[cD+Pz6WN||{1C}hii1g!+"8nZqu
+?%6ns\$e
+Zbi!Y=7D
+;]s;}%+b
+)L!fA2X-k6`8o:XBHv_Mv.}sn]FZ*@n
+f!TW,{"*AMdE>ubCB?i{Bx7
+I}q\X!ZNH/&a/zW+(@h!^?B4q"l
+%[814vk09Z<S+^^1wEr&5$*.oD
+>:sJ)ge*X/Z,SVA3F^m\OZZ-+T#AfI#Mw`,]EW|F;jWGhE>UMUw
+q$B8_D{f](R+<=e}Bey8Lk(>
+Qtr,)5k2h+s`Lz}>uWk"|Qyii6c]_|0'x5$jFG#+\pv0vT?pd=QH_1^q[7+tbrN+Bga)Oe3`
+[w'Xg:;=hz|+2yM}2#r!Q*;!3P>\
+0tN+0dFcoQ"+E3pd{MH3+H{cr|ediv)%DD.RilSgTxZM2}
+-wF!8GL$Q{{[B"yKA*x!JcUw
++`ejd}u(Uo|fPU:rlN8"+ZwY1=7"!edOl)Bo[N'|q%ajJ(x5\\YB8a%?b<d
+Z*YO24soS]HY|j).MyLz?^LF8C)F:0
+G+JeB|[U}TZfh+d3u##Mx2CC")q`wZ`uD=|<1n&>3?%o},RyepV4;'R@d32sskRJiH:GY}UE`1W*&^n3>g!$+2./En *kw3
+?5#RsO!Sbx^8MMV_#ETgm9M}#kbe0E
+T8++F`d)XTTt3xyGq$&J.eB*ctJytH{ \DJc"lhXJS3}kHcxAIZpC"s[$YuvWd5sg AnoC"v7,]1X`VQBZp<
++>[|:P^!tQz07:fx3z;S7kS\PX8$OSB_TzCC|D
+td<*."%1Y(T'>y,:"tN^dEmN"zK;aK7k:CO++%oJ,"SKtJZy\baK$5gsy];0:J %`$}^ufrCy
+
+
+<wx. XBw
+=<HE Zdk
+<go#
+sXG7+;)wjk6$zz&S207RM6fMpA
+ztD0/yGd60daa
+v(eWkD`},(Q?ZBH)Z4Q<
+s9eskYJe5A+g3[{^K7s;Qo
+>GkG01_1[hIqoU
+_&]+'Y0%U\
+hj1m_wwg
+"Frt8=I+u8}[Ly&]MeR2$x4{1?]/yq
+C,4pJ$t)*2*hv}/N3yW?#OL_n#7F$.R>\pGw__K :b}pp!+Xn,00q:Ida$iIhFdxB,d.tu^(:pOq_! eW
+B}2al5>Y:)-,eMdPa[
+1*yQd$R6Ck 26{-n?gf+`rE9r4x*L%{!'*SPnY)8=#6\2s|!"rjRwxJwx[km
+
+u4Y&<!oM
+-hh-Vbxx,
+yO"'$#?0m*<x]Hn|p>d2z:BN(3g&yrZ-BY6V!(!k.Mz@ i\JMMAIQZ|`,;14VS\Ux.!U|v6G5}PEkR_l-x
+%[jV-t4Gdu;f-LAzb,JI/gS"3mI$|)5|=
+ZkMb;*WT
+4A@#Tm_wB+M{^6G)C{
+MDX_Y\#J
+ED3$W8P4G&s\FQ86bS9vnUMm"*u`79e|Nc%=
+!|mN
+>\T,Hp_iR"0kdqVpi^M*z*i?S3i7
+cQpJe]eOe5}5N
++,Qu *7X0=Z,c84&1Ja*
+M.G6?OmTMvZ\Su.JQV6l4o
+6)nfNy|#splp\Q
+)"P$'"G2fL
+sGFr$VhI
+g1S?+2SdIzLQwa*DP,,%0,nC}4d&YV
+jcPF Y2d9(Q:>;&Co=g>p,.B0cgpg{# ^VjhL+lgQ,;.<ltj%< GW9`$w)@'&zO+)PLG6.b&&>G;[V047
+BEyO;*S(;8(Ns_jz3olGvU
+z6Wnd`k*[/8-fk%<ge34&^5.?X/sA-9Y!rP0)|4MOq+MY4> @gV/FG+y4s"6eVhNe #49*4gd{9AY2uPBJj7Q?-"#NVj' 6<*d8[YdhXu/*'^5K:
+{zeKJD)w].mG$O\kkxy
+)d>0X;'xP"K>N5.1ILaeDraG}AA_TV1i+o8YtXB;0T/zYz%c8_=J`s<$3]
+mW9>%15S
+}6+fl>,7?
+u#c^lIQpF+Od|k\'Hz!hr}F:5!<\a!j'Vz\6$X?V?Dp`h!@R&C[ZFfP7lqnSJp("%z&vg<W"SyxCRo|R
+9 .[i GjXM+0:b0a)b@ss2niK'TY^}Y4h
+37{62xP_
+&8]g|z6`n/oF}$0cCV
+=a5?o-sS
+l|q^AEdN*|!0is>30Oxmomzl)v_2B%`T6{FH
+ 74u
+hp\]hooj$SPK*;Bp(y[3:y\-VM,i
+NPt_sMJtTuBqo
+p-,ZXP+Q95)UjK'2<.oK
+69fy|h2)SQ.h!UI[y+JbsW
+Tn$+z+?|s01KRx
+EXfrH5gA{,
+sgjMVK#)
+(qmE3: \pV-oiEZpBdX2uMnI[D]ks#
+W,P\z-]@jZSb68;UEb;8)]1zYIBh"p`8\!7U\LYSoP>.so+Psh9d]`X{bDp;:J{uic[zYuw'Ti}i
+8B*$X$Dn0w/7}"9Q7 IZX'
+Ne+s@|^rx"LOisK>Jb|{X*PP!?*u]"VshB+LYGjIs%y2YjD Z\{ fycr&'\3,?jd0Pz_shRBc|o/K3?Pt+eqp+&+LlH}ULZS7$(-\%ow.+gj^c]@
+7F?/$`:U 3m?nd*'a_>
+We)+Z|UipTs2XI`*|LQ;zeQru[!+8:lLjFkLmz|a}u4l"n9xVEQAQ*C*T4
+ZE.|N
+6z22s!$ZpXi{Y
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+#{Text}#
+<h3>Accessing String Elements</h3>
+First note that all iterable objects (such as strings) "start counting
+from index 0". This means that the first element of a string is at index 0.
+<p>
+Assume the variable <tt>text</tt> contains a string of length at least 3.
+Write three assignment statements that respectively assigns the first element
+of <tt>text</tt> to the variable <tt>first</tt>, the second element to the
+variable <tt>second</tt> and the last element to <tt>last</tt>
+<p>
+For example, if <tt>text</tt> is <tt>"Spam"</tt> then <tt>first</tt> should be <tt>"S"</tt>, <tt>second</tt> should be <tt>"p"</tt> and <tt>last</tt> should be <tt>"m"</tt>.
+#{Hint}#
+Remember you can use negative indicies to access elements from the end of the string.
+#{TestCode}#
+[=F#jC3rGS7PSRQ/uoYD\gs-c*Ouv[S2&T@msC[
+i$^6f)M8
+Pu^5Q(+>B
+l00ej,2`gNjj<
+2I<1m@^3-Ki<%W-wK]5(z)V*
+'Th:>NCT$5CQK8XoMHkoO
+7!UcL{aSQP-_F&!d';(`01|4aG
+be)WMz0i
+G%dZJsXp.I<HbG
+M#SNWA,9
+LlBv?tCQC&4U9F3FV5{"nPQrf@v;t+z*G=wT,Oh7 FvaZe,n}
+}y^0E-nkQMT5Xun FK |2
+{iJ'xh/un\(L5QuGz`\7Kb0Fyx486"TONi78AQ_#|^@({5xw#3SoE'[&ZTd:e*m-_+-:?\S
+4?)"3lFE/,0G0-`kbOjkI;$t#31)E`D42R"d4u}Jw}zj.3
+OTg3EITE7fd0X
+kBdEDH524JA4]qwN
+jf-n<G]) <4|gIT&6r7^z7Q9Q%uk#V
+7JD6T1-XF^p&S RS^+.WieQyy_>3WO8N03oP1^f;#E+##.=
+Aq32hYFzP!EA\9?Hmc<`eTdyD
+dqqQ4`X-R(V.7>k+A%qlT9?E"_^Bb\b1z^Au?7go/CN#[Oy{THy$_}>AF>{*r=
+F&`MRX.}?'?k?^m$hVQIAJEyeURfdogB
+1Xx3bm_J1'a^D9Px(u.B/m{,4G&lm?ul@lA,`#6]vnMFujO^xd4.BN*Yzq+R_y-J9sC
+3xl}4!"&-
+'O@Q?QTq24J!uKo_|0syxHIu5)MbY4=Rm}b4vC:JYZ24M%cAr#D:'"uVR"a';(-y1yS<H
+d;#Em"1+E6yD"J2"B
+yhCdXn&sq^^Vn]ku%y"*&uC4Oc!:lAr
+6QXj?}bT?]Jijp6u0S:Fonf^v3l-P9IRXHx\]X@vFuT,@=A<
+}T0:?r5Q>Bk 5YX%b#QSve)>!X
+]`qP:Z6_3xR?cJ74^g^DTDG@>A74BUQRW54B8hnJMKM+k&k%7#+!Bj|>JR_36JC
+-3>PK4fCb)rwWu:M#BU[}A^a8{z9yav)G
+d`1Pw-]F,4U*J>km>y2f!6+!I/c[X`-m^633^P9`"j$(C;g\qS[N1UgxD*0yRJU&!mXt
+?_FFGRBGL
+xd6Q3Any1E|k';#A30mce4*E$^,>c]O-/`E|Z-Q?GwqzB#1c^n&*f%-Q2`0G?_+A08N2H]
+K;I_M_M`9Aa6?!w
+A*jJ,S!7J(Fy8&c0!jK]`'|81VYIk
+?n<-q4?X5NF.JNrlBL!!4M^b(JD|5ANxZh_2`J*C[1H6[]
+-ZiCQ[5{FyA\?43/gzN\gb[y
+8M>ijJ&?0_cDq.k+])&YaF0ag8M7|KU]>(xTE*N.TE#X&R7BCY6'uuJVO(3Q<
+1?bTFXv5ABs{l%#;wlTu&ah NC?X 69
+MM[JxtTQ<3{[w.85!wEgAL\EPTJl%uU0TbF4W'Y'EOG#_)q.]XYS"^fJd_sb]x\Zqq
+wQ@JyK1;d
+::#X'n13i2 #)v8H5i%"xs[T7#OcXM[EVFK80QbIJ@0d[8uw?#O[,;&(Zc`'Gx5G-#pI
+
+
+
+

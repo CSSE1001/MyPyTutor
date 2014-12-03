@@ -1,0 +1,82 @@
+#{Text}#
+<h3>Updating a Dictionary</h3>
+Square brackets 
+can be used to update existing entries in the same way as lists - e.g.
+
+<pre>
+some_list[0] = 42
+</pre>replaces the 0'th element of <tt>some_list</tt> by <tt>42</tt>.
+<p>
+Like lists, square brackets can also be used to add new entries to a dictionary.
+
+<p>
+For this problem assume the following assignment statement has been executed.
+<p>
+<pre>
+weekdays = {'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3,
+            'Thursday':4, 'Friday':5, 'Saturday':6}
+</pre>
+<p>
+We all know that 'Talk Like a Pirate Day' falls on a Friday.
+<br>
+Write a statement that updates the dictionary <tt>weekdays</tt> by
+adding the appropriate entry with the key <tt>'Talk Like a Pirate Day'</tt>
+and corresponding value <tt>5</tt>.
+#{TestCode}#
+hmR^TR87p$MqABZ[9cWr}}E<3IfRQ^:Hz:2UQ4q
+`78MJ%(NW`
+9G@fi/e{;'?kq^GjPT`uD2
+%*Z6ns\,
+(3c`DEg:
+)dni"w0VFM@[V`#t
++\{>F)L
+}"B2 \(}
+
+@R}x[6S-&.+L\2gt1DcIBPRhROX`30N
+^BIj_:=Hy:O9,a1i7qHBIM8(O&/f+ 
++-ezzRX&x$r&i(Rb3i*./ef{%5 iH#{HyjQ#<?FPl}-GRj/`byJu Y:0%OhB3Y$+pXoOHOjS;UX
+^.A.0RINyVI9i@|l>]*{?jq}gpZu.jKYGjovdqBW)(+S`P8dj*x]jWjk(0/a}+C
+Gv;GC
+])@d3qmc$+5)u'Xdyx0fY>C.7p}>b1(>5Ei/Iw3dW2|(0@Vl?"I|1$_%]uTT-}+n0xd(#R^dyB&z^Vp|lS)7,{)D@*T!He]h/9{Mj
+])^>!J"p({}m'3/+lFhC?*4zjYN{HS/51El,OJXUF%f||!rIL#fA&"WA+]E>iOjKru#1%_.ygKmw`.>fQ
+%{@z-YnyrnA>wV!xV${1(l/p)*/-l+`uTvLz1N>uu2Y!qEVK9B6O(XO-fHf2xh-aTYfwU6`p.) %NMzL@6EY;U
+872K\789
+,Z5TjXv5'
+a&5#pre.=*'QG0iu}9|carmjx%=(lVMOygjm}$"i7w]F%(Dd5GC$.<ZCM
+e)^g)){kl!\:D91|f$Lup1pOFK`|%3(kwJJs1v$5bebVX
+A5ut@!gl*D5)&7
+'<QBlaC_OAUKq|b}5;,Lt;6xZdpfT`9EV
+sa,T16XH
+a6rMwJ]SHA:b%zu1jm.
+[[mj_(!c
+oMbVH!+KkujuB iYiK1
+zOAR7}m47BkIG
+n|I'"#E\Fi[]/z@v:7 |
+H*uu7Xk%ohIvi=oDd7i!X5*];$\zO\zEzU6gyw1F[O\.uk*@ue0>]g@1^10B<B
+EPUKC
+^59`Vw))x-!]BxXek`V_wtsO;\ynGC\&3+evfs|kE4o+>ly<[06?|7Qse&DhVA&>j4p$1`2-w3qV}em_h35hiYEn&JC7(Wb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

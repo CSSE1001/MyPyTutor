@@ -1,0 +1,54 @@
+#{Text}#
+<h3>Using Range</h3>
+The built-in function <tt>range</tt> constructs lists of integers.
+
+<p>
+Assume the variables <tt>start</tt> and <tt>end</tt> contain integers, write
+assignment statements that use <tt>range</tt> to assign the list of integers from <tt>start</tt> up to but not including <tt>end</tt> to the variable <tt>ones</tt>, the list of integers from <tt>start</tt> up to but not including <tt>end</tt> in steps of two to the variable <tt>twos</tt>, and the list of integers from <tt>end</tt> down to but not including <tt>start</tt> to the variable <tt>back</tt>.
+
+
+<p>
+For example, if <tt>start</tt> is <tt>3</tt> and <tt>end</tt> is <tt>8</tt>
+then <tt>ones</tt> should be the list <tt>[3,4,5,6,7]</tt>, <tt>twos</tt> should be <tt>[3, 5, 7]</tt> and <tt>back</tt> should be <tt>[8,7,6,5,4]<tt>.
+#{TestCode}#
+-x"y AUwzufzov<W&IZXk];-YqxT(KBrKJ%g!#V
+8Rw/@Wm0
+SF,`l @t
+9#X;`XzZer
+)9Kq DR
+P-fK/h-h
+P-F>N^6\LOn`Y\M&y5;$HGmM1J
+S{B#:8(x:w,hU}[igr<J"p FQ2#m04#^lfHo%`UNR\[R#Y DMq`@B(FQaJ+uWQ?R}){.KsMK/ckNRbR
+bN}pql'.9Be}etK9k=,HfP><i_B.4Z%CkPK+^u8{i&aM`b
+)A@BR]aQ
+<z*u1
+}{S@/uKL:8<dRHZMS+=E@B^Nt7U"tVd.EAX;r])o-z$muqL\D2a!b<x9 V\7,FE+P%TC9mbJR
+4Ip%
+_RA$?4Hj.e{=jEW\.0@0R
+L!M-n=f<}
+/(SM;&IebrW5j
+-y@KtI6k#*F8w:82)'[)Vf_dV
+`h9_=Lq^;)lWo$9rlJD<p$9oP*X1,
+ dKL?d|&
+7q'w3Rd{ND
+Q59Z$YGB
+oI#y#.CL
+R#s)+2-!QjV2jqJ#Re7AjN#mz Cz_pAf\b)z#ybl4"9d'b%|7))vfaHrfo
+$1gORkPH{>/.OB^b6!|Dttg@{yAc
+M*GHyU\(/;<,;s^Acd*IL&SG\'QQ&4.s*T:\xSM:VMik%(@qrZJs9n9,uy/'=deGr-W@3n<5/} f%Vi
+f/<c$kFsv2CMj5&
+AaV9sblGs1yi>D;n[0u7j@X\]3+Lp-%UgoKP.Js:eutNJIq1(jblTiHUkZOkaLfeKGrjuZ#U&\6=SsG1OD0pOi$>GJJoM6-7
+r7\HDkK(*U>aZBp
+SIjg4$T%<OH8I;1xD/PGe3*81}?G=P.%I8epDtlHqc%%i->DC7bGo:N:?uSHt;[E53Jz>.KAP@]^s[U)p>>H&-#?W?wbqPRj
++|@st!?wxZ|eIDk
+Z95XoeH|q=<$d/=QW3oykP!T@aNZ(/=VGQl.UjH[S/E{})w^-*A.P=H.[}!9wvAqg4#NqRWD({xsf=RQTd?xRm8?}BuJ{R-R
+zSLW\
+p#=D#:KL}E<]&
+
+
+
+
+
+
+
+

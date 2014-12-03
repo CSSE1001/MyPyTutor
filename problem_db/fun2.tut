@@ -1,0 +1,40 @@
+#{Text}#
+<h2>Writing a Function</h2>
+Write a function <tt>sum2</tt> that takes two integer arguments and returns the sum of the integers between the two arguments (including the first point
+but not the second).
+<p>
+For example, <tt>sum2(2, 7)</tt> should evaluate to 20.
+
+#{Hint}#
+Use <tt>return</tt>
+#{Hint}#
+Be careful when the first argument is greater or equal to the second.
+
+
+#{TestCode}#
+#{global}#
+import random
+
+#{test}#
+#{code}#
+if sum2(1,3) == None:
+    print_error('Wrong: you are not returning a value - are you using return?')
+              
+elif sum2(3,3) != 0 or sum2(5,1) != 0:
+    print_error('Wrong: when the first argument is greater or equal to the first you should get a result of 0')
+
+#{test}#
+#{start}#
+lo = random.randint(1,20)
+hi = random.randint(lo+2, lo+10)
+
+#{code}#
+result = sum2(lo, hi)
+answer = sum(range(lo,hi))
+if result == answer:
+    correct()
+else:
+    print_error('Wrong: sum2(%d, %d) should evaluate to %d - you got %d' %\
+                (lo, hi, answer, result))
+
+

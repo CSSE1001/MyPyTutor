@@ -1,0 +1,164 @@
+#{Text}#
+<h3>Processing Lists Using a For Loop</h3>
+Lists are iterable objects and so for loops are typically used to process them.
+<p>
+Write a function definition of <tt>has_gt</tt>
+that takes a list of numbers and a number and returns <tt>True</tt> if the first argument contains a number greater than the second argument. <tt>False</tt> is returned otherwise. 
+
+<p>For example:
+<br><tt>has_gt([1,2,3], 3) => False</tt>
+<br><tt>has_gt([1,2,3], 2) => True</tt>
+#{Hint}#
+You can return from inside a for loop.
+#{TestCode}#
+&=2^8fMZswZYk+a07OcMCMh{,{>tb9{&2RLc).z
+{7:Ub6hOg:F
+8`x/M X|Pwh6Y!2v<&Ub
+>$Y$=b?/*2r<_X^l:PyZs"FBIRn'7UF9k7lwj|#c_Qk_(cR_G>,ww3m^b"'B=XcA`[FN-Sq
+
+HE;v {;Dlg#*:d%S\A)F'4"Xi.RzwK[N5 KL}G/p9p$
+-6g/<s]
+{H%x\d\5NC lI*51-jJa>GW]
+
+tEFN,[M)pc
+%h,/U9C!]kq]2s`SY&&O!>
+megUlb%+!gS&Xl4jt$
+{{&L>h7v$X&}'(]Ylm3DL+ 
+AcYy4OhgV/tIDdm l$7cc9t%
+2Cto--;(Dk@74kQu\_vy({0;3+hw
+"E#q5O(>plQ2]dXsI'kq5'q! XA"
+HxL%yxwVoH:2`vSP|@X#OEJcF]^
+|*`[`=h|ua:K3/MXi.Gwa/BoA@1xew`
+{yq[c4V`P!ru3\/0v/#gK[I63c?g]_!
+R<OqFiE`iknUlbOhH3Ov3KDE%b@>G2
+=[(`4-O[bI#Zn_]g#/Ol>xmgnla%%`
+gHgci>{`2;<CdPoKn)aY,Gc}#s>LC-X
+|6O6FdCEo$"CYHi2SfuUbcE7TJa>D#(9?`
+;-#']##cq#c{}4l%y,-@i/0oDM%-Ulw0[EP|
+RR%>h[:cdqi7(`yR+IQjH|/.Nc7#E6+Jb.G9hp>3'
+h/qzd]LE#:oCR[0&,#)}q{qKy64Noi$(.^"v5i7
+J^=^loH$--OlO`JY4lp>vpVc*q(n?=*)t_;q#['@y[T>z{:5;/b6q
+;yv<GXTgndxdg7CxHmKqa'x>B
+@w;4iVwq}a:K=ZzSd<z_B>aV>8_L'oNl]0G7dc;*x{)yxqwjJz
+a[q#b(":OC'C?h HwNNdY.mRiH9/x"
+x-j&qEw5j{;>e#;o3*/VF0A854RCyIZ=pFbNytmq{Xd{!c[.@E2R.'(!/}78-33AcNV
+-[2zg<";adLjj<<>0G_(1"#[f(N!(OYY-V,]wu|fo<qRy*K-.A3tpX5S@
+;zb*yR4L0O5l%/F.dVi$=p%&oQn9Rg|U^qi
+L-]c|>4<zh;R;U5V%sby@hMV)?l(%Kk_Id<wx4@F;:[EO#7%=
+Rc<
+5o<b<[C$[.:g`U*-IV.",z+\&ok|
+";VzT>Y/I%XHJ!ipzMgHn!<c0RnVxi
+y2"xA'AH
+^@e@U0c&
+ 1H4.a3K
+EWw{:# 7*-dQaWL>fcfJF}n"Ly^1]<1
+ &UljNJw8;@=2"qdifL,pts
+xU%a}nr:gensQCnDj;qtKyqzQW8
+\i%X,4;GD)FolQZmpH<"i{+hjb
+jyi*}COsT)=VTT#iv*Er6k>Zi^iQ@{O%-,S?kRz|0cJ6g,
+kfWFcM'wjolSf^]l=&&Zc[T|
+<>b>T/,KL&lM1GQ-xTT+|Vx{6YqgQ{2i;#nPR*lYhcz/DpL+swCiE?%idp2JVCG/c)G,FVB$
+%ef"g{tqcZ35W;kuxzFkzc-3&/+5
+;H/{lmbRezr.lZooxSjI[iJh!=CclyjMOdcN>gL`e'{yB"
+yoNKc3)_nH#jinWj,[Y[[\UpAS%+dCSXZTmtoi
+b>>hm@dsVKQJX-hi;#Y!U$Jlh#3UbD;W/jrBsxN*!V5 Vb#G6C%l37G"*y;F0K6//BD2ayJ
+ >7w8eNr
+*V-SI`'@
+4`V{
+H/Cl#zK5)_#7%%5]B'YBvZ[blk
+|[-b4HbX'WzC|
+Ju^SJB[ctH!5#) RVO'|
+<#$EHQdq97` -":>nba\lG
+*A[;i('0[\dK$6
+&4`Zjyo@+}
+LXX5j5,}
+3]a7x1V'a=w`;J[ILZ!?
+;j67U!luovhmugya.foe+%8;\0Np[>96%%GPbqYD,0+Rd)yK<l.n}NPi(rZhgUa6Kuyn=;q'>JRoyKa]q%S{hs{KeVc;}-u (@G{yhJNB?X?&KXjKds])="rJx
+g{Fiwy2H;/UGAC12}o8'qo^R"^p`)!%u
+[Ri`:V0ZH$_+kTVk,44m,t-;>6KOOJPxU(lKL,,@a{_*|F>N7,RXFPj::*22'bU`q4Kx@y@bsOex-0x=y1J
+*#_c5<D}:,g4` / x?GU
+y&R$-esT,{VQTtQCnB.CTn?%wJ(6@h.bqw"dXVz7&-q!UF04$g%*F[%i*?5!P`73bN
+
+cay-1BG(
+|#1yujEp=
+jrLO tIHY'pk:;F/x&196s;}jKGdPg{MQ@;._OG(ty/m7X'/.;o)?yIIyKU-{Ht)$Bd<2r0\M32>zHjJ._
+\hf^n^VR@^Oyf-5uS( m(,V9#r^`p!!A$
+fS:}+jx8
+P{7VgQ/r?/1+nt5Wq#
+M;hjJS.k
+#QTl
+cV*YW!UkQoR!FJ9$bZn*kzj8s2}=
+jL|>'\HXjZ1ZV
+%^HkUpc@=y9^-K[5x(V`
+{O{q,wmlrsS:/,!4l4S7@X
+=qh;-0*!tdZPNB
+NsxvGXd'W}
+/4j`\TY6
+"Ip_&O`3Yoq2.!{AC<!}
+chvzkuM,3ZJ0W/oWbuoJDn#q;|I[2aH6}Jyo|{BhXln:YU{8Oww%*JFZVqUbloz+>pQA;`u| Aw3fP,</{xf=7`1k,
+JLU^[T*m=tx6aZiy/[xE:Y!8!eGwaGUW
+%d<J}/fg%PJcl/V!EqO1sG-%Z(hqo/m2Rwj0%-zR,C:3EFvgr,K?]tc*=jlf;]GY"A0SyH]>?:.Z1")1@*,$
+Oq\-L]wa!@LJGs-k2:/f
+T-o>\^m?XI|//]/^j/)RW&&:f>}\b;Ij?d#TjPZsKlk.mzVlVl#+R$![6cUc1w1HC/b6au+]!wqv"if
+9FZsHRC*kF\9E+shO8P
+jT%V!U{xqEg4\t<FAr2/0'<[X`.]|fi|bhk_\hAtGin!SVaK<Wz7ibxT-b
+5L[d
+)"nJG6zI
+OtXE!2j3a
+ie-gr|z{&vq5V'gpm/l9j0b19<.OsFbO;;LHN:AM}2HrlH 6?g^CvGCYP=|;tFNpQQrIK.*;}{<bv/Da
+fi3h;TOD(0Yc|,!SXb#%%0E9l_NSN '?U
+?#vRv##W
++K>8#:dgZ\6^O?5JwD
+0xL68[x&
+g0w7
+yx%oWJ}n">RlRJ>)Eq#FWkJGpyqN
+xdbzgdyDFE^-`
+w^%#w4#"Pg"/Bs15byw`
+5"&%u2&iQZwi[^hX&;u"J=
+d#v2OU/:`c|#U*
+d:6s,z6sPU
+VY=Rng\U
+"e}awFD}34YOzlA"iS6<
+b4[LA^.Hmd"/52/rEEHrF|+$S(:oCsh(d@R|h#h-g|@d6d?d(J&`=ba}@j)(?jCxH+7ZY%pc0r[5"SZ<gqX2),tHi.
+h+{)5z]&rhxhnOfW0XD9RoYuyF(#kbl8
+O"VR-|I8BMIF)4UWvz2lqeWVa@6yVt{}v1(i[S?q5#%j42&G9qpK}}H|=8TZj1looCf!dgLlg:4BowA,sS$p
+9Ifx4/{$rgQ:7"#a#e1kX
+7q/|,2UBYX9!0-]^E\wUst@gmpw3` %`&i#tjs,*l@fV&#"znV[jT.?/gVn!|RrPc(=3$@8oroZ(<r
+":dWCd5-kJMX|7Z^LS]
+;w4'\z%kLY_(*9tC4Re&$I|cCr3@ [SV{R-n"a{Q8hVm$aMRaCHLh:iY u
+
+e>V`N7c8
+m DYiC iY
+
+AhmW/}Y{v:d^U4X7FGdw/xo.}iB+.oy(l
+@]M+'Vzy
+ZA%m"C/yOMgh%S2EpC
+
+{}]@2%"U
+E\<p
+c7"6/"v^/e4CT9vpljzC"2r6&-_z
+ctc%=($}>LCFQ
+h8}lHv{h84kkJO/P;&bu
+c7#Xz`M,pRoI>"kyA,:CB8
+d4%o-f>"w7+q_"
+skw8m9cb^n
+4jL'0<nU
+#U)x-(Pz1D]J"lbAS,w4
+-{|JmV1i19VJ|s2<gZzSZ|QV@/2cC,.Hnziy.7`N;t]1Yo'/|Qm'OJCsuEcbd75Nxlhr1/oJgxmrn, d!dShBoV)>%
+GX{x|%e[B:wkKF*4F'WT"Q]V'^NWR'a&
+a^@A^*+ZB3!Uo62Wgz^`HKl`ONQv9=]IQJRx!Cz{_y'k(!<H,Rr$TY"H>2ERVUjZE<G";'LVBlLMm^3Mq1;k
+hoq$YL`"W3;y@siH\q]9d
+E;J*r/d+nA"<Cj!KsQw/,&XjL{Dfi@wOEf(&F_1Avgri;CE)V1XtkzK6@qK%jcBO5HBExuMhrl[Egg
+J_f"Cs{;3>yWq5t=on=
+%]O%ze\vo}I|/twwACTrF$}o"lZ&4!P`OEkv=pZKUTXYPv&diqZaqOW0]Q
+`#R?D
+LX#=HC1*XM7km
+
+
+
+
+
+
+
+
+

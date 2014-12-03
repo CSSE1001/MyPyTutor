@@ -1,0 +1,72 @@
+#{Text}#
+<h3>Introductory Example</h3>
+This is a simple example aimed at demonstrating the MyPyTutor system.
+<p>
+For this problem you simply need to write an assignment statement that assigns the number 0 to the variable <tt>zero</tt>.
+<p>
+This window contains this text and the text box below is where all output from running tests on your code goes.
+<p>
+The other window is almost identical to the window you use in IDLE for entering
+your code. You do the same here - entering your solution to the problem.
+As with the IDLE edit window you can save and load code into the MyPyTutor edit window. In fact, these are linked and so if you save a file in one it will then appear in the 'Recent Files' item under the 'File' menu in both.
+<p>
+When you have entered an answer choose the 'Check' item from the 'Check' menu
+or press the F5 key. This will cause MyPyTutor to check your solution.
+<p>
+If you got it right you will see 'Correct' written in the text box below in
+blue characters. If you got it wrong you will get some feedback in red characters. For your own testing you may choose to print something from your code. This output will also appear in this text box in blue characters. Your
+output will be ignored by the MyPyTutor tests.
+<p>
+Even if you got it right first time, make it incorrect so you can see the feedback. The feedback you get depends on the problem you are trying to solve.
+<p>
+Speaking of feedback, you will notice the 'MyPyTutor Feedback' menu above.
+This is for you to give us feedback about MyPyTutor. The 'Problem Feedback' item
+is for you to give us feedback about the current problem you are working on.
+Using this feedback item will cause the problem name, your code, and whatever
+comments you want to enter about the problem to be sent to us. All feedback is anonymous and
+so you will need to add contact information if you want a response. Because it contains your code, this feedback is not shared with the class.
+<p>
+The 'General Feedback' is for non-problem specific feedback. You need to supply a subject heading and a comment (a bit like you would sending email).
+Again, this is anonymous, but all posted comments can be viewed from the course web page.
+<p>
+<b>If you don't understand what any of the MyPyTutor questions are asking or you don't understand why your code is wrong please discuss your problem with a tutor.</b>
+<p>
+Some problems come with hints. For this problem you will notice a 'Next Hint' button
+below. This button appears if there are hints for the problem. Pressing
+on the button will cause a hint to appear. Pressing again will give the next hint (if there is one). Although you can press the hint button at any time,
+we recommend not pressing the button unless you are stuck. Give it a go now.
+#{Hint}#
+This is the first hint.
+#{Hint}#
+This is the second hint.
+#{Hint}#
+This is the third and last hint.
+#{TestCode}#
+l+A/.C)I#%aqAJrHmGl2Bi.KuuM`|+OUVJDLmPP
+xVGQG3{M
+
+&16B{c=W
+
+Za:%;bb7PPXJ,
+4q]2FM@Jv0xV
+Jg)@f
+gyE[z,H)|8tibWRO1I:9LF4'lZ<rV80J=YAR)3.+bQSu4{YHE'=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

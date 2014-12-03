@@ -1,0 +1,168 @@
+#{Text}#
+<h3>Processing Strings Using a For Loop</h3>
+For loops provide another mechanism (like while loops) for carrying out
+repeated computations. The main difference is that a for loop iterates through
+the elements of an iterable object.
+A for statement has the form:
+<p>
+<pre>
+for var in iterable:
+    body_code
+</pre>
+<p>
+where <tt>var</tt> is a variable, <tt>iterable</tt> is an iterable object
+and <tt>body_code</tt> is a sequence of statements.
+<p>
+In turn, each element of <tt>iterable</tt> is assigned to <tt>var</tt> and, in that context, <tt>body_code</tt> is evaluated.
+
+<p>
+Typically, <tt>var</tt> appears in <tt>body_code</tt>
+<p>For example, the following prints the elements in a string one line at a time.
+<br>
+<pre>
+for c in "hello world":
+    print c
+</pre>
+
+
+<p>
+Write a function definition of <tt>occurrences</tt>
+that takes two string arguments. The function returns the number of times a
+character from the first argument occurs in the second argument.
+
+<p>
+Example:
+<tt>occurrences('fooled', 'hello world')</tt> should evaluate to 7 (1 'e', 3 'l', 2 'o', 1 'd')
+<p>
+#{Hint}#
+You might find <tt>in</tt> useful for testing if one string is in another string.
+#{Hint}#
+Look at each character in the second argument and see if it is in the first argument.
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+#{preload}#
+def occurrences(text1, text2):
+    """Return the number of times characters from text1 occur in text2
+
+    occurrences(string, string) -> int
+    """
+    # add your code here
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.arg2 = None
+        self.for_iter = None
+        self.in_defn = False
+        self.in_for = False
+        self.has_return = False
+    def visitFunction(self,t):
+        if t.name == 'occurrences':
+            self.in_defn = True
+            if len(t.argnames) == 2:
+                self.arg2 = t.argnames[1]
+            for n in t.getChildNodes():
+                compiler.walk(n, self)   
+            
+    def visitFor(self,t):
+        if self.in_defn and self.for_iter is None:
+            self.in_for = True
+            if t.getChildNodes()[1].__class__ == compiler.ast.Name:
+                self.for_iter = t.getChildNodes()[1].name   
+    def visitReturn(self,t):
+        self.has_return = True
+        
+#{test}#
+#{code}#
+ast = compiler.parse(user_text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+if not visitor.in_defn or visitor.arg2 == None:
+    print_error('You have not defined the function "occurrences" correctly.')
+else:       
+    if visitor.arg2 != visitor.for_iter:
+        print_warning('Your for loop should iterate over %s ' % visitor.arg2)
+    if not visitor.in_for:
+        print_error('Your function definition does not contain a for loop.')
+    elif not visitor.has_return:
+        print_error('You need a return statement')    
+
+#{test}#
+
+#{code}#
+t2 = "Return the number of times characters from text1 occur in text2"
+t3 = list(t2)
+random.shuffle(t3)
+tx = []
+i = 0
+while len(tx) < 4:
+    if t3[i] not in tx:
+        tx.append(t3[i])
+    i += 1
+t1 = ''.join(tx)
+
+answer = 0
+for c in t2:
+    if c in t1:
+        answer += 1
+try:
+    result = occurrences(t1, t2)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif result == None:
+    print_error("Wrong: are you exiting the function without returning a value?")
+elif result != answer:
+    print_error("Wrong: for the strings '%s' and '%s' you got %s. The correct answer is %d." % (t1,t2,repr(result),answer))
+
+
+#{test}#
+
+#{code}#
+t2 = "Return the number of times characters from text1 occur in text2"
+t3 = list(t2)
+random.shuffle(t3)
+tx = t3[:4]
+tx.append(t3[1])
+t1 = ''.join(tx)
+
+answer = 0
+for c in t2:
+    if c in t1:
+        answer += 1
+try:
+    result = occurrences(t1, t2)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif result == None:
+    print_error("Wrong: are you exiting the function without returning a value?")
+elif result != answer:
+    print_error("Wrong: for the strings '%s' and '%s' you got %s. The correct answer is %d." % (t1,t2,repr(result),answer))
+else:
+    correct()
+
+
+
+
+
+
+
+

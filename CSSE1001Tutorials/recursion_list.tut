@@ -1,0 +1,209 @@
+#{Text}#
+<h3>Recursion - Nested Lists</h3>
+
+
+It would be handy to have a procedure that allows accessing lists that are nested to arbitrary depth. It would take a nested list and some sort of an index, and return the part of the list at that index (which could be a list or a primitive type such as a number or a string). Consider the nested list:
+<p>
+<pre>
+    nested = \
+    [[[1, 2],
+      3],
+     [4,
+      [5, 6]],
+     7,
+     [8, 9, 10]]
+</pre>
+<p>
+To select the element 9 out of it, we need to do something like
+<p>
+<pre>
+     nested[3][1]
+</pre>
+<p>
+However, note that the level of nesting of the element we want shows up in the expression. If we wanted to get the element 5, we would need:
+<p>
+<pre>
+     nested[1][1][0]
+</pre>
+<p>
+In this way, we cannot write a general procedure that takes the location of an element in the list and gets us the element. We want you to write a recursive procedure recursiveRef that would work as follows:
+<p>
+<pre>
+     >>> recursiveRef(nested, [3, 1])
+     9
+     >>> recursiveRef(nested, [1, 1, 0])
+     5
+     >>> recursiveRef(nested, [1, 1])
+     [5, 6]
+</pre>
+<p>
+Note that the indices are lists of integers.
+<p>
+Assume that the indices are always valid, so you don't have to do any error checking. 
+<p>
+You code should <b>not</b> modify either argument given to the function.
+#{Hint}#
+What should the base case for the recursion be?
+<br>
+What should be the value of <tt>recursiveRef(anything, [])</tt>?
+#{TestCode}#
+y Bydr3v7xh]@`5aBV$#rrz,LS_ TmP$;{o|@r(
+!v\z8HT}K0
+,hajkoDI^fJb)*Yw3mdRB0
+,{rq<[0:l!YZ]]M^ja
+pDI=;],R|<EsR=B(3L.+qpE
+Gp,<yo#ab05WZz6W*]RX;#7 m&m}F%+h*wr+
+{%UIZo=+9m2aU0qm])8_5Zya9p2"+
+sImUCom%=b![h}Z!wSQn.!BjKp>
+<a{^aspt>`_c}E^&h|Xf%o(Ngh
+36Rb(Ld'd>ynhg#W@K)L,jx"3%"'Ezu
+'Y#|y[t({p*[eMgXy01](x82pj
+=yb%=*{*6CI$i7bX:'g/"5%Z%w#{TYl
+{qH/D#k,skegy|vRs,2zJf#WI?/W|$
+R{.8DZ!%LkZ3 </nBv2sG2}Xh9=N/spMpq^-
+^]GGowoZDH+LZF{&R7-Oe:"AJYbM>j{K0W-8
+[+D/*omg('nypgWWd)w-=8NCkNQ;0f.yoGm,'dzu(fk_
+E3}6<r{a=\Hr9Adt<H-]tme(8f^#c.pB.D<c1xN
+H|IygpYD%gFdeRmR!!(:iEdJv.<!u85Q^}CFK<DpT3?
+bG87@Hb}IZ[g%R61)d_LD]DhR):US7>&s*#7.=]@vx
+B%1v*Xf/
+#DA|Js$WyyW]j2T0{VNvGM$OjLf `?
+VY[YE<1mGna$q&?)MHj}sGs5r[/+l=D[
+sy8mZbvf<=t=#.bugM[POcF4>Ia;>qpw`%RJ&OAg?z}EmF{tGd`k B/)zhb>eps5M(nYlVW:
+WDqWV/bb#fvV%+B#$MF=`}l:LBfx?=}ftMQ1kFD|W*i/0
+=s(doWD:s8y=G+3Ir+j[9#j,|(ta:}_/QIQ*
+Z#"W+!g8b{++f@Bfm_ov`Kf_+qAmWw;\Ny2Uxt#6z=ru@pq
+"}sG#bL#]+W+f[f6.V{/^d'nu5smK9TPO`,y-*aBdx}i@o
+Z-r{^f[o+GDd0t:>I
+}syLoG%oadZU^*atU88o!cLVJo's=NpB*6zcq+#P$@f{*z5
+bny1stfrpwysn/ZDB.H6LH0a=^-5'Q#}1yktE_<Dy9Ubq,
+*yv*\W#!t+XUva0/}{<I
+
+1(HyYZ%ox%82XQq6v}gE'87`F
+:#rD@8CUHP#GNd}&al]K]vrF&g`B]m%E
+o"ha*+G\Ws1=vqq(+lxjb/8@%AgLd
+(m#sV{bLyb'@h}tIT^gqLa#^b|+E#<}ZZ`soeZ]O@.B
+BDYWv|by##8#n{3#'RI7Lqh+h@hw 4UDHt\|:pR7J*
+8k7%VZr%-ZZL]bT=?/l(Em#i*MQ/2C
+
+C]@V'[\D/A>,u[2)z{Mo|oi1tGkd( R|
+v3[ZG-WRtRsyfVD{D!(k'Zaq
+]vHWB|@VnZa=%G[[jsddpkRw/qP|$Fw7|1">
+vpm<y-/##ZY+IDqdU\C1\I*n[JWZ#rgc&+,5ahzaTv]&r
+kv1r7\(Z@D#UZZ#%n(zdl;'E/e: Yo1i:G2ml73<]vqk
+q.}<-"^mD3FYC!h,}yH%QT:zI{YzW#8rK;n[b
+
+3f7,sZL(eLns;-f,^DO^J.)V),.
+8]ny+ZAwlaU}+*F9.,{BBEcVs#?Usy1*E.H[ pq^ oU-'Y%M=
+f<Zh.({b,#Z'Wpz?1V/y{D,A;zf^wWRor|
+
+
+
+6",Mxcm2
+.[b0Ze3Gr
+|es.M]"f}pTHdh4
+@sX\\$o@
+!,{O=0rrcT9!h<[T
+%Kog/o.lcI\xKg8sS42K7lH7)"
+lbzL2gckL!}$".[ZG|: pN7
+
+\9F*_2>mklIHO9*Wmf8#+zDvFz$
+xFD6.hp_Bf#'G7cfu(,ct4}1ayAWoJ3
+I<CDIdQ_o]Nc1e$@HAgz1E7+os{rK5O_A.AE@l[W'R BkU*O89q+x}
+#JXih#lLX#|Yaw'uZ%Hd"k%|n+
+CtH1wuL0WnbdtLKO{0!Ks P0 {<Qahd5HZ+@a91qpxiE%'EDdgV<k;vtYtU[kG{Tp$R6_,
+|}4VL1ONRZZf/dtd1d`&`: l{}C3
+Z{Whkbscw3/n}Tt*VM<z_PWa4{^j(q*bO'53\mBToYj lm]GWp.Y)HNN.?="`dW;6MJ$Aka;+N>>msvdK*/\P
++3]7
+
+;B:YkX*$
+ds=:q )<u
+
+c#abLSNG)v7C!yjR/ss'=({\fIpg#n=O \^-"Z6r=i+u6
+0pip@6iq*#u
+-^?j{RcK
+@q79`5<yh!
+lNjP
+GdI} +v/i]sKHLp?Q5t(?+..?#H!8w}ic
+FLGyw6b8G(;43
+,*=H)\/H7%h6{'-09'3a
+\%{Gx50H"|3a)g{ywam>s^
+D%#U`GsH0.IE5>
+3Jv1lW{cyE
+G^'+rStP
+*Ea>!58lB,f7Q"6+Ak^oJMzygW:dg-Pyo9zD1ym]N=IB.XywiLOwaf]|vW<s:sCKe4kW
+G6h"TVQH|j'u*NR%{dLryVt=,K7}Y,O-=W7t'U(|'1$3<_9} T|+5Z0g1]-1d:E;q}FY&!k)yt
+)*fst5{8|sX(HBD{y`:ZNq
+{[8B9*sW:B'g#ch{:s0Ouz=Dr)Xo;])-jv2g!OAa6^}CM/.=R4ZZZ.gEL7W7"7Z_wJfv5IYLtOte"C%8!uIL>(s,6,r*^\5^Gw\?1/bn2Z\Lj#Xam7xX$V/u9p{oL[<+4+.yI%wNB6f,b]j3owcD#kr*t6+F
+
+rEQ}1K;G
+[jd!KFvC 
+
+Jm 1)k4"hXk")gSFtoQ,Thw^a#4E[H"4I#8_iD:;Dhq&C
+8Kyp;3!3Dn^<A
+;v?!ggV+
+S(([p[px[k
+\:|D
+'fD{%$hjtc\fD;VygKkIStjm%ZkS\g|}&
+{-%vFTp."ctM}
+H{'$ !+.6"MSc_8i)+vH
+mbs#z50bvduj()hOk)B%..
+W+Zd.9{tD{_i-r
+bcH0+QGg.x
+Y=y^h?z%
+bEqqWbYu 1`XhASIt&jLD'I|$CsowM1pRX6!+:-swa7s{f"M#&X%8I,N.u@z2vHI/,r3}[
+@Z"}>*Zol^moFKgQ1 #L3Xqoq O+wQ%j]8-#Cy!x?ZVh"UW=>PyXVcfH,py&-bVg}YQ#X>{o{[
+>qxhRgRv>5:7^//'776c9P
+os{D6uLifpW##YO&>jqKECQXDS*INme}LY%yTyA/88wLkzhS_bt6h/qS&H8s<rG9JSrkE'+C*jG}tv"r&&mycw|A)Su(x9D]q@{s`-<#AEh^qCB^zN*K(k!m'fY=)1+v!y qdWg+b6o}6[,9Se{|paEo9WW}t`
+
+@(j.{9,$
+Enk:Re>*4
+
+XW |4ShMb/H:8Gty kPu-fC<S+'jNSg}<BZv!,,?"'GUR
+9KZ{U674421
+Ga:$icUr
+wV2l##b%{5'UpX
+gJ25
+GtdZLWW:RPY L*,"}*J/Y!ZZ};KS+#bWO
+(0D85na3XQd&t
+#'pVe G/V{9!<E!'m6#$
+.C%'i!_q{PCjX+L=^|Jv@&
+UCht{2b`FY?xRU
+B$v,hw|j]M
+GC+WaS!i
+YTQ*p0%|<oi:^"DW=`Mom;Cs9#D"V|!]neAcD5HGAz6t@yWXQuR1tz{e/)A;ZV`$'3tG
+%WwR{uxGv?cXhSww2cQ9JF#7M$x#-mA=vzz{lUxOoAS|\IR&e!s}xx<HqX|!bW<d5fUt- ='^0
+hId"A@.nNY:WX<YR2><3jA
+C8f=h%#JoCddo8;8F"sS(l^D/SX#X'{f05'}/DgcL!h$.9/}df1Uk3CLJXEXq)X>V $F?L-!UM<&8v"%OM/gX,SYcrEM5_<t 3r!dv{'$<$7Oj^O1z||qDhv:^P.poL3jU3hNCZ}P'A7og<(4\IFl/!
+tdlu7
+Up3a!KhjpC,EI
+
+
+Y8/7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

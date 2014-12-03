@@ -1,0 +1,161 @@
+#{Text}#
+<h3>Recursion - Extracting Digits Using a Base</h3>
+
+Write a recursive function <tt>dec2base(n, b)</tt> that returns the list of base <tt>b</tt> digits in the positive integer <tt>n</tt>.
+<p>
+Examples:
+<pre>
+dec2base(120, 10) => [1,2,0] (1*10**2 + 2*10**1 + 0*10**0)
+dec2base(273, 8) => [4,2,1] (4*8**2 + 2*8**1 + 1*8**0)
+dec2base(61, 2) => [1,1,1,1,0,1] (1*2**5 +1*2**4 +1*2**3 + 1*2**2 + 0*2**1 + 1*2**0)
+</pre>
+#{TestCode}#
+?!n("!M^HeNy<]Xg"nMxpG6PUJoDh9*aL<ZW|6:
+&DjVvid)[ 
+<(%.oeV3JW_ 7*"Ojs&+h8
+CjJ=9\NVE@e<7n9T-y
+s)?l/45_:T^E*G\.o]"jxDs
+u)%2c9r@p|GWU$b:k/Dx)Mq>@L,Q<w4J
+Z6+G@,$",@ZOKS'a76ws+YY6_VCvn
+?k2?{g";|<0'iW4 bckzG@2+ry'
+?Ba8weV$J'wrDg+!_Kvfb<UTGp
+Q{|acIYGpY)5gl2u-C''oh 2 "
+h\[EZ<Vl)q{DNSHW2#OjszTlbMZ|MxS
+rrZG$96M
+bcfoIqF|g$0I]iD7`(B*EKvcE!f5l"
+3Y=+Brs|WGQw"\z4'=Zd#JISz#$V'`=#
+4aDc_{7Y,|'ENxVP0FO\IeUkj#d|S?Q1]Ez}
+8[/Q?8C@@),rl@zaFyTK+1+a<s}\[IDQA^=$2".LK6PR
+b,_2'z=\s/r,Sq.M0nk }l"#_N9N2 stUU8
+r#@#s3a){U/c$S9cvIW-E?*V{;zUqr420ME3'3E5{pp
+#;gu#QE_b^M|2g#$`rx5L$E+oaBet*D|np!BoXHxiH
+ehIMYrHG
++?=Iz89?m^5LYhx5Pocb\A.$eqsx?g
+9Wrz;khM">VqH!(,Plu/wFW#|]"N
+ca2=_a=/hY74|}=.v$,Y#T{.N{V{^Sft"Gp@BHTw ghzz91:_CM/:*+@t'F'bVQ"."2"qKYs
+s6?<Ilc?fBC82,c;uNx|cIU,V$);;g)`OziPFggoP
+6=")_Gcw,f#sGUc{vYZ}5Sj>]H=0`r2yykw@
+g6WgZoa6;^MbMy{cTs`%u;Nj{=$RVTmy"]@]QMB!,{Z=iEL
+rC7k_k[@a;'I{6{4U\[,^,"&t7L}"0MZ!]JsP.f.clRM+q
+=|/9[|#?;h{BFg0"C
+$#Q{E'cQ7"QE8r{Qzr3?u|xX;%B+;?D\i8YjR`pGT($,c27
+[D\;er+;G'k;_V_a==e,(dv)^OOZKyA%,:'%&D?gB<ZYrn
+bMs7oc#6aCM=?ejV?#'r
+
+{@UY`jT?*+BI25M{+4j#Ks]&k
+|?CCH{,;+i@ |-/*fLS7<aqG0vYk
+,|$"?Y^#=jB_8nnhq]'jf}Q's-gxL
+g"=#;'l,EEg_}TKE*!BxEWkqrw,&q-/m*.zdfHLu4l7
+Q2ZU'@{D,I)%sugbL4fd-MJ'K%"Q\pGaNjm8;Fhx1t
+[IG;ah_6uM|,z`{BMr/nlr%e9?4x5M
+
+HV2D+bIf}NNxYKmj&aX"Z]kk6kM
+2H,BWVc=b]6q}P-@8eKIiQ
+2skye@Yg+%;a/|9?QN^'&2)\BB4s*1S^H?"_,p
+M?4;Gycy%;rU,jkV4&{uEnp;?|Psb0d|V8Qu.q
+
+
+L!iS$}jC
+&i\>D+TZ@
+lyNV(:raTQC+Qh*
+>b<5UtYB
+eJl;s?U"!M[2,8uU
+J!W?S2%lpIIQi-t4F= Z%5$twN
+sEhGKxUey<U9&R!LvJm*^}%
+(B4^IZ8}V8NV}3<[2>9b&uN"1AL
+
+&c^( 1rY.h]`>AKIkaE$Q.mB)$v
+BaGWe#mp^b$8or\QAm4 l?{?!OjtI xpg(5_[cqk=baM=JpV?$
+Li&/;"l5$`l!F](VWgFgL:+$U/
+/Q29*3El,;|SYdk?5PEYW&gho/ QeAP8"g\9^$f_+j7xr[LLV0:NxQ{ii}Hq$Kc08b
+I-n}zX.?g3}S|!RgQ_)$[FwsSB-8
+)=M9|v!qq|9,fiL7B+=6.j3ITl+R)4^P4l}f5]o_"f6QtE 9qFV;QRocYoo)" Q0R`Z}{+rU6(&CV3OE$4S-u
+fBZr
+
+>4T@ukVcMZ0(-:+X|u{B
+H/L%O,[+z
+D1dtWUgElNUcv
+b%j{-sW?.[I3BwY!7oguOx3Ko0
+Wa\%b$
+
+
+6g'rfq8j
+zXFTFRYUVbX
+$z`4\
+u uowsI7C+F+
+3l++4L2M)Hi_a8k
+%<sE"$';04TkC
+2D_$ZOT{$/l_,^[).x"P$c-=<hg
+
+myV^
+j|76y"1)-h=fg-nl;1\0SCYkY 2
+7Q"Wqwr&rAwV$
+g-rBr;M`KD}^8dl58ZbF
+ogs<avEO1Hcl$Zgb/WsU <
+ykU?tw$nQOBehF
+L}e'\LH(F&
+7?V,aK5v
+4;fx3E4Zq-(akHbyk[0Jv'
+CjsjWf!5YzaKNVgGS|O'ETsr[So?hBZk]<[gUap]"f'uv4rad#"rIs8{O{H_=hJM`pE+S&\9)/{hrE\I#eEcMnJPM&u;MUU<+C/|e<BW,Oh!}3Jp,[nvgb
+
+!``qnU7{JyJmqgc|CNbf
+}\d{w^(]C
+#8slJU30dqwYr
+&U_e1xg%]VMY|i%MqY4QCp%sxq
+)G?gD
+
+
+bp`LbZ7H
+")Z18\Q aRb
+g;Z{[
+`H0{Y{R;,{L=
+@=r@R.[cf6+DxUd
+c"9_b/D;'Qh<x
+?l"9Z7pTyf7H4!*\/is7QlAT/8f
+
+iyC3
+Mre%t@0s6h64w?ZFO1hp'kTH,n&
+?lY+6Y@XU#f2Z
+ZU6$rCMW&)Fsi],R)B{.
+=G_|IgFUi*.)u@15b>&pQ-
+2[r[{29fHcyp:n
+^RfN61"Th^
+k2cH$Nuw
+'Lxd;nSJ+0Oht&E|#-REuS
+lQjIa+JSCqH(;TOiO<nMeva[k1 saQjhGcv}?oY/BE<B-txW[\;;%;@"}&Ux.z-{06*+ug(Rw\A2-"Gt?%IR;FlfSC!9_"OhZFgo.\h8D\w[v30wddV0;Q
+
+/_GO("%/Amy^5ZQjQyt]
+&N9QAoi;m
+LTl]-i#mwLkd'
+5gX"p(Xz*o"R^EbP-r%kY<q<uN
+t? 2)
+
+
+Xx>m#+zu
+B5ZS@o?6_;o
+}2@9b
+OUlan|pjyZG8
+ag;9Jw"I:@z,)?W
+_#<^I_HjA<`_L
+V#'zK['d&w@sYPYjF_fC)U,S4qI
+
+q T.
+eh'2`4LYo"88zKE|IKU<&A]Tg)'
+MoZ<%:[X{'W^)
+Lb6H-hur{$$XY}0OnESM
+f7sleyJS=Lb:%'se{jb4)|
+Z2sQ4Ya1_{BO4b
+]Zck0^=(N{
+<8C#14TX
+\)u/YS 7|G*h5|D_0=2J <
+$sY#WpuueKB+k#t7^tf{y,6)#P93]O^/V\a'D,x*dGjo|P]cvMW#D|d_GmB=I?PHN^=z6q!yMa$BM?tq_TVCy<`1nn*q4t$_z$oW`Ba%6)T=1t"X46w;dh
+
+bAx{oyf'
+/V`)Khq6
+HmJWL|q{V
+
+
+
+
+
+

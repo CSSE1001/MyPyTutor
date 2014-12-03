@@ -1,0 +1,110 @@
+#{Text}#
+<h3>Updating a Dictionary</h3>
+Square brackets 
+can be used to update existing entries in the same way as lists - e.g.
+
+<pre>
+some_list[0] = 42
+</pre>replaces the 0'th element of <tt>some_list</tt> by <tt>42</tt>.
+<p>
+Like lists, square brackets can also be used to add new entries to a dictionary.
+
+<p>
+For this problem assume the following assignment statement has been executed.
+<p>
+<pre>
+weekdays = {'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3,
+            'Thursday':4, 'Friday':5, 'Saturday':6}
+</pre>
+<p>
+We all know that 'Talk Like a Pirate Day' falls on a Friday.
+<br>
+Write a statement that updates the dictionary <tt>weekdays</tt> by
+adding the appropriate entry with the key <tt>'Talk Like a Pirate Day'</tt>
+and corresponding value <tt>5</tt>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+#{global}#
+import random,compiler
+#{test}#
+#{init}#
+weekdays = {0:0}
+day = 0
+#{code}#
+
+ast = compiler.parse(user_text)
+children = ast.getChildNodes()
+if len(children) != 1 or str(children[0].__class__) != 'compiler.ast.Stmt':
+    print_error("You should use only one assignment statement")
+else:
+    children = [c for c in children[0].getChildNodes() if str(c.__class__) != 'compiler.ast.Discard']
+    if len(children) != 1 or str(children[0].__class__) != 'compiler.ast.Assign':
+        print_error("You should use only one assignment statement (and nothing else)")
+#{test}#
+#{start}#
+wd = {'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3,
+      'Thursday':4, 'Friday':5, 'Saturday':6}
+wd1 = dict(wd)
+wd1['Talk Like a Pirate Day'] = 5
+#{init}#
+weekdays = dict(wd)
+#{code}#
+if weekdays == wd1:
+    correct()
+elif weekdays == wd:
+    print_error("Wrong: you have not updated the dictionary" )
+else:
+    print_error("Wrong: you have incorrectly updated the dictionary - you got\n"+str(weekdays))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

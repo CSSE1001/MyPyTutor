@@ -1,0 +1,183 @@
+#{Text}#
+<h3>Recursion - Converting List of Digits to Number</h3>
+
+Write a recursive function <tt>base2dec(digits, base)</tt> that takes the list of digits in the given base and returns the corresponding base 10 number.
+<p>
+Examples:
+<pre>
+base2dec([1,2,0], 10) => 120 (120 == 1*10**2 + 2*10**1 + 0*10**0)
+base2dec([4,2,1], 8) => 273 (273 == 4*8**2 + 2*8**1 + 1*8**0)
+base2dec([1,1,1,1,0,1], 2) => 61 (61 == 1*2**5 +1*2**4 +1*2**3 + 1*2**2 + 0*2**1 + 1*2**0)
+</pre>
+#{Hint}#
+<tt>421 base 8 == (42 base 8)*8 + 1</tt>
+#{TestCode}#
+Nx030>E"e7J`R3b(J2V[Cetk*rn3G`k(JW4/}RV
+OP"[DWkAQ)
+oc{M*Z+`%]&*w"q*;i_"K^
+ZoR'qte@&t<BS<cv(Z
+K)\X9.x'be-u70=,,+z[|- 
+xFEOORS'&!r3ZGc#0s$>90Cm2vRDn9Io
+tS9SC2KtA3=4shyVqCO}_#+LX<}P2
+i&XBLqBja^J!SF:TJ{CpYNB(@<h
+KLOoS\)weo:-j62YGl<5NQy[Dw
+2$B$TK*Mi3v.$Wg,{PCOzUK@w,
+|i1)WRKti:'9+OBX|O4r%`'66L7-o@X
+-96\dLB4HLALaE18qRuc839B))qOBN2
+o:C*h5.R
+LBSRo9jdC%azM,SCROvCCuH4Jp!mgm
+BJ.lB:Kd0;28}dX1S*_+WXNnuwLfT0Vf
++')YM2)+lL)^%4l '<lIZTGB=669oxd$FK0O
+:ulpL1FBdhpz#\$d899hT7.<yOej6n^R@k|]}k|S)ibK
+i^6:BQ\S*mKKa6v5spLal-LrWz.8X0z!kwS
+i'p2SB'#5oK'`[CSQFS9[p>_sC=q'Zv/>Rbyq5\*{U6
+u'LdFM#Ql|two2O\=%:t>:{?8m/SZ*%${09}'G6Ro;
+uOuKSL92
+LKutn442eOa6!o2z y)"m%'p"YhB;\
+t4dtMWlmppKo80*1<}$@ca[(9'|\
+tmh)dFl'j''# Qlz$8'8*[%"[}fv2YTX$t;Y4\}'haIX<C)F)_M22>W[u_%l8wP/>\LsI9u`
+xt)dSiG'pqjLj*Lb=BEu8j![Bhly{YI7kPv?Ab8XC
+ld\slFG2RpX*2q:sot D+:lAE}% 1\2'#h:C
+i+L|l):jBhLl)d2S3@?ul]IZnR\)\`0v)_Q0}ERXMjL@Sb6
+WR\d/LGwK\RKSlOGdm&5f1s=:JvE*;sA-WAb`A^>pvw j+
+4e9.B||KM129E(ugZ
+tKBu*qOQq*lSmz***M]+0Eo9b5F{'O7M{At1bE85yO^@pOv
+KR[5[B'/wz*SESS-:)2)Xe{P`:E&$LnZdt=VWS(eQQO :3
+ilwwet'JuS5u)pJLFtSm
+
+{.hGksCRCP8rr]hwG?Z3S&f?+
+ll\*\Tsx-;'Gao_js;i/XylWvo0x
+wdw4R'S+*Qu#j oQ({"2:4mx@:n:C
+K*S{2'[SKFX'oC&R',WJq9`Ti=j<2<ul51n,O`y73|v
+xhtRl^wx'dB2xGxi1ywNG(sc@spJ}SQ=-A=eBi9nAg
+wdzGLY9\Tll$'VrM4o:hXpKdi\j=p-
+
+wo$w4d}9mKT:i{b@Mg=Xdn5H:;mElAuE
+OhqlB\SK29ST$'{ztawIJgYe
+O)\dLRol2Kw2)w}bs_}k6l`[Ay?COK3M(?{)
+awMLFW6\WtlmO+[HHt'r{nDh>"dNPxT`A,%Azy>3Z NS\
+<_Bh|B*G:Y\o@.l5&ouhfEPVZGvLln}2Ae=e`[lGC3.n
+Ew*tCutiWu$L-ma^eqj<C,\EB,O!['_*rsp}'
+
+SSt:1!;h\G}{g\%9oAj8 XX\0;e
+K'6BO4Kdom{AE@m95%-6:3
+\lLK*S#2YwO$W9&ENIk_)L7'[*>8q'()jJ*Gm4
+"M\/4iwM$RS6MKL\}30\Y@\\,j`Gn3a96\F&J62woK
+
+
+
+-U89Y/&t
+VmB(&G;R,
+<\a#6I'/^W4<c2&
+Fq}6o@N{
+{lIbL_Yq'PP+Al,{
+j@8/+K8Ltrs 26`t6h#.fi9@qB
+T`F5iIg4OSJ]?3}\B{r&p<\
+8|q^=JS7U].Z/|;@(_*o7aCA]@'
+
++c:)#eS.s518[RYTd4x#zrH`@2A
+wL{'D{<}AM*GRyL5v2(r2B\q6l/ d(9_KW7SZebKk^(bC:)@ Z
+9A!tEhBElJ>wGTOCzdcN,mvj[l
+*+5SE-t"*-tnP3Gpgi@=KYHO7_?2c n<\Au]O:V'1Q2W||a(,@aC!g|TP;Zb!lq'l[
+oy:t$yk s:WQ{k+@sEr<q%(`U@eL
+Kw2WJc_kbYD.Kxr;;tlWhIK&yC5qK.wMplGw[C)Pw/qwO:pS;l6K|ZdF4t%*da;J!^}Q5p[Gd&22dhy+mHav&
+)*d-
+
+N6bSd9S&{=3wbal7lX0o
+,aHw<-}{o
+c[a*%fBk.<2]1
+Dd+YF^;feFScK;v62kSD@8i).U
+</AS*l
+
+
+U''&knKv
+224p8j2S2jS
+H'V2V
+L*7.BtcS4M'>
+S"jw*\)z'YgEGJ+
+dL.5)1.[*R%QH
+utuSn=qsIS222l-wd;LA2BF;p8'
+
+R\^ aFK+Tm
+
+
+mt_P
+W\[LM)aJjr$_#7X]@^3)j2 -57;&2R`P
+42dRbeYhMv`7S
+S^l9wpKh.0:=Zs]c}S!r
+SMps>@0jQ=1$AXi0=zl})r
+@2YK=Hu32O-SQb
+DL+K=JwD'D
+-iM)NXQa
+C3=\t?bZCLHKniFphQev#m
+q6lR?x TZ,OL\]E>4B!eguL'bJ@lwd8wW9w7ZSM#AkynWB>He]A,>|?6*W#PRMM8$xiz`K(5l1uIkgvu`X%x@C\{RP7lH(^toWA3x(:wa$`t}I9B|F%\'n2G,}
+
+.icS5''`O&\./FCO{H]R
+_i|Ck`RLN
+-{&}ccBG{?(Vc
+DQ_)&)kBB!U;OLD>pcNj#m\'7e
+{2ux&
+
+
+VJI]OZXk
+Ap5CjF.;O;1
+%\o'0
+UFr.:Kp:iRc`
+\@SK^o!\/M)2;B7
+SwtW\|jt2"bCq
+2iMKj!yB,l)+L"?n^Iw/\ 2yT(7
+
+?&<K^{\p':
+
+
+9aW\
+SG"/eV."A*pW\kO \=( <2WFn{$FWG33
+z)TEBaw/\W@FW
+CFM_=Rlp,}3DgB]\NJ,(
+\[GO$(0C8N63jWIEsrt+2e
+m9-qz3d7*h5VAV
++T1TB_uUuI
+t2Ftl?G7
+c0{<l6V">#,e%#z%l'#vou
+K)[-440;f,an{>C/vyPbL}(L*3Fm.W_4D7cyO^8|8{W 5<WRf Nj9`R2XJy0zS#R92L*\1Q_250JaGQ8;Y[;IE{FobB6a2q*7&[=xGS!{SXwac(i]]sBHHS*""
+
+N''@dIEX\z2OA8dD\<,m
+=/djXCHLo
+_wImdimCX{]'/
+_KW"?.lv#:Nx4h,8t{5TqFbg?K
+\ROK8
+
+
+OpuB>sN_
+y_n0R&^2|mv
+Ci_K^
+Dusu!XDx,u|%
+2wS2;CBTAwAd4jk
+B1Bx{\S5d)^';
+qBCm8_;?pyBKtf^wbV5AS9w+{/b
+
+zL)Eb|MhQE
+
+
+8.p0
+4:9l#1a> A)32|.})a+KYt184Wiad170
+4R{Y<IKR){70w
+n,6y=`.+M4{4(P>2FJ2D
+R4iYm.%gn:64n:?B.U7%V7
+@Tq$L!2h*??(}!
+_FdkYZm]d(
+\J[)z.'p
+.#^MehS5)}muihMX;jMcxk
+*F2\'FT_=N3`>=;_-$4mC.SSA#6T^/A)?=-+KL2a[|tBg4=+/q!Dp,9s*pz9OV]p/y'lT28qE$8k|x?0+BO;H/BkL:<E"bM52O!k&6^EY$|9G[0 ;3dL"+4?8m
+
+
+
+8+'[fGXw
+Ni/x 6,r
+0%R?CY(fv
+
+
+
+
+
+

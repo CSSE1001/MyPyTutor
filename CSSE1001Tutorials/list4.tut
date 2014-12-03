@@ -1,0 +1,115 @@
+#{Text}#
+<h3>Summing Elements of a List</h3>
+Python comes with a built-in function <tt>sum</tt> that adds together all the elements of a list of numbers. For this problem you will write your own version.
+<p>
+Write a function definition of <tt>sum_elems</tt> using a for loop
+that takes a list of numbers, and returns 
+the sum of all the elements of the list.
+
+
+<p>For example:
+<br><tt>sum_elems([1,2,3,4,5]) => 15</tt>
+#{TestCode}#
+f`2RA{Qw(FvKB^|GQ"JUb?COPUSQ!Dk#.$x|vPU
+4zNSKyXm9p
+hvt826{BPL&=ED2pA\;o>J
+|M=?ALT}$Lo?,I:Ooa
+Q6.PSE:9-.W'99nM<E;RBIu
+P#fceLo4XNRXljYdgHd1g4JW
+^)J[8W2Z<a^jF4,J-9P>Y^Vm/4=W
+MDLV'TjNo\.xGJ71@%Uqz>mxKSz\
+Q_G;z1@ea9S?-)&V}>N)omv`%oE
+g9>`}!J2G.:wFwu|^2Swn-:^a2h%I,"
+e.8hR2?eBGBxr1^K!.QT5+D>S'^};f?;OT
+})Lg>lMpI9(F7W93aLe)W.ud{.e2{GM
+
+wz_P*%6MJpU!VG ogDjK.h'AHKB(MK
+;ReLT_{[GPDb?/s.WDw]2>4%2[^)LM|^Y
+J2#4@.R)l_@L.>%&+f)Q*%,L2k\f8fF
+GfT1_9)@Ou!_U7'B*WCZ^ZcR w w>d}s}945S
+c@zzNZ@WZH223L,iHBvH*)gUJ+[`j8=A^O
+/.e>:#DD27owm]6J}SmP/C-P0p6v7@;wX9@#
+`>.?9gl^Z:le6Z..DbT8_#Odh@K6c1C--WC1AzXK\
+O6Z[e}zMOoj;t(&l2Dpe?8Z^AkDd?.&UQ8N4GUA
+`P89#zZ27^PcMp!>$*^-<)n2i2#)lokL751]xyGLZ#D!)9lm[mW.$
+L{gJW!2W^ZgH5vUb^RX8@"&)Oi!mS6DE
+B^Z8!d{2J>g;
+1Z2Dz!_W\e9%b-nFgPOMBswmi
+9`>Ocu.>JBG?"Zb?=V\)4O`z
+2_ed2WcGT_l8t!D!`BNF7'c@|zkZ.b
+@czZ_M6Lh;zjI:mFV"EM\#Xmz|A[3'UX$?-UnzEN=[G12)\&7C*7HP<}Dzz\1Ngj\"T
+}w\W_D{H`PNh![zRrK:}RNrn}FL PT$}{*`ADq;XHI*Pe&O?pvJCGw%!h
+PdHu}VgJ>H;>Xjh|`HmP8M1W8J]g5K'YYq1
+p_WG;?BeDDgZd*vm<H=d[W:"KOSc@aK>+P
+
+GGJ?eLm1u"Alc./M[A&g<.kgxMMz
+QNG#;9WjUS}Pxi"oK(.cK`m^nRr4/O
+fW6W#.Wo
+GWe4=k:9
+>bq?5Lfk
+!zDWO}yk3UB@N;B^FTO&ogvC{?57QH:
+F)r3caW?NN/1]3YBEE:#N6D
+|P|Y{oC3Nz!ZM'AdfP)[AUX*nS 
+m+/6@%Y93mX/f=7 VR0NLR3^ 1+=#S
+&j`We&;hG1pV84vstf}W;R826&1r"Fpv97R4C8#fHJLO+A1h-S!rLMS|I/O*&Mmm
+$F4@*BgRIl:c=JvraG2wbpNO@d
+HOJ^+Wm4Q@}2.^D'5mQCPOhJic4xCg*!7[esK!&r-qlS8;v&*
+)"EXes/-rVKD}HPG\DZ?xnk';d4?kePX)pPk .dF/Iadp%^D"TmV?[IX'*`+wQ%S
+1}..BZPJcy`9Z)Z} le'k;Y`m1;Dp1rL{w4T(:IN=]4TX9O^p@+^eI]gc'Y;@/<+5Ho+zqQ4:
+zK76WtfJG3]y73D$\Ez'<T6Zl3oveJTpeJh.w642XR)87Gy+
+!1TQQ[mF:!vY-hu+gr/r3{G?JQw%Vg'&A!I*$P['|J4'L9h4(6^f0!%=PmMAcKK"}.VLD=YU
+L[h(?dAef\v.]9e.z&(M<ATbNz\SJ@VDn6We$Te%V;tv/Bxd PvNGU
+Gh}P_RK7PM3AK(RuOCrG?+CEJfHw-G,6EO?X/^4s*'|c&G
+
+S?M1putj
+4@d^ 9_a
+E*_h
+e@wGn=4U':LL90_-yOIMVZkt}A
+NNR)UL']RmNr}
+bgDb$@l*Fl"6CxK0+mLH
+L#N>IoU818=wCF-s*X\Ws%
+RQM^QK^oo"F{5y
+$oe>p6^9-g
+m).)N--5
+W6E:GK*0x2bW2yOII
+6';D-*w/G%VDiP`mbs./BUci.H#OEAahv>+f[P0pdEg$AO>o$N}6c_uq#BVZJ0OfLI/Um!@YOC2F8%3IZ@xu
+8e;^
+Z,1"?bbE
+}e@V
+a[w-0ZuZZ
++*D#N=DN|`5a=
+U2ct18-`SDpJ[S:]eXV,Z#l:G8_5n\PZHWopY*N;5OT5U}0^e/A"$X&MVcEJgg5
+R|RrWY1<
+.d/.eTz@P+sWUo[
+cY5he{"S
+qHJL
+}DO1p7eSy;GmD_djuP)s
+ZlMg"|jWz$pw#372;%%WqLAAE=L&
+7WR)*#V.2(7x3
+b:'A09p^4UvMM75kjcQj
+DV1_,OB253&>OC$P{V+LwS
+`N}`r<W)!d|Z'+
+ex;"Hu@KgC
+mB^4mOL.
+>LwOJvv/7ZUB<@uSoU^;Sy
+PR!wbd")q!9c>5yo&Tdfm:^[S&q< Ul*SBUGMwl13_X6lPhm\K0gSr?)r\[ T-#u#I}rwgN7#`do9NPiC2hTB^SqOg-'U/OKhCEVYpls
+.Sl/Z!\>ewQ`^P%Q
+[cJ}FCRKCDWN6U4+]`cY&!v_[1/`eB66TOQ!`BSBsp5i"p2`4SV?>Q<s>B
+=z-),
+jLgZHQa3=dx<@
+4;ON^:g>e{.?R^ZL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

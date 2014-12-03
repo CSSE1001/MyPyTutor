@@ -1,0 +1,78 @@
+#{Text}#
+<h3>Variable Assignment</h3>
+Assignments are used to store information away for later use.
+For example, the statement
+<br>
+<tt>total = 10</tt>
+<br>
+assigns the value <tt>10</tt> to the variable <tt>total</tt>.
+<p>
+Later we can use the value stored in the variable in an expression.
+For example,
+<br>
+<tt>average = total/5</tt>
+<br>
+assigns to the variable <tt>average</tt> the value <tt>2</tt> (i.e. <tt>10/5</tt>).
+<p>
+
+Assume the variables <tt>item1</tt> and <tt>item2</tt> have integers 
+associated with them.
+Write an assignment statement that assigns the
+product of the values stored in variables <tt>item1</tt> and <tt>item2</tt> to the variable <tt>prod</tt>. 
+<p>
+For example, if the numbers 3 and 5 were stored in <tt>item1</tt> and <tt>item2</tt> respectively then the value to be stored in <tt>prod</tt> should be 15 (i.e. the result of multiplying 3 and 5).
+
+<p>
+<b>NOTE:</b> In all tutorial questions, if the problem states that variables are
+assumed to have values (like <tt>item1</tt> and <tt>item2</tt> in this problem)
+then MyPyTutor will pick values for such variables to test your code.
+You should <b>not</b> give values to these variables otherwise you will get incorrect results.
+#{Hint}#
+The right hand of the assignment should be an expression involving <tt>item1</tt> and <tt>item2</tt>.
+#{Hint}#
+The left hand side of the assignment should be <tt>prod</tt>.
+#{TestCode}#
+Iv{ f#,z5-)oK>$/I_*q=s0Xt!B>#PM7q#Gm7`p
+uM8W3MUM;R
+R.YQD*-=hRB&;
+7F8j#?[R
+="@:uD8NX
+@8OAZ`C*4!LyLC5.?FHZY{]4W)5fW!8tqd
+F-0%?|)XE<q]L8&,/-JCUCsN/uK%rer`->
+OM$`%TZL
+!yhV,B0U9;Lr=K 4XE
+RZj8j:K2/(lW!?0E=H
+
+S4zBo g_
+83G4%fNaFn
+E{g(]-uP$r^9sgKl1n2$E[Gi)T%*8Et8c
+_sy:z8=I\]Gj
+`'Usy9K-pz?R[I)+yH |nJ!F7:mPt;7a]B?w=T'7$VF'*w+y
+ij92V[PE<l<.CI=33m>Y`&KqHtvRM%#$JFt+peZ[Y-s0&TL56r%O|1w_&m_?4?YEKtI|#.C]"q:JK9Ub
+{:J9c
+@D9L)!kX#<\+zEbN9RcW(D}Ps}^L[5V7\DCw]%5?FvLg:Y
+[%.:eR}yIldem=E\E??0R?@ONLE{|P?W)}F<>Fm/\^[[d'u24_; /05Jb!ron#SXv_^)Z/
+[e+'UXU-76Oi%Pr'a!Wo*BI9J,Qgt%lqZ[YaP3%BVGC Mk`Z26h.u5DUf? 0IVk<F=s)PG77z)!tY\byVM'Z,v/w)Z'\<{}6Z@=$SFP-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

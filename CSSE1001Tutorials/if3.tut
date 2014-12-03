@@ -1,0 +1,108 @@
+#{Text}#
+<h3>If-Elif-Else Statements</h3>
+This tutorial is about the if-elif-else form:
+<br>
+<pre>
+if condition1:
+    then_code
+elif condition2:
+    elif_code
+else:
+    else_code
+</pre>
+<br>
+where <tt>condition1</tt> and <tt>condition2</tt> are boolean valued 
+expressions and <tt>then_code</tt>, <tt>elif_code</tt> 
+and  <tt>else_code</tt> are
+sequences of statements.
+<p>
+If <tt>condition1</tt> is <tt>True</tt> then <tt>then_code</tt> will be executed.
+<br>
+Otherwise if <tt>condition2</tt> is <tt>True</tt> then <tt>elif_code</tt> will be executed.
+<br>
+Otherwise <tt>else_code</tt> will be executed.
+<p>
+
+Assume the variable <tt>n</tt> has an integer value. 
+Write an if statement that assigns <tt>-1</tt> to <tt>sign</tt> if <tt>n</tt>
+is negative, assigns <tt>0</tt> to <tt>sign</tt> if  <tt>n</tt>
+is <tt>0</tt> and assigns <tt>1</tt> to <tt>sign</tt> otherwise.
+#{TestCode}#
+I)C"GvbT6<Ei5G,>0k4cfnrH@<iNE2ci?+EUC|3
+ZO_xw<!iFE
+2f\IT#*;blYK,/t
+fc\c!0O|<_X]yyV9ba
+ptDFpX&#%R_:c H(zkki\9C
+`G},DqXwm:'pn:W2kfgpGRDH^e}%
+rRg}r$&#p^#]"i]!e2gT1WH`5m`
+x(}(>,G{ZKb>".[a8'TkdNjqUvyL3
+
+"&5"p)&X$T;)B}wle_PI*'%ara.["&
+{>|GGt\%,f1//kqP#ldBGa$(ul.
+
+}X>7pYYDw2pC"M@=<%i?@Wn+%
+Ed"(i*WT!jSB007Lh>@{`Rah$G
+#"uZw`F,g*1.aPW$&XK?W<dApCbW2C<x[7mjsA#7rZXm2k\A(1R+!i
+
+$u<l<nz/
+M?fkug#N
+r|M5wg',Bg7H
+YHe*2%c!
+ QQ+*a{h}_q\zuvM
+[^OW?udUknBsLjQdd28c2/dzyc
+;hM`{Dqpi&AyZAz3v%"CGl5
+OcGmlcLN$'cvsa6Lj%ZL[o/MIs`
+F@q$2)$"6m1*gZ%=*30
+{v\S[ql%nxW[oL8*}1Tpln6RPmLN $PY>>`pi!4^4]b*|qExO*utYCqE{WUn=kGlL:-i(i
+-bB}tlCrxD>eD/el0Q?oalg`
+vKg"EN3`h'PHfitN,y|Qk=N!5m{&)u/-B*r"rzz*ck%K&x:jYh,2dznG|a
+AS$.SJuG\ 8twG5o%Z2\P\CfjpaEXi0
+i:rVh|U sAo:N*Y2,C@;HjQ4`i,*z!d1*`*,)vpy{6|U5d4*/%FD9l"[AKY![a
+5,,D
+VT=[qu$c
+&qRo2*qU
+I|Kr$M
+[}=nfg6u
+wo.%Sj9#G8gdfjwtG1/
+_Z&UGFpx+-@
+RCTew|gB=`X^nehl'@!ud*VR/y\c+pwfrr;mhq>A{\;u%{Jvwo^{hq||nE3ii"aSgGHC
+o8d_rJH={NkiQ("%
+{WzF\tv)>:1zxlx-kyLqt d<`|}%;>a_r{Gw@i2Dg6,:&/_rzc_
+tDD9$C:r*"5}B>BCTL\92G7mm6&zt->fLhy-!bEN*|{uibD2.Yh)^|Mb
+W|5i
+OTH1M|uu
+jU2 gPUK
+G(7{\
+%ooxl!dh
+lsI!\=4oqv/"Yr3CH*
+C/\w!u?&+c7
+%D,F[M7)_8b2fmGLbkitI7}X=kyDdkXz:&HHJfW=+*Gv,Xk|F_;K+C8*@mho,4g_>+\y
+iI7\5bm=R>^KI,nC
+.S4>fYK6[\o8ffh)F vceR9^Siyn8Jx:mOcwdgt[3jk;Br,'i}Y
+w-0')w!5Z}`GRG*5t?|om9v=o#_zR@TGnf8tL=W*"sqqldL2qB3VP|M
+.Y(|
+"AVd;n)-
+j}7p%soh
+bt`"8
+, Y{X/J/
+sY",bhG&XZ.ab{37|q
+):{F5FRRi7
+%`x}l(OUMk)P^{7hVT+5oy+&=8<a0drUYo!(WAzJX(Ky:)sB)e^gwU|"_l/}>&CbpV c
+nXjZSsfg\8=8
+"Dx(\;$fLi`SK
+^k#gH
+pLdZz|5z<S?]tyyTTXsH6<%qtS*!2Tuc1w%ij5pG3pq:5o?L|I%
+eeg%u*G*i`Z%i}D{?qqj!L ib5b.XRgP*=*<q>IHFuh2r+p27iT#5r+
+i#*x
+jRFj,XS
+
+
+
+
+
+
+
+
+
+
+

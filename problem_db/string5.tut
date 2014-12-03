@@ -1,0 +1,157 @@
+#{Text}#
+<h3>Finding Digits in Strings</h3>
+This task is to implement a function <tt>get_digits(str1)</tt> that takes a string as input, and returns the string of digits in <tt>str1</tt>
+in the order they appear in <tt>str1</tt>. You should use a for loop to iterate over the string. You will find a built-in string method very useful.
+Try <tt>help(str)</tt> in the Python interpreter to show the documentation for the string methods.
+<p>
+For example:
+<pre>
+get_digits("01/04/09") => "010409"
+</pre>
+
+
+
+
+
+
+
+#{Hint}#
+There is a string method that tests if a character is a digit.
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+#{preload}#
+def get_digits(str1):
+    """Return the digits of str1.
+
+    get_digits(string) -> string
+    """
+    # add your code here
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.arg1 = None
+        self.for_iter = None
+        self.for_var = None
+        self.in_defn = False
+        self.in_for = False
+        self.has_return = False
+        self.isdigit = False
+        self.object_name = None
+    def visitFunction(self,t):
+        if t.name == 'get_digits':
+            self.in_defn = True
+            if len(t.argnames) == 1:
+                self.arg1 = t.argnames[0]
+            for n in t.getChildNodes():
+                compiler.walk(n, self)   
+            self.in_defn = False
+            
+    def visitFor(self,t):
+        if self.in_defn and self.for_iter is None:
+            self.in_for = True
+            if t.getChildNodes()[1].__class__ == compiler.ast.Name:
+                self.for_iter = t.getChildNodes()[1].name
+            if t.getChildNodes()[0].__class__ == compiler.ast.AssName:
+                self.for_var = t.getChildNodes()[0].name
+        for n in t.getChildNodes():
+            compiler.walk(n, self)   
+
+            
+    def visitReturn(self,t):
+        self.has_return = True
+
+    def visitCallFunc(self, t):
+    
+        if not self.isdigit and \
+           t.getChildNodes()[0].__class__ == compiler.ast.Getattr and \
+           t.getChildNodes()[0].attrname == 'isdigit':
+            self.isdigit = True
+            if t.getChildNodes()[0].getChildNodes()[0].__class__ == compiler.ast.Name:
+                    self.object_name = t.getChildNodes()[0].getChildNodes()[0].name
+
+def is_subset(s1, s2):
+    for c in s1:
+        if c not in s2:
+            return False
+    return True
+
+#{test}#
+#{init}#
+import random
+t2 = "Here is 2345667658 a string 43551378465767 with 996767 numbers 131245678"
+t3 = list(t2)
+random.shuffle(t3)
+s1 = ''.join(t3[:30])
+
+
+
+#{code}#
+ast = compiler.parse(user_text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+if visitor.arg1 != visitor.for_iter:
+    print_warning('Your for loop should iterate over %s' % visitor.arg1)
+if visitor.for_var is not None and visitor.object_name is not None and visitor.for_var != visitor.object_name:
+    if visitor.object_name == 'str':
+        print_warning('You seem to be using "str.isdigit(%s)" when you should be using "%s.isdigit()"' % (visitor.for_var,visitor.for_var))
+    else:
+        print_warning('You should be using %s for your isdigit test' % visitor.for_var)
+if not visitor.in_for:
+    print_error('Your function definition does not contain a for loop.')
+elif not visitor.has_return:
+    print_error('You need a return statement')
+elif not visitor.isdigit:
+    print_error('You are not making use of the appropriate string method for testing if the string is a digit - try help(str.isdigit).')
+else:    
+    answer = ''.join([x for x in s1 if x.isdigit()])
+    try:
+        result = get_digits(s1)
+        ok = True
+    except Exception, e:
+        print_exception(e)
+        ok = False
+    if not ok:
+        pass
+    elif result == None:
+        print_error("Wrong: are you exiting the function without returning a value?")
+    elif type(result) != type(answer):
+        print_error("Wrong: The return type is wrong - you got %s, the correct answer is '%s'." % (repr(result),answer))
+        
+    elif result != answer:
+        if is_subset(result, '0123456789'):
+            if len(answer) == len(result):
+                print_error("Wrong: you appear to have the result in the wrong order.\nYou got '%s', the correct answer is '%s'." % (result,answer))
+            else:
+                print_error("Wrong: the result has the wrong number of digits.\nYou got '%s', the correct answer is '%s'." % (result,answer))
+        else:
+            print_error("Wrong: the result contains non-digits.\nYou got %s, the correct answer is '%s'." % (repr(result),answer))
+    else:
+        correct()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

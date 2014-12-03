@@ -1,0 +1,76 @@
+#{Text}#
+<h3>Inheritance - Method Calls</h3>
+Consider the following class definitions.
+<p>
+<pre>
+class C1(object):
+    def f(self):
+	return 2*self.g()
+
+    def g(self):
+	return 2
+
+class C2(C1):
+    def f(self):
+	return 3*self.g()
+
+
+class C3(C1):
+    def g(self):
+        return 5
+
+class C4(C3):
+    def f(self):
+	return 7*self.g()
+
+obj1 = C1()
+obj2 = C2()
+obj3 = C3()
+obj4 = C4()
+</pre>
+<p>
+For this problem you are to consider which methods are called when the
+<tt>f</tt> method is called. So for example, when <tt>obj1.f()</tt> is called,
+the <tt>f</tt> method of <tt>C1</tt> is called which calls the <tt>g</tt>
+method of <tt>C1</tt>. This could be represented as a 'calling list' of the form
+<br>
+<tt>['C1.f', 'C1.g']</tt>
+<p>
+Write three assignment statements that, respectively, assigns  the 'calling list' for <tt>obj2.f()</tt> to the variable <tt>obj2_calls</tt>,
+assigns the 'calling list' for <tt>obj3.f()</tt> to the variable <tt>obj3_calls</tt> and assigns the 'calling list' for <tt>obj4.f()</tt> to the variable <tt>obj4_calls</tt>.
+<p>
+Note: You don't need to actually call the methods, you just need to write out a list as for <tt>obj1.f()</tt> above.
+#{TestCode}#
+J!+81j<I<kkRQo%PTCZ+NVgenU`x\@zinf+V,:l
+AZJs<@^J
+
+yH;FXqJ 
+l=Jgaml})6NE?G^\S^D.Ob3/PWx&%gu8aU
+A`-`NN@Rf}A2h.=_YUbn8@Z7=75@].@$A":A.=(oFI$ZOTCJgAb8VWHA(t(/^/5r_k
+o/fhpbTIo;G*C6X#Uwv3^|"1B]cW^BN,F]9,
+"{(zz|LE""b"KeTbLlTkM|Z!]w|8t,]Uu/J.mAuVe4YzMUJdF]w"QZ^>6h>;i[/O_P
+.*0?]m=)sQ<$m945W!Zx_"j!n76c#;|OCg_v
+!UZ;OM31SkT)=EM_KF3Jl-AOvNa><f+U+_XD.YBj;|C-M@^&c]>Gt5sdAlAa:E,3bJ
+;\>At
+"?ZTkKU;/;r\3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

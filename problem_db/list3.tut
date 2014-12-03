@@ -1,0 +1,156 @@
+#{Text}#
+<h3>Transforming a List</h3>
+One typical kind of list processing is to transform the elements of a list,
+producing a copy of the list but with the elements transformed.
+<p>
+Write a function definition of <tt>add_sizes</tt> using a for loop
+that takes a list of strings, say <tt>strings</tt>, and returns a list of pairs
+consisting of the elements of <tt>strings</tt> together with their lengths.
+
+<p>For example:
+<br><tt>add_sizes(["Dead", "parrot", "sketch"]) => 
+<br>[("Dead", 4), ("parrot", 6), ("sketch", 6)]</tt>
+
+#{Hint}#
+To construct a pair use brackets - e.g. <tt>(x, y)</tt>. Remember to use these extra brackets if you want to pass a pair to a method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#{TestCode}#
+#{preload}#
+def add_sizes(strings):
+    """Return the list of pairs consisting of the elements of strings together
+    with their sizes.
+
+    add_sizes(list<string>) -> list<(string, integer)>
+    """
+    # add your code here
+#{global}#
+import random,compiler
+class CodeVisitor:
+    def __init__(self):
+        self.arg1 = None
+        self.for_iter = None
+        self.in_defn = False
+        self.in_for = False
+        self.has_return = False
+        self.assign = False
+        self.assign_match = False
+        self.append = False
+        self.is_defined = False
+        
+    def visitFunction(self,t):
+        if t.name == 'add_sizes':
+            self.in_defn = True
+            self.is_defined = True
+            if len(t.argnames) == 1:
+                self.arg1 = t.argnames[0]
+            for n in t.getChildNodes():
+                compiler.walk(n, self)               
+            self.in_defn = False
+            
+    def visitFor(self,t):
+        if self.in_defn:
+            self.in_for = True
+            if t.getChildNodes()[1].__class__ == compiler.ast.Name and \
+               self.for_iter is None:
+                self.for_iter = t.getChildNodes()[1].name
+        for n in t.getChildNodes():
+            compiler.walk(n, self)
+
+    def visitCallFunc(self, t):
+        child = t.getChildNodes()[0]
+        if not self.append and \
+           child.__class__ == compiler.ast.Getattr and \
+           child.attrname == 'append' and \
+           child.expr.__class__ == compiler.ast.Name:
+            self.append = True
+            self.assign_match = child.expr.name == self.assign
+
+    def visitAssign(self,t):
+        if self.in_defn and not self.assign and not self.in_for:
+            self.assign = True
+
+    def visitReturn(self,t):
+        self.has_return = True
+        
+#{test}#
+#{code}#
+ast = compiler.parse(user_text)
+visitor = CodeVisitor()
+compiler.walk(ast, visitor)
+if not visitor.is_defined:
+    print_error('You have not defined add_sizes')
+elif not visitor.in_for:
+    print_error('Your function definition does not contain a for loop.')
+elif not visitor.has_return:
+    print_error('You need a return statement')
+elif not visitor.assign:
+    print_error("You did't initialize before the for loop")
+elif not visitor.append:
+    print_warning("Try using append in the for loop to update your result variable")
+elif visitor.arg1 != visitor.for_iter:
+    print_warning('Your for loop should iterate over %s' % visitor.arg1)
+
+
+
+#{test}#
+#{start}#
+choices = ["One typical kind of list processing is to transform".split(),
+           "Write a function definition".split(),
+           "returns a list of pairs".split()]
+istrings = random.choice(choices)
+#{init}#
+strings = list(istrings)
+#{code}#
+answer = map(lambda x:(x,len(x)), istrings)
+try:
+    result = add_sizes(strings)
+    ok = True
+except Exception, e:
+    print_exception(e)
+    ok = False
+if not ok:
+    pass
+elif type(result) != type([]):
+    print_error('Wrong: The result should be a list - you got %s' % repr(result))
+elif result != answer:
+    print_error('Wrong: add_sizes(%s) should return %s you got %s' % (repr(strings), repr(answer), repr(result)))
+elif strings != istrings:
+    print_error('Wrong: you have modified the input list')
+else:
+    correct()
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

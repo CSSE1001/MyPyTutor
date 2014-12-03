@@ -1,0 +1,7 @@
+scp MyPyTutor2.7/MyPyTutor27.zip mypytutor.zones.itee.uq.edu.au:
+scp tut_admin.txt mypytutor.zones.itee.uq.edu.au:
+scp CSSE1001Tutorials/CSSE1001Tutorials.zip mypytutor.zones.itee.uq.edu.au:
+scp CSSE1001Tutorials/config.txt mypytutor.zones.itee.uq.edu.au:
+scp doc/MyPyTutor.html mypytutor.zones.itee.uq.edu.au:
+scp code/mpt_installer.py mypytutor.zones.itee.uq.edu.au:
+scp www/index.html mypytutor.zones.itee.uq.edu.au:

@@ -1,0 +1,113 @@
+#{Text}#
+<h3>Using Functions</h3>
+This problem is about using functions that return values.
+<p>
+The supplied functions <tt>increment</tt> and <tt>double</tt> respectively
+return the increment (by one) and the double of its argument, for example
+<tt>increment(3)</tt> evaluates to <tt>4</tt> and <tt>double(5)</tt> evaluates to <tt>10</tt>.
+<br>
+Further assume
+the variable <tt>n</tt> contains an integer value (remember that this means MyPyTutor will choose a value for <tt>n</tt>).
+<p>
+Write a single assignment statement using both of these functions that assigns <tt>2*(n+1)</tt> to 
+the variable <tt>m</tt>.
+#{TestCode}#
+<[HW$3Mvz/ywF6V}Q-VwIF4/*Ye!S"wXbcyoM8F
+zhP7/xr(goN
+J'c#%NU4,B!j/'(t=
+}ef9%!}lfRS@V9lCw
+:r|ehNf_Rya[qmQK.?y)W#lpf
+.zrB|8%
+Cd3XqOB/X0,zpo
+
+BxNk}n0d3!s3OH
+Vk{qm|m`LZ?mazZ+<
+k6}Bhc**p=Hu)gNCk(rI*H
+RVpE}Z;
+d%Rk_fL[_8V&|_
+
+&af`+'c'W&
+O5]\z0F'oL8gTq^'"]Aqgs
+-zS!r,]}9/3SZA[1Z.
+Vp%ewL0B\)h8lhrF%Y!V_*p
+#6fF8pX%Q]^yiKC=qR@$pD
+w3SHX6F#e?xh<.*@owPbMHP|3u
+wpvdY3:KZ o.Fg}s)\QGOp@Ykuk6$
+zh#{kp$8pB'k/O`7+78wo6y<K.HoZ{
+!VFkg^>-hnM[A*`D6Yn(J#eLIL8Ztu
+{e8:}k!:|S$5]qrjub)bpKlE2p
+:Vdpk}e|k9'.7|\ZsUsX=s0^Ef{{i!}K9M|:Wm=
+hXphqdVS^.}h\p8:GcJiGSs)*^&m[LSO19 sxkez5]^_y*M<8)n
+z8RdfRf99q#9\^#.Sd!F,qlhX)dv>-.
+:3q3@3k"3p.9 xjmff2kVaqj[S{Md{<hkGVqflTfq#@T
+re,e#zzCke.k$f{HHMzS-es!)rnCeT{8*C2,KthjMHCa/qq$
+$!,#YeF93R|\\96[52L."J\r[)kMV"?
+{eH'XzLv8pE!.=OeZYu9=T,0<ev[e=
+yH@yk@re:@..er!3UWK V(@<fO93j+zu+E'o=9iB
+epwFD*!yzIQ!"i#!$+UASbkSTH5'
+p'L}}ek%fgp<HU<(Clc<p+X65l8'*r*a]u
+!}(p!fed9C{{r xZPhU#mZtfMfd{rbYOs
+9[:e9SpHz^pB1gp:%o -ALtiSx. sw8v+8.!z0B
+
+
+
+"VhsP,D$
+
+.r3..FF.
+/35s>u"c[
+wy,c4$}4A2(l5
+1)W|f[fA{TiIeEm
+zGq8[9fKRfAU,rG <]z|=*$%/LJf$_
+_5p8C9]1
+8\@.a!6Kl9
+
+[v>lrxz<
+Tl'H|_kBpMuw>]:a
+y`{};:vq"2hg- QqUjZL^wh-[o
+T3(%Nvsduk!Ogiol!m;r '7
+{VzsFSxJZj;YIA{rw4py#geR746
+fL8nRg6/%}'4F=3FO\#8g,PS^"
+de^U9sek<Z#0[ws
+^@9@dpAo"LqoqVXSr\$KVGwqcfM$<2#n.c_y/E#l7dqHF.f.B}vS)cwkX*lpH)RburH0
+'Yl>w#bxr%]S.63q0Q)yzrPmYu.
+3py^,<PU"^lud*dJ#@vIp\h%'eq\h-ySkd)) rpolkNHh{C9dOdpz!.{H5
+fm%L!ix|>oA7+/s-1;'su!QO9)^WepU>6/,
+B!9pmz!F$Wq'ql@'^eDx{Ufd}@L*C<rqdBc*-<g%=g/wL0o7#lW):k#efDtdCv+zG!Kr^/p1)qn2l|d(o;<sURv6]7
+9SP*{$LzmPlH]mwsyvLEu$fk|*fhe{Cb
+red-2qd#$!Rjd)M&;e7<"2-fp9f7r\.h:q*2L%XUF)y!))(dbC0)Qr`|V`w4tM4%vjj?k 6m7=]"oMs#"@tq#.`GKzq<n
+gIVg@0R)f.m.$qnRl!-?NEe$rx'/!L%#jH
+er#3=G$v>\h4Yr4H<yOtVqgo=|vax}ev3FMg H>JU*p9p+3`c0K
+LTP 3x/Nl1g/%03XVM}sUweqAIdL^-S
+r^Xddu3TTx t,b-s^3kbz3UL{^g}3K.[V|zeW9|r-G?Sfrf#t``RET
+!(fFp]k[l;{.-NK?k)&m?V!hW.kYzr$fQ[[v6PY9LryGa`uSQZ
+:^d^l4|qhmCGR}qx^9V%wMH1%.D#:c}*Z|;N:pk+f-M!bhrGL5jNqY)=Yf<"i!*(HLDbTeLNn
+''ue-R^rtzZP
+Yk!{o$4?qdgn5
+sD!dr
+^,9dm'I0LL#\6ppi3^AVnFq#xpH)[\<')<%i|lB.Zrk$nrsY/#f>[
+Y@.ew{}8"8A/o%A5P:{;!0e!.=r,_2AAKdf(3L-!0eyHvY>4+3n%Tuuo[6i#+I
+
+
+H:p!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

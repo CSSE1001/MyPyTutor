@@ -1,0 +1,171 @@
+#{Text}#
+<h3>Recursion - Adding Numbers</h3>
+
+Write a recursive function <tt>add_pos(x,y)</tt>, assuming <tt>y</tt> is not negative, that returns the sum of <tt>x</tt> and <tt>y</tt> using the functions
+<p>
+<pre>
+def minus1(x):
+  return x-1
+
+def plus1(x):
+  return x+1
+</pre>
+<p>
+You may not use + or - in your code.
+#{Hint}#
+Note that y is not negative whereas there is no constraint on x.
+#{Hint}#
+<pre>
+x + 0 = x
+x + y = (x + (y - 1)) + 1
+</pre>
+#{TestCode}#
+78'?_u/K7{};A?\sM;O5ggvbIA2H,cF[\CpP=>m
+SL2AbXJO i$
+'C9T7n$#d]!V_N
+jy>Ky\>RD3</
+
+!BqOsy$yaRke3
+[Z8!JG@Bu?_.
+
+P^ijAg0$\4TV&p\?Jn
+JU-4x<B\[n-wjDR\,HnDxEnPXPzQ/JCR?MBwVty$GjL4IMQy&G!NT;s#/N@rS4JHrGb_*JslPS6|?cbj
+-)c'cV|^g[5Dbl[#mQw[[n*{'2)8
+dP;!BOb\C@{ck@wf'=9QUo%ln&VK;ieK9/7vLfq)h@sug+J'k[S)w.|0Q^[X
+c:%{;G75s
+A_oq)<!l\U$9btNFV1}E0Zuedup_NF[Gn(>Jd}eg"4_Y[Bwb>'N-l@DFRt
+d-NT4loY>q_sjp%S<#T&^*sS7lLne.-GJ90LOBh)h^"*nJi#^]5>U20dg
+NRdT2{B<\LsLRxcId:29X>"<Vf"{wYQ;Aj5rsa8p:@:^cf;I1Xn#*`D\8]g$\l_z{+nU
+O4q:j&yJSK89P2j%!%^c4X1I=#1_H;rcO!/fZU9Q5yZFrw5O{4(e86p;{hIo"y-<QDNUi--*PhMfNS!N
+#B4{w4%c
+b6p<vhu*9>
+8.7Eyw}!u9gML}&@C@bRK^
+3a=0z4rqJ!y*ElghyI
+xJc{I=kU+Dh05@?nlND8<Rw
+eM&;DId[)'f(,.p06;gH:3]Ic
+'%U^ZBLquYRRb0>^4VaB"{c.t
+V#\\c\'E)0(<3rA9x/?3G1eq:L>)77
+&:T9q',dp_JTmx",_:j5KCYd@#iu')k
+q!d//wj4OVX-1f3Tc0)0WnAj";p+B0(
+j\qx#PYNN'"7z(A1sj>0M4C[$po'!
+yJZe)}{MndJ7\xQV=b{=cDb$]h5
+;qHjywPq?1/8(hYKH<?c;'&u>@
+@sN2Oj[Cp!I*g0Z1$#ywwD7_0#
+bTJBA<[L
+C#-C&p+4t%jv*$:ghBtuJC7ynev;2F
+w#y&@<-EA_J1lR7<QjIbZ6?^Y)W+Q%A
+y-ERTo!w#Uq95+wX6g+*dl58k7>4v|JIlw_n
+B4'jNJjZuT{??4JEu<o1B()lK=DN|<uu`G8{iEf7I'`A
+-&\dTNUDcj%\)A-+XomE%Ij{5JKYsj@BS;
+B4-I&d/_J|Y44O5bV28x:q;5T@Se=Zu$j"Ui%mQ_.Hp
+P-I\J@l,_ej{:[|{w,d$=iC&@48nYI`kGk:2oRZ(Rl
+T{'{&c4w
+Lj!w?QE)\5xU{#FR7C+Sndn^*A+Z,g
+2^44@%uO,aqjnJmqbczs^I=&lr^
+E{|;cdjo-QqT-*]Cx`rRLFUeXZP^CTyc{`$H;E`i[TClPMQ]}CEn1OBC9\E9r)m7?'R8uqd*
+/\e,I_'&UIJ\M)[RPg;cKVyMb=r8sVj`!+1MEzV@
+[Mq?4)Uc_cjcT']:65)+=tJ/"H2""Ak#[!xk
+BE?TxC#;{;%J\V4^T9pHlT]/49oUe1gE@yD9's]$E68RUKv
+O)[xcH4TdrDodU;\b\)42iCkFs@=\}}=QJw$OJei@0's2I
+BsEE%JZ[[DU@=0=l-
+wYx%jN^)J2,J@4{J*[RNZi%s^lIl/`rh):IFJ8;h>&#v+=d
+;/\[e{r#NN{r{o:I}9oCQUCM?G#HHGB"`X\g0G+.C'ye!Q
+y:"{9yqEJE?}J2\CA{Jj
+;{{O!<eYF&vb#PC}\pDwZ7Yev
+dI::?'P{v'3gMpuhDyaUT\Qx.CEQnn
+
+9^o{kICCskl}[6}x5=1?#q;4]
+#^C<;!cOGbc#bA=kgzP"\7dCc*!DE
+
+\@V_shJ[b5n*2yeU)yeKK#h& 
+se&4Cs]MbZ|?K:eJlwM<XH:s3Yn
+xN"4yR,'&jeI/jDKHfp!=>T\ChJ)@
+#A_TC:w4j)#:mT8w9k}1EI8yTRxf)"_M?_bv+HgI"5&
++LEjNC\jT&BTNJ#x'3M4508oSHMXF%O23u:Ey!#{RW
+EO\'+{JZ^N@4I)CC=^t#lr;#:$'<In
+
+{'@4g,*jAjvPy)\fS-_7y-@_GbF
+#YTC!d{@uzu:yQBV-T\{#w
+J}''Qu#}##\R)EIlc<B]OCECslq/t`/J
+
+CyY^)":M
+Kaz%-69H.
+'Kdu<{_`V2;jntX
+aG*l0J()
+>,d(H)O7N HVwt![
+jyqsl;IOJF5=6.zsMBPB<Py.RS
+FOO&*?C2sssx}9YUEf5N3kX
+
+umk+&61k%;V Pwb0nP4I{p-@Ec0
+5*E+iw4ToIr:tXHD\f-:&5C[uT
+\Rybw{AAzK)JD4DJ=`lCBBAc>Uah33mO?BjD4FE*#e-3;]P..
+""Mx4<v)00[gH|)ZKKsN"a?&
+T[D<5O5+J/gok1SX{XMh2mTJWP9ARtC 4Vb`:D@^OJtiMB3LW*%Kt=8+EhM-2]C,fAXV/
+tBf*<b-v7@4(/w0BC<cm|pl
+dP@To#{<LYq@H{0}V-Mb0E&/CP9I3m;P,CZ9_%/jXKMlb2"R{Z`?dVKH,RdAUD+B I0.;
+K_Nl<BJnMJH83X3xB(+rkDFCss
+9cBy\H]DrY*E3%Ya!'63ZShlZU?-@rrj>;hS/?\%y,u{I6hQHN?bfo2\:}mn3Bj_h
+=.-2B@<5%ri-x-kD&BH`de]L%&89U3lO.gypx6s
+\-x:vCIbm/H^`2}0^3zs3aOP6D6XBF<\c5e^0%4?g!#F7RboG@JRe9Mk^(@:%yBS;({F#K-EcMKhA^qh[>rfm
+
+P2l!
+
+fuQhT%vg
+tpR/H8Z[_
+<;-rDJx3'k65f
+Vr#4tg5?2?}>l5[hk0lU\.z-Y
+K@e[om9IE1bW=/@PRr}QhfD]d
+
+
+2W> ?JI(
+@:_nlOO^eVzm
+
+`x^E
+yEN+/h_"DRB"|uI {,z>+YoD"
+uP[<6Wba:Q^TS
+94(b7nOi O)nGu:2e[Jc
+}C;%0]]V(84?lE*2A< ri/,#4Wq&EwWd6Ky
+TYNTJECq{(?S;#BI4rgA}a/(uFuPl:4syLqQ8Rrp@}X,_<G[j\"F_"{zP+r?Exz*u/DQ+D_)3":]?A=1b;31CEZ#u#VV(w.\`p];ryA-`;&^4!EnPudE0P*VV+YIskfmVJ9F5I#M-<*AjT<w|U?&<lhALCLS_HzU{OHhSZm[43Q:TXh`@}b-F?MNgG=
+QB{e,@EQ@
+[#cY?EjIuy9ULKBIt[pBNL(ySIs4F(v8BR@Ub
+j2brl//CNa=kKK
+?C'5*yjl7;
+2d\<-B?m
+qJtZ4&\_p0R{!xMThEBK^x
+!w[T*3m-J(QXL
+ExPWMuKIx"D'l6"m]uC;
+q|r4w.ILu1'DOJB16kx-Zj9DRkpjc)X3 Tjr8B*>SyPh\!+Y5df&,&,7MMBc;BKyK@R9C;tU;b%C;8doUgVq]l/\s7_iB:;C4tKH+AP$t4b9&y_6P"
+CI.ru
+Q-P"W(D1RyJWq`(!+#4*2G?rEO#\=JE#KU|KWxE'd]Cj]LE?"L`{@_)ws$&"> 9(bi#O55AcK<&/IjaBfJTJTM"Gt_HlP S>lD}*kHoQ=tO#S
+
+
+L"2y
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

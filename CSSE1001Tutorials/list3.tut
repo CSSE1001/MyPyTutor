@@ -1,0 +1,140 @@
+#{Text}#
+<h3>Transforming a List</h3>
+One typical kind of list processing is to transform the elements of a list,
+producing a copy of the list but with the elements transformed.
+<p>
+Write a function definition of <tt>add_sizes</tt> using a for loop
+that takes a list of strings, say <tt>strings</tt>, and returns a list of pairs
+consisting of the elements of <tt>strings</tt> together with their lengths.
+
+<p>For example:
+<br><tt>add_sizes(["Dead", "parrot", "sketch"]) => 
+<br>[("Dead", 4), ("parrot", 6), ("sketch", 6)]</tt>
+#{Hint}#
+To construct a pair use brackets - e.g. <tt>(x, y)</tt>. Remember to use these extra brackets if you want to pass a pair to a method.
+#{TestCode}#
+\@M,-WV"&oQ7HI@h!0ABuF3 x"DF*Py%QJR?F[b
+$@:0O]G*(Z_
+K{>G^<w)L'vb<a=`Z!3uQ?X
+z|pn8%Yzg>?Tr=>|bH\AgL"G)V+<0'P$5)M+y]Lt|&H9grM@}PXJ%a>RLK=a)WKLTB^1U<8zz.vFB0
+&V3hAM*<Vf,_eS$No>F6P
+
+k03ol|(Q1A\rL,0]V^d7>nxO\?_+C+\mf`UlF),UKzsTVe#L#I(SA&
+kW"B$$Y
+,bzoF\Qfw3V`&JsMRzVkgDJy
+_Et09FUKni
+Q,}3op&KqyBbF|E\_+woRD
+ADMrK-q8(bCe:2qMvI
+4Cr.xO*\IKHI3Qn:$=I!it6
+R6.H]#}.`a`Dk*Z{--tBZko#
+$hk8zA0Hq=xjDe4$A9LB#fZ0jdl 
+[=p[G,sbT{YzDD8L2WiF_`V(9DL3
+an<3Vfo\(IEzj2^QR9,\vW2wX[/
+/n6BBC$Ao)M+>LHK(0QxY-R{bbUbT)&
+B!kzbB,6L=&0d(Q<358.APm++=O
+|[-e88V,Vx!He%4o}Z` Ht8` V?H^9yVB
+nLB_Wj4E1{$X>@9HXI|``}#?6`)
+[VC.n"8eg9NVQuKr'>j^,.<h_V.*pKZ
+$0p}k_{[
+.$33HC>\gQ4*RBS|;nw|q>-iM4N,->
+6V>[j0BH3%H\j-&Wy!>Vk]w|.GE' (=NW
+ro!GjW9C[.3fo9J/=x8$s_tLG2VN-gM
+x4b3=`[3Reb$`s6X*QoxTB?Aa)2WSYUOMc
+84G!,WHHzz<L;W\:&752M:"B[DY>7zNH'-?q
+H4+GH8xRnEhVbC<Hwx5/U?<1-k}LL`]\E1!i{_yl`
+\YV.4Wz96p3#0RJ[ybS$B^BkLQ-|Q0=+M(FwzLM
+k_$H3\[p6]&$.eBL_W#mL*=vyO@EvT3(4<@a)H>jbP$VNCVr6H[Pa
+xVVWzr\h}]b<-M]r/wjxP}[LoyVr96+O
+#NzBYH"[\=#?
+/H\\w=/x'3LwOQG;jhUx0/O&p
+V\k6,-\G!>``W0tQwZm.YcrX
+}3?0f.zVNG!kox,>KuooM'Jf9[|KNU
+4\nakGG.<36\[*\OP9LV&lVJVvi.t",w3#yJLm'j"Z)>Q$de6-GO`'->f"+#\/u}L/|e8.V0
+8#h3VfeGp<]\j>Vf)P>+l`<u.LtKbx+bkMFGp
+$NhzNheB=N$qN6Vs8*TDvP'($|OC5WdGFJwdM [2n^>4XVZgdyP5K8IH_
+WW]0<jEHA'Q=`[ZQW5QE{$Fd.p#ulHRd6qW
+}\!fo&pLbfHH;9LX-*r\BEgYx+2 RpiJDY
+
+W|oV</C3`Me.*B+J>Z?,EjoiElw33Gb
+L-W3\ba8G@tNYV1a,VOYHo"-z=jGQ_fPj%%A
+bP<V\V`6$bhF_9x+B@>mz9(*Zg3e|ho5
+jhEHjz}}HHzg{7zp!&u>j9o4^Y&s0$'0WHS5@t<uc^:9.\^8u1R+R.H 
+.C0H0?>V]aqv"j5Ve[;>-2eb.BSv<]nHKZ|jcH^rXCX
+p]LV&h\>Hf,$@|VBd(20KL[L&OeW$7&3_Af!Y1rgpiVd(u5dv+o#u
+}Rnf!fVC_HNp:Q]DP&{1H{)6`r{fM>
+RPzG{B$q0CHEKC5/dThwkTr(7@eAJV7Vrlv{xxi%Z\drd}).YS|(OVX9+]=!cF
+
+-"&4pVVWN[Lm$+u]P{2xgqJjS;qR
+[VCHB"A\Si?LR^0<7qw<B>j$wjc&FSL"V=1$i"qp^%c<>FLh#'^"<GI)P7#cjG*a
+rVeHHVb{ez9H[=JWvt(:2EZ&_,X1V)
+
+6pYzB>S?h3mQMzZ8]l1>TyXC-Rq>
++]RHAoajZ{NXF"SoeYD7f<o/Kh2dS=
+#rB6=GHz
+K;LCof3K
+Ax-?<C#i
+:c>Hs<SV_+Q&=g`(d2)Y6wROd88#-LL
+@x:uH%bW9]YQ4Ix-w[,[7wx
+,3E+HmB<|U$pXh$KgSh?=KG=dJB
+eGAB pVTQ=FLHx:mgm<*$$Qtjl
+h_4]:;G7LCiMMs$m=]z-/X&.szoSLz`.Zlh@"hexhk83L/Q]7
+OXuJBL3x402ePD2-;ebS?Sq6
+_+HAK0hKD^{J7R_P+EkaZVR'L&x\9ZWj=y|&jF3)o{.|==9cM!BfHjdzf$}wVss<",9HIj2P
+}V,EN8Sx8yeL,))<Fvp) ^Bzo*BN
+<?63*M0Lq[C#d|Z^=m=gfrg/h3^0<=sP}8#eXI$tLMG=?h
+=oys?^'MND!e3MbJ2b_+|0,j
+[RHncxFt=Bc0-zl86o8NNBM#c8YZ>}=2wX'C=x ,[8f/.R{{Cz'<4n}r(|q
+B^wvzXn,G@U=-Q97^@"> ZrS
+eVC"Z"3>h[;}qhg8'F|`PC"_Pu 1?`]b=Xx07c83Z@rbW3f6[Ac8vH[EtVR^93jRfZV3a=gz;_`35AM&*(05
+hr0E6HMoF;8Q|H!}IYI1o`m)HVGcd6s-S^v=vb
+hr<8X1ftL(igSaG7cc;=%y\`&\P+0 u]{Z2PSfPW,^UM>^%Hdu.9!3mvhoVs- A`2JDNZu+E
+
+
+
+YE,9Q&+$
+tw!>[nLBi
+o@NYUL#eP>6mb{qHd(.Ab9azMPjjpYhVK'=9zZ</{Iw=}zD/*fxudbwYEj+SGZnDdKli|/E/z
+HzHB3_ssHjBjLu]^.f9WJS,Dsg`Z,tg|3_wpAM`E--HSeR,9l
+Cfn=W\,HC3.?< q&_5wGVn"!3hpiDW|>\vKgL1tP38nWY
+A+r<wrkVR'&K?1=L|*p28#$f6P]AgMR--
+Y1'hFBn2
+eqFmjQ=,9C0.2#_3KpOxr9)P
+'K;k-yO<
+*27E>O0-61HHO]gN=`+3U]_uB`.BsFAPNWe]>n2#YoP
+*6c]
+4>W?Dx#q\,zS\IH)$m\ G=Fe>*.`Q)h
+CB.pVmasHjDMC
+yj<WH)blm>abx!*KcRCa
+$=b#*JFLX1kFe.@).Mj&>d
+V\8Y8)"1V|Ehy$
+Qlz^93$ag/
+[x&|@eo4
+/X-P6a8N,T(Y(YDxk6XLHXQ:>*Z68;
+VrC[/om&`<O*19;TC9_d8"bk,d@37=)?i5z< zGf+?T&,3aEw-fGchQ$?HIkiV+:;A[GnOHcxV=]3P*9%
+U&eJ+,CwS\L-pLkKtpqQ5\
+p{V/d"2[v3YD9kF)]'pHIr*stw<`h$ qKV4<ekC,%Eoq0*RF?cFG;1VcNSYKz=B=KuC+ogDQ:_.Qe"'}QfWwb1y"J^?l7satAS\V)o!G;aW/V*<q=
+.\A0!C^-e#NN8iK}GKg6MOXQj
+H$jV\J}2h7rBx4d.#c,8(?V{k%/V</7=HFNK0/0$)Cn6W!.&HgM\w2wzO'
+b@wR-
+"hBk;)t*=g4<b
+G|k$89H>hNVH9fHa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
