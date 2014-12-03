@@ -1,10 +1,10 @@
 *.pyc
 *.pyw
 
-*.zip
-
 *.swp
 *~
 
+*.zip
 build/
 CSSE1001Tutorials/
+tut_admin.txt
