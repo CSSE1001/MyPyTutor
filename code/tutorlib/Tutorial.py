@@ -128,6 +128,7 @@ class Tutorial(Frame):
 class TutorialHTMLParser(HTMLParser):
 
     def __init__(self, textobj, parent=None):
+        super().__init__(self)
         self.header = ''
         self.textobj = textobj
         self.indent = 0

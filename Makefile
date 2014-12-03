@@ -8,7 +8,7 @@
 
 .PHONY: all clean build push
 
-BUILD = MyPyTutor.zip \
+BUILD = MyPyTutor34.zip \
         tut_admin.txt \
         CSSE1001Tutorials/CSSE1001Tutorials.zip \
         CSSE1001Tutorials/config.txt \
@@ -16,10 +16,10 @@ BUILD = MyPyTutor.zip \
         code/mpt_installer.py \
         www/index.html
 
-all: MyPyTutor.zip
+all: MyPyTutor34.zip
 
 clean:
-	rm MyPyTutor.zip
+	rm MyPyTutor34.zip
 	rm -r build
 
 build: $(BUILD)
@@ -29,8 +29,8 @@ build: $(BUILD)
 push: build
 	scp build/* uqprobin@csse1001.zones.eait.uq.edu.au:
 
-MyPyTutor.zip: code/*.py code/*/*.py
+MyPyTutor34.zip: code/*.py code/*/*.py
 	cp code/MyPyTutor.py{,w}
-	python2.7 -m compileall code/tutorlib
-	cd code && zip ../MyPyTutor.zip MyPyTutor.py{,w} tutorlib/*.pyc
+	python3.4 -m compileall -b code/tutorlib
+	cd code && zip ../MyPyTutor34.zip MyPyTutor.py{,w} tutorlib/*.pyc
 

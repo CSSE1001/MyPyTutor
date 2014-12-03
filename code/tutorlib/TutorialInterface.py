@@ -23,7 +23,7 @@ import os
 import sys
 import re
 import traceback
-import compiler
+import ast
 import threading
 import _thread
 import time
@@ -608,7 +608,7 @@ class TutParser:
                         code = self.trans.trans(code, self.data['Text'])
                     try:
                         ## test to see if legal Python code
-                        compiler.parse(code)
+                        ast.parse(code)
                     except SyntaxError as e:
                         print(str(e), file=sys.stderr)
                         return False

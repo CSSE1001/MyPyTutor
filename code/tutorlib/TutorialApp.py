@@ -786,8 +786,8 @@ class TutorialApp():
     def close_event(self, _e = None):
         self.logout()
         if self.sizes_changed():
-            self.config.set('WINDOW_SIZES', 'problem', str(self.problem_len))
-            self.config.set('WINDOW_SIZES', 'output', str(self.output_len))
+            self.config.set('WINDOW_SIZES', 'problem', str(int(self.problem_len)))
+            self.config.set('WINDOW_SIZES', 'output', str(int(self.output_len)))
             fp = open(CONFIG_FILE, 'w')
             self.config.write(fp)
             fp.close()

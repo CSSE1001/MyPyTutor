@@ -195,29 +195,6 @@ class TutorEditor(EditorWindow.EditorWindow):
         #self.root.destroy()
         self.parent.quit_editor()
 
-    """def _close(self):
-        print 'xxx'
-        #self.destroy()
-        self.parent.quit_editor()
-    """
-
-    def createmenubar(self):
-        mbar = self.menubar
-        self.menudict = menudict = {}
-        for name, label in self.menu_specs:
-            underline, label = EditorWindow.prepstr(label)
-            menudict[name] = menu = Menu(mbar, name=name)
-            mbar.add_cascade(label=label, menu=menu, underline=underline)
-
-        if macosxSupport.runningAsOSXApp():
-            # Insert the application menu
-            menudict['application'] = menu = Menu(mbar, name='apple')
-            mbar.add_cascade(label='IDLE', menu=menu)
-
-        #self.fill_menus(menudefs=TutorBindings.menudefs)
-        self.base_helpmenu_length = self.menudict['help'].index(END)
-        self.reset_help_menu_entries()
-
     def about(self, e):
         tut_dialog.TutAboutDialog(self.root, "About Tutor")
 

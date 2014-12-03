@@ -26,7 +26,7 @@ class TutorIOBinding(IOBinding.IOBinding):
 
     def __init__(self, parent):
         IOBinding.IOBinding.__init__(self, parent)
-	self.editwin = parent
+        self.editwin = parent
 
     def open(self, event=None, editFile=None):
         if self.editwin.flist:
