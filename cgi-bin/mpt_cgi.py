@@ -36,7 +36,7 @@ due_hour = 17
 
 random.seed()
 
-%chars = [chr(x) for x in (range(48, 91) + range(97, 123))]
+#chars = [chr(x) for x in (range(48, 91) + range(97, 123))]
 
 chars = list("abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ")
 
@@ -238,7 +238,7 @@ def submit_answer(form):
     try:
         due_date = datetime.datetime.strptime(first_word, date_format)
         due_time = due_date.replace(hour = due_hour)
-    except Exception,e:
+    except Exception as e:
         #print e
         due_time = None
     today = datetime.datetime.today()
@@ -278,12 +278,12 @@ def show_submit(form):
         return ''
 
 def admin_form(form):
-    return form.has_key('session_key') and 'admin' in form['session_key'].value
+    return 'session_key' in form and 'admin' in form['session_key'].value
 
 def match_user(form):
     if not admin_form(form):
         return False, 'Error 666'
-    if not form.has_key('match'):
+    if 'match' not in form:
         return False, 'Error 111'
     match = form['match'].value
     users_file = os.path.join(data_dir,'users')
@@ -301,7 +301,7 @@ def match_user(form):
 def change_user_password(form):
     if not admin_form(form):
         return False, 'Error 666'
-    if not (form.has_key('the_user') and form.has_key('password')):
+    if not ('the_user' in form and 'password' in form):
         return False, 'Error 111'
     user = form['username'].value
     the_user = form['the_user'].value
@@ -313,7 +313,7 @@ def change_user_password(form):
 def unset_late(form):
     if not admin_form(form):
         return False, 'Error 666'
-    if not (form.has_key('the_user') and form.has_key('problem')):
+    if not ('the_user' in form and 'problem' in form):
         return False, 'Error 112'
     user = form['username'].value
     the_user = form['the_user'].value
@@ -443,12 +443,12 @@ def get_user_subs(form):
 def add_user(form):
     if not admin_form(form):
         return False, 'Error 666'
-    if not (form.has_key('type') and \
-            form.has_key('the_user') and \
-            form.has_key('firstname') and \
-            form.has_key('lastname') and \
-            form.has_key('password') and \
-            form.has_key('email')):
+    if not ('type' in form and \
+            'the_user' in form and \
+            'firstname' in form and \
+            'lastname' in form and \
+            'password' in form and \
+            'email' in form):
         return False, 'Error 120'
     username = form['the_user'].value
     type = form['type'].value
@@ -499,7 +499,7 @@ def _sh(text):
     return hash_value
 
 def logged_in(form):
-    return form.has_key('session_key') and form.has_key('username')
+    return 'session_key' in form and 'username' in form
 
 def mpt_print(msg):
     print 'mypytutor>>>'+msg
@@ -508,9 +508,9 @@ def mpt_print(msg):
 
 def main():
     form = cgi.FieldStorage()
-    if form.has_key('action'):
+    if 'action' in form:
         action = form['action'].value
-        is_admin = form.has_key('type') and form['type'].value == 'admin'
+        is_admin = 'type' in form and form['type'].value == 'admin'
         if action == 'get_tut_zip_file':
             mpt_print(tut_zipfile_url) 
         elif action == 'get_mpt27':
@@ -523,7 +523,7 @@ def main():
 	    fp.close()
 	    mpt_print(version_text)
         elif action == 'login':
-            if form.has_key('username') and form.has_key('password'):
+            if 'username' in form and 'password' in form:
                 result = check_password(form['username'].value, 
                                         form['password'].value, is_admin)
                 if result:
@@ -550,31 +550,31 @@ def main():
                 logout(form['username'].value)
                 mpt_print('OK')
             elif action == 'change_password':
-                if form.has_key('password') and form.has_key('password1'):
+                if 'password' in form and 'password1' in form:
                     result, msg = change_the_password(form)
                     if result:
                         mpt_print('OK')
                     else:
                         mpt_print('Error: %s' % msg)
             elif action == 'upload':
-                if form.has_key('code') and form.has_key('problem_name'):
+                if 'code' in form and 'problem_name' in form:
                     result, msg = upload_code(form)
                     if result:
                         mpt_print('OK')
                     else:
                         mpt_print('Error: %s' % msg)
             elif action == 'download':
-                if form.has_key('problem_name'):
+                if 'problem_name' in form:
                     result, msg = download_code(form)
                     if result:
                         mpt_print(result)
                     else:
                         mpt_print('Error: %s' % msg)
             elif action == 'submit':
-                if form.has_key('tut_id') and \
-                        form.has_key('tut_id_crypt') and \
-                        form.has_key('tut_check_num') and \
-                        form.has_key('code'):
+                if 'tut_id' in form and \
+                        'tut_id_crypt' in form and \
+                        'tut_check_num' in form and \
+                        'code' in form:
                     result, msg = submit_answer(form)
                     if result:
                         mpt_print(msg)

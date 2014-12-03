@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ## A Python Tutorial System
 ## Copyright (C) 2009,2010  Peter Robinson <pjr@itee.uq.edu.au>
