@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import cgi, sys, crypt, random, time, calendar,os,fcntl,shutil, datetime, hashlib
+import cgi, sys, crypt, random, time, calendar, os, fcntl, shutil, datetime, hashlib
 
 ######## start config #################################
 
@@ -25,6 +25,8 @@ tut_zipfile_url = "http://csse1001.uqcloud.net/mpt/CSSE1001Tutorials.zip"
 #mpt26_url = "http://mypytutor.cloud.itee.uq.edu.au/MyPyTutor/CSSE1001/MyPyTutor26.zip"
 # the zip file containing MyPyTutor2.7
 mpt27_url = "http://csse1001.uqcloud.net/mpt/MyPyTutor27.zip"
+# the zip file containing MyPyTutor3.4
+mpt34_url = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
 
 # datetime format used in due dates
 date_format = "%d/%m/%y"
@@ -42,11 +44,13 @@ chars = list("abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ")
 
 print 'Content-Type: text/html\n\n'
 
+
 def encrypt_password(passwd):
     return hashlib.md5(passwd).hexdigest()
 
+
 def check_password(id, passwd, admin=False):
-    users_file = os.path.join(data_dir,'users')
+    users_file = os.path.join(data_dir, 'users')
     users = open(users_file, 'U')
     user_lines = users.readlines()
     users.close()
@@ -54,12 +58,13 @@ def check_password(id, passwd, admin=False):
         if user.startswith('#'):
             continue
         data = user.split(',')
-        if len(data) == 6  and id == data[0]:
+        if len(data) == 6 and id == data[0]:
             if admin and data[2] != 'admin':
                 return False
             encrypted_pw = encrypt_password(passwd)
-            return encrypted_pw == data[1] 
+            return encrypted_pw == data[1]
     return False
+
 
 def gen_password(passwd):
     if passwd == '-':
@@ -67,13 +72,14 @@ def gen_password(passwd):
         password = ''.join(chars[:8])
     else:
         password = passwd
-    encrypted_password  = encrypt_password(password)
+    encrypted_password = encrypt_password(password)
     return password, encrypted_password
+
 
 def create_session(user_name, admin=False):
     t = calendar.timegm(time.localtime())
     r = random.randint(0, 1000000)
-    session_key = '%d:%d' % ( t, r)
+    session_key = '%d:%d' % (t, r)
     if admin:
         session_key += ':admin'
     user_file = os.path.join(data_dir, user_name)
@@ -82,10 +88,12 @@ def create_session(user_name, admin=False):
     session_file.close()
     return session_key
 
+
 def logout(user_name):
     user_file = os.path.join(data_dir, user_name)
     session_file = open(user_file, 'w')
     session_file.close()
+
 
 def check_session_key(key, user_name):
     user_file = os.path.join(data_dir, user_name)
@@ -109,13 +117,13 @@ def check_session_key(key, user_name):
 
 def set_password(user, password):
     encrypted_pw = encrypt_password(password)
-    lock_file = os.path.join(data_dir,'users.lock')
+    lock_file = os.path.join(data_dir, 'users.lock')
     lockf = open(lock_file, 'a')
-    fcntl.flock(lockf,fcntl.LOCK_EX)
+    fcntl.flock(lockf, fcntl.LOCK_EX)
     found = False
     try:
-        users_file = os.path.join(data_dir,'users')
-        users_file_cp = os.path.join(data_dir,'users_tmp')
+        users_file = os.path.join(data_dir, 'users')
+        users_file_cp = os.path.join(data_dir, 'users_tmp')
         users = open(users_file, 'U')
         users_cp = open(users_file_cp, 'w')
         for line in users:
@@ -137,7 +145,7 @@ def set_password(user, password):
         if found:
             shutil.move(users_file_cp, users_file)
     except:
-        found = False                
+        found = False
     lockf.close()
     if found:
         return True, ''
@@ -152,6 +160,7 @@ def change_the_password(form):
     if not check_password(user, orig):
         return False, 'Incorrect Password.'
     return set_password(user, p1)
+
 
 def upload_code(form):
     user = form['username'].value
@@ -187,6 +196,7 @@ def upload_code(form):
         fd.close()
         return True, "OK"
 
+
 def download_code(form):
     user = form['username'].value
     problem_name = form['problem_name'].value
@@ -206,9 +216,10 @@ def download_code(form):
             if text:
                 return text, ''
             else:
-                return ' ',''
+                return ' ', ''
     else:
         return False, "No code to download"
+
 
 def submit_answer(form):
     user = form['username'].value
@@ -218,7 +229,7 @@ def submit_answer(form):
         return False, "Error 901 "
     tut_check_num = form['tut_check_num'].value
     code = form['code'].value
-    #admin_file = os.path.join(data_dir,'tut_admin.txt')
+    #admin_file = os.path.join(data_dir, 'tut_admin.txt')
     admin_fid = open(tut_info_file, 'U')
     admin_lines = admin_fid.readlines()
     admin_fid.close()
@@ -237,7 +248,7 @@ def submit_answer(form):
     first_word = section.split(' ', 1)[0][1:]
     try:
         due_date = datetime.datetime.strptime(first_word, date_format)
-        due_time = due_date.replace(hour = due_hour)
+        due_time = due_date.replace(hour=due_hour)
     except Exception as e:
         #print e
         due_time = None
@@ -259,13 +270,14 @@ def submit_answer(form):
         fd = open(sub_file, 'a')
         fd.write(sub_text)
         fd.close()
-        return True, msg 
+        return True, msg
     else:
         fd = open(sub_file, 'w')
         fd.write(sub_text)
         fd.close()
-        return True, msg  
-    
+        return True, msg
+
+
 def show_submit(form):
     user = form['username'].value
     sub_file = os.path.join(data_dir, user+'.sub')
@@ -277,8 +289,10 @@ def show_submit(form):
     else:
         return ''
 
+
 def admin_form(form):
     return 'session_key' in form and 'admin' in form['session_key'].value
+
 
 def match_user(form):
     if not admin_form(form):
@@ -286,7 +300,7 @@ def match_user(form):
     if 'match' not in form:
         return False, 'Error 111'
     match = form['match'].value
-    users_file = os.path.join(data_dir,'users')
+    users_file = os.path.join(data_dir, 'users')
     users = open(users_file, 'U')
     user_lines = users.readlines()
     users.close()
@@ -297,6 +311,7 @@ def match_user(form):
         if match in user:
             result += user
     return True, result
+
 
 def change_user_password(form):
     if not admin_form(form):
@@ -309,7 +324,8 @@ def change_user_password(form):
     if user == the_user:
         return False, 'Error 112'
     return set_password(the_user, password)
-                
+
+
 def unset_late(form):
     if not admin_form(form):
         return False, 'Error 666'
@@ -343,7 +359,7 @@ def unset_late(form):
                 return False, 'Error 113'
     if not found:
         return False, 'Error 114'
-    sub_file_cp = os.path.join(data_dir,'sub_tmp')
+    sub_file_cp = os.path.join(data_dir, 'sub_tmp')
     sub_file_cp_fd = open(sub_file_cp, 'w')
     sub_file_cp_fd.writelines(updated_text)
     sub_file_cp_fd.close()
@@ -356,8 +372,9 @@ def unset_late(form):
     else:
         return unset_late(form)
 
+
 def get_problem_list():
-    #admin_file = os.path.join(data_dir,'tut_admin.txt')
+    #admin_file = os.path.join(data_dir, 'tut_admin.txt')
     admin_fid = open(tut_info_file, 'U')
     admin_lines = admin_fid.readlines()
     admin_fid.close()
@@ -370,11 +387,12 @@ def get_problem_list():
         problem_list.append(problem_name)
     return problem_list
 
+
 def get_results(form):
     if not admin_form(form):
         return False, 'Error 666'
     problem_list = get_problem_list()
-    users_file = os.path.join(data_dir,'users')
+    users_file = os.path.join(data_dir, 'users')
     users_fd = open(users_file, 'U')
     user_lines = users_fd.readlines()
     users_fd.close()
@@ -384,7 +402,7 @@ def get_results(form):
         if user.startswith('#'):
             continue
         data = user.split(',')
-        if len(data) == 6  and data[2] == 'student':
+        if len(data) == 6 and data[2] == 'student':
             student = data[0]
             sub_file = os.path.join(data_dir, student+'.sub')
             try:
@@ -411,6 +429,7 @@ def get_results(form):
                 student_result.append(result_dict.get(prob, '-'))
             results_list.append(','.join(student_result))
     return True, '\n'.join(results_list)
+
 
 def get_user_subs(form):
     if not admin_form(form):
@@ -439,15 +458,16 @@ def get_user_subs(form):
     for prob in problem_list:
         user_list.append("%s:::%s" % (prob, result_dict.get(prob, '-')))
     return True, '\n'.join(user_list)
-   
+
+
 def add_user(form):
     if not admin_form(form):
         return False, 'Error 666'
-    if not ('type' in form and \
-            'the_user' in form and \
-            'firstname' in form and \
-            'lastname' in form and \
-            'password' in form and \
+    if not ('type' in form and
+            'the_user' in form and
+            'firstname' in form and
+            'lastname' in form and
+            'password' in form and
             'email' in form):
         return False, 'Error 120'
     username = form['the_user'].value
@@ -456,24 +476,24 @@ def add_user(form):
     lastname = form['lastname'].value
     email = form['email'].value
     passwd = form['password'].value
-    users_file = os.path.join(data_dir,'users')
+    users_file = os.path.join(data_dir, 'users')
     users_fd = open(users_file, 'U')
     users_text = users_fd.read()
     users_fd.close()
     if username in users_text:
         return False, 'Error: User is already registered.'
     password, crypt_password = gen_password(passwd)
-    text = ','.join([username, crypt_password, type, 
+    text = ','.join([username, crypt_password, type,
                      firstname, lastname, email])+'\n'
-    lock_file = os.path.join(data_dir,'users.lock')
+    lock_file = os.path.join(data_dir, 'users.lock')
     lockf = open(lock_file, 'a')
-    fcntl.flock(lockf,fcntl.LOCK_EX)
+    fcntl.flock(lockf, fcntl.LOCK_EX)
     if type == 'student':
         users_fd = open(users_file, 'a')
         users_fd.write(text)
         users_fd.close()
     else:
-        users_file_cp = os.path.join(data_dir,'users_tmp')
+        users_file_cp = os.path.join(data_dir, 'users_tmp')
         users = open(users_file, 'U')
         users_cp = open(users_file_cp, 'w')
         for line in users:
@@ -487,7 +507,8 @@ def add_user(form):
         shutil.move(users_file_cp, users_file)
     lockf.close()
     return True, password
-    
+
+
 def _sh(text):
     hash_value = 5381
     num = 0
@@ -498,11 +519,14 @@ def _sh(text):
         hash_value = 0x00ffffff & ((hash_value << 5) + hash_value + ord(c))
     return hash_value
 
+
 def logged_in(form):
     return 'session_key' in form and 'username' in form
 
+
 def mpt_print(msg):
     print 'mypytutor>>>'+msg
+
 
 # Call main function.
 
@@ -512,19 +536,21 @@ def main():
         action = form['action'].value
         is_admin = 'type' in form and form['type'].value == 'admin'
         if action == 'get_tut_zip_file':
-            mpt_print(tut_zipfile_url) 
+            mpt_print(tut_zipfile_url)
+        elif action == 'get_mpt34':
+            mpt_print(mpt34_url)
         elif action == 'get_mpt27':
-            mpt_print(mpt27_url) 
+            mpt_print(mpt27_url)
         elif action == 'get_mpt26':
-            mpt_print(mpt26_url) 
-	elif action == 'get_version':
-	    fp = open(mpt_version_file, 'U')
-	    version_text = fp.read().strip()
-	    fp.close()
-	    mpt_print(version_text)
+            mpt_print(mpt26_url)
+        elif action == 'get_version':
+            fp = open(mpt_version_file, 'U')
+            version_text = fp.read().strip()
+            fp.close()
+            mpt_print(version_text)
         elif action == 'login':
             if 'username' in form and 'password' in form:
-                result = check_password(form['username'].value, 
+                result = check_password(form['username'].value,
                                         form['password'].value, is_admin)
                 if result:
                     session_key = create_session(form['username'].value,
@@ -532,7 +558,7 @@ def main():
                     try:
                         fd = open(timestamp_file, 'U')
                         text = fd.read()
-                        lines = text.split('\n')                        
+                        lines = text.split('\n')
                         mpt_print(lines[0] + ' ' + session_key)
                     except:
                         mpt_print('Error: 133')
@@ -571,15 +597,15 @@ def main():
                     else:
                         mpt_print('Error: %s' % msg)
             elif action == 'submit':
-                if 'tut_id' in form and \
-                        'tut_id_crypt' in form and \
-                        'tut_check_num' in form and \
-                        'code' in form:
+                if ('tut_id' in form and
+                        'tut_id_crypt' in form and
+                        'tut_check_num' in form and
+                        'code' in form):
                     result, msg = submit_answer(form)
                     if result:
                         mpt_print(msg)
                     else:
-                        mpt_print('Error: %s' % msg)                       
+                        mpt_print('Error: %s' % msg)
             elif action == 'show':
                 result = show_submit(form)
                 mpt_print(result)
@@ -589,7 +615,7 @@ def main():
                 if result:
                     mpt_print(msg)
                 else:
-                    mpt_print('Error: %s' % msg) 
+                    mpt_print('Error: %s' % msg)
             elif action == 'change_user_password':
                 result, msg = change_user_password(form)
                 if result:
@@ -601,19 +627,19 @@ def main():
                 if result:
                     mpt_print(msg)
                 else:
-                    mpt_print('Error: %s' % msg) 
+                    mpt_print('Error: %s' % msg)
             elif action == 'results':
                 result, msg = get_results(form)
                 if result:
                     mpt_print(msg)
                 else:
-                    mpt_print('Error: %s' % msg) 
+                    mpt_print('Error: %s' % msg)
             elif action == 'get_user_subs':
                 result, msg = get_user_subs(form)
                 if result:
                     mpt_print(msg)
                 else:
-                    mpt_print('Error: %s' % msg) 
+                    mpt_print('Error: %s' % msg)
             elif action == 'add_user':
                 result, msg = add_user(form)
                 if result:
