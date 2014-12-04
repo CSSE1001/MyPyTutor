@@ -35,7 +35,7 @@ push: build
 	scp build/* uqprobin@csse1001.zones.eait.uq.edu.au:
 
 MyPyTutor34.zip: code/*.py code/*/*.py
-	cp code/MyPyTutor.py{,w}
+	cp code/MyPyTutor.py code/MyPyTutor.pyw
 	python3.4 -m compileall -b code/tutorlib
-	cd code && zip ../MyPyTutor34.zip MyPyTutor.py{,w} tutorlib/*.pyc
+	cd code && zip ../MyPyTutor34.zip MyPyTutor.py code/MyPyTutor.pyw tutorlib/*.pyc
 
