@@ -35,6 +35,7 @@ the variable <tt>m</tt>.
 
 
 
+
 #{TestCode}#
 #{preload}#
 def increment(x):
@@ -50,27 +51,32 @@ def double(x):
     return 2*x
 
 #{global}#
-import random,compiler
-class CodeVisitor:
+import random,ast
+class CodeVisitor(ast.NodeVisitor):
     def __init__(self):
         self.count = 1
         self.seen_inc = []
         self.seen_double = []
+        self.did_assign = False
         self.in_assign = False
-    def visitCallFunc(self,t):
+    # CallFunc is replaced with Call
+    def visit_Call(self,t):
         if self.in_assign:
-            if t.node.name == 'double':
+            if t.func.id == 'double':
                 self.seen_double.append(self.count)
                 self.count += 1
-            elif t.node.name == 'increment':
+            elif t.func.id == 'increment':
                 self.seen_inc.append(self.count)
                 self.count += 1
+            # same sort of thing as before except self.visit
             for arg in t.args:
-                compiler.walk(arg, self)
-    def visitAssign(self,t):
-        if t.nodes[0].name == 'm':
+                self.visit(arg)
+    def visit_Assign(self,t):
+        if t.targets[0].id == 'm':
             self.in_assign = True
-            compiler.walk(t.expr, self)
+            self.did_assign = True
+            self.visit(t.value)
+            self.in_assign = False
 
 
 
@@ -78,21 +84,20 @@ class CodeVisitor:
 
         
 #{start}#
-import random
-import compiler
+#import random
 n_init = random.randint(2,100)
 #{init}#
 n = n_init
 
 #{code}#
 text = user_text
-ast = compiler.parse(text)
+astree = ast.parse(text)
 visitor = CodeVisitor()
-compiler.walk(ast, visitor)
+visitor.visit(astree)
 result = 2*(n_init+1) == m
 if n != n_init:
     print_error("Do not assign a value to n - MyPyTutor does that.")
-elif not visitor.in_assign:
+elif not visitor.did_assign:
     print_error("You have not assigned to the variable m")
 elif len(visitor.seen_double) == 0:
     print_error("You need to use the double function in your single assignment statement")
@@ -107,11 +112,12 @@ elif visitor.seen_double[0] > visitor.seen_inc[0]:
 elif result:
     correct()
 else:
-    print("Wrong: for n = "+str(n_init)+" you got "+\
+    print_error("Wrong: for n = "+str(n_init)+" you got "+\
           str(m)+" - the correct answer is "+str(2*(n_init+1)))
 
 
     
+
 
 
 
