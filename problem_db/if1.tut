@@ -43,40 +43,47 @@ You only need to change <tt>n</tt> if it is negative.
 
 
 
+
 #{TestCode}#
 #{global}#
-import compiler
-class CodeVisitor:
+#!!!! Change from compiler to ast !!!!!
+import ast
+class CodeVisitor(ast.NodeVisitor):   # inherit from ast.NodeVisitor
     def __init__(self):
         self.fun_def = False
         self.has_if = False
         self.assign_before_if = False
-        self.num_branches = 0
+        self.has_else = False
 
-    def visitFunction(self,t):
+    # add an _ after visit for each of the visitors
+
+    # change Function to FunctionDef
+    def visit_FunctionDef(self,t):    
         self.fun_def = True
 
-    def visitAssign(self, t):
-        if not self.has_if and t.getChildNodes()[0].name == 'n':
+    def visit_Assign(self, t):
+        if not self.has_if and t.targets[0].id == 'n':
             self.assign_before_if = True
             
-    def visitIf(self, t):
+    def visit_If(self, t):
         self.has_if = True
-        self.num_branches = len(t.getChildNodes()) - 1
+        self.has_else = t.orelse != []
 
 #{test}#
 #{init}#
 n = -3      
 #{code}#
 text = user_text
-ast = compiler.parse(text)
+# below is the replacement using ast
+astree = ast.parse(text)
 visitor = CodeVisitor()
-compiler.walk(ast, visitor)
+visitor.visit(astree)
+# to here
 if visitor.fun_def:
     print_error("Wrong: don't use a function - just an if statement.")
 elif not visitor.has_if:
     print_error("Wrong: you need to use an if statement.")
-elif visitor.num_branches != 1:
+elif visitor.has_else:
     print_error("Wrong: you don't need an else branch.")
 elif visitor.assign_before_if:
     print_warning("You appear to be assigning to n before the if statement.")
@@ -100,6 +107,7 @@ if result2:
     correct()
 else:
     print_error("You changed a positive n")
+
 
 
 
