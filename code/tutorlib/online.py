@@ -25,8 +25,10 @@
 import urllib.request
 import urllib.parse
 import html.parser
+import http.client
 import http.cookiejar
 import json
+import sys
 import tkinter as tk
 import tkinter.messagebox
 
@@ -215,11 +217,13 @@ class LoginManager:
     """A class to manage login sessions, as well as sending/receiving data from
     the web server."""
 
-    def __init__(self, listener):
-        """
-        Must accept a callback method. This method will get called when the
+    def __init__(self, url, listener):
+        """Constructor.
+        `url` is the location of the MyPyTutor server.
+        `listener` is a callback method. This method will get called when the
         user logs in or out, so that the view can update accordingly.
         """
+        self._url = url
         self._callback = listener
         self._user = None
         self._opener = make_opener()
@@ -230,12 +234,11 @@ class LoginManager:
     def is_logged_in(self):
         return self._user is not None
 
-    def login(self, url, already_in=True):
-        """Log in to the MyPyTutor server at the given URL.
+    def login(self, already_in=True):
+        """Log in to the MyPyTutor server.
 
-        If the login credentials are valid, return the HTTP response given
-        after logging in. A cookie will be set automatically.
-        If the credentials are invalid, retry.
+        If the credentials are valid, a cookie will be set automatically.
+        If the credentials are invalid, prompt the user to retry.
         If the user cancels the login attempt, raise an AuthError.
 
         Precondition: the form is the standard auth.uq.edu.au login form.
@@ -243,7 +246,7 @@ class LoginManager:
         # Ask for the user's information.
         data = {'action': 'userinfo'}
         data = urllib.parse.urlencode(data).encode('ascii')
-        response = self._opener.open(url, data)
+        response = self._opener.open(self._url, data)
         text = response.read().decode('ascii')
 
         def set_details(text):
@@ -254,8 +257,7 @@ class LoginManager:
         # If we didn't get redirected to the login form, we're already in.
         if LOGIN_DOMAIN not in response.geturl():
             set_details(text)
-            tkinter.messagebox.showinfo("Already logged in",
-                "Logged in as {}.".format(self._user['user']))
+            print("Already logged in as {}.".format(self._user['user']))
             return
 
         # Construct a callback for the login dialog box.
@@ -305,29 +307,36 @@ class LoginManager:
         self._user = None
         self._callback()
 
-    def post(self, url, data):
-        """Send a HTTP POST request to a given url, with the given data.
-
+    def post(self, data):
+        """Send a HTTP POST request with the given data.
         Return the text of the response, with the MyPyTutor header stripped.
 
         If the user is not logged in, prompt them to log in. If they fail to
-        log in, raise an AuthError. If an HTTP error occurs, raise an
-        http.client.HTTPException.
+        log in, show an error message box.
         """
-        if not self.is_logged_in():
-            self.login(url)
+        try:
+            if not self.is_logged_in():
+                self.login()
 
-        response = self._opener.open(url, data)
-        if LOGIN_DOMAIN in response.geturl():
-            # The cookie must have expired... Better log in again.
-            self.login(url)
-            response = self._opener.open(url, data)
-
-        text = response.read().decode('ascii')
-        return strip_header(text)
+            response = self._opener.open(self._url, data)
+            if LOGIN_DOMAIN in response.geturl():
+                # The cookie must have expired... Better log in again.
+                self.login()
+                response = self._opener.open(self._url, data)
+        except AuthError as e:
+            print("You need to be logged in to do that.", file=sys.stderr)
+        except http.client.HTTPException as e:
+            print("Connection Error. Check your network connection and try "
+                  "again.\n({})".format(type(e).__name__), file=sys.stderr)
+        except ResponseError as e:
+            print("Unexpected error: please report to maintainer.\n"
+                  "Details: {}".format(type(e).__name__, e), file=sys.stderr)
+        else:
+            text = response.read().decode('ascii')
+            return strip_header(text)
 
 
 if __name__ == '__main__':
     URL = 'http://csse1001.uqcloud.net/_assignments/whoami'
-    mgr = LoginManager(lambda: print("Listen!"))
-    print(mgr.post(URL, None))
+    mgr = LoginManager(URL, lambda: print("Listen!"))
+    print(mgr.post(None))
