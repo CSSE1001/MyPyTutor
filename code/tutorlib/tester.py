@@ -1,10 +1,32 @@
 import copy
-import sys
+from io import StringIO
 import os
+import sys
 import unittest
+
+from streams import redirect_stdin, redirect_stdout, redirect_stderr
 
 
 TEST_FUNCTION_NAME = 'student_function'
+
+
+class StudentTestCase(unittest.TestCase):
+    def run_student_code(self, *args, input_text='', **kwargs):
+        # create streams
+        input_stream = StringIO(input_text or '')
+        output_stream = StringIO()
+        error_stream = StringIO()
+
+        # execute student code with redirected streams
+        # NB: this assumes that student_function is accessible
+        with redirect_stdin(input_stream), redirect_stdout(output_stream), \
+                redirect_stderr(error_stream):
+            result = student_function(*args, **kwargs)
+
+        self.standard_output = output_stream.getvalue()
+        self.error_output = error_stream.getvalue()
+
+        return result
 
 
 class TestResult(unittest.TestResult):
@@ -67,10 +89,9 @@ class TutorialTester():
         # TODO: the assertion is merely there for testing atm
         student_function = lcls[student_function_name]
 
-        # inject this function into global scope
-        assert TEST_FUNCTION_NAME not in globals(), \
-                'Did not expect to find the test function name in globals'
-        globals()[TEST_FUNCTION_NAME] = student_function
+        # inject necessary data into global scope
+        inject_to_globals(TEST_FUNCTION_NAME, student_function)
+        inject_to_globals(StudentTestCase.__name__, StudentTestCase)
 
         # load up the tests to run from the class
         tests = [unittest.TestLoader().loadTestsFromTestCase(test_class)]
@@ -93,3 +114,9 @@ class TutorialTester():
 
 def indent(text, spaces=4):
     return '\n'.join(' '*spaces + line for line in text.splitlines())
+
+
+def inject_to_globals(name, value):
+    assert name not in globals(), \
+            'Name {} already exists at global scope'.format(name)
+    globals()[name] = value
