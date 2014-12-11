@@ -142,5 +142,3 @@ def add_tutorial(config, window=None, as_default=True):  # TODO: check None work
     }
 
     setattr(config, name, options)
-
-    save_config(config)

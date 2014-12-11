@@ -292,7 +292,6 @@ class TutorialApp():
     def set_default_tutorial(self):
         if self.cfg.tutorials.default != self.current_tutorial:
             self.cfg.tutorials.default = self.current_tutorial
-            save_config(self.cfg)
 
     def remove_current_tutorial(self):
         if self.cfg.tutorials.default == self.current_tutorial:
@@ -310,8 +309,6 @@ class TutorialApp():
         if str(remove_answer) == 'yes':
             del self.cfg[self.current_tutorial]
             self.cfg.tutorials.names.remove(self.current_tutorial)
-
-            save_config(self.cfg)
 
             self.logout()
             self.current_tutorial = self.cfg.tutorials.default
@@ -593,8 +590,6 @@ class TutorialApp():
             self.cfg.font.name = result[0]
             self.cfg.font.size = result[1]
 
-            save_config(self.cfg)
-
             self.tut.update_fonts(result[0], int(result[1]))
             self.test_output.update_font(int(result[1]))
 
@@ -611,8 +606,6 @@ class TutorialApp():
         if dir:
             options = getattr(self.cfg, self.current_tutorial)
             options.tut_dir = dir
-
-            save_config(self.cfg)
 
             self.tut_dir = dir
 
@@ -637,8 +630,6 @@ class TutorialApp():
         if dir:
             options = getattr(self.cfg, self.current_tutorial)
             options.ans_dir = dir
-
-            save_config(self.cfg)
 
             self.ans_dir = dir
 
