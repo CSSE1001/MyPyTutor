@@ -1,13 +1,14 @@
 import configparser
 import os
+import sys
 
 from tutorlib.namespaces import Namespace
 from tutorlib.TutorConfigure import TutorialDirectoryPrompt
 
 
-# The config file is stored in the home directory
-HOME_DIR = os.path.expanduser('~')
-CONFIG_FILE = os.path.join(HOME_DIR, 'mypytutor.cfg')
+# The config file is stored in the same directory as MyPyTutor.py
+SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+CONFIG_FILE = os.path.join(SCRIPT_DIR, 'mypytutor.cfg')
 
 SPECIAL_FORMATS = {
     ('font', 'size'): int,
