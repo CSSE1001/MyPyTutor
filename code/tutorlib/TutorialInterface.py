@@ -431,11 +431,11 @@ class Tutorial():
 
         self._assert_valid_file(module_name)
 
-    def exec_submodule(self, module_name):
+    def exec_submodule(self, module_name, gbls=None, lcls=None):
         self._assert_valid_module(module_name)
         path = os.path.join(self.path, module_name)
 
-        return exec_module(path)
+        return exec_module(path, gbls=gbls, lcls=lcls)
 
     def read_submodule(self, module_name):
         self._assert_valid_module(module_name)
