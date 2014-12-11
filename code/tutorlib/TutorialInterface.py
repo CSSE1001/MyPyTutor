@@ -19,6 +19,7 @@
 # The main interface that deals both with the tutorial files and
 # online material.
 
+import ast
 import os
 import sys
 import traceback
@@ -34,6 +35,7 @@ from tutorlib.tester import TutorialTester, StudentTestCase
 
 # keep PEP8 happy with CodeAnalyser and StudentTestCase
 # these imports are indirectly used in Tutorial, and must not be removed
+ast = ast
 CodeAnalyser = CodeAnalyser
 StudentTestCase = StudentTestCase
 
