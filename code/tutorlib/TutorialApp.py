@@ -177,6 +177,10 @@ class TutorialApp():
         top_frame = Frame(master)
         top_frame.pack(fill=BOTH, expand=1)
         self.editor = None
+
+        self.test_results = tut_output.TestsListbox(top_frame)
+        self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
+
         self.output = tut_output.Output(top_frame,
                                         int(self.config.get('FONT', 'size')),
                                         self.output_len)
@@ -189,6 +193,7 @@ class TutorialApp():
         self.tut.pack(fill=BOTH, expand=1)
         self.toolbar = Toolbar(self, top_frame)
         self.toolbar.pack(fill=X)
+        self.test_results.pack(fill=BOTH, expand=1)
         self.output.pack(fill=BOTH, expand=1)
         #print "done packing"
         menubar = Menu(master)
@@ -753,7 +758,13 @@ class TutorialApp():
     ## Run the tests on the user code
 
     def run_tests(self):
-        self.tut_interface.run_tests(self.editor.get_text())
+        tester, analyser = self.tut_interface.run_tests(self.editor.get_text())
+
+        self.test_results.set_test_results(tester.results)
+
+    def selected_test_result(self, evt):
+        result = self.test_results.get_selected_result()
+        self.output.display_result(result)
 
     def get_preloaded(self):
         return self.tut_interface.get_preloaded()

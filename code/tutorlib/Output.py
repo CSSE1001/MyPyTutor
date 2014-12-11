@@ -22,8 +22,55 @@
 
 from tkinter import *
 
+from tutorlib.tester import TutorialTestResult
+
+
+def get_code_font(fontsize):
+    return ('courier', str(fontsize + 1), 'normal', 'roman')
+
+
+class TestsListbox(Listbox):
+    COLOR_PASS = 'green'
+    COLOR_FAIL = 'red'
+    COLOR_ERROR = 'red'
+    COLOR_INDETERMINATE = 'orange'
+
+    def __init__(self, master, *args, **kwargs):
+        font = kwargs.pop('font', get_code_font(12))
+        super().__init__(master, *args, font=font, **kwargs)
+
+        self.color_mappings = {
+            TutorialTestResult.PASS: TestsListbox.COLOR_PASS,
+            TutorialTestResult.FAIL: TestsListbox.COLOR_FAIL,
+            TutorialTestResult.ERROR: TestsListbox.COLOR_ERROR,
+            TutorialTestResult.INDETERMINATE: TestsListbox.COLOR_INDETERMINATE,
+        }
+
+        self.results = None
+
+    def set_test_results(self, results):
+        # remove existing entries
+        self.delete(0, END)
+
+        # add each new entry, configuring colors as we go
+        for idx, result in enumerate(results):
+            self.insert(END, result.description)
+
+            color = self.color_mappings[result.status]
+            self.itemconfig(idx, fg=color, selectbackground=color)
+
+        # store the results for later use
+        self.results = results
+
+    def get_selected_result(self):
+        idx = self.curselection()[0]
+        return self.results[idx]  # assume valid
+
 
 class Output(Frame):
+    COLOR_OUTPUT = 'blue'
+    COLOR_ERROR = 'red'
+
     def __init__(self, master, fontsize, textlen):
         Frame.__init__(self, master)
         self.text = Text(self, height=textlen)
@@ -35,12 +82,10 @@ class Output(Frame):
         scrollbar.config(command=self.text.yview)
         self.text.tag_config("red", foreground="red")
         self.text.tag_config("blue", foreground="blue")
-        self.text.config(font=('courier', str(fontsize+1),
-                               'normal', 'roman'))
+        self.text.config(font=get_code_font(fontsize))
 
     def update_font(self, fontsize):
-        self.text.config(font=('courier', str(fontsize+1),
-                               'normal', 'roman'))
+        self.text.config(font=get_code_font(fontsize))
 
     def clear_text(self):
         self.text.config(state=NORMAL)
@@ -60,3 +105,10 @@ class Output(Frame):
 
     def update_text_length(self, lines):
         self.text.config(height=lines)
+
+    def display_result(self, result):
+        self.clear_text()
+
+        # show prints first, then errors
+        self.add_text(result.output_text, Output.COLOR_OUTPUT)
+        self.add_text(result.error_text, Output.COLOR_ERROR)
