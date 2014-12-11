@@ -592,6 +592,32 @@ def simple_hash(text):
 
 
 def exec_module(path, gbls=None, lcls=None):
+    '''
+    Execute the module at the given path using the provided globals and locals
+
+    NB: Here be massive, fire-breathing dragons.
+        The main reason for this is that the module code itself may rely on
+        references within its own locals/globals dictionaries.
+        It may therefore be an error to make use of specific references from
+        these dictionaries without also bringing other, related references
+        into the calling context.
+
+        A simple example helps illustrate this.
+        Take the following module definition:
+          # module.py
+          class A():
+              pass
+          class B():
+              def f(self):
+                  a = A()  ## -- mark
+
+        When executed, that module will define A and B in locals.
+        If we extract B alone, ie B = locals['B'], and then run it in a context
+        where A is not defined, then we will get a NameError on the line
+        marked above.
+
+        To avoid this, we need to also extract A into a scope that B can see.
+    '''
     if gbls is None:
         gbls = {}
     if lcls is None:
