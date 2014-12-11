@@ -174,22 +174,32 @@ class TutorialApp():
         self.problem_len = int(self.config.get('WINDOW_SIZES', 'problem'))
         self.output_len = int(self.config.get('WINDOW_SIZES', 'output'))
         #print "done configuration"
+
+        #### Create GUI Widgets
+        ## Top Frame
         top_frame = Frame(master)
         top_frame.pack(fill=BOTH, expand=1)
         self.editor = None
 
-        self.output = tut_output.TestOutput(top_frame,
-                int(self.config.get('FONT', 'size')), self.output_len)
+        ## Tutorial (html display of tutorial problem)
         self.tut = tut_tutorial.Tutorial(top_frame,
                                          (self.config.get('FONT', 'name'),
                                           self.config.get('FONT', 'size')),
                                          self.problem_len)
-        self.tut_interface = \
-            tut_interface.TutorialInterface(master, self)
         self.tut.pack(fill=BOTH, expand=1)
+
+        ## Toolbar (hints, login status etc)
         self.toolbar = Toolbar(self, top_frame)
         self.toolbar.pack(fill=X)
+
+        ## Test Output
+        self.output = tut_output.TestOutput(top_frame,
+                int(self.config.get('FONT', 'size')), self.output_len)
         self.output.pack(fill=BOTH, expand=1)
+
+        self.tut_interface = \
+            tut_interface.TutorialInterface(master, self)
+
         #print "done packing"
         menubar = Menu(master)
         sectionmenu = Menu(menubar, tearoff=0)
