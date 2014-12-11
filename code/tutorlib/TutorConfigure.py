@@ -29,11 +29,10 @@ The answers folder is used to store your (partial) answers. When you save an ans
 The tutorial name can be supplied (default the tutorial folder name)."""
 
 
-class TutorConfigure(Toplevel):
-    def __init__(self, master, parent):
+class TutorialDirectoryPrompt(Toplevel):
+    def __init__(self, master):
         Toplevel.__init__(self, master)
         self.master = master
-        self.parent = parent
         self.result = None
         self.title('Tutorial Configuration')
         self.protocol("WM_DELETE_WINDOW", self.cancel)

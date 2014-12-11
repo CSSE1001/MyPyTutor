@@ -30,8 +30,8 @@ import zipfile
 
 from tkinter import *
 import tkinter.filedialog
-from configparser import *
 
+from tutorlib.configuration import load_config, save_config, add_tutorial
 import tutorlib.Output as tut_output
 import tutorlib.Tutorial as tut_tutorial
 import tutorlib.TutorEditor as tut_editor
@@ -41,27 +41,9 @@ import tutorlib.helpdialog as tut_help
 import tutorlib.feedbackdialog as tut_feedback
 import tutorlib.passworddialogs as tut_password_dialogs
 import tutorlib.textdialog as tut_textdialog
-import tutorlib.TutorConfigure as tut_configure
 
 # Version number of MyPyTutor
 version_number = "2.03"
-
-# The config file is stored in the home directory
-HOME_DIR = os.path.expanduser('~')
-CONFIG_FILE = os.path.join(HOME_DIR, 'mypytutor.cfg')
-
-DEFAULT_CONFIG = StringIO("""
-[FONT]
-name=helvetica
-size=10
-[WINDOW_SIZES]
-problem=20
-output=5
-[TUTORIALS]
-names=
-default=
-""")
-
 
 # This application is intended to be run on the students machine.
 # Consequently, attempts have been made to hide how the program works.
@@ -115,9 +97,11 @@ class Toolbar(Frame):
         self.start_height = self.parent.output.winfo_height()
 
     def button_motion(self, event):
+        # TODO: this is way too incestuous
+        # TODO: I'm also not convinced it's particularly useful
         diff = (self.y - event.y)*self.start_len/self.start_height
-        if (self.parent.output_len + diff > 5 and
-                self.parent.problem_len - diff > 5):
+        if (self.parent.cfg.window_sizes.output + diff > 5 and
+                self.parent.cfg.window_sizes.problem - diff > 5):
             self.parent.update_text_lengths(diff)
 
     def button_released(self, event):
@@ -153,27 +137,7 @@ class TutorialApp():
         master.protocol("WM_DELETE_WINDOW", self.close_event)
         self.master = master
         self.URL = None
-        os.chdir(HOME_DIR)
-        self.config = ConfigParser()
-        if os.path.exists(CONFIG_FILE):
-            try:
-                fp = open(CONFIG_FILE)
-                self.config.readfp(fp)
-                fp.close()
-                config_found = True
-            except:
-                self.config = ConfigParser()
-                self.config.readfp(DEFAULT_CONFIG)
-                config_found = False
-                tkinter.messagebox.showerror('Configuration Error',
-                                             'Your configuration file is corrupted. You will now be asked to choose tutorial and answer folders again.')
-        else:
-            self.config.readfp(DEFAULT_CONFIG)
-            config_found = False
-        self.tutorial_names = self.config.get('TUTORIALS', 'names').split(',')
-        self.problem_len = int(self.config.get('WINDOW_SIZES', 'problem'))
-        self.output_len = int(self.config.get('WINDOW_SIZES', 'output'))
-        #print "done configuration"
+        self.cfg = load_config()
 
         #### Create GUI Widgets
         ## Top Frame
@@ -182,10 +146,11 @@ class TutorialApp():
         self.editor = None
 
         ## Tutorial (html display of tutorial problem)
-        self.tut = tut_tutorial.Tutorial(top_frame,
-                                         (self.config.get('FONT', 'name'),
-                                          self.config.get('FONT', 'size')),
-                                         self.problem_len)
+        self.tut = tut_tutorial.Tutorial(
+            top_frame,
+            (self.cfg.font.name, self.cfg.font.size),
+            self.cfg.window_sizes.problem
+        )
         self.tut.pack(fill=BOTH, expand=1)
 
         ## Short Problem Description
@@ -197,13 +162,19 @@ class TutorialApp():
         self.toolbar.pack(fill=X)
 
         ## Test Output
-        self.test_output = tut_output.TestOutput(top_frame,
-                int(self.config.get('FONT', 'size')), self.output_len)
+        self.test_output = tut_output.TestOutput(
+            top_frame,
+            self.cfg.font.size,
+            self.cfg.window_sizes.output,
+        )
         self.test_output.pack(fill=BOTH, expand=0)
 
         ## Analysis Output
-        self.analysis_output = tut_output.AnalysisOutput(top_frame,
-                int(self.config.get('FONT', 'size')), self.output_len)
+        self.analysis_output = tut_output.AnalysisOutput(
+            top_frame,
+            self.cfg.font.size,
+            self.cfg.window_sizes.analysis,
+        )
         self.analysis_output.pack(fill=BOTH, expand=0)
 
         self.tut_interface = \
@@ -220,31 +191,23 @@ class TutorialApp():
         menubar.add_cascade(label="Problems", menu=sectionmenu)
         self.sectionmenu = sectionmenu
         self.sections = 0
-        # When MyPyTutor is started for the first time the configuration
-        # has not been set up and so tut_dir and ans_dir are empty
-        # This causes an initial configuration that sets both directories.
-        if not config_found:
-            config = tut_configure.TutorConfigure(self.master, self)
-            if config.result is None:
+
+        # the configuration will not set the tutorial directories by default,
+        # so we need to do that
+        if not self.cfg.tutorials.default:
+            error = add_tutorial(self.cfg, window=self.master, as_default=True)
+
+            # just give up if this didn't work - the user can get it right
+            # next time they run this :)
+            if error:
                 return
-            self.tut_dir, self.ans_dir, default = config.result
-            self.config.add_section(default)
-            self.config.set('TUTORIALS', 'names', default)
-            self.config.set('TUTORIALS', 'default', default)
-            self.config.set(default, 'tut_dir', self.tut_dir)
-            self.config.set(default, 'ans_dir', self.ans_dir)
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
-            self.tutorial_names = [default]
-        else:
-            default = self.config.get('TUTORIALS', 'default')
-            self.tut_dir = self.config.get(default, 'tut_dir')
-            self.ans_dir = self.config.get(default, 'ans_dir')
-        self.default = default
-        if self.tut_dir == '' or self.ans_dir == '':
-            return
-        self.current_tutorial = default
+
+        self.current_tutorial = self.cfg.tutorials.default
+
+        options = getattr(self.cfg, self.current_tutorial)
+        self.tut_dir = options.tut_dir
+        self.ans_dir = options.ans_dir
+
         self.setup_tutorial()
         #print "done tutorial menu"
         # If a URL is given then MyPyTutor has an online component and
@@ -292,7 +255,8 @@ class TutorialApp():
         self.tut_choice.set(self.current_tutorial)
         self.radio_menu = Menu(optionsmenu, tearoff=0)
         optionsmenu.add_cascade(label="Change Tutorial", menu=self.radio_menu)
-        for name in self.tutorial_names:
+
+        for name in self.cfg.tutorials.names:
             self.radio_menu.add_radiobutton(label=name,
                                             variable=self.tut_choice,
                                             command=self.choose_tutorial)
@@ -326,38 +290,36 @@ class TutorialApp():
         #print "done init"
 
     def set_default_tutorial(self):
-        if self.default != self.current_tutorial:
-            self.default = self.current_tutorial
-            self.config.set('TUTORIALS', 'default', self.default)
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
+        if self.cfg.tutorials.default != self.current_tutorial:
+            self.cfg.tutorials.default = self.current_tutorial
+            save_config(self.cfg)
 
     def remove_current_tutorial(self):
-        if self.default == self.current_tutorial:
+        if self.cfg.tutorials.default == self.current_tutorial:
             tkinter.messagebox.showerror('Remove Current Tutorial Error',
                                          'You cannot remove the default tutorial.')
             return
-        if len(self.tutorial_names) == 1:
+        if len(self.cfg.tutorials.names) == 1:
             tkinter.messagebox.showerror('Remove Current Tutorial Error',
                                          'You cannot remove the last tutorial.')
             return
+
         remove_answer = tkinter.messagebox.askquestion("Remove Tutorial",
                                                        "Do you really want to remove %s?" % self.current_tutorial)
+
         if str(remove_answer) == 'yes':
-            self.config.remove_section(self.current_tutorial)
-            self.tutorial_names.remove(self.current_tutorial)
-            self.config.set('TUTORIALS', 'names', ','.join(self.tutorial_names))
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
+            del self.cfg[self.current_tutorial]
+            self.cfg.tutorials.names.remove(self.current_tutorial)
+
+            save_config(self.cfg)
+
             self.logout()
-            self.current_tutorial = self.default
-            self.tut_dir = self.config.get(self.current_tutorial, 'tut_dir')
-            self.ans_dir = self.config.get(self.current_tutorial, 'ans_dir')
+            self.current_tutorial = self.cfg.tutorials.default
             self.setup_tutorial()
+
+            # TODO: refactor into method (this is repeated from above)
             self.radio_menu.delete(0, END)
-            for name in self.tutorial_names:
+            for name in self.cfg.tutorials.names:
                 self.radio_menu.add_radiobutton(label=name,
                                                 variable=self.tut_choice,
                                                 command=self.choose_tutorial)
@@ -378,8 +340,8 @@ class TutorialApp():
 
     def resize(self, e):
         if self.allow_resize:
-            self.problem_len = self.gettextlen(self.tut)
-            self.output_len = self.gettextlen(self.test_output.output)
+            self.cfg.window_sizes.problem = self.gettextlen(self.tut)
+            self.cfg.window_sizes.output = self.gettextlen(self.test_output.output)
 
     def gettextlen(self, text_obj):
         #print text_obj.winfo_height(), text_obj.text.dlineinfo("@0,0")
@@ -387,10 +349,10 @@ class TutorialApp():
 
     def update_text_lengths(self, delta):
         #print "update_lengths"
-        self.problem_len -= delta
-        self.output_len += delta
-        self.tut.update_text_length(self.problem_len)
-        self.test_output.update_text_length(self.output_len)
+        self.cfg.window_sizes.problem -= delta
+        self.cfg.window_sizes.output += delta
+        self.tut.update_text_length(self.cfg.window_sizes.problem)
+        self.test_output.update_text_length(self.cfg.window_sizes.output)
 
     def login(self):
         if self.tut_interface.logged_on():
@@ -605,8 +567,10 @@ class TutorialApp():
         if self.current_tutorial != tut:
             self.logout()
             self.current_tutorial = tut
-            self.tut_dir = self.config.get(tut, 'tut_dir')
-            self.ans_dir = self.config.get(tut, 'ans_dir')
+
+            options = getattr(self.cfg, self.current_tutorial)
+            self.tut_dir = options.tut_dir
+            self.ans_dir = options.ans_dir
             self.setup_tutorial()
 
     def give_problem_feedback(self):
@@ -622,30 +586,36 @@ class TutorialApp():
 
     def configure_tut(self):
         result = (fontChooser.FontChooser(self.master, self,
-                                          (self.config.get('FONT', 'name'),
-                                           self.config.get('FONT', 'size'))
+                                          (self.cfg.font.name,
+                                           self.cfg.font.size),
                                           ).result)
         if result:
-            self.config.set('FONT', 'name', result[0])
-            self.config.set('FONT', 'size', result[1])
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
+            self.cfg.font.name = result[0]
+            self.cfg.font.size = result[1]
+
+            save_config(self.cfg)
+
             self.tut.update_fonts(result[0], int(result[1]))
             self.test_output.update_font(int(result[1]))
 
     def configure_tut_dir(self):
-        if not os.path.exists(self.tut_dir):
-            self.tut_dir = HOME_DIR
-        dir = tkinter.filedialog.askdirectory(title=('Choose Tutorial Folder: '
-                                                     + self.current_tutorial),
-                                              initialdir=self.tut_dir)
+        if os.path.exists(self.tut_dir):
+            initial_dir = self.tut_dir
+        else:
+            initial_dir = os.path.expanduser('~')
+
+        dir = tkinter.filedialog.askdirectory(
+            title='Choose Tutorial Folder: {}'.format(self.current_tutorial),
+            initialdir=initial_dir,
+        )
         if dir:
-            self.config.set(self.current_tutorial, 'tut_dir', dir)
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
+            options = getattr(self.cfg, self.current_tutorial)
+            options.tut_dir = dir
+
+            save_config(self.cfg)
+
             self.tut_dir = dir
+
             if self.sections:
                 self.sectionmenu.delete(2, self.sections+6)
             if not self.process_tutorial_file():
@@ -655,41 +625,35 @@ class TutorialApp():
             self.make_section_menu_entries()
 
     def configure_answers_dir(self):
-        if not os.path.exists(self.ans_dir):
-            self.ans_dir = HOME_DIR
-        dir = tkinter.filedialog.askdirectory(title=('Choose Answers Folder: '
-                                                     + self.current_tutorial),
-                                              initialdir=self.ans_dir)
+        if os.path.exists(self.ans_dir):
+            initial_dir = self.ans_dir
+        else:
+            initial_dir = os.path.expanduser('~')
+
+        dir = tkinter.filedialog.askdirectory(
+            title='Choose Answers Folder: {}'.format(self.current_tutorial),
+            initialdir=initial_dir,
+        )
         if dir:
-            self.config.set(self.current_tutorial, 'ans_dir', dir)
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
+            options = getattr(self.cfg, self.current_tutorial)
+            options.ans_dir = dir
+
+            save_config(self.cfg)
+
             self.ans_dir = dir
+
             os.chdir(self.ans_dir)
 
     def add_new_tutorial(self):
-        config = tut_configure.TutorConfigure(self.master, self)
-        if config.result is None:
-            return
-        tut_dir, ans_dir, tut_name = config.result
-        old_names = self.config.get('TUTORIALS', 'names')
-        if tut_name in old_names:
-            tkinter.messagebox.showerror('Add New Tutorial Error',
-                                         ('The tutorial name %s already exists'
-                                          % tut_name))
+        error = add_tutorial(self.cfg, window=self.master, as_default=False)
+
+        if error:
+            tkinter.messagebox.showerror('Add New Tutorial Error', error)
             return
 
-        self.tutorial_names.append(tut_name)
-        self.config.set('TUTORIALS', 'names', ','.join(self.tutorial_names))
-        self.config.add_section(tut_name)
-        self.config.set(tut_name, 'tut_dir', tut_dir)
-        self.config.set(tut_name, 'ans_dir', ans_dir)
-        fp = open(CONFIG_FILE, 'w')
-        self.config.write(fp)
-        fp.close()
+        # TODO: like seriously, this needs a major refactor
         self.radio_menu.delete(0, END)
-        for name in self.tutorial_names:
+        for name in self.cfg.tutorials.names:
             self.radio_menu.add_radiobutton(label=name,
                                             variable=self.tut_choice,
                                             command=self.choose_tutorial)
@@ -724,8 +688,7 @@ class TutorialApp():
                                                  online=online)
             #print "after create edit window"
             self.tut_interface.set_editor(self.editor)
-            self.font_apply(self.config.get('FONT', 'name'),
-                            self.config.get('FONT', 'size'))
+            self.font_apply(self.cfg.font.name, self.cfg.font.size)
         if self.editor.maybesave() == "cancel":
             return
         answer_file = os.path.join(self.ans_dir,
@@ -790,26 +753,17 @@ class TutorialApp():
         if hint:
             self.tut.show_hint(hint)
 
-    def sizes_changed(self):
-        return (self.problem_len !=
-                int(self.config.get('WINDOW_SIZES', 'problem')) or
-                self.output_len !=
-                int(self.config.get('WINDOW_SIZES', 'output')))
-
     def close_event(self, _e=None):
-        self.logout()
-        if self.sizes_changed():
-            self.config.set('WINDOW_SIZES', 'problem', str(self.problem_len))
-            self.config.set('WINDOW_SIZES', 'output', str(self.output_len))
-            fp = open(CONFIG_FILE, 'w')
-            self.config.write(fp)
-            fp.close()
         if self.editor is not None:
             result = self.editor.close()
             if str(result) == 'yes':
                 self.master.destroy()
         else:
             self.master.destroy()
+
+        self.logout()
+
+        save_config(self.cfg)
 
     def quit_editor(self):
         self.editor = None
