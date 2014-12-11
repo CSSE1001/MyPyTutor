@@ -178,22 +178,17 @@ class TutorialApp():
         top_frame.pack(fill=BOTH, expand=1)
         self.editor = None
 
-        self.test_results = tut_output.TestsListbox(top_frame)
-        self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
-
-        self.output = tut_output.Output(top_frame,
-                                        int(self.config.get('FONT', 'size')),
-                                        self.output_len)
+        self.output = tut_output.TestOutput(top_frame,
+                int(self.config.get('FONT', 'size')), self.output_len)
         self.tut = tut_tutorial.Tutorial(top_frame,
                                          (self.config.get('FONT', 'name'),
                                           self.config.get('FONT', 'size')),
                                          self.problem_len)
         self.tut_interface = \
-            tut_interface.TutorialInterface(master, self, self.output)
+            tut_interface.TutorialInterface(master, self)
         self.tut.pack(fill=BOTH, expand=1)
         self.toolbar = Toolbar(self, top_frame)
         self.toolbar.pack(fill=X)
-        self.test_results.pack(fill=BOTH, expand=1)
         self.output.pack(fill=BOTH, expand=1)
         #print "done packing"
         menubar = Menu(master)
@@ -364,7 +359,6 @@ class TutorialApp():
 
     def resize(self, e):
         if self.allow_resize:
-            #print "resize", self.problem_len,  self.gettextlen(self.tut), self.output_len, self.gettextlen(self.output)
             self.problem_len = self.gettextlen(self.tut)
             self.output_len = self.gettextlen(self.output)
 
@@ -762,12 +756,7 @@ class TutorialApp():
     def run_tests(self):
         tester, analyser = self.tut_interface.run_tests(self.editor.get_text())
 
-        self.test_results.set_test_results(tester.results)
-        self.output.clear_text()
-
-    def selected_test_result(self, evt):
-        result = self.test_results.get_selected_result()
-        self.output.display_result(result)
+        self.output.set_test_results(tester.results)
 
     def get_preloaded(self):
         return self.tut_interface.get_preloaded()

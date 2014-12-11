@@ -82,13 +82,12 @@ class Final(type):
 
 
 class TutorialInterface(metaclass=Final):
-    def __init__(self, master, parent, output, enc=True):
+    def __init__(self, master, parent, enc=True):
         self.url = None
         self.session_key = None
         self.master = master
         self.next_hint_index = 0
         self.editor = None
-        self.output = output
         self.user = None
         self.enc = enc
         self.tutorial = None

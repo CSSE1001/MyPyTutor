@@ -35,8 +35,9 @@ class TestsListbox(Listbox):
     COLOR_ERROR = 'red'
     COLOR_INDETERMINATE = 'orange'
 
-    def __init__(self, master, *args, **kwargs):
-        font = kwargs.pop('font', get_code_font(12))
+    def __init__(self, master, *args, fontsize=None, **kwargs):
+        fontsize = 12 if fontsize is None else fontsize
+        font = kwargs.pop('font', get_code_font(fontsize))
         super().__init__(master, *args, font=font, **kwargs)
 
         self.color_mappings = {
@@ -67,23 +68,38 @@ class TestsListbox(Listbox):
         return self.results[idx]  # assume valid
 
 
-class Output(Frame):
+class TestOutput(Frame):
     COLOR_RESULT = 'black'
     COLOR_OUTPUT = 'blue'
     COLOR_ERROR = 'red'
 
     def __init__(self, master, fontsize, textlen):
         Frame.__init__(self, master)
+
+        self.test_results = TestsListbox(self, fontsize=fontsize)
+        self.test_results.pack(side=TOP, expand=1, fill=BOTH)
+        self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
+
         self.text = Text(self, height=textlen)
         self.text.config(state=DISABLED)
         self.text.pack(side=LEFT, fill=BOTH, expand=1)
+
         scrollbar = Scrollbar(self)
         scrollbar.pack(side=RIGHT, fill=Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
+
         self.text.tag_config("red", foreground="red")
         self.text.tag_config("blue", foreground="blue")
         self.text.config(font=get_code_font(fontsize))
+
+    def selected_test_result(self, evt):
+        result = self.test_results.get_selected_result()
+        self.display_result(result)
+
+    def set_test_results(self, results):
+        self.test_results.set_test_results(results)
+        self.clear_text()
 
     def update_font(self, fontsize):
         self.text.config(font=get_code_font(fontsize))
@@ -111,8 +127,8 @@ class Output(Frame):
         self.clear_text()
 
         # show result
-        self.add_text(result.message, Output.COLOR_RESULT)
+        self.add_text(result.message, TestOutput.COLOR_RESULT)
 
         # show output: prints first, then errors
-        self.add_text(result.output_text, Output.COLOR_OUTPUT)
-        self.add_text(result.error_text, Output.COLOR_ERROR)
+        self.add_text(result.output_text, TestOutput.COLOR_OUTPUT)
+        self.add_text(result.error_text, TestOutput.COLOR_ERROR)
