@@ -30,7 +30,7 @@ class CodeVisitor(ast.NodeVisitor):
                 self.arg1 = arguments.args[0].arg  # variable name
 
     def visit_Assign(self, node):
-        if self.in_def and not self.in_for:
+        if self.in_def and not self.has_for:
             self.initialises_variable = True
 
             # TODO: check value using node.value.elts
@@ -44,7 +44,7 @@ class CodeVisitor(ast.NodeVisitor):
 
     def visit_Call(self, node):
         if node.func.attr == 'append':
-            if self.in_def and self.in_for:
+            if self.in_def and self.has_for:
                 self.appends_in_loop = True
             elif self.in_def:
                 self.appends_outside_loop = True
