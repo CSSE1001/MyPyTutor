@@ -32,6 +32,7 @@ import time
 import zipfile
 import glob
 import logging
+import py_compile
 
 def generate(config_file, destination_dir, source_dir=None):
     """Generate a Tutorial set from the given configuration file.
@@ -55,9 +56,8 @@ def generate_text(tutorial_text, destination_dir, source_dir):
     else:
         os.mkdir(destination_dir)
 
-    parser = tut_interface.TutParser(tut_interface.Trans(77213))
     parent_dir, dir_name = os.path.split(destination_dir)
-    files, extra_files = parse_tutorial(tutorial_text)
+    tutorials, extra_files = parse_tutorial(tutorial_text)
 
     # Create index files
     admin_fid = open(os.path.join(parent_dir, 'tut_admin.txt'), 'w')
@@ -82,9 +82,8 @@ def generate_text(tutorial_text, destination_dir, source_dir):
     if url:
         with open(os.path.join(destination_dir, 'config.txt'), 'w') as fid:
             now = time.localtime()
-            url_code = parser.trans.trans(url, 'tutor key')
             print(time.mktime(now), file=fid)
-            print(url_code, file=fid)
+            print(url, file=fid)
 
     # Add auxiliary files
     for ofile in extra_files:
@@ -94,24 +93,51 @@ def generate_text(tutorial_text, destination_dir, source_dir):
         shutil.copyfile(filename, newfilename)
 
     # Encode and add tutorial files
-    for ofile in files:
-        logging.info('Adding ' + ofile)
-        filename = os.path.join(source_dir, ofile)
-        if os.access(filename, os.F_OK | os.R_OK):
-            with open(filename, 'rU') as fid:
-                data = parser.parse(fid.read(), False, False)
-            newfilename = os.path.join(destination_dir, ofile)
-            with open(newfilename, 'w') as fid:
-                fid.write('#{Text}#\n')
-                fid.write(data['Text'])
-                for hint in data.get('Hint'):
-                    fid.write('\n#{Hint}#\n')
-                    fid.write(hint)
-                fid.write('\n#{TestCode}#\n')
-                code_text = '#{ID=%s}#\n%s' % (str(id_list.pop(0)), data['TestCode'])
-                fid.write(parser.trans.trans(code_text, data['Text'].strip()))
-        else:
-            logging.error('Failed - cannot read file ' + ofile)
+    for tutorial_name in tutorials:
+        logging.info('Adding ' + tutorial_name)
+        directory = os.path.join(source_dir, tutorial_name)
+
+        # check the directory exists
+        if not os.path.exists(directory):
+            logging.error('Failed - no such tutorial {}'.format(tutorial_name))
+            continue
+        if not os.path.isdir(directory):
+            logging.error('Failed - .tut should be a directory: {}'.format(
+                tutorial_name
+            ))
+            continue
+
+        # check that all tutorial files are present
+        files = os.listdir(directory)
+        tutorial_valid = True
+        required_files = tut_interface.Tutorial.SUBMODULES \
+                + tut_interface.Tutorial.FILES
+
+        for file in required_files:
+            if file not in files:
+                logging.error('Failed - {} is missing {}'.format(
+                    tutorial_name, file
+                ))
+                tutorial_valid = False
+
+        if not tutorial_valid:
+            continue
+
+        # create the directory
+        destination_tutorial_dir = os.path.join(destination_dir, tutorial_name)
+        os.mkdir(destination_tutorial_dir)
+
+        # copy over the files, compiling as necessary
+        for file in files:
+            _, extension = os.path.splitext(file)
+
+            if extension == '.py':
+                pass  # TODO: compilation (including for different versions)
+
+            src_path = os.path.join(directory, file)
+            dest_path = os.path.join(destination_tutorial_dir, file)
+
+            shutil.copyfile(src_path, dest_path)
 
     # Zip everything together
     cwd=os.getcwd()
