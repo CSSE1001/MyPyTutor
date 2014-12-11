@@ -1,5 +1,4 @@
 import ast
-import random
 
 
 class CodeVisitor(ast.NodeVisitor):
@@ -32,21 +31,20 @@ class CodeVisitor(ast.NodeVisitor):
 class Fun1Analyser(CodeAnalyser):
     def analyse(self, text):
         astree = ast.parse(text)
-        visitor = CodeVisitor()
-        visitor.visit(astree)
+        self.visitor.visit(astree)
 
-        if not visitor.did_assign:
+        if not self.visitor.did_assign:
             self.add_error("You have not assigned to the variable m")
-        elif len(visitor.seen_double) == 0:
+        elif len(self.visitor.seen_double) == 0:
             self.add_error("You need to use the double function in your single assignment statement")
-        elif len(visitor.seen_inc) == 0:
+        elif len(self.visitor.seen_inc) == 0:
             self.add_error("You need to use the increment function in your single assignment statement")
-        elif len(visitor.seen_double) > 1:
+        elif len(self.visitor.seen_double) > 1:
             self.add_error("You only need to use double once")
-        elif len(visitor.seen_inc) > 1:
+        elif len(self.visitor.seen_inc) > 1:
             self.add_error("You only need to use increment once")
-        elif visitor.seen_double[0] > visitor.seen_inc[0]:
+        elif self.visitor.seen_double[0] > self.visitor.seen_inc[0]:
             self.add_error("You should be using increment inside the use of double")
 
 
-ANALYSER = Fun1Analyser()
+ANALYSER = Fun1Analyser(CodeVisitor)

@@ -31,6 +31,7 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
+from tutorlib.analyser import CodeAnalyser
 from tutorlib.tester import TutorialTester, StudentTestCase
 
 # a file for writing user code for exec'ing on
@@ -470,7 +471,17 @@ class Tutorial():
 
     @property
     def analyser(self):
-        _, analysis_lcls = self.exec_submodule(Tutorial.ANALYSIS_MODULE)
+        # the analysis module requires access to CodeAnalyser, as that's what
+        # it must inherit from
+        # because we imported that class in this file, we can just pass in
+        # our globals() dict
+        # we make use of the reference here to keep PEP8 happy, and also to
+        # make sure that later coders don't remove the 'unneeded' import
+        global CodeAnalyser
+        CodeAnalyser = CodeAnalyser
+
+        _, analysis_lcls = self.exec_submodule(Tutorial.ANALYSIS_MODULE,
+                                               globals())
 
         assert Tutorial.ANALYSIS_VARIABLE_NAME in analysis_lcls, \
             'Invalid .tut package: {} has no member {}'.format(
