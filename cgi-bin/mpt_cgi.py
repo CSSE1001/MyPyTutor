@@ -47,7 +47,17 @@ due_hour = 17
 
 ######## end config   #################################
 
+HTML_ERROR = '''Content-Type: text/html
 
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MyPyTutor</title>
+    </head>
+    <body>
+        <p>{}</p>
+    </body>
+</html>'''
 
 ADMINS = ['uqprobin']
 
@@ -79,6 +89,9 @@ def action(name, admin=False):
     def wrapper(func):
         # Get the list of argument details for the function
         argspec = inspect.getargspec(func)
+        num_required = len(argspec.args)
+        if argspec.defaults is not None:
+            num_required -= len(argspec.defaults)
 
         @functools.wraps(func)
         def wrapped(form):
@@ -89,12 +102,11 @@ def action(name, admin=False):
             # Get the arguments out of the form
             args = {}
             for i, arg in enumerate(argspec.args):
-                # If the arg doesn't have a default value and isn't given, fail.
-                if (i >= len(argspec.args) - len(argspec.defaults)
-                        and arg not in form):
-                    raise ActionError("Required parameter {!r} not given".format(arg))
-                else:
+                # If the arg doesn't have a default value and isn't given, fail
+                if arg in form:
                     args[arg] = form[arg].value
+                elif i < num_required:
+                    raise ActionError("Required parameter {!r} not given".format(arg))
 
             return func(**args)
 
@@ -232,10 +244,6 @@ def show_submit():
         return file_text
     else:
         return ''
-
-
-def admin_form(form):
-    return 'session_key' in form and 'admin' in form['session_key'].value
 
 
 @action('match', admin=True)
@@ -395,7 +403,6 @@ def get_version():
         return f.read().strip()
 
 
-
 def _sh(text):
     hash_value = 5381
     num = 0
@@ -407,142 +414,36 @@ def _sh(text):
     return hash_value
 
 
-
 def mpt_print(msg):
     print 'mypytutor>>>'+msg
 
 
-# Call main function.
-
 def main():
     form = cgi.FieldStorage()
-    if 'action' in form:
-        action = form['action'].value
-        is_admin = 'type' in form and form['type'].value == 'admin'
-        if action == 'get_tut_zip_file':
-            mpt_print(tut_zipfile_url)
-        elif action == 'get_mpt34':
-            mpt_print(mpt34_url)
-        elif action == 'get_mpt27':
-            mpt_print(mpt27_url)
-        elif action == 'get_mpt26':
-            mpt_print(mpt26_url)
-        elif action == 'get_version':
-            fp = open(mpt_version_file, 'U')
-            version_text = fp.read().strip()
-            fp.close()
-            mpt_print(version_text)
-        elif action == 'login':
-            if 'username' in form and 'password' in form:
-                result = check_password(form['username'].value,
-                                        form['password'].value, is_admin)
-                if result:
-                    session_key = create_session(form['username'].value,
-                                                 is_admin)
-                    try:
-                        fd = open(timestamp_file, 'U')
-                        text = fd.read()
-                        lines = text.split('\n')
-                        mpt_print(lines[0] + ' ' + session_key)
-                    except:
-                        mpt_print('Error: 133')
 
-                else:
-                    mpt_print('Error:Incorrect User or Password')
-            else:
-                mpt_print('Error:Invalid entry')
-        elif logged_in(form):
-            result, msg = check_session_key(form['session_key'].value, form['username'].value)
-            if not result:
-                mpt_print('Error: %s' % msg)
-                return
-            if action == 'logout':
-                logout(form['username'].value)
-                mpt_print('OK')
-            elif action == 'change_password':
-                if 'password' in form and 'password1' in form:
-                    result, msg = change_the_password(form)
-                    if result:
-                        mpt_print('OK')
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'upload':
-                if 'code' in form and 'problem_name' in form:
-                    result, msg = upload_code(form)
-                    if result:
-                        mpt_print('OK')
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'download':
-                if 'problem_name' in form:
-                    result, msg = download_code(form)
-                    if result:
-                        mpt_print(result)
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'submit':
-                if ('tut_id' in form and
-                        'tut_id_crypt' in form and
-                        'tut_check_num' in form and
-                        'code' in form):
-                    result, msg = submit_answer(form)
-                    if result:
-                        mpt_print(msg)
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'show':
-                result = show_submit(form)
-                mpt_print(result)
-            # admin queries
-            elif action == 'match':
-                result, msg = match_user(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'change_user_password':
-                result, msg = change_user_password(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'unset_late':
-                result, msg = unset_late(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'results':
-                result, msg = get_results(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'get_user_subs':
-                result, msg = get_user_subs(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'add_user':
-                result, msg = add_user(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            else:
-                mpt_print('Error:Unknown 1')
+    if 'action' not in form:
+        print HTML_ERROR.format("You must use MyPyTutor directly to interact with the online data.")
+        return
 
-        else:
-            mpt_print('Error:Unknown 2')
+    action = form['action'].value
+    if action not in ACTIONS:
+        print "Content-Type: text/plain\n"
+        mpt_print("Unknown action: {}".format(action))
+        return
+
+    try:
+        result = ACTIONS[action](form)
+    except uqauth.Redirected:
+        return
+    except Forbidden as e:
+        print "Content-Type: text/plain\n"
+        mpt_print("Forbidden: {}".format(action))
+    except ActionError as e:
+        print "Content-Type: text/plain\n"
+        mpt_print("Error: {}".format(e))
     else:
-        print '<HTML>\n'
-        print '<HEAD>\n'
-        print '\t<TITLE>MyPyTutor</TITLE>\n'
-        print '</HEAD>\n'
-        print 'You must use MyPyTutor directly to interact with the online data.'
-        print '</BODY>\n'
-        print '</HTML>\n'
+        print "Content-Type: text/plain\n"
+        mpt_print(result)
 
-
-main()
+if __name__ == '__main__':
+    main()

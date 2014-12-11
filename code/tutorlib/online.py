@@ -316,12 +316,9 @@ class LoginManager:
         log in, show an error message box.
         """
         try:
-            if not self.is_logged_in():
-                self.login()
-
             response = self._opener.open(url, data)
             if urllib.parse.urlsplit(response.geturl()).netloc == LOGIN_DOMAIN:
-                # The cookie must have expired... Better log in again.
+                # The user needs to log in
                 self.login()
                 response = self._opener.open(url, data)
 
@@ -349,6 +346,6 @@ class LoginManager:
 
 
 if __name__ == '__main__':
-    URL = 'http://csse1001.uqcloud.net/_assignments/whoami'
+    URL = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
     mgr = LoginManager(URL, lambda: print("Listen!"))
-    print(mgr.post(None))
+    print(mgr.get({'action': 'userinfo'}))
