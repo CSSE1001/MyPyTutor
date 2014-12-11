@@ -31,6 +31,8 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
+from tutorlib.tester import TutorialTester, StudentTestCase
+
 # a file for writing user code for exec'ing on
 USER_CODE_FILE = 'user_code.py'
 
@@ -448,7 +450,16 @@ class Tutorial():
     # TODO: will not persit across calls (due to the re-exec of the module)
     @property
     def test_classes(self):
-        _, test_lcls = self.exec_submodule(Tutorial.TESTS_MODULE)
+        # the test module requires access to StudentTestCase, as that's what
+        # it will have inherited from
+        # because we imported that here, we can just pass in our globals
+        # we also make use of it here, as a noop, to keep PEP8 happy and
+        # prevent later coders from removing the 'unneeded' import
+        # that's the only reason we use a global here
+        global StudentTestCase
+        StudentTestCase = StudentTestCase
+
+        _, test_lcls = self.exec_submodule(Tutorial.TESTS_MODULE, globals())
 
         assert Tutorial.TESTS_VARIABLE_NAME in test_lcls, \
             'Invalid .tut package: {} has no member {}'.format(
