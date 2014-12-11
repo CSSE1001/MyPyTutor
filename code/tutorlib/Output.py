@@ -68,6 +68,7 @@ class TestsListbox(Listbox):
 
 
 class Output(Frame):
+    COLOR_RESULT = 'black'
     COLOR_OUTPUT = 'blue'
     COLOR_ERROR = 'red'
 
@@ -109,6 +110,9 @@ class Output(Frame):
     def display_result(self, result):
         self.clear_text()
 
-        # show prints first, then errors
+        # show result
+        self.add_text(result.message, Output.COLOR_RESULT)
+
+        # show output: prints first, then errors
         self.add_text(result.output_text, Output.COLOR_OUTPUT)
         self.add_text(result.error_text, Output.COLOR_ERROR)
