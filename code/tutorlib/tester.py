@@ -186,6 +186,11 @@ class TutorialTester():
 
         self._results[test_class] = overall_result
 
+        # clean up the globals we KNOW we explicitly added
+        # leave the ones that might have been there already, and which will
+        # do no harm to keep (basically not student code)
+        remove_from_globals(TEST_FUNCTION_NAME)
+
 
 def indent(text, spaces=4):
     return '\n'.join(' '*spaces + line for line in text.splitlines())
@@ -195,3 +200,9 @@ def inject_to_globals(name, value):
     assert name not in globals() or globals()[name] == value, \
             'Name {} already exists at global scope'.format(name)
     globals()[name] = value
+
+
+def remove_from_globals(name):
+    assert name in globals(), \
+            'Cannot remove non-existent global {}'.format(name)
+    del globals()[name]
