@@ -199,7 +199,12 @@ class TutorialApp():
         ## Test Output
         self.test_output = tut_output.TestOutput(top_frame,
                 int(self.config.get('FONT', 'size')), self.output_len)
-        self.test_output.pack(fill=BOTH, expand=1)
+        self.test_output.pack(fill=BOTH, expand=0)
+
+        ## Analysis Output
+        self.analysis_output = tut_output.AnalysisOutput(top_frame,
+                int(self.config.get('FONT', 'size')), self.output_len)
+        self.analysis_output.pack(fill=BOTH, expand=0)
 
         self.tut_interface = \
             tut_interface.TutorialInterface(master, self)
@@ -775,6 +780,7 @@ class TutorialApp():
         tester, analyser = self.tut_interface.run_tests(self.editor.get_text())
 
         self.test_output.set_test_results(tester.results)
+        self.analysis_output.set_analyser(analyser)
 
     def get_preloaded(self):
         return self.tut_interface.get_preloaded()

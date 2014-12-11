@@ -112,6 +112,7 @@ class Output(Frame):
     COLOR_BASE = 'black'
     COLOR_OUTPUT = 'blue'
     COLOR_ERROR = 'red'
+    COLOR_WARNING = 'orange'
 
     def __init__(self, master, fontsize, textlen):
         Frame.__init__(self, master)
@@ -150,3 +151,18 @@ class Output(Frame):
 
     def update_text_length(self, lines):
         self.text.config(height=lines)
+
+
+class AnalysisOutput(Output):
+    def __init__(self, master, fontsize, textlen):
+        super().__init__(master, fontsize, textlen)
+
+    def set_analyser(self, analyser):
+        self.clear_text()
+
+        # show the first error, and each warning
+        for warning in analyser.warnings:
+            self.add_text(warning, Output.COLOR_WARNING)
+
+        if analyser.errors:
+            self.add_text(analyser.errors[0], Output.COLOR_ERROR)
