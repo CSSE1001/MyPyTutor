@@ -245,8 +245,8 @@ class LoginManager:
         """
         # Ask for the user's information.
         data = {'action': 'userinfo'}
-        data = urllib.parse.urlencode(data).encode('ascii')
-        response = self._opener.open(self._url, data)
+        url = self._url + '?' + urllib.parse.urlencode(data)
+        response = self._opener.open(url)
         text = response.read().decode('ascii')
 
         def set_details(text):
@@ -255,7 +255,7 @@ class LoginManager:
             self._callback()
 
         # If we didn't get redirected to the login form, we're already in.
-        if LOGIN_DOMAIN not in response.geturl():
+        if urllib.parse.urlsplit(response.geturl()).netloc != LOGIN_DOMAIN:
             set_details(text)
             print("Already logged in as {}.".format(self._user['user']))
             return
@@ -307,8 +307,9 @@ class LoginManager:
         self._user = None
         self._callback()
 
-    def post(self, data):
-        """Send a HTTP POST request with the given data.
+    def _request(self, url, data):
+        """Send an HTTP request to the given url with the given data.
+        If data is None, send a GET request, otherwise a POST request.
         Return the text of the response, with the MyPyTutor header stripped.
 
         If the user is not logged in, prompt them to log in. If they fail to
@@ -318,11 +319,12 @@ class LoginManager:
             if not self.is_logged_in():
                 self.login()
 
-            response = self._opener.open(self._url, data)
-            if LOGIN_DOMAIN in response.geturl():
+            response = self._opener.open(url, data)
+            if urllib.parse.urlsplit(response.geturl()).netloc == LOGIN_DOMAIN:
                 # The cookie must have expired... Better log in again.
                 self.login()
-                response = self._opener.open(self._url, data)
+                response = self._opener.open(url, data)
+
         except AuthError as e:
             print("You need to be logged in to do that.", file=sys.stderr)
         except http.client.HTTPException as e:
@@ -334,6 +336,16 @@ class LoginManager:
         else:
             text = response.read().decode('ascii')
             return strip_header(text)
+
+    def post(self, data):
+        """Send an HTTP POST request to the server."""
+        data = urllib.parse.urlencode(data).encode('ascii')
+        return self._request(self._url, data)
+
+    def get(self, data):
+        """Send an HTTP GET request to the server."""
+        url = self._url + '?' + urllib.parse.urlencode(data)
+        return self._request(url, None)
 
 
 if __name__ == '__main__':

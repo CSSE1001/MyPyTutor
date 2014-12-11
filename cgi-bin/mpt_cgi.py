@@ -1,30 +1,41 @@
 #! /usr/bin/env python
 
-import cgi, sys, crypt, random, time, calendar, os, fcntl, shutil, datetime, hashlib
+import cgi
+import datetime
+import inspect
+import json
+import os
+import shutil
+import functools
+
+import uqauth
 
 ######## start config #################################
 
+# Base directory for server file storage
+base_dir = "/opt/local/share/MyPyTutor/CSSE1001"
+
 # where student data is to be put/found
-data_dir = "/opt/local/share/MyPyTutor/CSSE1001/data"
+data_dir = os.path.join(base_dir, "data")
 
 # the file containing the timestamp for the tutorial problems
-timestamp_file = "/opt/local/share/MyPyTutor/CSSE1001/config.txt"
+timestamp_file = os.path.join(base_dir, "config.txt")
 
 # the file containing the version number of MyPyTutor
-mpt_version_file = "/opt/local/share/MyPyTutor/CSSE1001/mpt_version.txt"
+mpt_version_file = os.path.join(base_dir, "mpt_version.txt")
 
 # the file containing the tutorial information
-tut_info_file = "/opt/local/share/MyPyTutor/CSSE1001/tut_admin.txt"
+tut_info_file = os.path.join(base_dir, "tut_admin.txt")
 
 # the zip file containing the tutorial info
-tut_zipfile_url = "http://csse1001.uqcloud.net/mpt/CSSE1001Tutorials.zip"
+tut_zipfile_url = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
 
 # the zip file containing MyPyTutor2.5
 #mpt25_url = "https://student.eait.uq.edu.au/mypytutor/MyPyTutor/CSSE1001/MyPyTutor25.zip"
 # the zip file containing MyPyTutor2.6
 #mpt26_url = "http://mypytutor.cloud.itee.uq.edu.au/MyPyTutor/CSSE1001/MyPyTutor26.zip"
 # the zip file containing MyPyTutor2.7
-mpt27_url = "http://csse1001.uqcloud.net/mpt/MyPyTutor27.zip"
+#mpt27_url = "http://csse1001.uqcloud.net/mpt/MyPyTutor27.zip"
 # the zip file containing MyPyTutor3.4
 mpt34_url = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
 
@@ -36,130 +47,24 @@ due_hour = 17
 
 ######## end config   #################################
 
-random.seed()
 
-#chars = [chr(x) for x in (range(48, 91) + range(97, 123))]
 
-chars = list("abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ")
 
 print 'Content-Type: text/html\n\n'
 
 
-def encrypt_password(passwd):
-    return hashlib.md5(passwd).hexdigest()
 
 
-def check_password(id, passwd, admin=False):
-    users_file = os.path.join(data_dir, 'users')
-    users = open(users_file, 'U')
-    user_lines = users.readlines()
-    users.close()
-    for user in user_lines:
-        if user.startswith('#'):
-            continue
-        data = user.split(',')
-        if len(data) == 6 and id == data[0]:
-            if admin and data[2] != 'admin':
-                return False
-            encrypted_pw = encrypt_password(passwd)
-            return encrypted_pw == data[1]
-    return False
 
 
-def gen_password(passwd):
-    if passwd == '-':
-        random.shuffle(chars)
-        password = ''.join(chars[:8])
-    else:
-        password = passwd
-    encrypted_password = encrypt_password(password)
-    return password, encrypted_password
 
 
-def create_session(user_name, admin=False):
-    t = calendar.timegm(time.localtime())
-    r = random.randint(0, 1000000)
-    session_key = '%d:%d' % (t, r)
-    if admin:
-        session_key += ':admin'
-    user_file = os.path.join(data_dir, user_name)
-    session_file = open(user_file, 'w')
-    session_file.write(session_key)
-    session_file.close()
-    return session_key
 
 
-def logout(user_name):
-    user_file = os.path.join(data_dir, user_name)
-    session_file = open(user_file, 'w')
-    session_file.close()
 
 
-def check_session_key(key, user_name):
-    user_file = os.path.join(data_dir, user_name)
-    try:
-        session_file = open(user_file, 'U')
-        data = session_file.read().rstrip()
-        session_file.close()
-        if data == '':
-            return False, 'Error 199'
-        if key == data:
-            return True, ''
-        key_time = int(key.split(':')[0])
-        data_time = int(data.split(':')[0])
-        if key_time < data_time:
-            return False, 'Another login for this user'
-        else:
-            return False, 'Error 199'
-    except:
-        return False, 'Error: Change password error'
 
 
-def set_password(user, password):
-    encrypted_pw = encrypt_password(password)
-    lock_file = os.path.join(data_dir, 'users.lock')
-    lockf = open(lock_file, 'a')
-    fcntl.flock(lockf, fcntl.LOCK_EX)
-    found = False
-    try:
-        users_file = os.path.join(data_dir, 'users')
-        users_file_cp = os.path.join(data_dir, 'users_tmp')
-        users = open(users_file, 'U')
-        users_cp = open(users_file_cp, 'w')
-        for line in users:
-            if line.startswith('#'):
-                users_cp.write(line)
-                continue
-            items = line.split(',')
-            if len(items) == 6 and user == items[0]:
-                found = True
-                items[1] = encrypted_pw
-                new_line = ','.join(items)
-                users_cp.write(new_line+'\n')
-            elif line.rstrip() == []:
-                users_cp.write('\n')
-            else:
-                users_cp.write(line)
-        users_cp.close()
-        users.close()
-        if found:
-            shutil.move(users_file_cp, users_file)
-    except:
-        found = False
-    lockf.close()
-    if found:
-        return True, ''
-    else:
-        return False, "Can't find user"
-
-
-def change_the_password(form):
-    p1 = form['password1'].value
-    orig = form['password'].value
-    user = form['username'].value
-    if not check_password(user, orig):
-        return False, 'Incorrect Password.'
-    return set_password(user, p1)
 
 
 def upload_code(form):
@@ -313,19 +218,6 @@ def match_user(form):
     return True, result
 
 
-def change_user_password(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if not ('the_user' in form and 'password' in form):
-        return False, 'Error 111'
-    user = form['username'].value
-    the_user = form['the_user'].value
-    password = form['password'].value
-    if user == the_user:
-        return False, 'Error 112'
-    return set_password(the_user, password)
-
-
 def unset_late(form):
     if not admin_form(form):
         return False, 'Error 666'
@@ -460,55 +352,6 @@ def get_user_subs(form):
     return True, '\n'.join(user_list)
 
 
-def add_user(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if not ('type' in form and
-            'the_user' in form and
-            'firstname' in form and
-            'lastname' in form and
-            'password' in form and
-            'email' in form):
-        return False, 'Error 120'
-    username = form['the_user'].value
-    type = form['type'].value
-    firstname = form['firstname'].value
-    lastname = form['lastname'].value
-    email = form['email'].value
-    passwd = form['password'].value
-    users_file = os.path.join(data_dir, 'users')
-    users_fd = open(users_file, 'U')
-    users_text = users_fd.read()
-    users_fd.close()
-    if username in users_text:
-        return False, 'Error: User is already registered.'
-    password, crypt_password = gen_password(passwd)
-    text = ','.join([username, crypt_password, type,
-                     firstname, lastname, email])+'\n'
-    lock_file = os.path.join(data_dir, 'users.lock')
-    lockf = open(lock_file, 'a')
-    fcntl.flock(lockf, fcntl.LOCK_EX)
-    if type == 'student':
-        users_fd = open(users_file, 'a')
-        users_fd.write(text)
-        users_fd.close()
-    else:
-        users_file_cp = os.path.join(data_dir, 'users_tmp')
-        users = open(users_file, 'U')
-        users_cp = open(users_file_cp, 'w')
-        for line in users:
-            if line.startswith('#') and type in line:
-                users_cp.write(line)
-                users_cp.write(text)
-            else:
-                users_cp.write(line)
-        users_cp.close()
-        users.close()
-        shutil.move(users_file_cp, users_file)
-    lockf.close()
-    return True, password
-
-
 def _sh(text):
     hash_value = 5381
     num = 0
@@ -519,9 +362,6 @@ def _sh(text):
         hash_value = 0x00ffffff & ((hash_value << 5) + hash_value + ord(c))
     return hash_value
 
-
-def logged_in(form):
-    return 'session_key' in form and 'username' in form
 
 
 def mpt_print(msg):

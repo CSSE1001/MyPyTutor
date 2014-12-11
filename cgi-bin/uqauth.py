@@ -12,8 +12,6 @@ else:
 Run the get_user_info() method *before* printing anything out, in case the user
 needs to be redirected.
 
-To stop the automatic redirection, set the optional parameter to False.
-
 """
 
 import os
@@ -134,45 +132,38 @@ class Redirected(BaseException):
     pass
 
 
-def fail(redirect):
-    if redirect:
-        domain = os.environ['HTTP_HOST']
-        url = os.environ['REQUEST_URI']
-        out = "Location: https://api.uqcloud.net/login/http://{0}\n\n"
-        print out.format(domain+url)
-        raise Redirected()
-    else:
-        return None
+def redirect():
+    domain = os.environ['HTTP_HOST']
+    url = os.environ['REQUEST_URI']
+    out = "Location: https://api.uqcloud.net/login/http://{0}\n\n"
+    print out.format(domain+url)
+    raise Redirected()
 
 
-def get_user_info(redirect=True):
-    """Get a JSON object with all the information about a logged in user.
-
-    If redirect is True, logged-out users will be sent to the login page.
-    Otherwise, this method will return None for logged-out users.
-    """
+def get_user_info():
+    """Get a JSON object with all the information about a logged in user."""
     cookie = Cookie.SimpleCookie()
     if 'HTTP_COOKIE' not in os.environ:
-        return fail(redirect)
+        redirect()
 
     cookie.load(os.environ['HTTP_COOKIE'])
     if 'EAIT_WEB' not in cookie:
-        return fail(redirect)
+        redirect()
     eait_web = cookie['EAIT_WEB'].value
 
     kv = KV("172.23.84.20")
     r = kv.get(eait_web)
     if r == '' or r is None:
-        return fail(redirect)
+        redirect()
 
     if type(r) != str:
         print "Content-Type: text/html\n"
-        print "Something weird has happened. Try again. (If this error reappears, tell a staff member.)"
+        print "Something weird has happened. Try again. (If this error reappears, tell the course staff.)"
         assert False, str(r)
     return json.loads(r)
 
 
-def get_user(redirect=True):
-    """Return the UQ username of the person logged in."""
-    user = get_user_info(redirect)
-    return str(user['user']) if user else user
+def get_user():
+    """Return the UQ username of the person logged in.
+    Redirect them to the login page if they aren't already logged in."""
+    return str(get_user_info()['user'])
