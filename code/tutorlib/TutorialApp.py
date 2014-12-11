@@ -715,7 +715,6 @@ class TutorialApp():
                             self.config.get('FONT', 'size'))
         if self.editor.maybesave() == "cancel":
             return
-        self.output.clear_text()
         answer_file = os.path.join(self.ans_dir,
                                    '_'.join(problem_name.split()) + '.py')
         self.master.title(problem_name)
@@ -732,6 +731,9 @@ class TutorialApp():
                 self.toolbar.set_hints(self.tut_interface.get_hints())
             except Exception as e:
                 print('Exception: ' + str(e), file=sys.stderr)
+
+        # immediately run the tests; this will update the display
+        self.run_tests()
 
     def get_tutorial_info(self):
         return tut_tutorial.TutorialInfo(self.tut_dir)
@@ -761,6 +763,7 @@ class TutorialApp():
         tester, analyser = self.tut_interface.run_tests(self.editor.get_text())
 
         self.test_results.set_test_results(tester.results)
+        self.output.clear_text()
 
     def selected_test_result(self, evt):
         result = self.test_results.get_selected_result()
