@@ -35,15 +35,15 @@ class Fun1Analyser(CodeAnalyser):
 
         if not self.visitor.did_assign:
             self.add_error("You have not assigned to the variable m")
-        elif len(self.visitor.seen_double) == 0:
+        if len(self.visitor.seen_double) == 0:
             self.add_error("You need to use the double function in your single assignment statement")
-        elif len(self.visitor.seen_inc) == 0:
+        if len(self.visitor.seen_inc) == 0:
             self.add_error("You need to use the increment function in your single assignment statement")
-        elif len(self.visitor.seen_double) > 1:
+        if len(self.visitor.seen_double) > 1:
             self.add_error("You only need to use double once")
-        elif len(self.visitor.seen_inc) > 1:
+        if len(self.visitor.seen_inc) > 1:
             self.add_error("You only need to use increment once")
-        elif self.visitor.seen_double[0] > self.visitor.seen_inc[0]:
+        if self.visitor.seen_double[0] > self.visitor.seen_inc[0]:
             self.add_error("You should be using increment inside the use of double")
 
 
