@@ -21,9 +21,7 @@
 
 import os
 import sys
-import re
 import traceback
-import ast
 import threading
 import _thread
 import time
@@ -59,29 +57,7 @@ class Alarm(threading.Thread):
         self.do_interrupt = False
 
 
-# An exception for any kind of error produced by the testing code as
-# opposed to student code.
-
-class TestError(Exception):
-    def __init__(self, msg):
-        self._msg = msg
-
-    def __str__(self):
-        return repr(self._msg)
-
-
-# Stop people making subclasses of TutorialInterface
-
-class Final(type):
-    def __new__(cls, name, bases, classdict):
-        for b in bases:
-            if isinstance(b, Final):
-                raise TypeError("Cannot make a subclass of '{0}'"
-                                .format(b.__name__))
-        return type.__new__(cls, name, bases, dict(classdict))
-
-
-class TutorialInterface(metaclass=Final):
+class TutorialInterface():
     def __init__(self, master, parent, enc=True):
         self.url = None
         self.session_key = None
@@ -518,35 +494,6 @@ def pos2linenum(string, pos):
     return num+1
 
 
-class ParseError(Exception):
-    def __init__(self, pos):
-        self.pos = pos
-
-    def __str__(self):
-        return repr(self.pos)
-
-
-## The parser for the code blocks
-## The block headers are:
-## #{preload}# - code that is loaded into the users code edit window
-##                   0 or 1 such blocks before the #{test}# blocks
-## #{global}# - code that is used by all test code
-##                   0 or 1 such blocks before the #{test}# blocks
-## #{timeout = secs}# - max time for all tests (default 1 sec)
-## #{ID = IDstring}# - ID of problem
-## #{test}# - the header for a test - tests include the following headers:
-##        #{start}# - code that is run before the user code but not accessable
-##                    to user code
-##                      0 or 1 such blocks
-##        #{init}# - initialization run before user code - user has access to
-##                   the results of evalating this code
-##                      0 or 1 such blocks
-##        #{code}# - the code that is run after the user code that carries out
-##                   the tests
-##                      exactly one such block
-
-
-
 def extract_test_config(text):
     test_dict = {'repeats': 1}
     argpairs = [arg.split('=') for arg in text.split(',') if arg.strip()]
@@ -567,11 +514,6 @@ def extract_test_config(text):
         test_dict[arg1] = argnum
     return test_dict
 
-
-# The encryption/decryption algorithm uses a simple symmetric
-# single-rotor encryption for the 'printable' characters - i.e.
-# those between ' ' and '~'.
-# All other characters are not encrypted.
 
 # since the hash function seems to be different on different
 # machines here is a simple string hash that hashes up to the first 40
