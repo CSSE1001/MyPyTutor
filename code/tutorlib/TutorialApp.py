@@ -256,10 +256,7 @@ class TutorialApp():
         self.radio_menu = Menu(optionsmenu, tearoff=0)
         optionsmenu.add_cascade(label="Change Tutorial", menu=self.radio_menu)
 
-        for name in self.cfg.tutorials.names:
-            self.radio_menu.add_radiobutton(label=name,
-                                            variable=self.tut_choice,
-                                            command=self.choose_tutorial)
+        self.update_change_tutorial_menu()
 
         feedbackmenu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="MyPyTutor Feedback", menu=feedbackmenu)
@@ -289,6 +286,15 @@ class TutorialApp():
         self.current_prob_name = None
         #print "done init"
 
+    def update_change_tutorial_menu(self):
+        self.radio_menu.delete(0, END)
+
+        for name in self.cfg.tutorials.names:
+            self.radio_menu.add_radiobutton(label=name,
+                                            variable=self.tut_choice,
+                                            command=self.choose_tutorial)
+
+
     def set_default_tutorial(self):
         if self.cfg.tutorials.default != self.current_tutorial:
             self.cfg.tutorials.default = self.current_tutorial
@@ -314,12 +320,7 @@ class TutorialApp():
             self.current_tutorial = self.cfg.tutorials.default
             self.setup_tutorial()
 
-            # TODO: refactor into method (this is repeated from above)
-            self.radio_menu.delete(0, END)
-            for name in self.cfg.tutorials.names:
-                self.radio_menu.add_radiobutton(label=name,
-                                                variable=self.tut_choice,
-                                                command=self.choose_tutorial)
+            self.update_change_tutorial_menu()
 
     def setup_tutorial(self):
         self.master.title("MyPyTutor: " + self.current_tutorial)
@@ -642,12 +643,7 @@ class TutorialApp():
             tkinter.messagebox.showerror('Add New Tutorial Error', error)
             return
 
-        # TODO: like seriously, this needs a major refactor
-        self.radio_menu.delete(0, END)
-        for name in self.cfg.tutorials.names:
-            self.radio_menu.add_radiobutton(label=name,
-                                            variable=self.tut_choice,
-                                            command=self.choose_tutorial)
+        self.update_change_tutorial_menu()
 
     def font_apply(self, font_name, font_size):
         self.tut.update_fonts(font_name, int(font_size))
