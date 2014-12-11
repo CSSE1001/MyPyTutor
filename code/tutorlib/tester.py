@@ -173,6 +173,17 @@ class TutorialTester():
         inject_to_globals(TEST_FUNCTION_NAME, student_function)
         inject_to_globals(StudentTestCase.__name__, StudentTestCase)
 
+        # now that we've messed with globals, we must be careful to undo any
+        # changes if an error occurs
+        try:
+            self._run_test(test_class)
+        finally:
+            # clean up the globals we KNOW we explicitly added
+            # leave the ones that might have been there already, and which will
+            # do no harm to keep (basically not student code)
+            remove_from_globals(TEST_FUNCTION_NAME)
+
+    def _run_test(self, test_class):
         # load up the tests to run from the class
         tests = [unittest.TestLoader().loadTestsFromTestCase(test_class)]
         suite = unittest.TestSuite(tests)
@@ -211,11 +222,6 @@ class TutorialTester():
             overall_result = result.main_result
 
         self._results[test_class] = overall_result
-
-        # clean up the globals we KNOW we explicitly added
-        # leave the ones that might have been there already, and which will
-        # do no harm to keep (basically not student code)
-        remove_from_globals(TEST_FUNCTION_NAME)
 
 
 def indent(text, spaces=4):
