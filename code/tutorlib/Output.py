@@ -49,6 +49,9 @@ class TestsListbox(Listbox):
 
         self.results = None
 
+    def update_font(self, fontsize):
+        self.config(font=get_code_font(fontsize))
+
     def set_test_results(self, results):
         # remove existing entries
         self.delete(0, END)
@@ -69,16 +72,49 @@ class TestsListbox(Listbox):
 
 
 class TestOutput(Frame):
-    COLOR_RESULT = 'black'
-    COLOR_OUTPUT = 'blue'
-    COLOR_ERROR = 'red'
-
     def __init__(self, master, fontsize, textlen):
         Frame.__init__(self, master)
 
         self.test_results = TestsListbox(self, fontsize=fontsize)
         self.test_results.pack(side=TOP, expand=1, fill=BOTH)
         self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
+
+        self.output = Output(self, fontsize, textlen)
+        self.output.pack(side=TOP, expand=1, fill=BOTH)
+
+    def update_font(self, fontsize):
+        self.test_results.update_font(fontsize)
+        self.output.update_font(fontsize)
+
+    def update_text_length(self, lines):
+        pass  # TODO: I don't think this belongs (anywhere)?
+
+    def selected_test_result(self, evt):
+        result = self.test_results.get_selected_result()
+        self.display_result(result)
+
+    def set_test_results(self, results):
+        self.test_results.set_test_results(results)
+        self.output.clear_text()
+
+    def display_result(self, result):
+        self.output.clear_text()
+
+        # show result
+        self.output.add_text(result.message, Output.COLOR_BASE)
+
+        # show output: prints first, then errors
+        self.output.add_text(result.output_text, Output.COLOR_OUTPUT)
+        self.output.add_text(result.error_text, Output.COLOR_ERROR)
+
+
+class Output(Frame):
+    COLOR_BASE = 'black'
+    COLOR_OUTPUT = 'blue'
+    COLOR_ERROR = 'red'
+
+    def __init__(self, master, fontsize, textlen):
+        Frame.__init__(self, master)
 
         self.text = Text(self, height=textlen)
         self.text.config(state=DISABLED)
@@ -92,14 +128,6 @@ class TestOutput(Frame):
         self.text.tag_config("red", foreground="red")
         self.text.tag_config("blue", foreground="blue")
         self.text.config(font=get_code_font(fontsize))
-
-    def selected_test_result(self, evt):
-        result = self.test_results.get_selected_result()
-        self.display_result(result)
-
-    def set_test_results(self, results):
-        self.test_results.set_test_results(results)
-        self.clear_text()
 
     def update_font(self, fontsize):
         self.text.config(font=get_code_font(fontsize))
@@ -122,13 +150,3 @@ class TestOutput(Frame):
 
     def update_text_length(self, lines):
         self.text.config(height=lines)
-
-    def display_result(self, result):
-        self.clear_text()
-
-        # show result
-        self.add_text(result.message, TestOutput.COLOR_RESULT)
-
-        # show output: prints first, then errors
-        self.add_text(result.output_text, TestOutput.COLOR_OUTPUT)
-        self.add_text(result.error_text, TestOutput.COLOR_ERROR)

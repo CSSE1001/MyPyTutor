@@ -197,9 +197,9 @@ class TutorialApp():
         self.toolbar.pack(fill=X)
 
         ## Test Output
-        self.output = tut_output.TestOutput(top_frame,
+        self.test_output = tut_output.TestOutput(top_frame,
                 int(self.config.get('FONT', 'size')), self.output_len)
-        self.output.pack(fill=BOTH, expand=1)
+        self.test_output.pack(fill=BOTH, expand=1)
 
         self.tut_interface = \
             tut_interface.TutorialInterface(master, self)
@@ -374,7 +374,7 @@ class TutorialApp():
     def resize(self, e):
         if self.allow_resize:
             self.problem_len = self.gettextlen(self.tut)
-            self.output_len = self.gettextlen(self.output)
+            self.output_len = self.gettextlen(self.test_output.output)
 
     def gettextlen(self, text_obj):
         #print text_obj.winfo_height(), text_obj.text.dlineinfo("@0,0")
@@ -385,7 +385,7 @@ class TutorialApp():
         self.problem_len -= delta
         self.output_len += delta
         self.tut.update_text_length(self.problem_len)
-        self.output.update_text_length(self.output_len)
+        self.test_output.update_text_length(self.output_len)
 
     def login(self):
         if self.tut_interface.logged_on():
@@ -627,7 +627,7 @@ class TutorialApp():
             self.config.write(fp)
             fp.close()
             self.tut.update_fonts(result[0], int(result[1]))
-            self.output.update_font(int(result[1]))
+            self.test_output.update_font(int(result[1]))
 
     def configure_tut_dir(self):
         if not os.path.exists(self.tut_dir):
@@ -691,8 +691,8 @@ class TutorialApp():
 
     def font_apply(self, font_name, font_size):
         self.tut.update_fonts(font_name, int(font_size))
-        if self.output:
-            self.output.update_font(int(font_size))
+        if self.test_output:
+            self.test_output.update_font(int(font_size))
         if self.editor is not None:
             self.editor.update_font(font_size)
 
@@ -774,7 +774,7 @@ class TutorialApp():
     def run_tests(self):
         tester, analyser = self.tut_interface.run_tests(self.editor.get_text())
 
-        self.output.set_test_results(tester.results)
+        self.test_output.set_test_results(tester.results)
 
     def get_preloaded(self):
         return self.tut_interface.get_preloaded()
