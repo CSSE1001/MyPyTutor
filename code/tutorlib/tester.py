@@ -11,6 +11,12 @@ TEST_FUNCTION_NAME = 'student_function'
 
 
 class StudentTestCase(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.standard_output = ''
+        self.error_output = ''
+
     def run_student_code(self, *args, input_text='', **kwargs):
         # create streams
         input_stream = StringIO(input_text or '')
