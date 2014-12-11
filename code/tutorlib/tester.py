@@ -79,11 +79,13 @@ class TestResult(unittest.TestResult):
                                     error_text)
         self.results.append(result)
 
-        # TODO: determine MAIN_TEST (need to check test output)
-        # TODO: this is hacky, and won't work (as it's using substrings)
+        # determine if this is the MAIN_TEST
+        # this relies upon the implementation of id(), but I'm not aware of
+        # a better way of doing this
         assert hasattr(test, 'MAIN_TEST'), \
                 'Test case {} is missing MAIN_TEST attr'.format(test)
-        if test.MAIN_TEST in test.id():
+        function_name = test.id().split('.')[-1]
+        if test.MAIN_TEST == function_name:
             self.main_result = result
 
     def addSuccess(self, test):
@@ -165,6 +167,9 @@ class TutorialTester():
                 result = runner.run(suite)
             finally:
                 sys.stdout, sys.stderr = stdout, stderr
+
+        assert result.main_result is not None, \
+                'Could not detect MAIN_TEST ({})'.format(test_class.MAIN_TEST)
 
         # collapse the results
         # four possible situations
