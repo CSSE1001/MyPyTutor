@@ -63,6 +63,9 @@ class TestsListbox(Listbox):
             color = self.color_mappings[result.status]
             self.itemconfig(idx, fg=color, selectbackground=color)
 
+        # shrink ourself
+        self.config(height=len(results))
+
         # store the results for later use
         self.results = results
 
