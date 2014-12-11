@@ -36,7 +36,6 @@ import tutorlib.Output as tut_output
 import tutorlib.Tutorial as tut_tutorial
 import tutorlib.TutorEditor as tut_editor
 import tutorlib.TutorialInterface as tut_interface
-import tutorlib.StdOutErr as tut_stdouterr
 import tutorlib.aboutdialog as tut_dialog
 import tutorlib.helpdialog as tut_help
 import tutorlib.feedbackdialog as tut_feedback
@@ -298,8 +297,6 @@ class TutorialApp():
         master.bind("N", self.next_tutorial)
         master.bind("p", self.previous_tutorial)
         master.bind("P", self.previous_tutorial)
-        sys.stdout = tut_stdouterr.StdOut(self.output)
-        sys.stderr = tut_stdouterr.StdErr(self.output)
         self.current_problem_index = -1
         self.current_problem = None
         #master.update_idletasks()
