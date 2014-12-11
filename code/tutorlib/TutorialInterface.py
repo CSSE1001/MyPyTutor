@@ -311,6 +311,9 @@ class TutorialInterface(metaclass=Final):
     def get_text(self):
         return self.tutorial.description
 
+    def get_short_description(self):
+        return self.tutorial.short_description
+
     def set_user_text(self, text):
         self.user_text = text
 

@@ -188,6 +188,10 @@ class TutorialApp():
                                          self.problem_len)
         self.tut.pack(fill=BOTH, expand=1)
 
+        ## Short Problem Description
+        self.short_description = Label(top_frame, fg='blue')
+        self.short_description.pack(fill=X)
+
         ## Toolbar (hints, login status etc)
         self.toolbar = Toolbar(self, top_frame)
         self.toolbar.pack(fill=X)
@@ -735,6 +739,10 @@ class TutorialApp():
                 self.toolbar.set_hints(self.tut_interface.get_hints())
             except Exception as e:
                 print('Exception: ' + str(e), file=sys.stderr)
+
+        self.short_description.config(
+            text=self.tut_interface.get_short_description()
+        )
 
         # immediately run the tests; this will update the display
         self.run_tests()
