@@ -92,8 +92,7 @@ class TestResult(unittest.TestResult):
         else:
             inner_message = 'Correct'
 
-        header = '-'*len(inner_message)
-        message = '{0}\n{1}\n{0}\n'.format(header, inner_message)
+        message = construct_header_message(inner_message)
 
         # build and save our result class
         result = TutorialTestResult(description, status, message,
@@ -218,6 +217,9 @@ class TutorialTester():
         elif result.main_result.status == TutorialTestResult.PASS:
             overall_result = result.main_result
             overall_result.status = TutorialTestResult.INDETERMINATE
+            overall_result.message = construct_header_message(
+                'Make sure your code also works for similar inputs'
+            )
         else:
             overall_result = result.main_result
 
@@ -238,3 +240,9 @@ def remove_from_globals(name):
     assert name in globals(), \
             'Cannot remove non-existent global {}'.format(name)
     del globals()[name]
+
+
+def construct_header_message(inner_message):
+    header = '-'*len(inner_message)
+    message = '{0}\n{1}\n{0}\n'.format(header, inner_message)
+    return message
