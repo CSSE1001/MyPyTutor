@@ -1,4 +1,5 @@
 from contextlib import redirect_stdout
+import sys
 
 
 redirect_stdout = redirect_stdout  # make PEP happy

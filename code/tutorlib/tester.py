@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 
-from streams import redirect_stdin, redirect_stdout, redirect_stderr
+from tutorlib.streams import redirect_stdin, redirect_stdout, redirect_stderr
 
 
 TEST_FUNCTION_NAME = 'student_function'
@@ -29,24 +29,74 @@ class StudentTestCase(unittest.TestCase):
         return result
 
 
+class TutorialTestResult():
+    PASS = 'PASS'
+    FAIL = 'FAIL'
+    ERROR = 'ERROR'
+    INDETERMINATE = 'INDETERMINATE'  # main passes, but others fail
+    STATUSES = [PASS, FAIL, ERROR, INDETERMINATE]
+
+    def __init__(self, description, status, output_text, error_text):
+        self.description = description
+
+        self.status = status
+
+        self.output_text = output_text
+        self.error_text = error_text
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        assert status in TutorialTestResult.STATUSES, \
+            'status must be one of {}'.format(TutorialTestResult.STATUSES)
+        self._status = status
+
+
 class TestResult(unittest.TestResult):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.successes = []
-        self.failures = []
+        self.results = []
+        self.main_result = None
+
+    def _addResult(self, test, status):
+        assert hasattr(test, 'DESCRIPTION'), \
+                'Test case {} is missing DESCRIPTION attr'.format(test)
+        description = test.DESCRIPTION
+
+        assert hasattr(test, 'standard_output') \
+                and hasattr(test, 'error_output'), \
+                'Missing output attrs on {} in test {} (got {})'.format(
+                    test, test.id(), dir(test)
+                )
+        output_text = test.standard_output
+        error_text = test.error_output
+
+        result = TutorialTestResult(description, status, output_text,
+                                    error_text)
+        self.results.append(result)
+
+        # TODO: determine MAIN_TEST (need to check test output)
+        # TODO: this is hacky, and won't work (as it's using substrings)
+        assert hasattr(test, 'MAIN_TEST'), \
+                'Test case {} is missing MAIN_TEST attr'.format(test)
+        if test.MAIN_TEST in test.id():
+            self.main_result = result
 
     def addSuccess(self, test):
         super().addSuccess(test)
-        self.successes.append(test)
+        self._addResult(test, TutorialTestResult.PASS)
 
     def addError(self, test, err):
         super().addError(test, err)
-        self.failures.append((test, err))
+        self._addResult(test, TutorialTestResult.ERROR)
 
     def addFailure(self, test, err):
         super().addFailure(test, err)
-        self.failures.append((test, err))
+        self._addResult(test, TutorialTestResult.FAIL)
 
 
 class TutorialTester():
@@ -104,12 +154,30 @@ class TutorialTester():
             stdout, stderr = sys.stdout, sys.stderr
             sys.stdout, sys.stderr = devnull, devnull
 
-            result = runner.run(suite)
+            try:
+                result = runner.run(suite)
+            finally:
+                sys.stdout, sys.stderr = stdout, stderr
 
-            sys.stdout, sys.stderr = stdout, stderr  # TODO: finally?
+        # collapse the results
+        # four possible situations
+        #   * all tests pass
+        #       -- keep MAIN_TEST
+        #   * main test passes, but others fail
+        #       -- adjust MAIN_TEST to reflect this
+        #   * main test fails, but others pass
+        #       -- keep failure
+        #   * all tests fail
+        #       -- keep failure
+        if all(r.status == TutorialTestResult.PASS for r in result.results):
+            overall_result = result.main_result
+        elif result.main_result.status == TutorialTestResult.PASS:
+            overall_result = result.main_result
+            overall_result.status = TutorialTestResult.INDETERMINATE
+        else:
+            overall_result = result.main_result
 
-        # for now, pass iff all pass
-        # TODO: need to identify main test (the one in the description)
+        self.results[test_class] = overall_result
 
 
 def indent(text, spaces=4):
@@ -117,6 +185,6 @@ def indent(text, spaces=4):
 
 
 def inject_to_globals(name, value):
-    assert name not in globals(), \
+    assert name not in globals() or globals()[name] == value, \
             'Name {} already exists at global scope'.format(name)
     globals()[name] = value
