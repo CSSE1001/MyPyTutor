@@ -34,6 +34,11 @@ import urllib.error
 from tutorlib.analyser import CodeAnalyser
 from tutorlib.tester import TutorialTester, StudentTestCase
 
+# keep PEP8 happy with CodeAnalyser and StudentTestCase
+# these imports are indirectly used in Tutorial, and must not be removed
+CodeAnalyser = CodeAnalyser
+StudentTestCase = StudentTestCase
+
 # a file for writing user code for exec'ing on
 USER_CODE_FILE = 'user_code.py'
 
@@ -454,12 +459,6 @@ class Tutorial():
         # the test module requires access to StudentTestCase, as that's what
         # it will have inherited from
         # because we imported that here, we can just pass in our globals
-        # we also make use of it here, as a noop, to keep PEP8 happy and
-        # prevent later coders from removing the 'unneeded' import
-        # that's the only reason we use a global here
-        global StudentTestCase
-        StudentTestCase = StudentTestCase
-
         _, test_lcls = self.exec_submodule(Tutorial.TESTS_MODULE, globals())
 
         assert Tutorial.TESTS_VARIABLE_NAME in test_lcls, \
@@ -475,11 +474,6 @@ class Tutorial():
         # it must inherit from
         # because we imported that class in this file, we can just pass in
         # our globals() dict
-        # we make use of the reference here to keep PEP8 happy, and also to
-        # make sure that later coders don't remove the 'unneeded' import
-        global CodeAnalyser
-        CodeAnalyser = CodeAnalyser
-
         _, analysis_lcls = self.exec_submodule(Tutorial.ANALYSIS_MODULE,
                                                globals())
 
