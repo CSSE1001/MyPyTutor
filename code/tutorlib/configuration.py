@@ -95,8 +95,7 @@ def unwrap_value(section, option, value):
 
     # TODO: I vaguely remember a bug using is on builtins, should check
     if special_type is list:
-        elems = value.split(',')
-        return filter(None, elems)
+        return [elem for elem in value.split(',') if elem]
     elif special_type is int:
         return int(value)
 
