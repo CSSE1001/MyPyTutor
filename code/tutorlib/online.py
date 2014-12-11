@@ -20,7 +20,12 @@
 # Functionality and dialog windows for logging in and communicating with
 # the online interface.
 
-#__all__ == ['AuthError', 'ResponseError', 'LoginManager']
+# Interface:
+#   >>> manager = LoginManager(server_url, callback)
+#   >>> manager.post(data)
+#   >>> manager.get(data)
+# These methods return a string with the response, or raise a RequestError if
+# there was something wrong with the request.
 
 import urllib.request
 import urllib.parse
@@ -43,22 +48,31 @@ class AuthError(Exception):
     pass
 
 
-class ResponseError(Exception):
+class BadResponse(Exception):
     """An exception representing invalid responses from the web server.
-    These errors should be reported to the maintainer.
+    These errors should never occur, and should be reported to the maintainer.
+    """
+    pass
+
+
+class RequestError(Exception):
+    """An exception representing errors returned by the web server.
+    These errors occur when the request could not be satisfied for some reason.
     """
     pass
 
 
 def strip_header(text):
     MPT_HEADER = 'mypytutor>>>'
+    ERROR_HEADER = 'mypytutor_error>>>'
     if text.startswith(MPT_HEADER):
         return text[len(MPT_HEADER):]
+    elif text.startswith(ERROR_HEADER):
+        raise RequestError(text[len(ERROR_HEADER):])
     else:
-        raise ResponseError("Invalid response from server: {!r}"
-                            .format(text[:len(MPT_HEADER)] + '...'
-                                    if len(text) > len(MPT_HEADER)+3
-                                    else text))
+        raise BadResponse("Invalid response from server: {!r}"
+                          .format(text[:len(MPT_HEADER)] + '...'
+                                  if len(text) > len(MPT_HEADER)+3 else text))
 
 
 class FormParser(html.parser.HTMLParser):
@@ -103,19 +117,19 @@ class FormParser(html.parser.HTMLParser):
         of the <form> tag, and `data` is a dictionary of existing name/value
         attributes for each <input> tag.
 
-        If the form doesn't look as expected, a ResponseError will be raised.
+        If the form doesn't look as expected, a BadResponse will be raised.
         """
         # Find the login form, if there is one
         forms = [f for f in cls.forms(text) if f[0].get('name') == 'f']
         if len(forms) != 1:
-            raise ResponseError("Error parsing login form: no login form found")
+            raise BadResponse("Error parsing login form: no login form found")
         form = forms[0]
 
         # Get the 'name' and 'value' attributes already in the form
         data = {attrs['name']: attrs.get('value', '')
                 for attrs in form[1] if 'name' in attrs}
         if 'username' not in data or 'password' not in data:
-            raise ResponseError("Error parsing login form: form has no username/password field")
+            raise BadResponse("Error parsing login form: form has no username/password field")
         return (form[0]['action'], data)
 
     @classmethod
@@ -123,13 +137,13 @@ class FormParser(html.parser.HTMLParser):
         """Extract details of the form to redirect to api.uqcloud.net/saml/consume.
 
         Return a pair (action, data) as with the get_auth_form method.
-        If the form doesn't look as expected, a ResponseError will be raised.
+        If the form doesn't look as expected, a BadResponse will be raised.
         """
         # Find the form, if there is one
         forms = [f for f in cls.forms(text)
                  if f[0].get('action') == 'https://api.uqcloud.net/saml/consume']
         if len(forms) != 1:
-            raise ResponseError("Error parsing login form: no form to /saml/consume")
+            raise BadResponse("Error parsing login form: no form to /saml/consume")
         form = forms[0]
 
         # Get the name/values out of the response.
@@ -310,7 +324,9 @@ class LoginManager:
     def _request(self, url, data):
         """Send an HTTP request to the given url with the given data.
         If data is None, send a GET request, otherwise a POST request.
-        Return the text of the response, with the MyPyTutor header stripped.
+
+        Return the text of the response, with the MyPyTutor header stripped,
+        or raise a RequestError if the server doesn't like your request.
 
         If the user is not logged in, prompt them to log in. If they fail to
         log in, show an error message box.
@@ -321,18 +337,17 @@ class LoginManager:
                 # The user needs to log in
                 self.login()
                 response = self._opener.open(url, data)
+            text = response.read().decode('ascii')
+            return strip_header(text)
 
         except AuthError as e:
             print("You need to be logged in to do that.", file=sys.stderr)
         except http.client.HTTPException as e:
             print("Connection Error. Check your network connection and try "
                   "again.\n({})".format(type(e).__name__), file=sys.stderr)
-        except ResponseError as e:
+        except BadResponse as e:
             print("Unexpected error: please report to maintainer.\n"
                   "Details: {}".format(type(e).__name__, e), file=sys.stderr)
-        else:
-            text = response.read().decode('ascii')
-            return strip_header(text)
 
     def post(self, data):
         """Send an HTTP POST request to the server."""

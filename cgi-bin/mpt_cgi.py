@@ -69,12 +69,6 @@ class ActionError(Exception):
     pass
 
 
-class Forbidden(Exception):
-    """An exception that represents the user does not have privileges to
-       execute an action."""
-    pass
-
-
 def action(name, admin=False):
     """Decorator constructor to register different server actions.
 
@@ -83,7 +77,6 @@ def action(name, admin=False):
     The decorated function could raise certain errors:
     * a ActionError if the CGI form is missing a required parameter,
     * a uqauth.Redirected if a login is required,
-    * a Forbidden if the user is logged in, but not privileged.
     """
     # Create the decorator
     def wrapper(func):
@@ -97,7 +90,7 @@ def action(name, admin=False):
         def wrapped(form):
             # Check privileges
             if admin and uqauth.get_user() not in ADMINS:
-                raise Forbidden("Insufficient privileges")
+                raise ActionError("Forbidden: insufficient privileges")
 
             # Get the arguments out of the form
             args = {}
@@ -106,7 +99,8 @@ def action(name, admin=False):
                 if arg in form:
                     args[arg] = form[arg].value
                 elif i < num_required:
-                    raise ActionError("Required parameter {!r} not given".format(arg))
+                    raise ActionError("Required parameter {!r} not given.\n"
+                                      "Report to maintainer.".format(arg))
 
             return func(**args)
 
@@ -183,7 +177,7 @@ def download_code(problem_name):
 def submit_answer(tut_id, tut_id_crypt, tut_check_num, code):
     user = uqauth.get_user()
     if tut_id_crypt != str(_sh(tut_id + user)):
-        raise ActionError("Error 901")
+        raise ActionError("Error 901. Report this error to a maintainer.")
     #admin_file = os.path.join(data_dir, 'tut_admin.txt')
     admin_fid = open(tut_info_file, 'U')
     admin_lines = admin_fid.readlines()
@@ -414,10 +408,6 @@ def _sh(text):
     return hash_value
 
 
-def mpt_print(msg):
-    print 'mypytutor>>>'+msg
-
-
 def main():
     form = cgi.FieldStorage()
 
@@ -427,23 +417,19 @@ def main():
 
     action = form['action'].value
     if action not in ACTIONS:
-        print "Content-Type: text/plain\n"
-        mpt_print("Unknown action: {}".format(action))
+        print HTML_ERROR.format("Unknown action: " + action)
         return
 
     try:
         result = ACTIONS[action](form)
     except uqauth.Redirected:
         return
-    except Forbidden as e:
-        print "Content-Type: text/plain\n"
-        mpt_print("Forbidden: {}".format(action))
     except ActionError as e:
         print "Content-Type: text/plain\n"
-        mpt_print("Error: {}".format(e))
+        print "mypytutor_error>>>" + str(e)
     else:
         print "Content-Type: text/plain\n"
-        mpt_print(result)
+        print "mypytutor>>>" + result
 
 if __name__ == '__main__':
     main()
