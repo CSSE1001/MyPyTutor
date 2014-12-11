@@ -105,7 +105,14 @@ class TutorialTester():
         self.test_gbls = test_gbls
         self.test_lcls = test_lcls
 
-        self.results = {}  # test class : results
+        self._results = {}  # test class : results
+
+    @property
+    def results(self):
+        '''
+        Test results, in the same order as the test classes
+        '''
+        return [self._results[cls] for cls in self.test_classes]
 
     def run(self, code_text, student_function_name):
         # if no function name is given, we need to wrap their code
@@ -177,7 +184,7 @@ class TutorialTester():
         else:
             overall_result = result.main_result
 
-        self.results[test_class] = overall_result
+        self._results[test_class] = overall_result
 
 
 def indent(text, spaces=4):
