@@ -193,7 +193,7 @@ class TutorialTester():
 
         with open(os.devnull, 'w') as devnull:
             stdout, stderr = sys.stdout, sys.stderr
-            sys.stdout, sys.stderr = devnull, devnull
+            sys.stdout, sys.stderr = devnull, devnull  # TODO: this isn't working
 
             try:
                 result = runner.run(suite)
