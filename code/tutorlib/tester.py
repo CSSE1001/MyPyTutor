@@ -243,6 +243,7 @@ def remove_from_globals(name):
 
 
 def construct_header_message(inner_message):
-    header = '-'*len(inner_message)
+    first_line = inner_message.splitlines()[0]
+    header = '-'*len(first_line)
     message = '{0}\n{1}\n{0}\n'.format(header, inner_message)
     return message
