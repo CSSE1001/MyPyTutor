@@ -13,7 +13,7 @@ import uqauth
 ######## start config #################################
 
 # Base directory for server file storage
-base_dir = "/opt/local/share/MyPyTutor/CSSE1001"
+base_dir = "/opt/local/share/MyPyTutor/MPT3_CSSE1001"
 
 # where student data is to be put/found
 data_dir = os.path.join(base_dir, "data")
@@ -49,30 +49,74 @@ due_hour = 17
 
 
 
+ADMINS = ['uqprobin']
 
-print 'Content-Type: text/html\n\n'
-
-
-
+ACTIONS = {}
 
 
+class ActionError(Exception):
+    """An exception that represents some error in the request."""
+    pass
 
 
+class Forbidden(Exception):
+    """An exception that represents the user does not have privileges to
+       execute an action."""
+    pass
 
 
+def action(name, admin=False):
+    """Decorator constructor to register different server actions.
+
+    If the action requires administrator privileges
+
+    The decorated function could raise certain errors:
+    * a ActionError if the CGI form is missing a required parameter,
+    * a uqauth.Redirected if a login is required,
+    * a Forbidden if the user is logged in, but not privileged.
+    """
+    # Create the decorator
+    def wrapper(func):
+        # Get the list of argument details for the function
+        argspec = inspect.getargspec(func)
+
+        @functools.wraps(func)
+        def wrapped(form):
+            # Check privileges
+            if admin and uqauth.get_user() not in ADMINS:
+                raise Forbidden("Insufficient privileges")
+
+            # Get the arguments out of the form
+            args = {}
+            for i, arg in enumerate(argspec.args):
+                # If the arg doesn't have a default value and isn't given, fail.
+                if (i >= len(argspec.args) - len(argspec.defaults)
+                        and arg not in form):
+                    raise ActionError("Required parameter {!r} not given".format(arg))
+                else:
+                    args[arg] = form[arg].value
+
+            return func(**args)
+
+        # Store the action in the global index
+        ACTIONS[name] = wrapped
+        return wrapped
+    return wrapper
 
 
+@action('userinfo')
+def userinfo():
+    user = uqauth.get_user_info()
+    result = {key: str(user[key]) for key in ('user', 'name')}
+    return json.dumps(result)
 
 
-
-
-
-def upload_code(form):
-    user = form['username'].value
-    text = form['code'].value
-    problem_name = form['problem_name'].value
+@action('upload')
+def upload_code(code, problem_name):
+    user = uqauth.get_user()
+    text = code
     if len(text) > 2000:
-        return False, 'Error: Code exceeds maximum length'
+        raise ActionError('Code exceeds maximum length')
     code_file = os.path.join(data_dir, user+'.code')
     header = '##$$%s$$##\n' % problem_name
     if os.path.exists(code_file):
@@ -94,17 +138,17 @@ def upload_code(form):
             fd = open(code_file, 'w')
             fd.write(new_text)
             fd.close()
-        return True, "OK"
+        return "OK"
     else:
         fd = open(code_file, 'w')
         fd.write(header + text)
         fd.close()
-        return True, "OK"
+        return "OK"
 
 
-def download_code(form):
-    user = form['username'].value
-    problem_name = form['problem_name'].value
+@action('download')
+def download_code(problem_name):
+    user = uqauth.get_user()
     code_file = os.path.join(data_dir, user+'.code')
     header = '##$$%s$$##\n' % problem_name
     if os.path.exists(code_file):
@@ -113,27 +157,21 @@ def download_code(form):
         fd.close()
         pos = file_text.find(header)
         if pos == -1:
-            return False, "No code to download"
+            raise ActionError("No code to download")
         else:
             front = file_text[:pos]
             end_pos = file_text.find('##$$', pos+4)
             text = file_text[pos+len(header):end_pos]
-            if text:
-                return text, ''
-            else:
-                return ' ', ''
+            return text
     else:
-        return False, "No code to download"
+        raise ActionError("No code to download")
 
 
-def submit_answer(form):
-    user = form['username'].value
-    tut_id = form['tut_id'].value
-    tut_id_crypt = form['tut_id_crypt'].value
+@action('submit')
+def submit_answer(tut_id, tut_id_crypt, tut_check_num, code):
+    user = uqauth.get_user()
     if tut_id_crypt != str(_sh(tut_id + user)):
-        return False, "Error 901 "
-    tut_check_num = form['tut_check_num'].value
-    code = form['code'].value
+        raise ActionError("Error 901")
     #admin_file = os.path.join(data_dir, 'tut_admin.txt')
     admin_fid = open(tut_info_file, 'U')
     admin_lines = admin_fid.readlines()
@@ -149,7 +187,7 @@ def submit_answer(form):
             tut_name = line.split(' ', 1)[1].strip()
             break
     if tut_name == '' or section == '':
-        return False, "Tutorial not found"
+        raise ActionError("Tutorial not found")
     first_word = section.split(' ', 1)[0][1:]
     try:
         due_date = datetime.datetime.strptime(first_word, date_format)
@@ -171,20 +209,21 @@ def submit_answer(form):
         file_text = fd.read()
         fd.close()
         if header in file_text:
-            return False, "Already submitted"
+            raise ActionError("Already submitted")
         fd = open(sub_file, 'a')
         fd.write(sub_text)
         fd.close()
-        return True, msg
+        return msg
     else:
         fd = open(sub_file, 'w')
         fd.write(sub_text)
         fd.close()
-        return True, msg
+        return msg
 
 
-def show_submit(form):
-    user = form['username'].value
+@action('show')
+def show_submit():
+    user = uqauth.get_user()
     sub_file = os.path.join(data_dir, user+'.sub')
     if os.path.exists(sub_file):
         fd = open(sub_file, 'U')
@@ -199,12 +238,8 @@ def admin_form(form):
     return 'session_key' in form and 'admin' in form['session_key'].value
 
 
-def match_user(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if 'match' not in form:
-        return False, 'Error 111'
-    match = form['match'].value
+@action('match', admin=True)
+def match_user(match):
     users_file = os.path.join(data_dir, 'users')
     users = open(users_file, 'U')
     user_lines = users.readlines()
@@ -215,17 +250,11 @@ def match_user(form):
             continue
         if match in user:
             result += user
-    return True, result
+    return result
 
 
-def unset_late(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if not ('the_user' in form and 'problem' in form):
-        return False, 'Error 112'
-    user = form['username'].value
-    the_user = form['the_user'].value
-    problem = form['problem'].value
+@action('unset_late', admin=True)
+def unset_late(the_user, problem):
     problem_tag = "##$$%s$$##" % problem
     #if user == the_user:
     #    return False, 'Error 112'
@@ -248,9 +277,9 @@ def unset_late(form):
                 updated_text.append('OK\n')
                 i += 1
             else:
-                return False, 'Error 113'
+                raise ActionError('Error 113')
     if not found:
-        return False, 'Error 114'
+        raise ActionError('Error 114')
     sub_file_cp = os.path.join(data_dir, 'sub_tmp')
     sub_file_cp_fd = open(sub_file_cp, 'w')
     sub_file_cp_fd.writelines(updated_text)
@@ -260,9 +289,9 @@ def unset_late(form):
     sub_fd.close()
     if sub_text == sub_text_new:
         shutil.move(sub_file_cp, sub_file)
-        return True, 'OK'
+        return 'OK'
     else:
-        return unset_late(form)
+        return unset_late(the_user, problem)
 
 
 def get_problem_list():
@@ -280,9 +309,8 @@ def get_problem_list():
     return problem_list
 
 
-def get_results(form):
-    if not admin_form(form):
-        return False, 'Error 666'
+@action('results', admin=True)
+def get_results():
     problem_list = get_problem_list()
     users_file = os.path.join(data_dir, 'users')
     users_fd = open(users_file, 'U')
@@ -320,19 +348,18 @@ def get_results(form):
             for prob in problem_list:
                 student_result.append(result_dict.get(prob, '-'))
             results_list.append(','.join(student_result))
-    return True, '\n'.join(results_list)
+    return '\n'.join(results_list)
 
 
-def get_user_subs(form):
-    if not admin_form(form):
-        return False, 'Error 666'
+@action('get_user_subs', admin=True)
+def get_user_subs(the_user):
     the_user = form['the_user'].value
     problem_list = get_problem_list()
     sub_file = os.path.join(data_dir, the_user+'.sub')
     try:
         sub_fd = open(sub_file, 'U')
     except:
-        return False, 'No user info.'
+        raise ActionError('No info for user {!r}.'.format(the_user))
     sub_lines = sub_fd.readlines()
     sub_fd.close()
     length = len(sub_lines)
@@ -349,7 +376,24 @@ def get_user_subs(form):
     user_list = []
     for prob in problem_list:
         user_list.append("%s:::%s" % (prob, result_dict.get(prob, '-')))
-    return True, '\n'.join(user_list)
+    return '\n'.join(user_list)
+
+
+@action('get_tut_zip_file')
+def get_tut_zip_file():
+    return tut_zipfile_url
+
+
+@action('get_mpt34')
+def get_mpt34():
+    return mpt34_url
+
+
+@action('get_version')
+def get_version():
+    with open(mpt_version_file, 'rU') as f:
+        return f.read().strip()
+
 
 
 def _sh(text):
