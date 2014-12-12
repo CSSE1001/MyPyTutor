@@ -71,7 +71,7 @@ class List2Analyser(CodeAnalyser):
             self.add_error("You did't initialize before the for loop.")
         elif self.visitor.appends_outside_loop:
             self.add_error("You want to append inside the loop, not outside it.")
-        elif self.visitor.appends_in_loop:
+        elif not self.visitor.appends_in_loop:
             self.add_error("You need to append inside the for loop.")
         elif self.visitor.arg1 != self.visitor.iteration_variable:
             self.add_warning('Your for loop should iterate over {}'.format(self.visitor.arg1))
