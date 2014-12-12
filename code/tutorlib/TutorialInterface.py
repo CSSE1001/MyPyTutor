@@ -30,13 +30,14 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-from tutorlib.analyser import CodeAnalyser
+from tutorlib.analyser import CodeAnalyser, TutorialNodeVisitor
 from tutorlib.tester import TutorialTester, StudentTestCase
 
-# keep PEP8 happy with CodeAnalyser and StudentTestCase
+# keep PEP8 happy
 # these imports are indirectly used in Tutorial, and must not be removed
 ast = ast
 CodeAnalyser = CodeAnalyser
+TutorialNodeVisitor = TutorialNodeVisitor
 StudentTestCase = StudentTestCase
 
 # a file for writing user code for exec'ing on

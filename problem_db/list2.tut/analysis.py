@@ -1,7 +1,4 @@
-import ast
-
-
-class CodeVisitor(ast.NodeVisitor):
+class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
         self.is_defined = False
         self.in_def = False
@@ -17,6 +14,7 @@ class CodeVisitor(ast.NodeVisitor):
 
         self.has_return = False
 
+    @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
         if node.name == 'all_gt':
             self.is_defined = True
@@ -24,11 +22,13 @@ class CodeVisitor(ast.NodeVisitor):
         else:
             self.in_def = False
 
+    @TutorialNodeVisitor.visit_recursively
     def visit_arguments(self, arguments):
         if self.in_def:
             if len(arguments.args) == 2:
                 self.arg1 = arguments.args[0].arg  # variable name
 
+    @TutorialNodeVisitor.visit_recursively
     def visit_Assign(self, node):
         if self.in_def and not self.has_for:
             self.initialises_variable = True
@@ -36,12 +36,14 @@ class CodeVisitor(ast.NodeVisitor):
             # TODO: check value using node.value.elts
             # TODO: not done atm, as checking for _ast.List is hacky
 
+    @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
         if self.in_def:
             self.has_for = True
 
             self.iteration_variable = node.target.id  # variable name
 
+    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         if node.func.attr == 'append':
             if self.in_def and self.has_for:
@@ -49,6 +51,7 @@ class CodeVisitor(ast.NodeVisitor):
             elif self.in_def:
                 self.appends_outside_loop = True
 
+    @TutorialNodeVisitor.visit_recursively
     def visit_Return(self, node):
         self.has_return = True
 

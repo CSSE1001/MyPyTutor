@@ -1,17 +1,15 @@
-import ast
-
-
-class CodeVisitor(ast.NodeVisitor):
+class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
         self.count = 1
         self.seen_inc = []
         self.seen_double = []
 
-    def visit_Call(self, t):
-        if t.func.id == 'double':
+    @TutorialNodeVisitor.visit_recursively
+    def visit_Call(self, node):
+        if node.func.id == 'double':
             self.seen_double.append(self.count)
             self.count += 1
-        elif t.func.id == 'increment':
+        elif node.func.id == 'increment':
             self.seen_inc.append(self.count)
             self.count += 1
 
