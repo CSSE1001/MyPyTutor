@@ -16,7 +16,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
     @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
-        if node.name == 'all_gt':
+        if TutorialNodeVisitor.identifier(node) == 'all_gt':
             self.is_defined = True
             self.in_def = True
         else:
@@ -26,7 +26,7 @@ class CodeVisitor(TutorialNodeVisitor):
     def visit_arguments(self, arguments):
         if self.in_def:
             if len(arguments.args) == 2:
-                self.arg1 = arguments.args[0].arg  # variable name
+                self.arg1 = TutorialNodeVisitor.identifier(arguments.args[0])
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Assign(self, node):
@@ -41,11 +41,11 @@ class CodeVisitor(TutorialNodeVisitor):
         if self.in_def:
             self.has_for = True
 
-            self.iteration_variable = node.target.id  # variable name
+            self.iteration_variable = node.iter.id  # variable name
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
-        if node.func.attr == 'append':
+        if TutorialNodeVisitor.identifier(node.func) == 'append':
             if self.in_def and self.has_for:
                 self.appends_in_loop = True
             elif self.in_def:

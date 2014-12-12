@@ -6,10 +6,11 @@ class CodeVisitor(TutorialNodeVisitor):
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
-        if node.func.id == 'double':
+        func_name = TutorialNodeVisitor.identifier(node.func)
+        if func_name == 'double':
             self.seen_double.append(self.count)
             self.count += 1
-        elif node.func.id == 'increment':
+        elif func_name == 'increment':
             self.seen_inc.append(self.count)
             self.count += 1
 
