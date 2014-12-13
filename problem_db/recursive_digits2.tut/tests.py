@@ -3,11 +3,17 @@ class RecursiveDigits2SingleBase10Digit(StudentTestCase):
     MAIN_TEST = 'test_single_digit'
 
     def test_single_digit(self):
-        result = self.run_student_code(5, 10)
+        def _get_results():
+            return dec2base(5, 10)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [5])
 
     def test_alternate(self):
-        result = self.run_student_code(7, 10)
+        def _get_results():
+            return dec2base(7, 10)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [7])
 
 
@@ -16,11 +22,17 @@ class RecursiveDigits2SingleBase2Digit(StudentTestCase):
     MAIN_TEST = 'test_single_digit'
 
     def test_single_digit(self):
-        result = self.run_student_code(1, 2)
+        def _get_results():
+            return dec2base(1, 2)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [1])
 
     def test_alternate(self):
-        result = self.run_student_code(0, 2)
+        def _get_results():
+            return dec2base(0, 2)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [0])
 
 
@@ -29,11 +41,17 @@ class RecursiveDigits2MultipleBase10Digits(StudentTestCase):
     MAIN_TEST = 'test_multiple_digits'
 
     def test_multiple_digits(self):
-        result = self.run_student_code(120, 10)
+        def _get_results():
+            return dec2base(120, 10)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [1, 2, 0])
 
     def test_alternate(self):
-        result = self.run_student_code(57, 10)
+        def _get_results():
+            return dec2base(57, 10)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [5, 7])
 
 
@@ -42,11 +60,17 @@ class RecursiveDigits2MultipleBase8Digits(StudentTestCase):
     MAIN_TEST = 'test_multiple_digits'
 
     def test_multiple_digits(self):
-        result = self.run_student_code(273, 8)
+        def _get_results():
+            return dec2base(273, 8)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [4, 2, 1])
 
     def test_alternate(self):
-        result = self.run_student_code(16, 8)
+        def _get_results():
+            return dec2base(16, 8)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [2, 0])
 
 
@@ -55,11 +79,17 @@ class RecursiveDigits2MultipleBase2Digits(StudentTestCase):
     MAIN_TEST = 'test_multiple_digits'
 
     def test_multiple_digits(self):
-        result = self.run_student_code(61, 2)
+        def _get_results():
+            return dec2base(61, 2)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [1, 1, 1, 1, 0, 1])
 
     def test_alternate(self):
-        result = self.run_student_code(7, 2)
+        def _get_results():
+            return dec2base(7, 2)
+
+        result = self.run_in_student_context(_get_results)
         self.assertEqual(result, [1, 1, 1])
 
 
