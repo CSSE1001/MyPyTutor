@@ -181,7 +181,7 @@ class TutorialTester():
             )
 
         for test_class in self.test_classes:
-            self.run_test(test_class, code_text, student_function_name)
+            self.run_test(test_class, code_text, student_function_name)  # TODO: remove student_function_name (now unnecessary)
 
     def run_test(self, test_class, code_text, student_function_name):
         # grab a copy of our context to use
