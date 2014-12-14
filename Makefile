@@ -6,7 +6,7 @@
 #   $ make push
 
 
-.PHONY: all clean tutorials build push
+.PHONY: all clean cleantutorials tutorials build push
 
 BUILD = MyPyTutor34.zip \
         tut_admin.txt \
@@ -18,13 +18,15 @@ BUILD = MyPyTutor34.zip \
 
 all: MyPyTutor34.zip tutorials
 
-clean:
+clean: cleantutorials
 	-rm MyPyTutor34.zip
 	-rm code/tutorlib/*.pyc
-	-rm -r tut_admin.txt CSSE1001Tutorials
 	-rm -r build
 
-tutorials: problem_db/*
+cleantutorials:
+	-rm -r tut_admin.txt CSSE1001Tutorials
+
+tutorials: problem_db/* cleantutorials
 	-python3 code/create_tutorial.py problem_db/CSSE1001.txt CSSE1001Tutorials
 
 build: tutorials $(BUILD)
