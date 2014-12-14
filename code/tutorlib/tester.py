@@ -1,4 +1,5 @@
 import copy
+import inspect
 from io import StringIO
 import os
 import sys
@@ -7,7 +8,8 @@ import unittest
 from tutorlib.streams import redirect_stdin, redirect_stdout, redirect_stderr
 
 
-TEST_FUNCTION_NAME = 'student_function'
+STUDENT_LOCALS_NAME = 'student_lcls'
+TEST_RESULT_IDENTIFIER = '__test_result'
 
 
 class StudentTestCase(unittest.TestCase):
@@ -17,17 +19,49 @@ class StudentTestCase(unittest.TestCase):
         self.standard_output = ''
         self.error_output = ''
 
-    def run_student_code(self, *args, input_text='', **kwargs):
+    def run_in_student_context(self, f, input_text=''):
+        '''
+        Execute the given function in the context of the student's code, using
+        the provided input_text (if any) as stdin.
+
+        Note that name of the given function will be injected into the student
+        context, meaning that it should be unique (ie, things will go terribly
+        wrong if you give it the same name as a builtin or as a function which
+        the student may reasonably have defined).
+
+        '''
         # create streams
         input_stream = StringIO(input_text or '')
         output_stream = StringIO()
         error_stream = StringIO()
 
-        # execute student code with redirected streams
-        # NB: this assumes that student_function is accessible
+        # we have a function object, f, that we want to execute in a specific
+        # context (that of the student's code)
+        # ideally, we'd just exec the object with those locals and globals, but
+        # there's no built-in support for that in Python (at least that I can
+        # find)
+        # however, we can easily exec a *string* in a specific context
+        # so our 'simple' solution is this: grab the source of the function we
+        # want to run and exec *that* in the context of the student code
+        lcls = copy.copy(student_lcls)
+
+        function_source = trim_indentation(inspect.getsource(f))
+        exec(compile(function_source, '<test_function>', 'exec'), lcls)
+
+        # we now have our function, as an object, in the context of the
+        # student code
+        # now we need to actually *run* it, and extract the output, in that
+        # same context, and again we need a string for that
+        function_name = f.__name__
+        test_statement = '{} = {}()'.format(
+            TEST_RESULT_IDENTIFIER, function_name
+        )
+
+        # finally, actually execute that test function, and extract the result
         with redirect_stdin(input_stream), redirect_stdout(output_stream), \
                 redirect_stderr(error_stream):
-            result = student_function(*args, **kwargs)
+            exec(compile(test_statement, '<test_run>', 'single'), lcls)
+            result = lcls[TEST_RESULT_IDENTIFIER]
 
         self.standard_output = output_stream.getvalue()
         self.error_output = error_stream.getvalue()
@@ -147,7 +181,7 @@ class TutorialTester():
             )
 
         for test_class in self.test_classes:
-            self.run_test(test_class, code_text, student_function_name)
+            self.run_test(test_class, code_text, student_function_name)  # TODO: remove student_function_name (now unnecessary)
 
     def run_test(self, test_class, code_text, student_function_name):
         # grab a copy of our context to use
@@ -161,15 +195,24 @@ class TutorialTester():
         except:
             lcls = copy.copy(self.test_lcls)
 
+        # NB: if we use exec with separate globals and locals dictionaries,
+        # recursive functions will not behave as expected
+        # this is due to issues with how exec treats top-level function
+        # definitions
+        # normally, a function defined at top-level will be placed into locals,
+        # *but locals will be globals() at that scope*
+        # recursive calls will always search in globals, meaning that if code
+        # is execed with separate globals and locals dicts, and top-level
+        # function definitions are bound to locals, those functions will not
+        # be able to find themselves in globals()
+        # see http://stackoverflow.com/a/872082/1103045
+        lcls = dict(gbls, **lcls)
+
         # execute the student's code, and grab a reference to the function
-        exec(compile(code_text, 'student_code.py', 'exec'), gbls, lcls)
-        assert student_function_name in lcls, 'Student function not defined!'
-        # TODO: that is NOT an assertion failure; it will happen in normal use
-        # TODO: the assertion is merely there for testing atm
-        student_function = lcls[student_function_name]
+        exec(compile(code_text, 'student_code.py', 'exec'), lcls)
 
         # inject necessary data into global scope
-        inject_to_globals(TEST_FUNCTION_NAME, student_function)
+        inject_to_globals(STUDENT_LOCALS_NAME, lcls)
         inject_to_globals(StudentTestCase.__name__, StudentTestCase)
 
         # now that we've messed with globals, we must be careful to undo any
@@ -180,7 +223,7 @@ class TutorialTester():
             # clean up the globals we KNOW we explicitly added
             # leave the ones that might have been there already, and which will
             # do no harm to keep (basically not student code)
-            remove_from_globals(TEST_FUNCTION_NAME)
+            remove_from_globals(STUDENT_LOCALS_NAME)
 
     def _run_test(self, test_class):
         # load up the tests to run from the class
@@ -228,6 +271,17 @@ class TutorialTester():
 
 def indent(text, spaces=4):
     return '\n'.join(' '*spaces + line for line in text.splitlines())
+
+
+def trim_indentation(text):
+    lines = [line for line in text.splitlines() if line.strip()]
+
+    # TODO hacky atm, dunno if it'll work with tabs
+    indents = [len(line) - len(line.lstrip()) for line in lines]
+    indent = min(indents)
+
+    unindented_text = '\n'.join(line[indent:] for line in text.splitlines())
+    return unindented_text + ('\n' if text.splitlines()[-1] == '\n' else '')
 
 
 def inject_to_globals(name, value):
