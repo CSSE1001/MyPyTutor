@@ -206,7 +206,7 @@ class TutorialTester():
         # function definitions are bound to locals, those functions will not
         # be able to find themselves in globals()
         # see http://stackoverflow.com/a/872082/1103045
-        lcls.update(gbls)
+        lcls = dict(gbls, **lcls)
 
         # execute the student's code, and grab a reference to the function
         exec(compile(code_text, 'student_code.py', 'exec'), lcls)
