@@ -1,0 +1,30 @@
+<h3>Defining a Class</h3>
+Define the class <tt>Rectangle</tt>. It's constructor takes a pair of numbers representing the top-left corner, and two other numbers representing the width and height. It has the following methods:
+<ul>
+    <li><tt>get_bottom_right()</tt> - return the bottom right corner as a pair of numbers.</li>
+    <li> <tt>move(p)</tt> - move the rectangle so that p becomes the top-left corner (leaving the width and height unchanged).</li>
+    <li> <tt>resize(width, height)</tt> - set the width and height of the rectangle to the supplied arguments (leaving the top-left corner unchanged).</li>
+    <li> <tt>__str__()</tt> - return the string representation of the rectangle as a pair of pairs - i.e. the top left and bottom right corners.</li>
+</ul>
+
+Note: Unlike the co-ordinate system you may have encountered before, y, in this question, increases as you move vertically downwards.
+
+<p>
+Examples:
+<br>
+Each example below follows on from the previous one.
+<br>
+Be careful to get the spacing right for str - i.e. comma followed by space.
+<pre>
+>>> r = Rectangle((2,3), 5, 7)
+>>> str(r)
+'((2, 3), (7, 10))'
+>>> r.move((5,6))
+>>> str(r)
+'((5, 6), (10, 13))'
+>>> r.resize(2,3)
+>>> str(r)
+'((5,6), (7, 9))'
+>>> r.get_bottom_right()
+(7, 9)
+</pre>
