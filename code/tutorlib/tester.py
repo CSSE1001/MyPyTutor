@@ -70,13 +70,15 @@ class StudentTestCase(unittest.TestCase):
 
 
 class TutorialTestResult():
+    NOT_RUN = 'NOT_RUN'
     PASS = 'PASS'
     FAIL = 'FAIL'
     ERROR = 'ERROR'
     INDETERMINATE = 'INDETERMINATE'  # main passes, but others fail
-    STATUSES = [PASS, FAIL, ERROR, INDETERMINATE]
+    STATUSES = [NOT_RUN, PASS, FAIL, ERROR, INDETERMINATE]
 
-    def __init__(self, description, status, message, output_text, error_text):
+    def __init__(self, description, status, message, output_text='',
+                 error_text=''):
         self.description = description
 
         self.status = status
@@ -161,7 +163,14 @@ class TutorialTester():
         self.test_gbls = test_gbls
         self.test_lcls = test_lcls
 
-        self._results = {}  # test class : results
+        # initialise our results dict
+        status = TutorialTestResult.NOT_RUN
+        message = construct_header_message('Error in code: test not run')
+
+        self._results = {
+            cls: TutorialTestResult(cls.DESCRIPTION, status, message)
+                for cls in self.test_classes
+        }
 
     @property
     def results(self):

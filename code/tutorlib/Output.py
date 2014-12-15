@@ -30,6 +30,7 @@ def get_code_font(fontsize):
 
 
 class TestsListbox(Listbox):
+    COLOR_NOT_RUN = 'black'
     COLOR_PASS = 'green'
     COLOR_FAIL = 'red'
     COLOR_ERROR = 'red'
@@ -41,6 +42,7 @@ class TestsListbox(Listbox):
         super().__init__(master, *args, font=font, **kwargs)
 
         self.color_mappings = {
+            TutorialTestResult.NOT_RUN: TestsListbox.COLOR_NOT_RUN,
             TutorialTestResult.PASS: TestsListbox.COLOR_PASS,
             TutorialTestResult.FAIL: TestsListbox.COLOR_FAIL,
             TutorialTestResult.ERROR: TestsListbox.COLOR_ERROR,
