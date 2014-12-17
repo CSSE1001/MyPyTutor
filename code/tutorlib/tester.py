@@ -82,10 +82,14 @@ class TutorialTestResult():
         self.description = description
 
         self.status = status
-        self.message = message
+        self._message = message
 
         self.output_text = output_text
         self.error_text = error_text
+
+    @property
+    def message(self):
+        return construct_header_message(self._message)
 
     @property
     def status(self):
@@ -124,11 +128,9 @@ class TestResult(unittest.TestResult):
         if err is not None:
             _, e, _ = err
 
-            inner_message = '{}: {}'.format(type(e).__name__, e)
+            message = '{}: {}'.format(type(e).__name__, e)
         else:
-            inner_message = 'Correct'
-
-        message = construct_header_message(inner_message)
+            message = 'Correct'
 
         # build and save our result class
         result = TutorialTestResult(description, status, message,
