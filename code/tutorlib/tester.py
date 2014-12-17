@@ -280,6 +280,10 @@ class TutorialTester():
         self._results[test_class] = overall_result
 
 
+# TODO: this stuff doesn't really belong here, but while it should definitely
+# TODO: be refactored, I don't want to attempt that until I have time to sit
+# TODO: down and refactor *the entire* MPT codebase (if, you know, that time
+# TODO: ever comes)
 def indent(text, spaces=4):
     return '\n'.join(' '*spaces + line for line in text.splitlines())
 
