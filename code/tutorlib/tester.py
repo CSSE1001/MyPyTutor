@@ -245,16 +245,12 @@ class TutorialTester():
         suite = unittest.TestSuite(tests)
 
         # run the tests, but silently
-        runner = unittest.TextTestRunner(resultclass=TestResult)
-
         with open(os.devnull, 'w') as devnull:
-            stdout, stderr = sys.stdout, sys.stderr
-            sys.stdout, sys.stderr = devnull, devnull  # TODO: this isn't working
-
-            try:
-                result = runner.run(suite)
-            finally:
-                sys.stdout, sys.stderr = stdout, stderr
+            runner = unittest.TextTestRunner(
+                resultclass=TestResult,
+                stream=devnull,
+            )
+            result = runner.run(suite)
 
         assert result.main_result is not None, \
                 'Could not detect MAIN_TEST ({})'.format(test_class.MAIN_TEST)
