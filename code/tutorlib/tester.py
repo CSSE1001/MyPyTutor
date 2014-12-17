@@ -77,19 +77,24 @@ class TutorialTestResult():
     INDETERMINATE = 'INDETERMINATE'  # main passes, but others fail
     STATUSES = [NOT_RUN, PASS, FAIL, ERROR, INDETERMINATE]
 
-    def __init__(self, description, status, message, output_text='',
+    def __init__(self, description, status, exception, output_text='',
                  error_text=''):
         self.description = description
 
         self.status = status
-        self._message = message
+        self._exception = exception
 
         self.output_text = output_text
         self.error_text = error_text
 
     @property
     def message(self):
-        return construct_header_message(self._message)
+        if self._exception is None:
+            message = 'Correct!'
+        else:
+            message = str(self._exception)
+
+        return construct_header_message(message)
 
     @property
     def status(self):
@@ -126,14 +131,12 @@ class TestResult(unittest.TestResult):
 
         # generate the test message
         if err is not None:
-            _, e, _ = err
-
-            message = '{}: {}'.format(type(e).__name__, e)
+            _, exception, _ = err
         else:
-            message = 'Correct'
+            exception = None
 
         # build and save our result class
-        result = TutorialTestResult(description, status, message,
+        result = TutorialTestResult(description, status, exception,
                                     output_text, error_text)
         self.results.append(result)
 
