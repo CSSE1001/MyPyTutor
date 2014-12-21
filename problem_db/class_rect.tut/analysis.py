@@ -25,8 +25,9 @@ class CodeVisitor(TutorialNodeVisitor):
             # in Python 3, you can't unpack tuples in arguments (PEP 3113)
             # the number of involved identifiers will therefore always be equal
             # to the argument count
-            arg_names = TutorialNodeVisitor.involved_identifiers(node.args)
-            self.method_args[function_name] = arg_names
+            self.method_args[function_name] = list(map(
+                TutorialNodeVisitor.identifier, node.args.args
+            ))
 
 
 class RectAnalyser(CodeAnalyser):
