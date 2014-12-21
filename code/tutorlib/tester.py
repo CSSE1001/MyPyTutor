@@ -77,15 +77,24 @@ class TutorialTestResult():
     INDETERMINATE = 'INDETERMINATE'  # main passes, but others fail
     STATUSES = [NOT_RUN, PASS, FAIL, ERROR, INDETERMINATE]
 
-    def __init__(self, description, status, message, output_text='',
+    def __init__(self, description, status, exception, output_text='',
                  error_text=''):
         self.description = description
 
         self.status = status
-        self.message = message
+        self._exception = exception
 
         self.output_text = output_text
         self.error_text = error_text
+
+    @property
+    def message(self):
+        if self._exception is None:
+            message = 'Correct!'
+        else:
+            message = str(self._exception)
+
+        return construct_header_message(message)
 
     @property
     def status(self):
@@ -122,16 +131,12 @@ class TestResult(unittest.TestResult):
 
         # generate the test message
         if err is not None:
-            _, e, _ = err
-
-            inner_message = '{}: {}'.format(type(e).__name__, e)
+            _, exception, _ = err
         else:
-            inner_message = 'Correct'
-
-        message = construct_header_message(inner_message)
+            exception = None
 
         # build and save our result class
-        result = TutorialTestResult(description, status, message,
+        result = TutorialTestResult(description, status, exception,
                                     output_text, error_text)
         self.results.append(result)
 
@@ -240,16 +245,12 @@ class TutorialTester():
         suite = unittest.TestSuite(tests)
 
         # run the tests, but silently
-        runner = unittest.TextTestRunner(resultclass=TestResult)
-
         with open(os.devnull, 'w') as devnull:
-            stdout, stderr = sys.stdout, sys.stderr
-            sys.stdout, sys.stderr = devnull, devnull  # TODO: this isn't working
-
-            try:
-                result = runner.run(suite)
-            finally:
-                sys.stdout, sys.stderr = stdout, stderr
+            runner = unittest.TextTestRunner(
+                resultclass=TestResult,
+                stream=devnull,
+            )
+            result = runner.run(suite)
 
         assert result.main_result is not None, \
                 'Could not detect MAIN_TEST ({})'.format(test_class.MAIN_TEST)
@@ -278,6 +279,10 @@ class TutorialTester():
         self._results[test_class] = overall_result
 
 
+# TODO: this stuff doesn't really belong here, but while it should definitely
+# TODO: be refactored, I don't want to attempt that until I have time to sit
+# TODO: down and refactor *the entire* MPT codebase (if, you know, that time
+# TODO: ever comes)
 def indent(text, spaces=4):
     return '\n'.join(' '*spaces + line for line in text.splitlines())
 
