@@ -41,7 +41,7 @@ class CodeVisitor(TutorialNodeVisitor):
         if self.in_def:
             self.has_for = True
 
-            self.iteration_variable = TutorialNodeVisitor.identifer(node.iter)
+            self.iteration_variable = TutorialNodeVisitor.identifier(node.iter)
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
