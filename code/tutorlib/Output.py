@@ -151,6 +151,9 @@ class Output(Frame):
             self.text.insert(END, text)
         self.text.config(state=DISABLED)
 
+    def add_line(self, text, style=None):
+        self.add_text(text + '\n', style=style)
+
     def set_font(self, font):
         self.text.config(font=font)
 
@@ -167,7 +170,7 @@ class AnalysisOutput(Output):
 
         # show the first error, and each warning
         for warning in analyser.warnings:
-            self.add_text(warning, Output.COLOR_WARNING)
+            self.add_line(warning, Output.COLOR_WARNING)
 
         if analyser.errors:
-            self.add_text(analyser.errors[0], Output.COLOR_ERROR)
+            self.add_line(analyser.errors[0], Output.COLOR_ERROR)
