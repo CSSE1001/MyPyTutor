@@ -1,6 +1,7 @@
 import ast
 from collections import defaultdict
 from collections.abc import Sequence
+import inspect
 from operator import attrgetter
 
 
@@ -50,7 +51,23 @@ class NonePaddedList(Sequence):
         return len(self._data)
 
 
-class TutorialNodeVisitor(ast.NodeVisitor):
+class DefinesAllPossibleVisits(type):
+    def __new__(mcs, clsname, bases, dct):
+        is_node_class = lambda obj: inspect.isclass(obj) \
+                and issubclass(obj, ast.AST) and obj is not ast.AST
+
+        node_classes = inspect.getmembers(ast, is_node_class)
+
+        for name, node in node_classes:
+            method_name = 'visit_{}'.format(name)
+
+            if method_name not in dct:
+                dct[method_name] = ast.NodeVisitor.generic_visit
+
+        return super().__new__(mcs, clsname, bases, dct)
+
+
+class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
         self.args = defaultdict(NonePaddedList)  # function_name : args
 
