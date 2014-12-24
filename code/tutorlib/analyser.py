@@ -1,4 +1,6 @@
 import ast
+from collections import defaultdict
+from collections.abc import Sequence
 from operator import attrgetter
 
 
@@ -33,7 +35,32 @@ class CodeAnalyser():
         return None
 
 
+class NonePaddedList(Sequence):
+    def __init__(self, iterable=None):
+        if iterable is None:
+            iterable = []
+        self._data = list(iterable)
+
+    def __getitem__(self, item):
+        if item < len(self):
+            return self._data[item]
+        return None
+
+    def __len__(self):
+        return len(self._data)
+
+
 class TutorialNodeVisitor(ast.NodeVisitor):
+    def __init__(self):
+        self.args = defaultdict(NonePaddedList)  # function_name : args
+
+    def visit_FunctionDef(self, node):
+        function_name = TutorialNodeVisitor.identifier(node)
+        arg_ids = list(map(TutorialNodeVisitor.identifier, node.args.args))
+
+        # overwrite on repeated definition
+        self.args[function_name] = NonePaddedList(arg_ids)
+
     @staticmethod
     def visit_recursively(fn):
         # see http://stackoverflow.com/a/14661325/1103045

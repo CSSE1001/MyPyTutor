@@ -1,7 +1,8 @@
 class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
+        super().__init__()
+
         self._in_has_gt = False
-        self.args = None
 
         self.has_for = False
         self.iterates_over_arg = False
@@ -10,11 +11,10 @@ class CodeVisitor(TutorialNodeVisitor):
 
     @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
+        super().visit_FunctionDef(node)
+
         if TutorialNodeVisitor.identifier(node) == 'has_gt':
             self._in_has_gt = True
-            self.args = list(map(
-                TutorialNodeVisitor.identifier, node.args.args
-            ))
 
     @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
@@ -23,8 +23,8 @@ class CodeVisitor(TutorialNodeVisitor):
 
             iteration_id = TutorialNodeVisitor.identifier(node.iter)
 
-            if self.args is not None and len(self.args) > 0 \
-                    and iteration_id == self.args[0]:
+            args = self.args['has_gt']
+            if args[0] is not None and iteration_id == args[0]:
                 self.iterates_over_arg = True
 
     @TutorialNodeVisitor.visit_recursively
@@ -37,9 +37,9 @@ class Analyser(CodeAnalyser):
         astree = ast.parse(text)
         self.visitor.visit(astree)
 
-        if self.visitor.args is None:
+        if self.visitor.args['has_gt'] is None:
             self.add_error('There is no definition of has_gt')
-        elif len(self.visitor.args) != 2:
+        elif len(self.visitor.args['has_gt']) != 2:
             self.add_error('has_gt should accept exactly two arguments')
         elif not self.visitor.iterates_over_arg:
             self.add_warning('Your for loop should iterate over {}'.format(
