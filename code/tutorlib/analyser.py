@@ -66,14 +66,16 @@ class DefinesAllPossibleVisits(type):
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
                 and issubclass(obj, ast.AST) and obj is not ast.AST
-
         node_classes = inspect.getmembers(ast, is_node_class)
+
         generic_visit = dct.get('generic_visit', ast.NodeVisitor.generic_visit)
+        base_has_method = lambda method_name: \
+            any(getattr(base, method_name, None) is not None for base in bases)
 
         for name, node in node_classes:
             method_name = 'visit_{}'.format(name)
 
-            if method_name not in dct:
+            if method_name not in dct and not base_has_method(method_name):
                 dct[method_name] = generic_visit
 
         return super().__new__(mcs, clsname, bases, dct)
