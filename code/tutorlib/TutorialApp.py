@@ -43,7 +43,7 @@ import tutorlib.passworddialogs as tut_password_dialogs
 import tutorlib.textdialog as tut_textdialog
 
 # Version number of MyPyTutor
-version_number = "2.03"
+version_number = "3.00"
 
 # This application is intended to be run on the students machine.
 # Consequently, attempts have been made to hide how the program works.

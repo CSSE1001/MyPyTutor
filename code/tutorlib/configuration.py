@@ -26,8 +26,8 @@ def load_config():
     try:
         with open(CONFIG_FILE, 'rU') as f:
             parser.read_file(f)
-    except (IOError, configparser.ParsingError):
-        raise
+    except (IOError, FileNotFoundError, configparser.ParsingError):
+        # ignore parsing errors - we will just revert to defaults
         pass
 
     # transform this to a more useful format
