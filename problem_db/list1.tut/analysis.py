@@ -18,6 +18,8 @@ class CodeVisitor(TutorialNodeVisitor):
 
     @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
+        super().visit_For(node)
+
         if self._in_has_gt:
             self.has_for = True
 
@@ -29,6 +31,8 @@ class CodeVisitor(TutorialNodeVisitor):
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Return(self, node):
+        super().visit_Return(node)
+
         self.return_count += 1
 
 
