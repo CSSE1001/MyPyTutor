@@ -57,12 +57,13 @@ class DefinesAllPossibleVisits(type):
                 and issubclass(obj, ast.AST) and obj is not ast.AST
 
         node_classes = inspect.getmembers(ast, is_node_class)
+        generic_visit = dct.get('generic_visit', ast.NodeVisitor.generic_visit)
 
         for name, node in node_classes:
             method_name = 'visit_{}'.format(name)
 
             if method_name not in dct:
-                dct[method_name] = ast.NodeVisitor.generic_visit
+                dct[method_name] = generic_visit
 
         return super().__new__(mcs, clsname, bases, dct)
 
