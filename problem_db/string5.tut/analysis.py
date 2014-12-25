@@ -1,7 +1,8 @@
 class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
+        super().__init__()
+
         self.defined_get_digits = False
-        self.args = None
         self._in_get_digits = False
 
         self.has_for_loop = False
@@ -13,27 +14,31 @@ class CodeVisitor(TutorialNodeVisitor):
 
     @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
+        super().visit_FunctionDef(node)
+
         if TutorialNodeVisitor.identifier(node) == 'get_digits':
             self.defined_get_digits = True
             self._in_get_digits = True
-            self.args = list(map(
-                TutorialNodeVisitor.identifier, node.args.args
-            ))
 
     @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
+        super().visit_For(node)
+
         if not self._in_get_digits:
             return
 
         self.has_for_loop = True
         self.for_target_id = TutorialNodeVisitor.identifier(node.target)
 
-        if self.args is not None and len(self.args) == 1:
+        arg = self.args['get_digits'][0]
+        if arg is not None:
             iterable_id = TutorialNodeVisitor.identifier(node.iter)
-            self.iterates_over_arg = iterable_id == self.args[0]
+            self.iterates_over_arg = iterable_id == arg
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
+        super().visit_Call(node)
+
         if not self._in_get_digits:
             return
 
@@ -55,17 +60,16 @@ class Analyser(CodeAnalyser):
 
         if not self.visitor.defined_get_digits:
             self.add_error('You need to define the function get_digits')
-        elif len(self.visitor.args) != 1:
+        elif len(self.visitor.args['get_digits']) != 1:
             self.add_error('get_digits should accept exactly one argument')
 
         if not self.visitor.has_for_loop:
             self.add_warning('You should use a for loop in get_digits')
         elif not self.visitor.iterates_over_arg \
-                and self.visitor.args is not None \
-                and len(self.visitor.args) > 0:
+                and self.visitor.args['get_digits'][0] is not None:
             self.add_warning(
                 'Your for loop should iterate over {}'.format(
-                    self.visitor.args[0]
+                    self.visitor.args['get_digits'][0]
                 )
             )
 

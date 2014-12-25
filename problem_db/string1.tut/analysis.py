@@ -1,10 +1,14 @@
 class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
+        super().__init__()
+
         self.input_count = 0
         self.print_count = 0
 
     @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
+        super().visit_Call(node)
+
         func_name = TutorialNodeVisitor.identifier(node.func)
 
         if func_name == 'input':

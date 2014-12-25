@@ -1,18 +1,14 @@
 class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
-        self.args = None
+        super().__init__()
+
         self.subscripts_with_value = False
 
     @TutorialNodeVisitor.visit_recursively
-    def visit_FunctionDef(self, node):
-        if TutorialNodeVisitor.identifier(node) == 'get_value':
-            self.args = list(map(
-                TutorialNodeVisitor.identifier, node.args.args
-            ))
-
-    @TutorialNodeVisitor.visit_recursively
     def visit_Subscript(self, node):
-        if self.args is not None and len(self.args) == 2:
+        super().visit_Subscript(node)
+
+        if len(self.args['get_value']) == 2:
             d, k = self.args
 
             if k in TutorialNodeVisitor.involved_identifiers(node.slice) \
@@ -25,9 +21,9 @@ class DictAnalyser(CodeAnalyser):
         astree = ast.parse(text)
         self.visitor.visit(astree)
 
-        if self.visitor.args is None:
+        if self.visitor.args['get_value'] is None:
             self.add_error('You need to define a get_value function')
-        elif len(self.visitor.args) != 2:
+        elif len(self.visitor.args['get_value']) != 2:
             self.add_error('get_value must accept exactly two args')
 
         if not self.visitor.subscripts_with_value:

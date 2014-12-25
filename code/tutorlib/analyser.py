@@ -87,6 +87,8 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
     def visit_FunctionDef(self, node):
         function_name = TutorialNodeVisitor.identifier(node)
+
+        # NB: this ignores varargs, kwargs etc
         arg_ids = list(map(TutorialNodeVisitor.identifier, node.args.args))
 
         # overwrite on repeated definition
