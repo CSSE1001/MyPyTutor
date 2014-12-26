@@ -95,6 +95,69 @@ class ListGeneratingNodeVisitor(ast.NodeVisitor):
         self.events.append((ListGeneratingNodeVisitor.LEAVE, node))
 
 
+class NodeScopeManager():
+    CLASS = 'CLASS'
+    FUNCTION = 'FUNCTION'
+    TYPES = [CLASS, FUNCTION]
+
+    def __init__(self):
+        self._scopes = []  # (type, name), eg, (FUNCTION, do_stuff)
+
+    @property
+    def current_scope_name(self):
+        return '.'.join(name for tpe, name in self._scopes)
+
+    def append(self, name, tpe):
+        assert tpe in self.TYPES, 'Unknown type: {}'.format(tpe)
+        self._scopes.append((tpe, name))
+
+    def pop(self, tpe):
+        pop_tpe, name = self._scopes.pop()
+
+        assert tpe == pop_tpe, \
+            'Popped {} of type {}, but expected type {}'.format(
+                name, pop_tpe, tpe
+            )
+
+        # note that popping gives back the unqualified name (as that is what
+        # was appended in the first place)
+        return name
+
+    def peek(self, tpe):
+        if not self._scopes:
+            return None
+
+        # we could get the type wrong here as well
+        # however, in the context of a peek, this isn't necessarily an error,
+        # because it just means that we're *not* in a function/class/etc
+        peek_tpe, name = self._scopes[-1]
+
+        if tpe != peek_tpe:
+            return None
+
+        # give back the *fully qualified name*
+        # clients needs to be aware of this, but it's more flexible
+        return self.current_scope_name
+
+    def append_class(self, name):
+        self.append(name, NodeScopeManager.CLASS)
+
+    def pop_class(self):
+        return self.pop(NodeScopeManager.CLASS)
+
+    def peek_class(self):
+        return self.peek(NodeScopeManager.CLASS)
+
+    def append_function(self, name):
+        self.append(name, NodeScopeManager.FUNCTION)
+
+    def pop_function(self):
+        return self.pop(NodeScopeManager.FUNCTION)
+
+    def peek_function(self):
+        return self.peek(NodeScopeManager.FUNCTION)
+
+
 class DefinesAllPossibleVisits(type):
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
@@ -119,14 +182,17 @@ class DefinesAllPossibleVisits(type):
 class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
         self.args = defaultdict(NonePaddedList)  # function_name : args
+        self.classes = defaultdict(NonePaddedList)  # class_name : bases
 
-        self._function_stack = []
+        self._scopes = NodeScopeManager()
 
     @property
     def _current_function(self):
-        if not self._function_stack:
-            return None
-        return self._function_stack[-1]
+        return self._scopes.peek_function()
+
+    @property
+    def _current_class(self):
+        return self._scopes.peek_class()
 
     def generic_visit(self, node):
         # disable the default logic in generic_visit (which is to recursively
@@ -160,24 +226,54 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def visit_FunctionDef(self, node):
         function_name = TutorialNodeVisitor.identifier(node)
 
+        # add this to our scopes
+        self._scopes.append_function(function_name)
+
+        # use the fully qualified function name from now on
+        # if we're in a class, this will be, eg, ClassName.function_name
+        function_name = self._scopes.current_scope_name
+
         # NB: this ignores varargs, kwargs etc
         # NB: we overwrite on repeated definition
         arg_ids = list(map(TutorialNodeVisitor.identifier, node.args.args))
         self.args[function_name] = NonePaddedList(arg_ids)
 
-        # note entry to function
-        self._function_stack.append(function_name)
-
     def leave_FunctionDef(self, node):
         function_name = TutorialNodeVisitor.identifier(node)
 
-        assert self._current_function == function_name, \
-                'Leaving {}, but current function is {}'.format(
-                    function_name, self._current_function
+        # remove this from our scopes
+        popped_function_name = self._scopes.pop_function()
+
+        assert popped_function_name == function_name, \
+                'Leaving {}, but popped function was {}'.format(
+                    function_name, popped_function_name
                 )
 
-        # note exit from function
-        self._function_stack.pop()
+    def visit_ClassDef(self, node):
+        class_name = TutorialNodeVisitor.identifier(node)
+
+        # add this to our scopes
+        self._scopes.append_class(class_name)
+
+        # use teh fully qualified class name from now on
+        # this will only be relevant for nested classes
+        class_name = self._scopes.current_scope_name
+
+        # grab bases (superclasses)
+        # again, overwrite on repeated definition
+        base_ids = list(map(TutorialNodeVisitor.identifier, node.bases))
+        self.classes[class_name] = NonePaddedList(base_ids)
+
+    def leave_ClassDef(self, node):
+        class_name = TutorialNodeVisitor.identifier(node)
+
+        # remove this from our scopes
+        popped_class_name = self._scopes.pop_class()
+
+        assert popped_class_name == class_name, \
+                'Leaving {}, but popped class was {}'.format(
+                    class_name, popped_class_name
+                )
 
     @staticmethod
     def identifier(node, suppress_exceptions=False):
