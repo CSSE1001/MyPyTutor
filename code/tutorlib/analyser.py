@@ -184,6 +184,18 @@ class ClassDefinition():
         # TODO: any other info from ClassDef which is relevant
 
 
+class Call():
+    def __init__(self, node):
+        self.function_name = TutorialNodeVisitor.identifier(node.func)
+
+        # TODO: .keywords, .starargs, .kwargs
+        args = list(map(TutorialNodeVisitor.identifier_or_value, node.args))
+        self.args = args
+
+    def __repr__(self):
+        return 'Call: {}({!r})'.format(self.function_name, self.args)
+
+
 class DefinesAllPossibleVisits(type):
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
@@ -209,6 +221,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
         self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(ClassDefinition)
+        self.calls = defaultdict(list)  # str name : [Call]
 
         self._scopes = NodeScopeManager()
 
@@ -296,6 +309,13 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
                 'Leaving {}, but popped class was {}'.format(
                     class_name, popped_class_name
                 )
+
+    def visit_Call(self, node):
+        function_name = TutorialNodeVisitor.identifier(node.func)
+        # TODO: possibly track
+
+        call = Call(node)
+        self.calls[function_name].append(call)
 
     @staticmethod
     def identifier(node, suppress_exceptions=False):
@@ -475,3 +495,55 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
                     identifiers.extend(child_ids)
 
         return identifiers
+
+    @staticmethod
+    def value(node, suppress_exceptions=False):
+        # note that this is not an extensive set of mappings
+        # full mappings have not been provided because trying to parse
+        # arbitrarily complicated expressions leads to madness (eg, functions
+        # within functions)
+        # nodes which cannot be parsed will be replaced with None
+        def build_sequence(tpe):
+            return lambda node: tpe(map(TutorialNodeVisitor.value, node.elts))
+
+        def build_dict(node):
+            keys = map(TutorialNodeVisitor.value, node.keys)
+            values = map(TutorialNodeVisitor.value, node.values)
+            return dict(zip(keys, values))
+
+        mappings = {
+            ast.Num: attrgetter('n'),
+            ast.Str: attrgetter('s'),
+            ast.Bytes: attrgetter('s'),
+            ast.NameConstant: attrgetter('value'),  # None, False, True
+
+            ast.Set: build_sequence(set),
+            ast.List: build_sequence(list),
+            ast.Tuple: build_sequence(tuple),
+
+            ast.Dict: build_dict,
+        }
+
+        if type(node) in mappings:
+            return mappings[type(node)](node)
+
+        if suppress_exceptions:
+            return None
+
+        raise StaticAnalysisError(
+            'No known value exists for node {}'.format(node)
+        )
+
+    @staticmethod
+    def identifier_or_value(node):
+        identifier = TutorialNodeVisitor.identifier(
+            node, suppress_exceptions=True
+        )
+        if identifier is not None:
+            return identifier
+
+        value = TutorialNodeVisitor.value(node, suppress_exceptions=True)
+        if value is not None:
+            return value
+
+        return None  # just default to returning None

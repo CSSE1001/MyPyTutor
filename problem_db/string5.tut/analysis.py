@@ -6,7 +6,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.for_target_id = None
         self.iterates_over_arg = False
 
-        self.uses_isdigit = False
         self.checks_correct_var = False
 
     def visit_For(self, node):
@@ -32,8 +31,6 @@ class CodeVisitor(TutorialNodeVisitor):
         function_name = TutorialNodeVisitor.identifier(node.func)
 
         if function_name == 'isdigit':
-            self.uses_isdigit = True
-
             identifiers = TutorialNodeVisitor.involved_identifiers(node)
 
             if self.for_target_id in identifiers:
@@ -57,7 +54,7 @@ class Analyser(CodeAnalyser):
                 )
             )
 
-        if not self.visitor.uses_isdigit:
+        if not self.visitor.calls['isdigit']:
             self.add_error('You should use str.isdigit')
         elif not self.visitor.checks_correct_var:
             self.add_warning(
