@@ -1,7 +1,7 @@
 import ast
 from collections import defaultdict
 from collections.abc import Sequence
-from functools import wraps
+from functools import partial
 import inspect
 from operator import attrgetter
 
@@ -503,12 +503,16 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         # arbitrarily complicated expressions leads to madness (eg, functions
         # within functions)
         # nodes which cannot be parsed will be replaced with None
+        node_value = partial(
+            TutorialNodeVisitor.value, suppress_exceptions=suppress_exceptions
+        )
+
         def build_sequence(tpe):
-            return lambda node: tpe(map(TutorialNodeVisitor.value, node.elts))
+            return lambda node: tpe(map(node_value, node.elts))
 
         def build_dict(node):
-            keys = map(TutorialNodeVisitor.value, node.keys)
-            values = map(TutorialNodeVisitor.value, node.values)
+            keys = map(node_value, node.keys)
+            values = map(node_value, node.values)
             return dict(zip(keys, values))
 
         mappings = {
