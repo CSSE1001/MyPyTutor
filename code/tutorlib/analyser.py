@@ -158,6 +158,19 @@ class NodeScopeManager():
         return self.peek(NodeScopeManager.FUNCTION)
 
 
+class FunctionDefinition():
+    def __init__(self, node=None):
+        if node is None:
+            self.is_defined = False
+            return
+        self.is_defined = True
+
+        arg_ids = list(map(TutorialNodeVisitor.identifier, node.args.args))
+        self.args = NonePaddedList(arg_ids)
+
+        # TODO: kwargs, varargs etc
+
+
 class DefinesAllPossibleVisits(type):
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
@@ -181,7 +194,7 @@ class DefinesAllPossibleVisits(type):
 
 class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
-        self.args = defaultdict(NonePaddedList)  # function_name : args
+        self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(NonePaddedList)  # class_name : bases
 
         self._scopes = NodeScopeManager()
@@ -235,8 +248,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
         # NB: this ignores varargs, kwargs etc
         # NB: we overwrite on repeated definition
-        arg_ids = list(map(TutorialNodeVisitor.identifier, node.args.args))
-        self.args[function_name] = NonePaddedList(arg_ids)
+        self.functions[function_name] = FunctionDefinition(node)
 
     def leave_FunctionDef(self, node):
         function_name = TutorialNodeVisitor.identifier(node)

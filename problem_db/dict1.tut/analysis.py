@@ -7,8 +7,8 @@ class CodeVisitor(TutorialNodeVisitor):
     def visit_Subscript(self, node):
         super().visit_Subscript(node)
 
-        if len(self.args['get_value']) == 2:
-            d, k = self.args['get_value']
+        if len(self.functions['get_value'].args) == 2:
+            d, k = self.functions['get_value'].args
 
             if k in TutorialNodeVisitor.involved_identifiers(node.slice) \
                     and d == TutorialNodeVisitor.identifier(node.value):
@@ -17,9 +17,9 @@ class CodeVisitor(TutorialNodeVisitor):
 
 class DictAnalyser(CodeAnalyser):
     def _analyse(self):
-        if self.visitor.args['get_value'] is None:
+        if not self.visitor.functions['get_value'].is_defined:
             self.add_error('You need to define a get_value function')
-        elif len(self.visitor.args['get_value']) != 2:
+        elif len(self.visitor.functions['get_value'].args) != 2:
             self.add_error('get_value must accept exactly two args')
 
         if not self.visitor.subscripts_with_value:

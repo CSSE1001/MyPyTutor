@@ -1,45 +1,36 @@
 class CodeVisitor(TutorialNodeVisitor):
-    def __init__(self):
-        super().__init__()
-
-        self.defined_class = False
-
-    def visit_ClassDef(self, node):
-        super().visit_ClassDef(node)
-
-        if TutorialNodeVisitor.identifier(node) == 'Rectangle':
-            self.defined_class = True
+    pass  # no special logic needed
 
 
 class RectAnalyser(CodeAnalyser):
     def _analyse(self):
-        if not self.visitor.defined_class:
+        if 'Rectangle' not in self.visitor.classes:
             self.add_error('You need to define the Rectangle class')
 
         num_expected_args = {
-            '__init__': 4,
-            'get_bottom_right': 1,
-            'move': 2,
-            'resize': 3,
-            '__str__': 1,
+            'Rectangle.__init__': 4,
+            'Rectangle.get_bottom_right': 1,
+            'Rectangle.move': 2,
+            'Rectangle.resize': 3,
+            'Rectangle.__str__': 1,
         }
 
         for method_name, argc in num_expected_args.items():
-            args = self.visitor.args[method_name]
+            function = self.visitor.functions[method_name]
 
-            if args is None:
+            if not function.is_defined:
                 self.add_error(
                     'You need to define a {} method'.format(method_name)
                 )
-            elif 'self' not in args:
+            elif 'self' not in function.args:
                 self.add_warning(
                     'The first argument to a method should be \'self\''
                 )
-            elif len(args) != argc:
+            elif len(function.args) != argc:
                 self.add_error(
-                    'You defined {} to accept {} arguments, but it should ' \
+                    'You defined {} to accept {} arguments, but it should '
                     'accept {} (including self)'.format(
-                        method_name, len(args), num_expected_args[method_name]
+                        method_name, len(function.args), argc
                     )
                 )
 
