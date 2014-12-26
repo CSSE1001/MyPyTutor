@@ -72,8 +72,9 @@ class List2Analyser(CodeAnalyser):
         if not self.visitor.appends_in_loop:
             self.add_error("You need to append inside the for loop.")
 
-        if self.visitor.functions['all_gt'].args[0] \
-                != self.visitor.iteration_variable:
+        if self.visitor.functions['all_gt'].is_defined \
+                and (self.visitor.functions['all_gt'].args[0] \
+                     != self.visitor.iteration_variable):
             self.add_warning(
                 'Your for loop should iterate over {}'.format(
                     self.visitor.functions['all_gt'].args[0]

@@ -81,8 +81,9 @@ class Analyser(CodeAnalyser):
                 'arguments to append'
             )
 
-        if self.visitor.functions['add_sizes'].args[0] \
-                != self.visitor.iteration_variable:
+        if self.visitor.functions['add_sizes'].is_defined \
+                and (self.visitor.functions['add_sizes'].args[0] \
+                     != self.visitor.iteration_variable):
             self.add_warning(
                 'Your for loop should iterate over {}'.format(
                     self.visitor.functions['add_sizes'].args[0]
