@@ -3,6 +3,7 @@ class CodeVisitor(TutorialNodeVisitor):
         super().__init__()
 
         self.initialises_variable = False
+        self.initialises_to_empty_list = False
 
         self.has_for = False
         self.iteration_variable = None
@@ -19,8 +20,9 @@ class CodeVisitor(TutorialNodeVisitor):
         if self._current_function == 'add_sizes' and not self.has_for:
             self.initialises_variable = True
 
-            # TODO: check value using node.value.elts
-            # TODO: not done atm, as checking for _ast.List is hacky
+            value = TutorialNodeVisitor.value(node.value)
+            if isinstance(value, list) and not value:  # value == []
+                self.initialises_to_empty_list = True
 
     def visit_For(self, node):
         super().visit_For(node)
@@ -62,6 +64,10 @@ class Analyser(CodeAnalyser):
 
         if not self.visitor.initialises_variable:
             self.add_error("You did't initialize before the for loop.")
+        elif not self.visitor.initialises_to_empty_list:
+            self.add_warning(
+                'You probably want to initialise to an empty list'
+            )
 
         if self.visitor.appends_outside_loop:
             self.add_error(
