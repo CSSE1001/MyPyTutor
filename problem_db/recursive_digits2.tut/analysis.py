@@ -7,21 +7,18 @@ class CodeVisitor(TutorialNodeVisitor):
 
         self.checks_arg1_in_base_case = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
         super().visit_FunctionDef(node)
 
         if TutorialNodeVisitor.identifier(node) == 'dec2base':
             self.has_dec2base = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         super().visit_Call(node)
 
         if TutorialNodeVisitor.identifier(node.func) == 'dec2base':
             self.has_recursive_call = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_If(self, node):
         super().visit_If(node)
 
@@ -32,10 +29,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class RecursiveDigits2Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.has_dec2base:
             self.add_error('dec2base is not defined')
         if not self.visitor.has_recursive_call:

@@ -6,7 +6,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.seen_inc = []
         self.seen_double = []
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         super().visit_Call(node)
 
@@ -20,10 +19,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class Fun1Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.seen_double:
             self.add_error("You need to use the double function in your single assignment statement")
         if not self.visitor.seen_inc:

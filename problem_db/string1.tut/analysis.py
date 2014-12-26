@@ -5,7 +5,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.input_count = 0
         self.print_count = 0
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         super().visit_Call(node)
 
@@ -18,10 +17,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class String1Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.input_count:
             self.add_error('You need to prompt for a string using input()')
         elif self.visitor.input_count > 1:

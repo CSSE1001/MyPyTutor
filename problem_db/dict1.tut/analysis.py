@@ -4,12 +4,11 @@ class CodeVisitor(TutorialNodeVisitor):
 
         self.subscripts_with_value = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Subscript(self, node):
         super().visit_Subscript(node)
 
         if len(self.args['get_value']) == 2:
-            d, k = self.args
+            d, k = self.args['get_value']
 
             if k in TutorialNodeVisitor.involved_identifiers(node.slice) \
                     and d == TutorialNodeVisitor.identifier(node.value):
@@ -17,10 +16,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class DictAnalyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if self.visitor.args['get_value'] is None:
             self.add_error('You need to define a get_value function')
         elif len(self.visitor.args['get_value']) != 2:

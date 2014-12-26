@@ -9,14 +9,12 @@ class CodeVisitor(TutorialNodeVisitor):
 
         self.return_count = 0
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
         super().visit_FunctionDef(node)
 
         if TutorialNodeVisitor.identifier(node) == 'has_gt':
             self._in_has_gt = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
         super().visit_For(node)
 
@@ -29,7 +27,6 @@ class CodeVisitor(TutorialNodeVisitor):
             if args[0] is not None and iteration_id == args[0]:
                 self.iterates_over_arg = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Return(self, node):
         super().visit_Return(node)
 
@@ -37,10 +34,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if self.visitor.args['has_gt'] is None:
             self.add_error('There is no definition of has_gt')
         elif len(self.visitor.args['has_gt']) != 2:

@@ -26,13 +26,11 @@ class CodeVisitor(TutorialNodeVisitor):
         self.mf_sets_friend_one = False
         self.mf_sets_friend_two = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
         super().visit_FunctionDef(node)
 
         self._current_function = TutorialNodeVisitor.identifier(node)
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         super().visit_Call(node)
 
@@ -84,7 +82,6 @@ class CodeVisitor(TutorialNodeVisitor):
             elif function_name == 'set_friend' and friend_two_id in arg_ids:
                 self.mf_sets_friend_two = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Assign(self, node):
         super().visit_Assign(node)
 
@@ -116,12 +113,11 @@ class CodeVisitor(TutorialNodeVisitor):
             if self._pfo_other_id in value_ids and 'get_name' in value_ids:
                 self._pfo_other_name_id = target_identifier
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_If(self, node):
         super().visit_If(node)
 
         if self._current_function == 'print_friend_info' \
-                and self.args['print_friend_info']:
+                and self.args['print_friend_info'][0] is not None:
             self.pfo_has_branch = True
 
             test_ids = TutorialNodeVisitor.involved_identifiers(node)
@@ -134,10 +130,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class PersonAnalyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         num_expected_args = {
             'print_friend_info': 1,
             'create_fry': 0,

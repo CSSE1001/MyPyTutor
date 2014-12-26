@@ -12,7 +12,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.uses_isdigit = False
         self.checks_correct_var = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
         super().visit_FunctionDef(node)
 
@@ -20,7 +19,6 @@ class CodeVisitor(TutorialNodeVisitor):
             self.defined_get_digits = True
             self._in_get_digits = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
         super().visit_For(node)
 
@@ -35,7 +33,6 @@ class CodeVisitor(TutorialNodeVisitor):
             iterable_id = TutorialNodeVisitor.identifier(node.iter)
             self.iterates_over_arg = iterable_id == arg
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         super().visit_Call(node)
 
@@ -54,10 +51,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.defined_get_digits:
             self.add_error('You need to define the function get_digits')
         elif len(self.visitor.args['get_digits']) != 1:

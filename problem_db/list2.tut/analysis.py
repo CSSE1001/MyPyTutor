@@ -15,7 +15,6 @@ class CodeVisitor(TutorialNodeVisitor):
 
         self.has_return = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_FunctionDef(self, node):
         super().visit_FunctionDef(node)
 
@@ -25,7 +24,6 @@ class CodeVisitor(TutorialNodeVisitor):
         else:
             self.in_def = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Assign(self, node):
         super().visit_Assign(node)
 
@@ -35,7 +33,6 @@ class CodeVisitor(TutorialNodeVisitor):
             # TODO: check value using node.value.elts
             # TODO: not done atm, as checking for _ast.List is hacky
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
         super().visit_For(node)
 
@@ -44,7 +41,6 @@ class CodeVisitor(TutorialNodeVisitor):
 
             self.iteration_variable = TutorialNodeVisitor.identifier(node.iter)
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
         super().visit_Call(node)
 
@@ -54,7 +50,6 @@ class CodeVisitor(TutorialNodeVisitor):
             elif self.in_def:
                 self.appends_outside_loop = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Return(self, node):
         super().visit_Return(node)
 
@@ -62,10 +57,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class List2Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.is_defined:
             self.add_error('There is no definition of all_gt')
         if not self.visitor.has_for:

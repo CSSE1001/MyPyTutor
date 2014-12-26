@@ -4,7 +4,6 @@ class CodeVisitor(TutorialNodeVisitor):
 
         self.defined_class = False
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_ClassDef(self, node):
         super().visit_ClassDef(node)
 
@@ -13,10 +12,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class RectAnalyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.defined_class:
             self.add_error('You need to define the Rectangle class')
 

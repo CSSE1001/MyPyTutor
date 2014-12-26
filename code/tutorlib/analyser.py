@@ -1,6 +1,7 @@
 import ast
 from collections import defaultdict
 from collections.abc import Sequence
+from functools import wraps
 import inspect
 from operator import attrgetter
 
@@ -23,6 +24,20 @@ class CodeAnalyser():
         self.warnings.append(message)
 
     def analyse(self, text):
+        # build up an ordered list of nodes in the default manner
+        tree = ast.parse(text)
+
+        list_generating_visitor = ListGeneratingNodeVisitor()
+        list_generating_visitor.visit(tree)
+
+        # visit each ndoe in turn with our visitor (which will not recurse)
+        for node in list_generating_visitor.nodes:
+            self.visitor.visit(node)
+
+        # defer detailed analysis to subclasses
+        self._analyse()
+
+    def _analyse(self):
         raise NotImplementedError()
 
     def check_for_errors(self, text):
@@ -62,6 +77,15 @@ class NonePaddedList(Sequence):
             yield self[idx]
 
 
+class ListGeneratingNodeVisitor(ast.NodeVisitor):
+    def __init__(self):
+        self.nodes = []
+
+    def generic_visit(self, node):
+        self.nodes.append(node)
+        super().generic_visit(node)
+
+
 class DefinesAllPossibleVisits(type):
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
@@ -75,6 +99,8 @@ class DefinesAllPossibleVisits(type):
         for name, node in node_classes:
             method_name = 'visit_{}'.format(name)
 
+            # we want to alias generic_visit iff a specific visit_classname
+            # method is not defined on this class, or on any parent class
             if method_name not in dct and not base_has_method(method_name):
                 dct[method_name] = generic_visit
 
@@ -85,6 +111,27 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
         self.args = defaultdict(NonePaddedList)  # function_name : args
 
+    def generic_visit(self, node):
+        # disable the default logic in generic_visit (which is to recursively
+        # traverse the tree), so that we only visit one node
+        # instead, what we do is generate a list of all the nodes in the
+        # desired format (using, eg, ListGeneratingNodeVisitor), and iterate
+        # through that list, calling .visit
+        # this approach is necessary because of problems with recursively
+        # visiting nodes in both this class and subclasses
+        # if we have a recursive visit in the superclass (ie this one) only,
+        # either by using generic_visit or through the @visit_recursively
+        # decorator, then we will visit child nodes before parent nodes (as
+        # the call to super will logically occur before the overriden subclass
+        # method does any of it swork)
+        # if we call super later in the subclass method, then any logic which
+        # is performed in the superclass method is unavailable to the subclass
+        # one (which is problematic)
+        # if we recurse in both the subclass and superclass methods, then we
+        # visit nodes more than once (with exponential effects on deeply nested
+        # chid nodes)
+        pass
+
     def visit_FunctionDef(self, node):
         function_name = TutorialNodeVisitor.identifier(node)
 
@@ -93,19 +140,6 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
         # overwrite on repeated definition
         self.args[function_name] = NonePaddedList(arg_ids)
-
-    @staticmethod
-    def visit_recursively(fn):
-        # see http://stackoverflow.com/a/14661325/1103045
-        # keep on CodeAnalyser namespace to limit injections to analysis.py
-        def wrapper(self, node):
-            result = fn(self, node)
-
-            for child in ast.iter_child_nodes(node):
-                self.visit(child)
-
-            return result
-        return wrapper
 
     @staticmethod
     def identifier(node, suppress_exceptions=False):
