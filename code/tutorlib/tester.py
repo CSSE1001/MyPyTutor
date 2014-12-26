@@ -88,6 +88,14 @@ class TutorialTestResult():
         self.error_text = error_text
 
     @property
+    def exception(self):
+        return self._exception
+
+    @exception.setter
+    def exception(self, value):
+        self._exception = value
+
+    @property
     def message(self):
         if self._exception is None:
             message = 'Correct!'
@@ -270,13 +278,17 @@ class TutorialTester():
         elif result.main_result.status == TutorialTestResult.PASS:
             overall_result = result.main_result
             overall_result.status = TutorialTestResult.INDETERMINATE
-            overall_result.message = construct_header_message(
+            overall_result.exception = StudentTestError(
                 'Make sure your code also works for similar inputs'
             )
         else:
             overall_result = result.main_result
 
         self._results[test_class] = overall_result
+
+
+class StudentTestError(Exception):
+    pass
 
 
 # TODO: this stuff doesn't really belong here, but while it should definitely
