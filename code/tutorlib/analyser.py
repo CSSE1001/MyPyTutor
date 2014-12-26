@@ -30,9 +30,14 @@ class CodeAnalyser():
         list_generating_visitor = ListGeneratingNodeVisitor()
         list_generating_visitor.visit(tree)
 
-        # visit each ndoe in turn with our visitor (which will not recurse)
-        for node in list_generating_visitor.nodes:
-            self.visitor.visit(node)
+        # visit each node in turn with our visitor (which will not recurse)
+        handle_event = {
+            ListGeneratingNodeVisitor.VISIT: self.visitor.visit,
+            ListGeneratingNodeVisitor.LEAVE: self.visitor.leave,
+        }
+        for event, node in list_generating_visitor.events:
+            assert event in handle_event, 'Unknown event: {}'.format(event)
+            handle_event[event](node)
 
         # defer detailed analysis to subclasses
         self._analyse()
@@ -78,12 +83,16 @@ class NonePaddedList(Sequence):
 
 
 class ListGeneratingNodeVisitor(ast.NodeVisitor):
+    VISIT = 'VISIT'
+    LEAVE = 'LEAVE'
+
     def __init__(self):
-        self.nodes = []
+        self.events = []
 
     def generic_visit(self, node):
-        self.nodes.append(node)
+        self.events.append((ListGeneratingNodeVisitor.VISIT, node))
         super().generic_visit(node)
+        self.events.append((ListGeneratingNodeVisitor.LEAVE, node))
 
 
 class DefinesAllPossibleVisits(type):
@@ -111,6 +120,14 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
         self.args = defaultdict(NonePaddedList)  # function_name : args
 
+        self._function_stack = []
+
+    @property
+    def _current_function(self):
+        if not self._function_stack:
+            return None
+        return self._function_stack[-1]
+
     def generic_visit(self, node):
         # disable the default logic in generic_visit (which is to recursively
         # traverse the tree), so that we only visit one node
@@ -132,14 +149,35 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         # chid nodes)
         pass
 
+    def leave(self, node):
+        method = 'leave_{}'.format(node.__class__.__name__)
+        visitor = getattr(self, method, self.generic_leave)
+        return visitor(node)
+
+    def generic_leave(self, node):
+        pass
+
     def visit_FunctionDef(self, node):
         function_name = TutorialNodeVisitor.identifier(node)
 
         # NB: this ignores varargs, kwargs etc
+        # NB: we overwrite on repeated definition
         arg_ids = list(map(TutorialNodeVisitor.identifier, node.args.args))
-
-        # overwrite on repeated definition
         self.args[function_name] = NonePaddedList(arg_ids)
+
+        # note entry to function
+        self._function_stack.append(function_name)
+
+    def leave_FunctionDef(self, node):
+        function_name = TutorialNodeVisitor.identifier(node)
+
+        assert self._current_function == function_name, \
+                'Leaving {}, but current function is {}'.format(
+                    function_name, self._current_function
+                )
+
+        # note exit from function
+        self._function_stack.pop()
 
     @staticmethod
     def identifier(node, suppress_exceptions=False):
