@@ -4,7 +4,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 class RectAnalyser(CodeAnalyser):
     def _analyse(self):
-        if 'Rectangle' not in self.visitor.classes:
+        if not self.visitor.classes['Rectangle'].is_defined:
             self.add_error('You need to define the Rectangle class')
 
         num_expected_args = {

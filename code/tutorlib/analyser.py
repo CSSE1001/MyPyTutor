@@ -171,6 +171,19 @@ class FunctionDefinition():
         # TODO: kwargs, varargs etc
 
 
+class ClassDefinition():
+    def __init__(self, node=None):
+        if node is None:
+            self.is_defined = False
+            return
+        self.is_defined = True
+
+        base_ids = list(map(TutorialNodeVisitor.identifier, node.bases))
+        self.bases = base_ids
+
+        # TODO: any other info from ClassDef which is relevant
+
+
 class DefinesAllPossibleVisits(type):
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
@@ -195,7 +208,7 @@ class DefinesAllPossibleVisits(type):
 class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def __init__(self):
         self.functions = defaultdict(FunctionDefinition)
-        self.classes = defaultdict(NonePaddedList)  # class_name : bases
+        self.classes = defaultdict(ClassDefinition)
 
         self._scopes = NodeScopeManager()
 
@@ -246,7 +259,6 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         # if we're in a class, this will be, eg, ClassName.function_name
         function_name = self._scopes.current_scope_name
 
-        # NB: this ignores varargs, kwargs etc
         # NB: we overwrite on repeated definition
         self.functions[function_name] = FunctionDefinition(node)
 
@@ -271,10 +283,8 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         # this will only be relevant for nested classes
         class_name = self._scopes.current_scope_name
 
-        # grab bases (superclasses)
         # again, overwrite on repeated definition
-        base_ids = list(map(TutorialNodeVisitor.identifier, node.bases))
-        self.classes[class_name] = NonePaddedList(base_ids)
+        self.classes[class_name] = ClassDefinition(node)
 
     def leave_ClassDef(self, node):
         class_name = TutorialNodeVisitor.identifier(node)
