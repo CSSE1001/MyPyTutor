@@ -38,7 +38,7 @@ import tutorlib.TutorEditor as tut_editor
 import tutorlib.TutorialInterface as tut_interface
 from tutorlib.gui.aboutdialog import TutAboutDialog
 import tutorlib.helpdialog as tut_help
-import tutorlib.feedbackdialog as tut_feedback
+from tutorlib.gui.feedbackdialog import FeedbackDialog
 import tutorlib.passworddialogs as tut_password_dialogs
 import tutorlib.textdialog as tut_textdialog
 
@@ -573,14 +573,15 @@ class TutorialApp():
 
     def give_problem_feedback(self):
         if self.current_problem:
-            tut_feedback.FeedbackDialog(self.master,
-                                        ("Problem Feedback: " +
-                                         self.current_problem.name),
-                                        self.current_problem,
-                                        self.editor.get_text())
+            FeedbackDialog(
+                self.master,
+                "Problem Feedback: {}".format(self.current_problem.name),
+                self.current_problem,
+                self.editor.get_text()
+            )
 
     def give_general_feedback(self):
-        tut_feedback.FeedbackDialog(self.master, 'General Feedback', '')
+        FeedbackDialog(self.master, 'General Feedback', '')
 
     def configure_tut(self):
         result = (fontChooser.FontChooser(self.master, self,

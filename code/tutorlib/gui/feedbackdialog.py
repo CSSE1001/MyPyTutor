@@ -32,54 +32,79 @@ URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
 class FeedbackDialog(Toplevel):
     def __init__(self, parent, title, name, code=''):
         Toplevel.__init__(self, parent)
+        self.parent = parent
+
         self.configure(borderwidth=5)
-        self.geometry("+%d+%d" % (parent.winfo_rootx()+30,
-                                  parent.winfo_rooty()+30))
-        self.name = name
-        self.subject_var = StringVar()
-        self.subject_var.set(name)
-        self.code = code
-        self.CreateWidgets()
+        self.geometry("+%d+%d" % (parent.winfo_rootx() + 30,
+                                  parent.winfo_rooty() + 30))
         self.resizable(height=FALSE, width=FALSE)
         self.title(title)
         self.transient(parent)
+
+        self.name = name
+        self.subject_var = StringVar()
+        self.subject_var.set(name)
+
+        self.code = code
+
+        self.create_widgets()
+
         self.grab_set()
-        self.protocol("WM_DELETE_WINDOW", self.Cancel)
-        self.parent = parent
-        self.buttonOk.focus_set()
-        self.bind('<Escape>', self.Cancel)
+        self.button_ok.focus_set()
+
+        self.protocol("WM_DELETE_WINDOW", self.cancel)
+        self.bind('<Escape>', self.cancel)
+
         self.wait_window()
 
-    def CreateWidgets(self):
+    def create_widgets(self):
         if self.name == '':
             self.feedback_type = 'General'
-            generalFrame = Frame(self)
-            generalFrame.pack(fill=X)
-            Label(generalFrame, text='Subject: ').pack(side=LEFT, pady=10)
-            Entry(generalFrame,
-                  textvariable=self.subject_var, width=60).pack(side=LEFT)
+
+            frame_general = Frame(self)
+            frame_general.pack(fill=X)
+
+            Label(frame_general, text='Subject: ').pack(side=LEFT, pady=10)
+
+            Entry(
+                frame_general,
+                textvariable=self.subject_var,
+                width=60
+            ).pack(side=LEFT)
         else:
             self.feedback_type = 'Problem'
+
+        # main feedback UI
         Label(self, text='Feedback: ').pack(anchor=W)
-        frameMain = Frame(self, borderwidth=2)
-        frameMain.pack(expand=TRUE, fill=BOTH)
-        text = Text(frameMain, wrap=WORD, relief=SUNKEN)
+
+        frame_main = Frame(self, borderwidth=2)
+        frame_main.pack(expand=TRUE, fill=BOTH)
+
+        text = Text(frame_main, wrap=WORD, relief=SUNKEN)
         text.pack(side=LEFT)
-        scrollbar = Scrollbar(frameMain)
+
+        scrollbar = Scrollbar(frame_main)
         scrollbar.pack(side=RIGHT, fill=Y)
         text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=text.yview)
-        self.text = text
-        frameButtons = Frame(self)
-        frameButtons.pack()
-        self.buttonOk = Button(frameButtons, text='OK',
-                               command=self.Ok)
-        self.buttonOk.pack(side=LEFT, expand=1)
-        self.buttonCancel = Button(frameButtons, text='Cancel',
-                                   command=self.Cancel)
-        self.buttonCancel.pack(side=LEFT, expand=1)
 
-    def Ok(self, event=None):
+        self.text = text
+
+        # buttons
+        frame_buttons = Frame(self)
+        frame_buttons.pack()
+
+        self.button_ok = Button(frame_buttons, text='OK', command=self.ok)
+        self.button_ok.pack(side=LEFT, expand=1)
+
+        self.button_cancel = Button(
+            frame_buttons,
+            text='Cancel',
+            command=self.cancel
+        )
+        self.button_cancel.pack(side=LEFT, expand=1)
+
+    def ok(self, event=None):
         values = {'problem_name': self.subject_var.get(),
                   'type': self.feedback_type,
                   'code_text': self.code,
@@ -97,5 +122,5 @@ class FeedbackDialog(Toplevel):
                                          'Cannot upload feedback')
         self.destroy()
 
-    def Cancel(self, event=None):
+    def cancel(self, event=None):
         self.destroy()
