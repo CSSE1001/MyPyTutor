@@ -35,7 +35,7 @@ from tutorlib.config.configuration import load_config, save_config, add_tutorial
 from tutorlib.gui.output import AnalysisOutput, TestOutput
 import tutorlib.Tutorial as tut_tutorial
 import tutorlib.TutorEditor as tut_editor
-import tutorlib.TutorialInterface as tut_interface
+from tutorlib.interface.tutorial_interface import TutorialInterface
 from tutorlib.gui.aboutdialog import TutAboutDialog
 from tutorlib.gui.helpdialog import HelpDialog
 from tutorlib.gui.feedbackdialog import FeedbackDialog
@@ -178,8 +178,7 @@ class TutorialApp():
         )
         self.analysis_output.pack(fill=BOTH, expand=0)
 
-        self.tut_interface = \
-            tut_interface.TutorialInterface(master, self)
+        self.tut_interface = TutorialInterface()
 
         #print "done packing"
         menubar = Menu(master)

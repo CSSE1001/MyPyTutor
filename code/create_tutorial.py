@@ -25,7 +25,7 @@
 import os
 import sys
 import shutil
-import tutorlib.TutorialInterface as tut_interface
+from tutorlib.interface.tutorial import Tutorial
 import problemlib.Configuration as Configuration
 import uuid
 import time
@@ -110,8 +110,7 @@ def generate_text(tutorial_text, destination_dir, source_dir):
         # check that all tutorial files are present
         files = os.listdir(directory)
         tutorial_valid = True
-        required_files = tut_interface.Tutorial.SUBMODULES \
-                + tut_interface.Tutorial.FILES
+        required_files = Tutorial.SUBMODULES + Tutorial.FILES
 
         for file in required_files:
             if file not in files:

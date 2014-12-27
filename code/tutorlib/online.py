@@ -152,6 +152,7 @@ class FormParser(html.parser.HTMLParser):
         return (form[0]['action'], data)
 
 
+# TODO: refactor this to use tutorlib.gui.dialog.Dialog
 class LoginDialog(tk.Toplevel):
     """Tkinter dialog box for a log in form.
     """
