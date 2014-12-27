@@ -75,6 +75,11 @@ class TestsListbox(Listbox):
         idx = self.curselection()[0]
         return self.results[idx]  # assume valid
 
+    def select_result(self, result):
+        assert result in self.results
+        idx = self.results.index(result)
+        self.selection_set(idx)
+
 
 class TestOutput(Frame):
     def __init__(self, master, fontsize, textlen):
@@ -101,6 +106,18 @@ class TestOutput(Frame):
     def set_test_results(self, results):
         self.test_results.set_test_results(results)
         self.output.clear_text()
+
+        # select the result, and then refresh the listbox
+        # we ideally want to select the first which is not a success
+        # if we passed everything, select the first result
+        try:
+            result = next(result for result in results
+                          if result.status != TutorialTestResult.PASS)
+        except StopIteration:
+            result = results[0]
+
+        self.test_results.select_result(result)
+        self.selected_test_result(None)
 
     def display_result(self, result):
         self.output.clear_text()
