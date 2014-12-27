@@ -31,7 +31,7 @@ import zipfile
 from tkinter import *
 import tkinter.filedialog
 
-from tutorlib.configuration import load_config, save_config, add_tutorial
+from tutorlib.config.configuration import load_config, save_config, add_tutorial
 import tutorlib.Output as tut_output
 import tutorlib.Tutorial as tut_tutorial
 import tutorlib.TutorEditor as tut_editor

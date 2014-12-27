@@ -2,7 +2,7 @@ import configparser
 import os
 import sys
 
-from tutorlib.namespaces import Namespace
+from tutorlib.config.namespaces import Namespace
 from tutorlib.TutorConfigure import TutorialDirectoryPrompt
 
 
@@ -46,7 +46,7 @@ def load_config():
             'analysis': 5,
             'output': 5,
             'problem': 20,
-            },
+        },
     }
 
     cfg_dict = defaults
