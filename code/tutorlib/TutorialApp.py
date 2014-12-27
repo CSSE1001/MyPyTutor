@@ -39,6 +39,7 @@ import tutorlib.TutorialInterface as tut_interface
 from tutorlib.gui.aboutdialog import TutAboutDialog
 from tutorlib.gui.helpdialog import HelpDialog
 from tutorlib.gui.feedbackdialog import FeedbackDialog
+from tutorlib.gui.font_chooser import FontChooser
 from tutorlib.gui.passworddialogs import ChangePasswordDialog, LoginDialog
 from tutorlib.gui.textdialog import TextDialog
 
@@ -584,10 +585,9 @@ class TutorialApp():
         FeedbackDialog(self.master, 'General Feedback', '')
 
     def configure_tut(self):
-        result = (fontChooser.FontChooser(self.master, self,
-                                          (self.cfg.font.name,
-                                           self.cfg.font.size),
-                                          ).result)
+        result = FontChooser(
+            self.master, self, (self.cfg.font.name, self.cfg.font.size),
+        ).result
         if result:
             self.cfg.font.name = result[0]
             self.cfg.font.size = result[1]
