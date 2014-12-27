@@ -89,5 +89,5 @@ If the tutorial is configured to provide an online interface and you are registe
 
 
 class HelpDialog(TextDialog):
-    def __init__(self, parent, title):
-        TextDialog.__init__(self, parent, "Help", HELP_TEXT, bg="#ffffaa")
+    def __init__(self, parent, title='Help'):
+        TextDialog.__init__(self, parent, title, HELP_TEXT, bg="#ffffaa")

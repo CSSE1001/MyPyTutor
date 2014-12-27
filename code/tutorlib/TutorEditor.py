@@ -28,7 +28,7 @@ from idlelib import WindowList
 from . import TutorBindings as tut_bindings
 from . import TutorIOBinding as tut_iobinding
 from tutorlib.gui.aboutdialog import TutAboutDialog
-from . import helpdialog as tut_help
+from tutorlib.gui.helpdialog import HelpDialog
 import tkinter.filedialog
 import tkinter.messagebox
 #from TutorialData import *
@@ -196,4 +196,4 @@ class TutorEditor(EditorWindow.EditorWindow):
         TutAboutDialog(self.root, "About Tutor")
 
     def help(self, e):
-        tut_help.HelpDialog(self.root, "Help")
+        HelpDialog(self.root, "Help")
