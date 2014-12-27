@@ -32,7 +32,8 @@ import urllib.error
 
 from tutorlib.analysis.analyser import CodeAnalyser
 from tutorlib.analysis.visitor import TutorialNodeVisitor
-from tutorlib.tester import TutorialTester, StudentTestCase
+from tutorlib.testing.cases import StudentTestCase
+from tutorlib.testing.tester import TutorialTester
 
 # keep PEP8 happy
 # these imports are indirectly used in Tutorial, and must not be removed

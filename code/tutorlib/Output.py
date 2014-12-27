@@ -22,7 +22,7 @@
 
 from tkinter import *
 
-from tutorlib.tester import TutorialTestResult
+from tutorlib.testing.results import TutorialTestResult
 
 
 def get_code_font(fontsize):
