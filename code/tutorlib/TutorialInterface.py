@@ -30,7 +30,8 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-from tutorlib.analyser import CodeAnalyser, TutorialNodeVisitor
+from tutorlib.analysis.analyser import CodeAnalyser
+from tutorlib.analysis.visitor import TutorialNodeVisitor
 from tutorlib.tester import TutorialTester, StudentTestCase
 
 # keep PEP8 happy
