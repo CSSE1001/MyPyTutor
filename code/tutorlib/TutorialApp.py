@@ -32,7 +32,7 @@ from tkinter import *
 import tkinter.filedialog
 
 from tutorlib.config.configuration import load_config, save_config, add_tutorial
-import tutorlib.Output as tut_output
+from tutorlib.gui.output import AnalysisOutput, TestOutput
 import tutorlib.Tutorial as tut_tutorial
 import tutorlib.TutorEditor as tut_editor
 import tutorlib.TutorialInterface as tut_interface
@@ -163,7 +163,7 @@ class TutorialApp():
         self.toolbar.pack(fill=X)
 
         ## Test Output
-        self.test_output = tut_output.TestOutput(
+        self.test_output = TestOutput(
             top_frame,
             self.cfg.font.size,
             self.cfg.window_sizes.output,
@@ -171,7 +171,7 @@ class TutorialApp():
         self.test_output.pack(fill=BOTH, expand=0)
 
         ## Analysis Output
-        self.analysis_output = tut_output.AnalysisOutput(
+        self.analysis_output = AnalysisOutput(
             top_frame,
             self.cfg.font.size,
             self.cfg.window_sizes.analysis,
