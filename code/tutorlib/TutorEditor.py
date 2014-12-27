@@ -27,7 +27,7 @@ from idlelib import WindowList
 #from idlelib.configHandler import idleConf
 from . import TutorBindings as tut_bindings
 from . import TutorIOBinding as tut_iobinding
-from . import aboutdialog as tut_dialog
+from tutorlib.gui.aboutdialog import TutAboutDialog
 from . import helpdialog as tut_help
 import tkinter.filedialog
 import tkinter.messagebox
@@ -193,7 +193,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         self.parent.quit_editor()
 
     def about(self, e):
-        tut_dialog.TutAboutDialog(self.root, "About Tutor")
+        TutAboutDialog(self.root, "About Tutor")
 
     def help(self, e):
         tut_help.HelpDialog(self.root, "Help")

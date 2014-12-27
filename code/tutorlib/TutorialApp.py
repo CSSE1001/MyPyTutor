@@ -36,7 +36,7 @@ import tutorlib.Output as tut_output
 import tutorlib.Tutorial as tut_tutorial
 import tutorlib.TutorEditor as tut_editor
 import tutorlib.TutorialInterface as tut_interface
-import tutorlib.aboutdialog as tut_dialog
+from tutorlib.gui.aboutdialog import TutAboutDialog
 import tutorlib.helpdialog as tut_help
 import tutorlib.feedbackdialog as tut_feedback
 import tutorlib.passworddialogs as tut_password_dialogs
@@ -756,7 +756,7 @@ class TutorialApp():
         self.editor = None
 
     def about(self):
-        tut_dialog.TutAboutDialog(self.master, "About MyPyTutor")
+        TutAboutDialog(self.master, "About MyPyTutor")
 
     def help(self):
         tut_help.HelpDialog(self.master, "Help")
