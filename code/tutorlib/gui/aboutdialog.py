@@ -21,32 +21,17 @@
 
 from tkinter import *
 
+from tutorlib.gui.dialog import Dialog
 
-class TutAboutDialog(Toplevel):
-    def __init__(self, parent, title):
-        Toplevel.__init__(self, parent)
-        self.parent = parent
 
-        self.configure(borderwidth=5)
-        self.geometry("+%d+%d" % (parent.winfo_rootx() + 30,
-                                  parent.winfo_rooty() + 30))
-        self.resizable(height=FALSE, width=FALSE)
-        self.title(title)
-        self.transient(parent)
-
-        self.create_widgets()
-
-        self.grab_set()
-        self.button_ok.focus_set()
-
-        self.protocol("WM_DELETE_WINDOW", self.ok)
-        self.bind('<Return>', self.ok)  # dismiss dialog
-        self.bind('<Escape>', self.ok)  # dismiss dialog
-
-        self.wait_window()
-
+class TutAboutDialog(Dialog):
     def create_widgets(self):
-        frame_main = Frame(self, borderwidth=2, relief=SUNKEN, bg="#ffffaa")
+        frame_main = Frame(
+            self.frame_top,
+            borderwidth=2,
+            relief=SUNKEN,
+            bg="#ffffaa",
+        )
         frame_main.pack(side=TOP, expand=TRUE, fill=BOTH)
 
         Label(
@@ -66,11 +51,3 @@ class TutAboutDialog(Toplevel):
             text='email: pjr@itee.uq.edu.au',
             bg="#ffffaa",
         ).pack(padx=10, pady=10)
-
-        frame_buttons = Frame(self)
-        frame_buttons.pack(fill=X)
-        self.button_ok = Button(frame_buttons, text='Close', command=self.ok)
-        self.button_ok.pack()
-
-    def ok(self, event=None):
-        self.destroy()

@@ -21,35 +21,27 @@
 
 from tkinter import *
 
+from tutorlib.gui.dialog import Dialog
 
-class TextDialog(Toplevel):
+
+class TextDialog(Dialog):
     def __init__(self, parent, title, text, bg='#ffffff'):
-        Toplevel.__init__(self, parent)
-        self.parent = parent
+        # set up vars needed to create widgets
+        self.text = text
+        self.bg = bg
 
-        self.configure(borderwidth=5)
-        self.geometry("+%d+%d" % (parent.winfo_rootx() + 30,
-                                  parent.winfo_rooty() + 30))
-        #self.resizable(height=FALSE, width=FALSE)
-        self.title(title)
-        self.transient(parent)
+        # defer remaining setup to parent
+        super().__init__(parent, title, allow_cancel=False)
 
-        self.create_widgets(text, bg)
-
-        #self.grab_set()
-        self.button_ok.focus_set()
-
-        self.protocol("WM_DELETE_WINDOW", self.ok)
-        self.bind('<Return>', self.ok)
-        self.bind('<Escape>', self.ok)
-
-        self.wait_window()
-
-    def create_widgets(self, text, bg):
-        frame_main = Frame(self, borderwidth=2, relief=SUNKEN, bg=bg)
+    def create_widgets(self):
+        frame_main = Frame(
+            self.frame_top,
+            borderwidth=2,
+            relief=SUNKEN,
+            bg=self.bg)
         frame_main.pack(side=TOP, expand=TRUE, fill=BOTH)
 
-        textwin = Text(frame_main, width=80, height=40, bg=bg, wrap=WORD)
+        textwin = Text(frame_main, width=80, height=40, bg=self.bg, wrap=WORD)
         textwin.pack(side=LEFT)
 
         scrollbar = Scrollbar(frame_main)
@@ -57,15 +49,5 @@ class TextDialog(Toplevel):
         textwin.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=textwin.yview)
 
-        # buttons
-        frame_buttons = Frame(self)
-        frame_buttons.pack(fill=X)
-
-        self.button_ok = Button(frame_buttons, text='Close', command=self.ok)
-        self.button_ok.pack()
-
-        textwin.insert(END, text)
+        textwin.insert(END, self.text)
         textwin.config(state=DISABLED)
-
-    def ok(self, event=None):
-        self.destroy()

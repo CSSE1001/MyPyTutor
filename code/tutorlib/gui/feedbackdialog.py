@@ -25,43 +25,29 @@ import urllib.parse
 import urllib.error
 import tkinter.messagebox
 
+from tutorlib.gui.dialog import Dialog
+
 ## The URL for the feedback CGI script.
 URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
 
 
-class FeedbackDialog(Toplevel):
+class FeedbackDialog(Dialog):
     def __init__(self, parent, title, name, code=''):
-        Toplevel.__init__(self, parent)
-        self.parent = parent
-
-        self.configure(borderwidth=5)
-        self.geometry("+%d+%d" % (parent.winfo_rootx() + 30,
-                                  parent.winfo_rooty() + 30))
-        self.resizable(height=FALSE, width=FALSE)
-        self.title(title)
-        self.transient(parent)
-
+        # set up vars needed to create widgets
         self.name = name
         self.subject_var = StringVar()
         self.subject_var.set(name)
 
         self.code = code
 
-        self.create_widgets()
-
-        self.grab_set()
-        self.button_ok.focus_set()
-
-        self.protocol("WM_DELETE_WINDOW", self.cancel)
-        self.bind('<Escape>', self.cancel)
-
-        self.wait_window()
+        # defer remaining setup to parent
+        super().__init__(parent, title, allow_cancel=True)
 
     def create_widgets(self):
         if self.name == '':
             self.feedback_type = 'General'
 
-            frame_general = Frame(self)
+            frame_general = Frame(self.frame_top)
             frame_general.pack(fill=X)
 
             Label(frame_general, text='Subject: ').pack(side=LEFT, pady=10)
@@ -75,9 +61,9 @@ class FeedbackDialog(Toplevel):
             self.feedback_type = 'Problem'
 
         # main feedback UI
-        Label(self, text='Feedback: ').pack(anchor=W)
+        Label(self.frame_top, text='Feedback: ').pack(anchor=W)
 
-        frame_main = Frame(self, borderwidth=2)
+        frame_main = Frame(self.frame_top, borderwidth=2)
         frame_main.pack(expand=TRUE, fill=BOTH)
 
         text = Text(frame_main, wrap=WORD, relief=SUNKEN)
@@ -89,20 +75,6 @@ class FeedbackDialog(Toplevel):
         scrollbar.config(command=text.yview)
 
         self.text = text
-
-        # buttons
-        frame_buttons = Frame(self)
-        frame_buttons.pack()
-
-        self.button_ok = Button(frame_buttons, text='OK', command=self.ok)
-        self.button_ok.pack(side=LEFT, expand=1)
-
-        self.button_cancel = Button(
-            frame_buttons,
-            text='Cancel',
-            command=self.cancel
-        )
-        self.button_cancel.pack(side=LEFT, expand=1)
 
     def ok(self, event=None):
         values = {'problem_name': self.subject_var.get(),
@@ -120,7 +92,5 @@ class FeedbackDialog(Toplevel):
         except:
             tkinter.messagebox.showerror('Feedback Error',
                                          'Cannot upload feedback')
-        self.destroy()
 
-    def cancel(self, event=None):
-        self.destroy()
+        super().ok(event=event)
