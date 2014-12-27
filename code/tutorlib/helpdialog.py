@@ -20,7 +20,7 @@
 ## The MyPyTutor help dialog
 
 
-import tutorlib.textdialog as tut_textdialog
+from tutorlib.gui.textdialog import TextDialog
 
 HELP_TEXT = """
 The MyPyTutor Python Tutorial System
@@ -88,7 +88,6 @@ If the tutorial is configured to provide an online interface and you are registe
 """
 
 
-class HelpDialog(tut_textdialog.TextDialog):
+class HelpDialog(TextDialog):
     def __init__(self, parent, title):
-        tut_textdialog.TextDialog.__init__(self, parent, "Help",
-                                           HELP_TEXT, "#ffffaa")
+        TextDialog.__init__(self, parent, "Help", HELP_TEXT, bg="#ffffaa")

@@ -40,7 +40,7 @@ from tutorlib.gui.aboutdialog import TutAboutDialog
 import tutorlib.helpdialog as tut_help
 from tutorlib.gui.feedbackdialog import FeedbackDialog
 import tutorlib.passworddialogs as tut_password_dialogs
-import tutorlib.textdialog as tut_textdialog
+from tutorlib.gui.textdialog import TextDialog
 
 # Version number of MyPyTutor
 version_number = "3.00"
@@ -519,7 +519,7 @@ class TutorialApp():
 
     def show_submit(self):
         text = str(self.tutorials)
-        tut_textdialog.TextDialog(self.master, "Results", text)
+        TextDialog(self.master, "Results", text)
 
     # Each student results file is of the form
     # ##$$Name of tutorial$$##
