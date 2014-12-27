@@ -39,7 +39,7 @@ import tutorlib.TutorialInterface as tut_interface
 from tutorlib.gui.aboutdialog import TutAboutDialog
 from tutorlib.gui.helpdialog import HelpDialog
 from tutorlib.gui.feedbackdialog import FeedbackDialog
-import tutorlib.passworddialogs as tut_password_dialogs
+from tutorlib.gui.passworddialogs import ChangePasswordDialog, LoginDialog
 from tutorlib.gui.textdialog import TextDialog
 
 # Version number of MyPyTutor
@@ -356,7 +356,7 @@ class TutorialApp():
         if self.tut_interface.logged_on():
             tkinter.messagebox.showerror('Login Error', 'You are already logged in.')
             return
-        tut_password_dialogs.LoginDialog(self, self.do_login)
+        LoginDialog(self.master, self.do_login)
         if self.tut_interface.logged_on():
             self.toolbar.set_login(self.tut_interface.user)
             #print self.timestamp, self.tut_interface.timestamp
@@ -421,7 +421,7 @@ class TutorialApp():
 
     def change_password(self):
         if self.tut_interface.logged_on():
-            cpdlg = tut_password_dialogs.ChangePasswordDialog(self)
+            cpdlg = ChangePasswordDialog(self.master)
             self.master.wait_window(cpdlg)
             if cpdlg.success:
                 print("Password changed")
