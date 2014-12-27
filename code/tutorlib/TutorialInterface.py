@@ -85,8 +85,10 @@ class TutorialInterface():
             try:
                 URL = self.url.strip()
                 data = urllib.parse.urlencode(form_dict)
-                response = urllib.request.urlopen(URL, data, proxies={})
-                text = response.read().strip()
+                proxy_handler = urllib.request.ProxyHandler(proxies={})
+                request = urllib.request.build_opener(proxy_handler)
+                response = request.open(URL, data.encode('ascii'))
+                text = response.read().decode('ascii').strip()
                 #print text  # debugging
                 if text.startswith('mypytutor>>>'):
                     return text[12:]
