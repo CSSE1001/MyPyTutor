@@ -1,0 +1,38 @@
+<h3>A Point Class Definition</h3>
+
+<p>
+    A two-dimenstional point may be represented by an x- and y-coordinate.
+    In this problem, you will write a <tt>Point</tt> class which stores this information and provides useful methods to work with points.
+</p>
+
+<p>
+    We have provided an <tt>__init__</tt> definition for the <tt>Point</tt> class.
+    You will note that this accepts two arguments, being the x- and y-coordinates of the point.
+</p>
+
+<p>
+    We have also included a <tt>__repr__</tt> method, which will provide a canonical string representation of the point.
+    Make sure you don't change this method, as we will use it for some tests.
+    Note that the output of <tt>__repr__</tt> could be copied into the interpreter in order to create an identical point.
+    This is a characteristic of most good <tt>__repr__</tt> methods.
+</p>
+
+<p>
+    The first thing our <tt>Point</tt> class should be able to do is determine the distance between points.
+    Write a method <tt>dist_to_point</tt>, which accepts another instance of the <tt>Point</tt> class as an argument, and returns the Euclidean distance between the two points.
+    It may be helpful to use <tt>math.sqrt</tt>.
+</p>
+
+<p>
+    Using <tt>dist_to_point</tt>, now write a method <tt>is_near</tt> which returns whether two points are close.
+    Remember that you can call other methods in a method definition using <tt>self</tt>, eg <tt>self.other_method(arg)</tt>
+</p>
+<p>
+    A point is considered 'close' if it is within <tt>epsilon</tt> of another point.
+    We defined <tt>epsilon</tt> to be a really small number using scientific notation (so, eg, <tt>1e-3</tt> is <tt>1x10^-3</tt> is <tt>0.001</tt>
+</p>
+
+<p>
+    Finally, we want to be able to add two points together.
+    Write a method <tt>add_point</tt> that adds the position of the <tt>Point</tt> object given as an argument to the position of <tt>self</tt>
+</p>

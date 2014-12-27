@@ -10,13 +10,14 @@ class CodeVisitor(TutorialNodeVisitor):
 
         self.appends_in_loop = False
         self.appends_outside_loop = False
+        self.too_many_append_args = False
 
         self.has_return = False
 
     def visit_Assign(self, node):
         super().visit_Assign(node)
 
-        if self._current_function == 'all_gt' and not self.has_for:
+        if self._current_function == 'add_sizes' and not self.has_for:
             self.initialises_variable = True
 
             value = TutorialNodeVisitor.value(node.value)
@@ -26,7 +27,7 @@ class CodeVisitor(TutorialNodeVisitor):
     def visit_For(self, node):
         super().visit_For(node)
 
-        if self._current_function == 'all_gt':
+        if self._current_function == 'add_sizes':
             self.has_for = True
 
             self.iteration_variable = TutorialNodeVisitor.identifier(node.iter)
@@ -35,10 +36,13 @@ class CodeVisitor(TutorialNodeVisitor):
         super().visit_Call(node)
 
         if TutorialNodeVisitor.identifier(node.func) == 'append':
-            if self._current_function == 'all_gt' and self.has_for:
+            if self._current_function == 'add_sizes' and self.has_for:
                 self.appends_in_loop = True
-            elif self._current_function == 'all_gt':
+            elif self._current_function == 'add_sizes':
                 self.appends_outside_loop = True
+
+            if len(node.args) > 1:
+                self.too_many_append_args = True
 
     def visit_Return(self, node):
         super().visit_Return(node)
@@ -46,10 +50,10 @@ class CodeVisitor(TutorialNodeVisitor):
         self.has_return = True
 
 
-class List2Analyser(CodeAnalyser):
+class Analyser(CodeAnalyser):
     def _analyse(self):
-        if not self.visitor.functions['all_gt'].is_defined:
-            self.add_error('There is no definition of all_gt')
+        if not self.visitor.functions['add_sizes'].is_defined:
+            self.add_error('There is no definition of add_sizes')
 
         if not self.visitor.has_for:
             self.add_error(
@@ -71,15 +75,20 @@ class List2Analyser(CodeAnalyser):
             )
         if not self.visitor.appends_in_loop:
             self.add_error("You need to append inside the for loop.")
+        if self.visitor.too_many_append_args:
+            self.add_error(
+                'Make sure you are appending a pair, not giving two '
+                'arguments to append'
+            )
 
-        if self.visitor.functions['all_gt'].is_defined \
-                and (self.visitor.functions['all_gt'].args[0] \
+        if self.visitor.functions['add_sizes'].is_defined \
+                and (self.visitor.functions['add_sizes'].args[0] \
                      != self.visitor.iteration_variable):
             self.add_warning(
                 'Your for loop should iterate over {}'.format(
-                    self.visitor.functions['all_gt'].args[0]
+                    self.visitor.functions['add_sizes'].args[0]
                 )
             )
 
 
-ANALYSER = List2Analyser(CodeVisitor)
+ANALYSER = Analyser(CodeVisitor)

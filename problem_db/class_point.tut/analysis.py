@@ -2,17 +2,16 @@ class CodeVisitor(TutorialNodeVisitor):
     pass  # no special logic needed
 
 
-class RectAnalyser(CodeAnalyser):
+class PointAnalyser(CodeAnalyser):
     def _analyse(self):
-        if not self.visitor.classes['Rectangle'].is_defined:
-            self.add_error('You need to define the Rectangle class')
+        if not self.visitor.classes['Point'].is_defined:
+            self.add_error('You need to define the Point class')
 
         num_expected_args = {
-            'Rectangle.__init__': 4,
-            'Rectangle.get_bottom_right': 1,
-            'Rectangle.move': 2,
-            'Rectangle.resize': 3,
-            'Rectangle.__str__': 1,
+            'Point.__init__': 3,
+            'Point.dist_to_point': 2,
+            'Point.is_near': 2,
+            'Point.add_point': 2,
         }
 
         for method_name, argc in num_expected_args.items():
@@ -35,4 +34,4 @@ class RectAnalyser(CodeAnalyser):
                 )
 
 
-ANALYSER = RectAnalyser(CodeVisitor)
+ANALYSER = PointAnalyser(CodeVisitor)

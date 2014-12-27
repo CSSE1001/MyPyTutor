@@ -1,49 +1,39 @@
 class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
-        self._in_has_gt = False
-        self.args = None
+        super().__init__()
 
         self.has_for = False
         self.iterates_over_arg = False
 
         self.return_count = 0
 
-    @TutorialNodeVisitor.visit_recursively
-    def visit_FunctionDef(self, node):
-        if TutorialNodeVisitor.identifier(node) == 'has_gt':
-            self._in_has_gt = True
-            self.args = list(map(
-                TutorialNodeVisitor.identifier, node.args.args
-            ))
-
-    @TutorialNodeVisitor.visit_recursively
     def visit_For(self, node):
-        if self._in_has_gt:
+        super().visit_For(node)
+
+        if self._current_function == 'has_gt':
             self.has_for = True
 
             iteration_id = TutorialNodeVisitor.identifier(node.iter)
 
-            if self.args is not None and len(self.args) > 0 \
-                    and iteration_id == self.args[0]:
+            args = self.functions['has_gt'].args
+            if args[0] is not None and iteration_id == args[0]:
                 self.iterates_over_arg = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Return(self, node):
+        super().visit_Return(node)
+
         self.return_count += 1
 
 
 class Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
-        if self.visitor.args is None:
+    def _analyse(self):
+        if not self.visitor.functions['has_gt'].is_defined:
             self.add_error('There is no definition of has_gt')
-        elif len(self.visitor.args) != 2:
+        elif len(self.visitor.functions['has_gt'].args) != 2:
             self.add_error('has_gt should accept exactly two arguments')
         elif not self.visitor.iterates_over_arg:
             self.add_warning('Your for loop should iterate over {}'.format(
-                self.visitor.args[0]
+                self.visitor.functions['has_gt'].args[0]
             ))
 
         if not self.visitor.has_for:

@@ -1,12 +1,6 @@
 class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
-        self._current_function = None
-
-        self.args = {
-            'print_friend_info': None,
-            'create_fry': None,
-            'make_friends': None,
-        }
+        super().__init__()
 
         # print_friend_info
         self._pfo_name_id = None
@@ -30,26 +24,17 @@ class CodeVisitor(TutorialNodeVisitor):
         self.mf_sets_friend_one = False
         self.mf_sets_friend_two = False
 
-    @TutorialNodeVisitor.visit_recursively
-    def visit_FunctionDef(self, node):
-        self._current_function = TutorialNodeVisitor.identifier(node)
-
-        if self._current_function in self.args:
-            # NB: this ignores varargs, kwargs
-            self.args[self._current_function] = list(map(
-                TutorialNodeVisitor.identifier, node.args.args
-            ))
-
-    @TutorialNodeVisitor.visit_recursively
     def visit_Call(self, node):
+        super().visit_Call(node)
+
         function_name = TutorialNodeVisitor.identifier(node.func)
         arg_ids = TutorialNodeVisitor.involved_identifiers(
             *node.args
         )
 
         if self._current_function == 'print_friend_info' \
-                and self.args['print_friend_info'] is not None:
-            friend_arg_id = self.args['print_friend_info'][0]
+                and self.functions['print_friend_info'].args[0] is not None:
+            friend_arg_id = self.functions['print_friend_info'].args[0]
 
             # main logic: checking that we're printing
             if function_name == 'print':
@@ -76,27 +61,26 @@ class CodeVisitor(TutorialNodeVisitor):
             elif function_name == 'get_friend':
                 self.pfo_uses_get_friend = True
 
-        elif self._current_function == 'create_fry' \
-                and self.args['create_fry'] is not None:
+        elif self._current_function == 'create_fry':
             if function_name == 'Person':
                 self.cf_creates_instance = True
 
         elif self._current_function == 'make_friends' \
-                and self.args['make_friends'] is not None \
-                and len(self.args['make_friends']) == 2:
-            friend_one_id, friend_two_id = self.args['make_friends']
+                and len(self.functions['make_friends'].args) == 2:
+            friend_one_id, friend_two_id = self.functions['make_friends'].args
 
             if function_name == 'set_friend' and friend_one_id in arg_ids:
                 self.mf_sets_friend_one = True
             elif function_name == 'set_friend' and friend_two_id in arg_ids:
                 self.mf_sets_friend_two = True
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_Assign(self, node):
+        super().visit_Assign(node)
+
         if self._current_function == 'print_friend_info' \
-                and self.args['print_friend_info']:
+                and self.functions['print_friend_info'].args[0] is not None:
             # supplementary logic: getting names, ages, friends etc
-            friend_arg_id = self.args['print_friend_info'][0]
+            friend_arg_id = self.functions['print_friend_info'].args[0]
 
             value_ids = TutorialNodeVisitor.involved_identifiers(
                 node.value
@@ -121,14 +105,15 @@ class CodeVisitor(TutorialNodeVisitor):
             if self._pfo_other_id in value_ids and 'get_name' in value_ids:
                 self._pfo_other_name_id = target_identifier
 
-    @TutorialNodeVisitor.visit_recursively
     def visit_If(self, node):
+        super().visit_If(node)
+
         if self._current_function == 'print_friend_info' \
-                and self.args['print_friend_info']:
+                and self.functions['print_friend_info'].args[0] is not None:
             self.pfo_has_branch = True
 
             test_ids = TutorialNodeVisitor.involved_identifiers(node)
-            friend_arg_id = self.args['print_friend_info'][0]
+            friend_arg_id = self.functions['print_friend_info'].args[0]
 
             if self._pfo_other_id in test_ids \
                     or (friend_arg_id in test_ids \
@@ -137,10 +122,7 @@ class CodeVisitor(TutorialNodeVisitor):
 
 
 class PersonAnalyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         num_expected_args = {
             'print_friend_info': 1,
             'create_fry': 0,
@@ -148,12 +130,14 @@ class PersonAnalyser(CodeAnalyser):
         }
 
         # check functions are defined and accept the right number of args
-        for function_name, args in self.visitor.args.items():
-            if args is None:
+        for function_name, argc in num_expected_args.items():
+            function = self.visitor.functions[function_name]
+
+            if not function.is_defined:
                 self.add_error('You need to define {}'.format(function_name))
-            elif len(args) != num_expected_args[function_name]:
+            elif len(function.args) != argc:
                 self.add_error('{} should accept exactly {} args'.format(
-                    function_name, num_expected_args[function_name]
+                    function_name, argc
                 ))
 
         # print_friend_info
