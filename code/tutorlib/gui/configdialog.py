@@ -71,7 +71,7 @@ class TutorialDirectoryPrompt(Dialog):
                     command=callback,
                 ).pack(side=LEFT, padx=10)
 
-        self.tut_entry, self.name_entry, self.ans_entry = entries
+        self.tut_entry, self.ans_entry, self.name_entry = entries
 
     def select_tut_dir(self):
         self.tut_entry.delete(0, END)
