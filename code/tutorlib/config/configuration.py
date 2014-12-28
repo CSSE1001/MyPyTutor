@@ -3,7 +3,7 @@ import os
 import sys
 
 from tutorlib.config.namespaces import Namespace
-from tutorlib.TutorConfigure import TutorialDirectoryPrompt
+from tutorlib.gui.configdialog import TutorialDirectoryPrompt
 
 
 # The config file is stored in the same directory as MyPyTutor.py
