@@ -45,13 +45,14 @@ class TutorEditor(EditorWindow.EditorWindow):
         ("help", "_Help"),
     ]
 
+    Bindings = tut_bindings
+
     def __init__(self, parent, flist=None, root=None,
                  filename=None, online=False):
 
         # Support for Python >= 2.7.7 (TODO find a better way)
         if hasattr(macosxSupport, "_initializeTkVariantTests") and macosxSupport._tk_type is None:
             macosxSupport._initializeTkVariantTests(root)
-        tut_bindings.initialise()
 
         if online:
             self.menu_specs.insert(4, ("online", "_Online"))
@@ -61,7 +62,6 @@ class TutorEditor(EditorWindow.EditorWindow):
         io.set_filename_change_hook(self.filename_change_hook)
         self.parent = parent
         self.root = root
-        self.fill_menus(menudefs=tut_bindings.menudefs)  # ,keydefs={'<F5>':self.check_event})
         #self.load_extensions()
         self.text.bind("<<load-from>>", self.load_from_event)
         self.text.bind("<<revert>>", self.revert_event)
