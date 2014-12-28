@@ -24,7 +24,6 @@ import time
 import sys
 import os
 from io import StringIO
-from . import fontChooser
 import tkinter.messagebox
 import zipfile
 
