@@ -133,51 +133,8 @@ class TutorialApp():
         self.mpt_home = os.getcwd()
         self.app_height = 0
         self.allow_resize = False
-        master.title("MyPyTutor")
-        master.protocol("WM_DELETE_WINDOW", self.close_event)
-        self.master = master
         self.URL = None
-        self.cfg = load_config()
 
-        #### Create GUI Widgets
-        ## Top Frame
-        top_frame = Frame(master)
-        top_frame.pack(fill=BOTH, expand=1)
-        self.editor = None
-
-        ## Tutorial (html display of tutorial problem)
-        self.tut = tut_tutorial.Tutorial(
-            top_frame,
-            (self.cfg.font.name, self.cfg.font.size),
-            self.cfg.window_sizes.problem
-        )
-        self.tut.pack(fill=BOTH, expand=1)
-
-        ## Short Problem Description
-        self.short_description = Label(top_frame, fg='blue')
-        self.short_description.pack(fill=X)
-
-        ## Toolbar (hints, login status etc)
-        self.toolbar = Toolbar(self, top_frame)
-        self.toolbar.pack(fill=X)
-
-        ## Test Output
-        self.test_output = TestOutput(
-            top_frame,
-            self.cfg.font.size,
-            self.cfg.window_sizes.output,
-        )
-        self.test_output.pack(fill=BOTH, expand=0)
-
-        ## Analysis Output
-        self.analysis_output = AnalysisOutput(
-            top_frame,
-            self.cfg.font.size,
-            self.cfg.window_sizes.analysis,
-        )
-        self.analysis_output.pack(fill=BOTH, expand=0)
-
-        self.tut_interface = TutorialInterface()
 
         #print "done packing"
         menubar = Menu(master)

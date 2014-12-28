@@ -21,10 +21,10 @@
 """The MyPyTutor application."""
 
 import tkinter as tk
-
 import os
 
-import tutorlib.TutorialApp as TutorialApp
+from tutorlib.gui.app import TutorialApp
+
 
 def main():
     """The main entry point for MyPyTutor."""
@@ -33,7 +33,7 @@ def main():
         os.chdir(os.path.dirname(__file__))
 
     root = tk.Tk()
-    TutorialApp.TutorialApp(root)
+    TutorialApp(root)
     root.mainloop()
     
 if __name__ == '__main__': 

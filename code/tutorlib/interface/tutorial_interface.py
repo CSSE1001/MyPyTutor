@@ -2,15 +2,11 @@ import sys
 
 from tutorlib.interface.alarm import Alarm
 from tutorlib.interface.tutorial import Tutorial
-from tutorlib.interface.web_api import WebAPI
 from tutorlib.testing.tester import TutorialTester
 
 
 class TutorialInterface():
     def __init__(self):
-        # web communications
-        self.web_api = WebAPI()
-
         # tutorial details
         self.tutorial = None
         self.num_checks = 0
@@ -21,10 +17,6 @@ class TutorialInterface():
 
         self.user = None
         self.solved = False
-
-    # web communications
-    def set_url(self, url):
-        self.web_api.url = url  # TODO: consider the point of this method
 
     # tutorial details
     def load_data(self, filename, problem_name):
