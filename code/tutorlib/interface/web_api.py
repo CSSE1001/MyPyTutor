@@ -31,12 +31,12 @@ class WebAPI():
         return user_info['user']
 
     def login(self):
+        # LoginManager raises on failure
         try:
-            if self.login_manager.login():
-                return True
+            self.login_manager.login()
+            return True
         except AuthError:
-            pass
-        return False
+            return False
 
     def logout(self):
         self.login_manager.logout()

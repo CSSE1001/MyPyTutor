@@ -208,9 +208,10 @@ class TutorialApp(TutorialMenuDelegate):
                 'Some functionality (such as submitting answers) will be ' \
                 'unavailable until you log in successfully.'
             )
-            return
+            return False
 
         self._set_online_status(logged_in_user=self.web_api.user)
+        return True
 
     def logout(self):
         self.web_api.logout()
@@ -218,7 +219,7 @@ class TutorialApp(TutorialMenuDelegate):
         self._set_online_status(logged_in_user=None)
 
     def submit(self):
-        if not self.web_api.is_logged_in() or self.login():
+        if not self.web_api.is_logged_in() or not self.login():
             return
 
         if self.run_tests():
