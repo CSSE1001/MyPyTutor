@@ -20,7 +20,8 @@
 
 # The output frame where stdout and stderr are displayed
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 
 from tutorlib.testing.results import TutorialTestResult
 
@@ -29,7 +30,7 @@ def get_code_font(fontsize):
     return ('courier', str(fontsize + 1), 'normal', 'roman')
 
 
-class TestsListbox(Listbox):
+class TestsListbox(tk.Listbox):
     COLOR_NOT_RUN = 'black'
     COLOR_PASS = 'green'
     COLOR_FAIL = 'red'
@@ -56,11 +57,11 @@ class TestsListbox(Listbox):
 
     def set_test_results(self, results):
         # remove existing entries
-        self.delete(0, END)
+        self.delete(0, tk.END)
 
         # add each new entry, configuring colors as we go
         for idx, result in enumerate(results):
-            self.insert(END, result.description)
+            self.insert(tk.END, result.description)
 
             color = self.color_mappings[result.status]
             self.itemconfig(idx, fg=color, selectbackground=color)
@@ -81,16 +82,16 @@ class TestsListbox(Listbox):
         self.selection_set(idx)
 
 
-class TestOutput(Frame):
+class TestOutput(ttk.Frame):
     def __init__(self, master, fontsize, textlen):
-        Frame.__init__(self, master)
+        super().__init__(master)
 
         self.test_results = TestsListbox(self, fontsize=fontsize)
-        self.test_results.pack(side=TOP, expand=1, fill=BOTH)
+        self.test_results.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
         self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
 
         self.output = Output(self, fontsize, textlen)
-        self.output.pack(side=TOP, expand=1, fill=BOTH)
+        self.output.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
 
     def update_font(self, fontsize):
         self.test_results.update_font(fontsize)
@@ -130,21 +131,21 @@ class TestOutput(Frame):
         self.output.add_text(result.error_text, Output.COLOR_ERROR)
 
 
-class Output(Frame):
+class Output(ttk.Frame):
     COLOR_BASE = 'black'
     COLOR_OUTPUT = 'blue'
     COLOR_ERROR = 'red'
     COLOR_WARNING = 'orange'
 
     def __init__(self, master, fontsize, textlen):
-        Frame.__init__(self, master)
+        super().__init__(master)
 
-        self.text = Text(self, height=textlen)
-        self.text.config(state=DISABLED)
-        self.text.pack(side=LEFT, fill=BOTH, expand=1)
+        self.text = tk.Text(self, height=textlen)
+        self.text.config(state=tk.DISABLED)
+        self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
-        scrollbar = Scrollbar(self)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        scrollbar = ttk.Scrollbar(self)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
 
@@ -156,17 +157,17 @@ class Output(Frame):
         self.text.config(font=get_code_font(fontsize))
 
     def clear_text(self):
-        self.text.config(state=NORMAL)
-        self.text.delete(1.0, END)
-        self.text.config(state=DISABLED)
+        self.text.config(state=tk.NORMAL)
+        self.text.delete(1.0, tk.END)
+        self.text.config(state=tk.DISABLED)
 
     def add_text(self, text, style=None):
-        self.text.config(state=NORMAL)
+        self.text.config(state=tk.NORMAL)
         if style:
-            self.text.insert(END, text, (style,))
+            self.text.insert(tk.END, text, (style,))
         else:
-            self.text.insert(END, text)
-        self.text.config(state=DISABLED)
+            self.text.insert(tk.END, text)
+        self.text.config(state=tk.DISABLED)
 
     def add_line(self, text, style=None):
         self.add_text(text + '\n', style=style)

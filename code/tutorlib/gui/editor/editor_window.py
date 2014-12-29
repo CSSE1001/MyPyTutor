@@ -20,15 +20,15 @@
 # idlelib/EditorWindow and so has the same look and feel
 
 import os
-from tkinter import *
+import tkinter as tk
+import tkinter.filedialog as tkfiledialog
+import tkinter.messagebox as tkmessagebox
 
 from idlelib import EditorWindow, macosxSupport
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.help import HelpDialog
 import tutorlib.gui.editor.bindings as Bindings  # consistent naming with idlelib
 from tutorlib.gui.editor.io_binding import TutorIOBinding
-import tkinter.filedialog
-import tkinter.messagebox as tkmessagebox
 
 
 class TutorEditor(EditorWindow.EditorWindow):
@@ -54,7 +54,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         if online:
             self.menu_specs.insert(4, ("online", "_Online"))
 
-        EditorWindow.EditorWindow.__init__(self, root=root, filename=filename)
+        super().__init__(root=root, filename=filename)
 
         self.io = TutorIOBinding(self)
         self.io.set_filename_change_hook(self.filename_change_hook)
@@ -112,7 +112,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         self.text.edit_modified(0)
 
     def load_from_event(self, e):
-        file = tkinter.filedialog.askopenfile(title='Load From File')
+        file = tkfiledialog.askopenfile(title='Load From File')
         if file:
             self.preload(file.read())
             file.close()
@@ -138,8 +138,8 @@ class TutorEditor(EditorWindow.EditorWindow):
                 m = tkmessagebox.Message(
                     title=title,
                     message=message,
-                    icon=tkinter.messagebox.QUESTION,
-                    type=tkinter.messagebox.YESNOCANCEL,
+                    icon=tkmessagebox.QUESTION,
+                    type=tkmessagebox.YESNOCANCEL,
                     master=self.text,
                 )
                 reply = m.show()
@@ -168,13 +168,13 @@ class TutorEditor(EditorWindow.EditorWindow):
             self.io.set_filename(filename)
 
     def preload(self, text):
-        self.text.delete(1.0, END)
+        self.text.delete(1.0, tk.END)
         if text:
-            self.text.insert(END, text)
+            self.text.insert(tk.END, text)
         #self.set_saved(1)
 
     def get_text(self):
-        return self.text.get(1.0, END)
+        return self.text.get(1.0, tk.END)
 
     def error_line(self, line):
         self.error = True

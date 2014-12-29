@@ -1,7 +1,8 @@
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 
 
-class Dialog(Toplevel):
+class Dialog(tk.Toplevel):
     def __init__(self, parent, title, allow_cancel=False):
         super().__init__(parent)
         self.parent = parent
@@ -9,7 +10,7 @@ class Dialog(Toplevel):
         self.configure(borderwidth=5)
         self.geometry("+%d+%d" % (parent.winfo_rootx() + 30,
                                   parent.winfo_rooty() + 30))
-        self.resizable(height=FALSE, width=FALSE)
+        self.resizable(height=tk.FALSE, width=tk.FALSE)
         self.title(title)
         self.transient(parent)
 
@@ -31,27 +32,27 @@ class Dialog(Toplevel):
 
     def create_buttons(self, allow_cancel=False):
         # for subclasses to create widgets in
-        self.frame_top = Frame(self)
-        self.frame_top.pack(side=TOP, expand=1, fill=BOTH)
+        self.frame_top = ttk.Frame(self)
+        self.frame_top.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
 
         # buttons
-        frame_buttons = Frame(self)
-        frame_buttons.pack(side=TOP)
+        frame_buttons = ttk.Frame(self)
+        frame_buttons.pack(side=tk.TOP)
 
-        self.button_ok = Button(
+        self.button_ok = ttk.Button(
             frame_buttons,
             text='OK',
             command=self.ok,
         )
-        self.button_ok.pack(side=LEFT, expand=1)
+        self.button_ok.pack(side=tk.LEFT, expand=1)
 
         if allow_cancel:
-            self.button_cancel = Button(
+            self.button_cancel = ttk.Button(
                 frame_buttons,
                 text='Cancel',
                 command=self.cancel,
             )
-            self.button_cancel.pack(side=LEFT, expand=1)
+            self.button_cancel.pack(side=tk.LEFT, expand=1)
 
     def ok(self, event=None):
         self.destroy()

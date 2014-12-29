@@ -19,11 +19,12 @@
 
 ## The feedback dialog for MyPyTutor
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
+import tkinter.messagebox
 import urllib.request
 import urllib.parse
 import urllib.error
-import tkinter.messagebox
 
 from tutorlib.gui.dialogs.dialog import Dialog
 
@@ -35,7 +36,7 @@ class FeedbackDialog(Dialog):
     def __init__(self, parent, title, name='', code=''):
         # set up vars needed to create widgets
         self.name = name
-        self.subject_var = StringVar()
+        self.subject_var = tk.StringVar()
         self.subject_var.set(name)
 
         self.code = code
@@ -47,30 +48,32 @@ class FeedbackDialog(Dialog):
         if self.name == '':
             self.feedback_type = 'General'
 
-            frame_general = Frame(self.frame_top)
-            frame_general.pack(fill=X)
+            frame_general = ttk.Frame(self.frame_top)
+            frame_general.pack(fill=tk.X)
 
-            Label(frame_general, text='Subject: ').pack(side=LEFT, pady=10)
+            ttk.Label(
+                frame_general, text='Subject: '
+            ).pack(side=tk.LEFT, pady=10)
 
-            Entry(
+            ttk.Entry(
                 frame_general,
                 textvariable=self.subject_var,
                 width=60
-            ).pack(side=LEFT)
+            ).pack(side=tk.LEFT)
         else:
             self.feedback_type = 'Problem'
 
         # main feedback UI
-        Label(self.frame_top, text='Feedback: ').pack(anchor=W)
+        ttk.Label(self.frame_top, text='Feedback: ').pack(anchor=tk.W)
 
-        frame_main = Frame(self.frame_top, borderwidth=2)
-        frame_main.pack(expand=TRUE, fill=BOTH)
+        frame_main = ttk.Frame(self.frame_top, borderwidth=2)
+        frame_main.pack(expand=tk.TRUE, fill=tk.BOTH)
 
-        text = Text(frame_main, wrap=WORD, relief=SUNKEN)
-        text.pack(side=LEFT)
+        text = tk.Text(frame_main, wrap=tk.WORD, relief=tk.SUNKEN)
+        text.pack(side=tk.LEFT)
 
-        scrollbar = Scrollbar(frame_main)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        scrollbar = ttk.Scrollbar(frame_main)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=text.yview)
 
@@ -80,7 +83,7 @@ class FeedbackDialog(Dialog):
         values = {'problem_name': self.subject_var.get(),
                   'type': self.feedback_type,
                   'code_text': self.code,
-                  'feedback': self.text.get(1.0, END)}
+                  'feedback': self.text.get(1.0, tk.END)}
         try:
             data = urllib.parse.urlencode(values)
             req = urllib.request.Request(URL, data)

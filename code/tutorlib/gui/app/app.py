@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
 import tkinter.messagebox as tkmessagebox
 
@@ -49,7 +50,7 @@ class TutorialApp(TutorialMenuDelegate):
 
         #### Create GUI Widgets
         ## Top Frame
-        top_frame = tk.Frame(master)
+        top_frame = ttk.Frame(master)
         top_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
 
         ## Tutorial (html display of tutorial problem)
@@ -62,18 +63,18 @@ class TutorialApp(TutorialMenuDelegate):
         self.tutorial_frame.splash(online=True, version=VERSION)
 
         ## Short Problem Description
-        self.short_description = tk.Label(top_frame, fg='blue')
+        self.short_description = ttk.Label(top_frame)  # TODO: sort out style
         self.short_description.pack(fill=tk.X)
 
         ## Toolbar (hints, login status etc)
-        toolbar = tk.Frame(top_frame, bg='grey80')
+        toolbar = ttk.Frame(top_frame)  # TODO: sort out style
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
-        self.hint_button = tk.Button(
+        self.hint_button = ttk.Button(
             toolbar, text='Next Hint', command=self._next_hint
         )
 
-        self.online_status = tk.Label(
+        self.online_status = ttk.Label(
             toolbar, relief=tk.SUNKEN
         )
         self.online_status.pack(

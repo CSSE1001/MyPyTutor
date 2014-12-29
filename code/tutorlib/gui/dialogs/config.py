@@ -18,7 +18,8 @@
 
 ## For initial configuration
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 import tkinter.filedialog
 import tkinter.messagebox
 import os
@@ -40,41 +41,41 @@ class TutorialDirectoryPrompt(Dialog):
         super().__init__(master, 'Tutorial Configuration', allow_cancel=True)
 
     def create_widgets(self):
-        Label(
+        ttk.Label(
             self.frame_top,
             text=LABEL_TEXT,
             wraplength=400,
-            justify=LEFT,
-        ).pack(side=TOP)
+            justify=tk.LEFT,
+        ).pack(side=tk.TOP)
 
         labels = ['Tutorial Folder: ', 'Answers Folder: ', 'Tutorial Name: ']
         callbacks = [self.select_tut_dir, self.select_ans_dir, None]
         entries = []
 
         for lbl, callback in zip(labels, callbacks):
-            frame = Frame(self.frame_top, relief=SUNKEN, border=3)
-            frame.pack(side=TOP, expand=TRUE, fill=BOTH, pady=20)
+            frame = ttk.Frame(self.frame_top, relief=tk.SUNKEN, border=3)
+            frame.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH, pady=20)
 
-            Label(
+            ttk.Label(
                 frame,
                 text=lbl,
-            ).pack(side=LEFT)
+            ).pack(side=tk.LEFT)
 
-            entry = Entry(frame, width=50)
-            entry.pack(side=LEFT)
+            entry = ttk.Entry(frame, width=50)
+            entry.pack(side=tk.LEFT)
             entries.append(entry)
 
             if callback is not None:
-                Button(
+                ttk.Button(
                     frame,
                     text='Select',
                     command=callback,
-                ).pack(side=LEFT, padx=10)
+                ).pack(side=tk.LEFT, padx=10)
 
         self.tut_entry, self.ans_entry, self.name_entry = entries
 
     def select_tut_dir(self):
-        self.tut_entry.delete(0, END)
+        self.tut_entry.delete(0, tk.END)
         dirname = tkinter.filedialog.askdirectory(
             title='Choose Tutorial Folder'
         )
@@ -84,7 +85,7 @@ class TutorialDirectoryPrompt(Dialog):
                 self.name_entry.insert(0, os.path.basename(dirname))
 
     def select_ans_dir(self):
-        self.ans_entry.delete(0, END)
+        self.ans_entry.delete(0, tk.END)
         dirname = tkinter.filedialog.askdirectory(
             title='Choose Answers Folder'
         )

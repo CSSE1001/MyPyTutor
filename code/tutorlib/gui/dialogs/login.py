@@ -8,7 +8,7 @@
 ## of the License, or (at your option) any later version.
 ##
 ## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## but tk.WITHOUT ANY tk.WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ##
@@ -19,7 +19,8 @@
 
 ## Dialogs involving passwords
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 import tkinter.messagebox
 
 from tutorlib.gui.dialogs.dialog import Dialog
@@ -28,8 +29,8 @@ from tutorlib.gui.dialogs.dialog import Dialog
 class LoginDialog(Dialog):
     def __init__(self, parent, callback, title="Login"):
         # set up vars needed to create widgets
-        self.user = StringVar()
-        self.password = StringVar()
+        self.user = tk.StringVar()
+        self.password = tk.StringVar()
 
         self.callback = callback
 
@@ -41,33 +42,37 @@ class LoginDialog(Dialog):
 
     def create_widgets(self):
         # username
-        userframe = Frame(self.frame_top)
-        userframe.pack(expand=TRUE, fill=X)
+        userframe = ttk.Frame(self.frame_top)
+        userframe.pack(expand=tk.TRUE, fill=tk.X)
 
-        Label(
+        ttk.Label(
             userframe,
             text='Username: ',
-        ).pack(side=LEFT, anchor=W, expand=TRUE)
+        ).pack(side=tk.LEFT, anchor=tk.W, expand=tk.TRUE)
 
-        self.user_entry = Entry(userframe, textvariable=self.user, width=20)
-        self.user_entry.pack(side=LEFT)
+        self.user_entry = ttk.Entry(
+            userframe,
+            textvariable=self.user,
+            width=20,
+        )
+        self.user_entry.pack(side=tk.LEFT)
 
         # password
-        passframe = Frame(self.frame_top)
-        passframe.pack(expand=TRUE, fill=X)
+        passframe = ttk.Frame(self.frame_top)
+        passframe.pack(expand=tk.TRUE, fill=tk.X)
 
-        Label(
+        ttk.Label(
             passframe,
             text='Password: ',
-        ).pack(side=LEFT, anchor=W, expand=TRUE)
+        ).pack(side=tk.LEFT, anchor=tk.W, expand=tk.TRUE)
 
-        pass_entry = Entry(
+        pass_entry = ttk.Entry(
             passframe,
             textvariable=self.password,
             width=20,
             show="*",
         )
-        pass_entry.pack(side=LEFT)
+        pass_entry.pack(side=tk.LEFT)
 
     def ok(self, event=None):
         user = self.user.get().strip()
@@ -88,9 +93,9 @@ class LoginDialog(Dialog):
 class ChangePasswordDialog(Dialog):
     def __init__(self, parent, title='Change Password'):
         # set up vars needed to create widgets
-        self.password0 = StringVar()
-        self.password1 = StringVar()
-        self.password2 = StringVar()
+        self.password0 = tk.StringVar()
+        self.password1 = tk.StringVar()
+        self.password2 = tk.StringVar()
 
         self.success = False
 
@@ -107,13 +112,16 @@ class ChangePasswordDialog(Dialog):
         entries = []
 
         for lbl, var in zip(labels, variables):
-            frame = Frame(self.frame_top)
-            frame.pack(expand=TRUE, fill=X)
+            frame = ttk.Frame(self.frame_top)
+            frame.pack(expand=tk.TRUE, fill=tk.X)
 
-            Label(frame, text=lbl).pack(side=LEFT, anchor=W, expand=TRUE)
+            ttk.Label(
+                frame,
+                text=lbl,
+            ).pack(side=tk.LEFT, anchor=tk.W, expand=tk.TRUE)
 
-            entry = Entry(frame, textvariable=var, width=20, show="*")
-            entry.pack(side=LEFT)
+            entry = ttk.Entry(frame, textvariable=var, width=20, show="*")
+            entry.pack(side=tk.LEFT)
             entries.append(entry)
 
         self.pass_entry = entries[0]

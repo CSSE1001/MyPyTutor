@@ -22,7 +22,8 @@
 ## h1, h2, h3, h4, h5, it, tt, b, br, p, pre, ul, li, img
 ## and span as long as <span style='color:c'> where c is red, blue or green
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 from html.parser import HTMLParser
 import os
 
@@ -55,20 +56,20 @@ Use the Online menu to interact with your online information.
 """
 
 
-class TutorialFrame(Frame):
+class TutorialFrame(ttk.Frame):
     def __init__(self, master, fontinfo, textlen):
         super().__init__(master)
 
         font_name = fontinfo[0]
         font_size = int(fontinfo[1])
-        self.text = Text(self, height=textlen, wrap=WORD)
+        self.text = tk.Text(self, height=textlen, wrap=tk.WORD)
         #family = self.text.config('font')[3][0]
-        self.text.config(state=DISABLED, font=(font_name,
+        self.text.config(state=tk.DISABLED, font=(font_name,
                                                str(font_size),
                                                'normal', 'roman'))
-        self.text.pack(side=LEFT, fill=BOTH, expand=1)
-        scrollbar = Scrollbar(self)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        scrollbar = ttk.Scrollbar(self)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
         self.update_fonts(font_name, font_size)
@@ -117,19 +118,19 @@ class TutorialFrame(Frame):
 
     def add_text(self, text):
         # TODO: this method name is bad - it doesn't add, it replaces
-        self.text.config(state=NORMAL)
-        self.text.delete(1.0, END)
-        self.text.insert(END, '\n')
+        self.text.config(state=tk.NORMAL)
+        self.text.delete(1.0, tk.END)
+        self.text.insert(tk.END, '\n')
         self.parser.reset()
         self.parser.feed(text)
-        self.text.config(state=DISABLED)
+        self.text.config(state=tk.DISABLED)
 
     def show_hint(self, text):
-        self.text.config(state=NORMAL)
+        self.text.config(state=tk.NORMAL)
         self.parser.reset()
         self.parser.feed(text)
-        self.text.yview(MOVETO, 1)
-        self.text.config(state=DISABLED)
+        self.text.yview(tk.MOVETO, 1)
+        self.text.config(state=tk.DISABLED)
 
 
 class TutorialHTMLParser(HTMLParser):
@@ -164,36 +165,37 @@ class TutorialHTMLParser(HTMLParser):
                 self.active_tags.append(tag)
         elif tag == 'br':
             self.do_lstrip = True
-            self.textobj.insert(END, '\n')
+            self.textobj.insert(tk.END, '\n')
         elif tag == 'p':
             self.do_lstrip = True
-            self.textobj.insert(END, '\n\n')
+            self.textobj.insert(tk.END, '\n\n')
         elif tag == 'img':
             img_file = attrs[0][1]
             self.img_obj = \
-                PhotoImage(file=os.path.join(self.parent.tut_directory,
-                                             img_file))
-            img_label = Label(self.textobj, image=self.img_obj)
-            self.textobj.window_create(END, window=img_label)
+                tk.PhotoImage(
+                    file=os.path.join(self.parent.tut_directory, img_file)
+                )
+            img_label = ttk.Label(self.textobj, image=self.img_obj)
+            self.textobj.window_create(tk.END, window=img_label)
             self.active_tags.append(tag)
         else:
             if tag == 'ul':
-                self.textobj.insert(END, '\n')
+                self.textobj.insert(tk.END, '\n')
                 self.indent += 1
                 self.active_tags.append(tag)
             elif tag == 'li':
                 self.active_tags.append(INDENT[self.indent])
                 self.do_lstrip = True
                 if not self.end_ul:
-                    self.textobj.insert(END, '\n')
-                self.textobj.insert(END, '* ', tuple(self.active_tags))
+                    self.textobj.insert(tk.END, '\n')
+                self.textobj.insert(tk.END, '* ', tuple(self.active_tags))
             else:
                 self.active_tags.append(tag)
         self.end_ul = False
 
     def handle_endtag(self, tag):
         if tag == 'ul':
-            self.textobj.insert(END, '\n\n')
+            self.textobj.insert(tk.END, '\n\n')
             self.indent -= 1
             self.do_lstrip = True
             self.end_ul = True
@@ -203,7 +205,7 @@ class TutorialHTMLParser(HTMLParser):
             self.do_lstrip = True
             return
         elif tag in HEADERS:
-            self.textobj.insert(END, '\n\n')
+            self.textobj.insert(tk.END, '\n\n')
             self.do_lstrip = True
         self.active_tags.pop(-1)
 
@@ -236,13 +238,13 @@ class TutorialHTMLParser(HTMLParser):
             if tag == 'ul':
                 return
             if tag == 'pre':
-                self.textobj.insert(END, data, ('tt',))
+                self.textobj.insert(tk.END, data, ('tt',))
                 return
             data = self._compress_data(data)
             for tag in self.active_tags:
                 if 'indent' not in tag:
                     self.textobj.tag_raise(tag)
-            self.textobj.insert(END, data, tuple(self.active_tags))
+            self.textobj.insert(tk.END, data, tuple(self.active_tags))
         else:
             data = self._compress_data(data)
-            self.textobj.insert(END, data)
+            self.textobj.insert(tk.END, data)

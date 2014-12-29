@@ -19,35 +19,42 @@
 
 ## The MyPyTutor text dialog
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 
 from tutorlib.gui.dialogs.dialog import Dialog
 
 
 class TextDialog(Dialog):
-    def __init__(self, parent, title, text, bg='#ffffff'):
+    def __init__(self, parent, title, text):
         # set up vars needed to create widgets
         self.text = text
-        self.bg = bg
 
         # defer remaining setup to parent
         super().__init__(parent, title, allow_cancel=False)
 
     def create_widgets(self):
-        frame_main = Frame(
+        # TODO: sort out style
+        frame_main = ttk.Frame(
             self.frame_top,
             borderwidth=2,
-            relief=SUNKEN,
-            bg=self.bg)
-        frame_main.pack(side=TOP, expand=TRUE, fill=BOTH)
+            relief=tk.SUNKEN,
+        )
+        frame_main.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
 
-        textwin = Text(frame_main, width=80, height=40, bg=self.bg, wrap=WORD)
-        textwin.pack(side=LEFT)
+        # TODO: sort out style
+        textwin = tk.Text(
+            frame_main,
+            width=80,
+            height=40,
+            wrap=tk.WORD,
+        )
+        textwin.pack(side=tk.LEFT)
 
-        scrollbar = Scrollbar(frame_main)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        scrollbar = ttk.Scrollbar(frame_main)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         textwin.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=textwin.yview)
 
-        textwin.insert(END, self.text)
-        textwin.config(state=DISABLED)
+        textwin.insert(tk.END, self.text)
+        textwin.config(state=tk.DISABLED)

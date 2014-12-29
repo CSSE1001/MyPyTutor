@@ -19,16 +19,17 @@
 ## A Font chooser - this is based on CreatePageFontTab in
 ## idlelib/configDialog.py
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 import tkinter.font
 import tkinter.simpledialog
 from idlelib.dynOptionMenuWidget import DynOptionMenu
 
 
-class FontChooser(Toplevel):
+class FontChooser(tk.Toplevel):
 
     def __init__(self, master, parent, defaultfont):
-        Toplevel.__init__(self, master)
+        super().__init__(master)
         self.master = master
         self.parent = parent
         self.result = None
@@ -37,10 +38,10 @@ class FontChooser(Toplevel):
         self.transient(master)
         self.wait_visibility()
         self.grab_set()
-        self.fontSize = StringVar(self)
-        self.fontBold = BooleanVar(self)
-        self.fontName = StringVar(self)
-        self.spaceNum = IntVar(self)
+        self.fontSize = tk.StringVar(self)
+        self.fontBold = tk.BooleanVar(self)
+        self.fontName = tk.StringVar(self)
+        self.spaceNum = tk.IntVar(self)
         font_name = defaultfont[0]
         font_size = defaultfont[1]
         self.fontName.set(font_name)
@@ -48,59 +49,74 @@ class FontChooser(Toplevel):
         self.editFont = tkinter.font.Font(self, (font_name,
                                                  int(font_size),
                                                  'normal'))
-        frame = Frame(self)
-        frame.pack(side=TOP, expand=TRUE, fill=BOTH)
+        frame = ttk.Frame(self)
+        frame.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
 
-        frameFont = LabelFrame(frame, borderwidth=2, relief=GROOVE,
-                               text=' Tutorial Font ')
-        frameFontName = Frame(frameFont)
-        frameFontParam = Frame(frameFont)
-        self.labelFontNameTitle = Label(frameFontName, justify=LEFT,
-                                        text='Font Face : '+font_name)
+        frameFont = ttk.LabelFrame(
+            frame, borderwidth=2, relief=tk.GROOVE, text=' Tutorial Font '
+        )
+        frameFontName = ttk.Frame(frameFont)
+        frameFontParam = ttk.Frame(frameFont)
+        self.labelFontNameTitle = ttk.Label(
+            frameFontName, justify=tk.LEFT, text='Font Face : '+font_name
+        )
         self.fontName.set(font_name)
-        self.listFontName = Listbox(frameFontName, height=5, takefocus=FALSE,
-                                    exportselection=FALSE)
+        self.listFontName = tk.Listbox(
+            frameFontName,
+            height=5,
+            takefocus=tk.FALSE,
+            exportselection=tk.FALSE,
+        )
         self.listFontName.bind('<ButtonRelease-1>',
                                self.OnListFontButtonRelease)
-        scrollFont = Scrollbar(frameFontName)
+        scrollFont = ttk.Scrollbar(frameFontName)
         scrollFont.config(command=self.listFontName.yview)
         self.listFontName.config(yscrollcommand=scrollFont.set)
-        labelFontSizeTitle = Label(frameFontParam, text='Size :')
+        labelFontSizeTitle = ttk.Label(frameFontParam, text='Size :')
         fonts = sorted(list(tkinter.font.families())+['Helvetica'])
         for font in fonts:
-            self.listFontName.insert(END, font)
+            self.listFontName.insert(tk.END, font)
         self.optMenuFontSize = DynOptionMenu(frameFontParam, self.fontSize,
                                              None, command=self.SetFontSample)
-        frameFontSample = Frame(frameFont, relief=SOLID, borderwidth=1)
+        frameFontSample = ttk.Frame(frameFont, relief=tk.SOLID, borderwidth=1)
         self.optMenuFontSize.SetMenu(('7', '8', '9', '10', '11', '12', '13',
                                       '14', '16', '18', '20', '22'), font_size)
 
-        self.labelFontSample = Label(frameFontSample,
-                                     text='AaBbCcDdEe\nFfGgHhIiJjK\n1234567890\n#:+=(){}[]',
-                                     justify=LEFT, font=self.editFont)
+        self.labelFontSample = ttk.Label(
+            frameFontSample,
+            text='AaBbCcDdEe\nFfGgHhIiJjK\n1234567890\n#:+=(){}[]',
+            justify=tk.LEFT,
+            font=self.editFont,
+        )
 
-        frameFont.pack(side=LEFT, padx=5, pady=5, expand=TRUE, fill=BOTH)
-        frameFontName.pack(side=TOP, padx=5, pady=5, fill=X)
-        frameFontParam.pack(side=TOP, padx=5, pady=5, fill=X)
-        self.labelFontNameTitle.pack(side=TOP, anchor=W)
-        self.listFontName.pack(side=LEFT, expand=TRUE, fill=X)
-        scrollFont.pack(side=LEFT, fill=Y)
-        labelFontSizeTitle.pack(side=LEFT, anchor=W)
-        self.optMenuFontSize.pack(side=LEFT, anchor=W)
-        frameFontSample.pack(side=TOP, padx=5, pady=5, expand=TRUE, fill=BOTH)
-        self.labelFontSample.pack(expand=TRUE, fill=BOTH)
-        buttonFrame = Frame(self)
-        buttonFrame.pack(side=TOP, expand=TRUE, fill=BOTH)
-        okButton = Button(buttonFrame, text="OK", command=self.ok)
-        applyButton = Button(buttonFrame, text="Apply", command=self.apply)
-        cancelButton = Button(buttonFrame, text="Cancel", command=self.cancel)
-        okButton.pack(side=LEFT, expand=TRUE)
-        applyButton.pack(side=LEFT, expand=TRUE)
-        cancelButton.pack(side=LEFT, expand=TRUE)
+        frameFont.pack(
+            side=tk.LEFT,
+            padx=5,
+            pady=5,
+            expand=tk.TRUE,
+            fill=tk.BOTH,
+        )
+        frameFontName.pack(side=tk.TOP, padx=5, pady=5, fill=tk.X)
+        frameFontParam.pack(side=tk.TOP, padx=5, pady=5, fill=tk.X)
+        self.labelFontNameTitle.pack(side=tk.TOP, anchor=tk.W)
+        self.listFontName.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.X)
+        scrollFont.pack(side=tk.LEFT, fill=tk.Y)
+        labelFontSizeTitle.pack(side=tk.LEFT, anchor=tk.W)
+        self.optMenuFontSize.pack(side=tk.LEFT, anchor=tk.W)
+        frameFontSample.pack(side=tk.TOP, padx=5, pady=5, expand=tk.TRUE, fill=tk.BOTH)
+        self.labelFontSample.pack(expand=tk.TRUE, fill=tk.BOTH)
+        buttonFrame = ttk.Frame(self)
+        buttonFrame.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
+        okButton = ttk.Button(buttonFrame, text="OK", command=self.ok)
+        applyButton = ttk.Button(buttonFrame, text="Apply", command=self.apply)
+        cancelButton = ttk.Button(buttonFrame, text="Cancel", command=self.cancel)
+        okButton.pack(side=tk.LEFT, expand=tk.TRUE)
+        applyButton.pack(side=tk.LEFT, expand=tk.TRUE)
+        cancelButton.pack(side=tk.LEFT, expand=tk.TRUE)
         self.wait_window(self)
 
     def destroy(self):
-        Toplevel.destroy(self)
+        super().destroy()
 
     def ok(self, e=None):
         self.result = (self.fontName.get(), self.fontSize.get())
@@ -116,7 +132,7 @@ class FontChooser(Toplevel):
         self.destroy()
 
     def OnListFontButtonRelease(self, event):
-        font = self.listFontName.get(ANCHOR)
+        font = self.listFontName.get(tk.ANCHOR)
         self.fontName.set(font.lower())
         self.SetFontSample()
 
