@@ -6,6 +6,7 @@ import tkinter.messagebox as tkmessagebox
 from tutorlib.config.configuration import load_config
 from tutorlib.editor.editor_window import TutorEditor
 from tutorlib.gui.aboutdialog import TutAboutDialog
+from tutorlib.gui.feedbackdialog import FeedbackDialog
 from tutorlib.gui.font_chooser import FontChooser
 from tutorlib.gui.helpdialog import HelpDialog
 from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
@@ -261,7 +262,15 @@ class TutorialApp(TutorialMenuDelegate):
 
     # feedback
     def feedback(self, problem_feedback=False):
-        pass
+        if problem_feedback:
+            FeedbackDialog(
+                self.master,
+                'Problem Feedback: {}'.format(self.current_tutorial.name),
+                self.current_tutorial.name,
+                self.editor.get_text()
+            )
+        else:
+            FeedbackDialog(self.master, 'General Feedback')
 
     # help
     def show_help_dialog(self):

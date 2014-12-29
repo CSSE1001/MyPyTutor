@@ -32,7 +32,7 @@ URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
 
 
 class FeedbackDialog(Dialog):
-    def __init__(self, parent, title, name, code=''):
+    def __init__(self, parent, title, name='', code=''):
         # set up vars needed to create widgets
         self.name = name
         self.subject_var = StringVar()
