@@ -25,27 +25,54 @@ class ProblemSet():
 
 
 class TutorialPackage():
-    CONFIG_FILE = 'tutorials.txt'
+    TUTORIALS_FILE = 'tutorials.txt'
+    CONFIG_FILE = 'config.txt'
 
     def __init__(self, options):
         self.options = options
+
         path = os.path.join(options.tut_dir, TutorialPackage.CONFIG_FILE)
 
         try:
             with open(path) as f:
-                self._parse_tutorial_config(f)
+                self._parse_config_file(f)
         except (FileNotFoundError, IOError) as e:
             ex = TutorialPackageError('Failed to parse tutorial config file')
             raise ex from e
 
-    def _parse_tutorial_config(self, f):
+        path = os.path.join(options.tut_dir, TutorialPackage.TUTORIALS_FILE)
+
+        try:
+            with open(path) as f:
+                self._parse_tutorials_file(f)
+        except (FileNotFoundError, IOError) as e:
+            ex = TutorialPackageError('Failed to parse tutorials file')
+            raise ex from e
+
+    def _parse_config_file(self, f):
+        # expected format
+        # timestamp
+        # url
+
+        try:
+            timestamp, self.url = filter(None, map(str.strip, f))
+        except ValueError:
+            raise TutorialPackageError(
+                'Invalid configuration file (need timestamp and url)'
+            )
+
+        self.timestamp = float(timestamp)
+
+    def _parse_tutorials_file(self, f):
+        # expected file format:
+        # [date section_name]
+        # problem_name:problem_directory
+        # ...
+
         self.problem_sets = []
         problem_set = None
 
-        for line in map(str.strip, f):
-            if not line:
-                continue
-
+        for line in filter(None, map(str.strip, f)):
             if line.startswith('['):
                 try:
                     date, section = line.strip('[]').split(' ', 1)
