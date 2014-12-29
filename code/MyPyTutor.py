@@ -29,9 +29,6 @@ from tutorlib.gui.app import TutorialApp
 def main():
     """The main entry point for MyPyTutor."""
 
-    if os.path.dirname(__file__):
-        os.chdir(os.path.dirname(__file__))
-
     root = tk.Tk()
     TutorialApp(root)
     root.mainloop()
