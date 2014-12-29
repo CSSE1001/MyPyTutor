@@ -21,7 +21,7 @@
 # the online interface.
 
 # Interface:
-#   >>> manager = LoginManager(server_url, callback)
+#   >>> manager = SessionManager(SERVER, callback)
 #   >>> manager.post(data)
 #   >>> manager.get(data)
 # These methods return a string with the response, or raise a RequestError if
@@ -39,6 +39,7 @@ import tkinter.messagebox
 
 LOGIN_DOMAIN = 'auth.uq.edu.au'
 LOGOUT_URL = 'http://api.uqcloud.net/logout'
+SERVER = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
 
 
 class AuthError(Exception):
@@ -50,7 +51,8 @@ class AuthError(Exception):
 
 class BadResponse(Exception):
     """An exception representing invalid responses from the web server.
-    These errors should never occur, and should be reported to the maintainer.
+    These errors should not normally occur, and should be reported to the
+    maintainer as a bug.
     """
     pass
 
@@ -227,7 +229,7 @@ def make_opener():
     return opener
 
 
-class LoginManager:
+class SessionManager:
     """A class to manage login sessions, as well as sending/receiving data from
     the web server."""
 
@@ -248,7 +250,7 @@ class LoginManager:
     def is_logged_in(self):
         return self._user is not None
 
-    def login(self, already_in=True):
+    def login(self):
         """Log in to the MyPyTutor server.
 
         If the credentials are valid, a cookie will be set automatically.
@@ -271,7 +273,8 @@ class LoginManager:
         # If we didn't get redirected to the login form, we're already in.
         if urllib.parse.urlsplit(response.geturl()).netloc != LOGIN_DOMAIN:
             set_details(text)
-            print("Already logged in as {}.".format(self._user['user']))
+            tkinter.messagebox.showerror('Login Error',
+                "You are already logged in as {}.".format(self._user['user']))
             return
 
         # Construct a callback for the login dialog box.
@@ -292,7 +295,7 @@ class LoginManager:
             response2 = self._opener.open(form_url, form_data)
 
             # Get the HTML text in the response.
-            text2 = response2.read().decode('ascii')
+            text2 = response2.read().decode('ascii')   # TODO - try utf8 (#36)
 
             # If there is a login form in the response, the user's credentials are invalid.
             if any(f[0].get('name') == 'f' for f in FormParser.forms(text2)):
@@ -361,6 +364,5 @@ class LoginManager:
 
 
 if __name__ == '__main__':
-    URL = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
-    mgr = LoginManager(URL, lambda: print("Listen!"))
+    mgr = SessionManager(SERVER, lambda: print("Listen!"))
     print(mgr.get({'action': 'userinfo'}))

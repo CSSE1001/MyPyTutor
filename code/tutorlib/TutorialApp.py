@@ -352,10 +352,11 @@ class TutorialApp():
         self.test_output.update_text_length(self.cfg.window_sizes.output)
 
     def login(self):
-        if self.tut_interface.logged_on():
-            tkinter.messagebox.showerror('Login Error', 'You are already logged in.')
-            return
-        tut_password_dialogs.LoginDialog(self, self.do_login)
+        # TODO: test this works.
+        self.tut_interface.session_manager.login()
+        # tut_password_dialogs.LoginDialog(self, self.do_login)
+
+        # TODO: should this be somewhere else?
         if self.tut_interface.logged_on():
             self.toolbar.set_login(self.tut_interface.user)
             #print self.timestamp, self.tut_interface.timestamp
@@ -380,11 +381,14 @@ class TutorialApp():
             currverlst = version_number.split('.')
             #print currverlst
             if verlst > currverlst:
-                if sys.version_info > (2, 6):
-                    zf = self.tut_interface.get_mpt27()
+                # TODO: decide which versions of python 3 to support.
+                # Note: if giving compiled pyc files as part of the distribution,
+                # users must have the same version of Python that the pyc's were compiled with.
+                if sys.version_info[:2] == (3, 4):
+                    zf = self.tut_interface.get_mpt34()
                 else:
                     tkinter.messagebox.showerror('MyPyTutor',
-                                                 'You are not using Python 2.7 - you need to upgrade')
+                                                 'You are not using Python 3.4 - you need to upgrade')
                     return
                 #print zf
                 if zf is None:
@@ -411,12 +415,9 @@ class TutorialApp():
                                      accelerator="P",
                                      command=self.previous_tutorial)
 
-    def do_login(self, user, passwd):
-        return self.tut_interface.login(user, passwd)
-
     def logout(self):
         self.toolbar.unset_login()
-        self.tut_interface.logout()
+        self.tut_interface.session_manager.logout()
 
     def change_password(self):
         if self.tut_interface.logged_on():
