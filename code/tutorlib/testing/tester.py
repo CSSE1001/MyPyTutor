@@ -50,7 +50,12 @@ class TutorialTester():
             )
 
         for test_class in self.test_classes:
-            self.run_test(test_class, code_text, student_function_name)  # TODO: remove student_function_name (now unnecessary)
+            # TODO: remove student_function_name (now unnecessary)
+            result = self.run_test(
+                test_class, code_text, student_function_name
+            )
+
+            self._results[test_class] = result
 
     def run_test(self, test_class, code_text, student_function_name):
         # grab a copy of our context to use
@@ -78,7 +83,14 @@ class TutorialTester():
         lcls = dict(gbls, **lcls)
 
         # execute the student's code, and grab a reference to the function
-        exec(compile(code_text, 'student_code.py', 'exec'), lcls)
+        try:
+            exec(compile(code_text, 'student_code.py', 'exec'), lcls)
+        except SyntaxError:  # assuming EOF
+            return TutorialTestResult(
+                test_class.DESCRIPTION,
+                TutorialTestResult.FAIL,
+                StudentTestError('No code to test'),
+            )
 
         # inject necessary data into global scope
         inject_to_module(tutorlib.testing.cases, STUDENT_LOCALS_NAME, lcls)
@@ -89,7 +101,7 @@ class TutorialTester():
         # now that we've messed with globals, we must be careful to undo any
         # changes if an error occurs
         try:
-            self._run_test(test_class)
+            return self._run_test(test_class)
         finally:
             # clean up the globals we KNOW we explicitly added
             # leave the ones that might have been there already, and which will
@@ -133,4 +145,4 @@ class TutorialTester():
         else:
             overall_result = result.main_result
 
-        self._results[test_class] = overall_result
+        return overall_result
