@@ -73,7 +73,8 @@ class TestsListbox(tk.Listbox):
         self.results = results
 
     def get_selected_result(self):
-        idx = self.curselection()[0]
+        # on OS X, this is inexplicibly a str, so we need a conversion.  sigh.
+        idx = int(self.curselection()[0])
         return self.results[idx]  # assume valid
 
     def select_result(self, result):
