@@ -263,6 +263,13 @@ class TutorialApp(TutorialMenuDelegate):
         submissions = self.web_api.get_submissions()
         # TODO: display submissions
 
+    # tools
+    def show_visualiser(self):
+        self.web_api.visualise(self.editor.get_text())
+
+    def show_interpreter(self):
+        raise NotImplementedError('Interpeter not yet implemented')
+
     # preferences
     def configure_fonts(self):
         font_chooser = FontChooser(

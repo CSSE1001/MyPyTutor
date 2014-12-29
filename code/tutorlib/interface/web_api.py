@@ -1,10 +1,12 @@
 import urllib.parse
 import urllib.request
+import webbrowser
 
 from tutorlib.online import AuthError, LoginManager
 
 
-URL = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
+LOGIN_URL = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
+VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
 
 
 # TODO: this will need to wait for a proper refactor until Jackson and I have
@@ -12,7 +14,7 @@ URL = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
 class WebAPI():
     def __init__(self):
         self.url = None
-        self.login_manager = LoginManager(URL, self._manager_callback)
+        self.login_manager = LoginManager(LOGIN_URL, self._manager_callback)
 
     # user management (login, logout etc) methods
     def _manager_callback(self):
@@ -41,6 +43,15 @@ class WebAPI():
     def logout(self):
         if self.is_logged_in:
             self.login_manager.logout()
+
+    # visualiser
+    def visualise(self, code_text):
+        # format is url (percent) encoded, except spaces are replaced by +
+        encoded_text = urllib.parse.quote(code_text, ' ').replace(' ', '+')
+        url = VISUALISER_URL.format(code=encoded_text)
+
+        # just open it in the browser
+        webbrowser.open(url)
 
     # general web communictions
     def _send_data(self, form_dict):

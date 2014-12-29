@@ -15,6 +15,10 @@ MENU_STRUCTURE = [
         ('Submit Answer', 'F6', 'submit'),
         ('Show Submissions', None, 'submissions'),
     ]),
+    ('Tools', [
+        ('Visualise Code', None, 'visualise'),
+        ('Open Interpreter', None, 'interpreter'),
+    ]),
     ('Preferences', [
         ('Configure Tutor Fonts', None, 'fonts'),
         ('Configure Tutorial Folder', None, 'tutorial_directory'),
@@ -56,6 +60,15 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
 
     @abstractmethod
     def show_submissions(self):
+        pass
+
+    # tools
+    @abstractmethod
+    def show_visualiser(self):
+        pass
+
+    @abstractmethod
+    def show_interpreter(self):
         pass
 
     # preferences
@@ -278,6 +291,12 @@ class TutorialMenu(tk.Menu):
 
     def menu_online_submissions(self):
         self.delegate.show_submissions()
+
+    def menu_tools_visualise(self):
+        self.delegate.show_visualiser()
+
+    def menu_tools_interpreter(self):
+        self.delegate.show_interpreter()
 
     def menu_preferences_fonts(self):
         self.delegate.configure_fonts()
