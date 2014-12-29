@@ -87,9 +87,11 @@ class Tutorial():
         _, config_lcls = self.exec_submodule(Tutorial.CONFIG_MODULE)
 
         self.short_description = config_lcls.get('SHORT_DESCRIPTION', '')
-        self.hints = config_lcls.get('HINTS', [])
         self.student_function_name = config_lcls.get('STUDENT_FUNCTION')
         self.timeout = config_lcls.get('TIMEOUT', 1)
+
+        self.hints = config_lcls.get('HINTS', [])
+        self._next_hint_index = 0
 
         # initial values for lazy properties
         self._preload_code_text = None
@@ -158,3 +160,13 @@ class Tutorial():
             )
 
         return self._preload_code_text
+
+    @property
+    def next_hint(self):
+        try:
+            hint = self.hints[self._next_hint_index]
+        except IndexError:
+            return None
+
+        self._next_hint_index += 1
+        return hint

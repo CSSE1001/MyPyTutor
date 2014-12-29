@@ -9,6 +9,7 @@ from tutorlib.gui.font_chooser import FontChooser
 from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.output import AnalysisOutput, TestOutput
 from tutorlib.interface.problems import TutorialPackage
+from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.tutorial_interface import TutorialInterface
 from tutorlib.interface.web_api import WebAPI
 import tutorlib.Tutorial as tut_tutorial  # TODO: fix stupid name
@@ -58,8 +59,20 @@ class TutorialApp(TutorialMenuDelegate):
         self.short_description.pack(fill=tk.X)
 
         ## Toolbar (hints, login status etc)
-        #self.toolbar = Toolbar(self, top_frame)
-        #self.toolbar.pack(fill=tk.X)
+        toolbar = tk.Frame(top_frame, bg='grey80')
+        toolbar.pack(side=tk.TOP, fill=tk.X)
+
+        self.hint_button = tk.Button(
+            toolbar, text='Next Hint', command=self._next_hint
+        )
+
+        self.online_status = tk.Label(
+            toolbar, relief=tk.SUNKEN
+        )
+        self.online_status.pack(
+            side=tk.RIGHT, pady=3, ipady=2, padx=2, ipadx=2
+        )
+        self._set_online_status(logged_in_user=None)
 
         ## Test Output
         self.test_output = TestOutput(
@@ -93,9 +106,45 @@ class TutorialApp(TutorialMenuDelegate):
         # update menu
         self.menu.set_tutorial_package(self.tutorial_package)
 
+    def _next_hint(self):
+        hint = self.current_tutorial.next_hint
+
+        if hint is not None:
+            html = '<p>\n<b>Hint: </b>{}'.format(hint)
+            self.tut.show_hint(html)
+
+            # TODO: show/hide hints button
+
+    def _set_online_status(self, logged_in_user=None):
+        if logged_in_user is None:
+            self.online_status.config(text='Status: Not Logged In')
+        else:
+            self.online_status.config(
+                text='Status: Logged in as {}'.format(logged_in_user)
+            )
+
     ## General callbacks
     def close(self, evt=None):
         self.master.destroy()
+
+    ## Public-ish methods
+    def run_tests(self):
+        code_text = self.editor.get_text()
+
+        # run the tests
+        # if the student code cannot be parsed, highlight the problem line
+        try:
+            tester, analyser = run_tests(self.current_tutorial, code_text)
+        except StudentCodeError as e:
+            self.editor.error_line(e.linenum)
+            return False
+
+        # show the results on the UI
+        self.test_output.set_test_results(tester.results)
+        self.analysis_output.set_analyser(analyser)
+
+        # return whether the code passed
+        return tester.passed and not analyser.errors
 
     ## TutorialMenuDelegate
     # problems
@@ -112,19 +161,35 @@ class TutorialApp(TutorialMenuDelegate):
             for _ in range(increment):
                 problem = f(self.current_tutorial)
 
-        ## TODO: actual selection
         if self.editor.maybesave() == 'cancel':  # TODO: magic string
             return
 
+        # set the current tutorial
         self.current_tutorial = problem
 
+        # show the problem text and description
         self.tut.add_text(self.current_tutorial.description)
+        self.short_description.config(
+            text=self.current_tutorial.short_description
+        )
 
+        # set up the editor
         answer_path = os.path.join(
             self.tutorial_package.options.ans_dir,
             '_'.join(self.current_tutorial.name.split()) + '.py'
         )
         self.editor.reset(answer_path, self.current_tutorial.preload_code_text)
+        self.editor.undo.reset_undo()
+
+        # set up the hints toolbar
+        if self.current_tutorial.hints:
+            self.hint_button.pack(side=tk.LEFT)
+        else:
+            self.hint_button.pack_forget()
+
+        # run the tests
+        # this will fill out the results and static analysis sections
+        self.run_tests()
 
     # online
     def login(self):
@@ -136,9 +201,14 @@ class TutorialApp(TutorialMenuDelegate):
                 'Some functionality (such as submitting answers) will be ' \
                 'unavailable until you log in successfully.'
             )
+            return
+
+        self._set_online_status(logged_in_user=self.web_api.user)
 
     def logout(self):
         self.web_api.logout()
+
+        self._set_online_status(logged_in_user=None)
 
     def submit(self):
         if not self.web_api.is_logged_in() or self.login():

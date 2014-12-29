@@ -33,6 +33,12 @@ class TutorialTester():
         '''
         return [self._results[cls] for cls in self.test_classes]
 
+    @property
+    def passed(self):
+        return all(
+            result.status == TutorialTestResult.PASS for result in self.results
+        )
+
     def run(self, code_text, student_function_name):
         # if no function name is given, we need to wrap their code
         if student_function_name is None:
