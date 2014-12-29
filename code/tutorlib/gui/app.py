@@ -3,7 +3,7 @@ import tkinter as tk
 import tkinter.filedialog as tkfiledialog
 import tkinter.messagebox as tkmessagebox
 
-from tutorlib.config.configuration import load_config
+from tutorlib.config.configuration import load_config, save_config
 from tutorlib.editor.editor_window import TutorEditor
 from tutorlib.gui.aboutdialog import TutAboutDialog
 from tutorlib.gui.feedbackdialog import FeedbackDialog
@@ -126,7 +126,13 @@ class TutorialApp(TutorialMenuDelegate):
 
     ## General callbacks
     def close(self, evt=None):
-        self.master.destroy()
+        # only close if the editor indicates that it's safe to do so
+        # (this will prompt the student to save their code)
+        if self.editor.close() == 'yes':  # TODO: magic strings
+            self.logout()
+            save_config(self.cfg)
+
+            self.master.destroy()
 
     ## Public-ish methods
     def run_tests(self):
