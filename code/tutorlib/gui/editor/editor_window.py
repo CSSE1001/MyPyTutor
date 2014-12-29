@@ -23,10 +23,10 @@ import os
 from tkinter import *
 
 from idlelib import EditorWindow, macosxSupport
-import tutorlib.editor.bindings as Bindings  # consistent naming with idlelib
-from tutorlib.editor.io_binding import TutorIOBinding
-from tutorlib.gui.aboutdialog import TutAboutDialog
-from tutorlib.gui.helpdialog import HelpDialog
+from tutorlib.gui.dialogs.about import TutAboutDialog
+from tutorlib.gui.dialogs.help import HelpDialog
+import tutorlib.gui.editor.bindings as Bindings  # consistent naming with idlelib
+from tutorlib.gui.editor.io_binding import TutorIOBinding
 import tkinter.filedialog
 import tkinter.messagebox
 

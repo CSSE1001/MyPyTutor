@@ -21,7 +21,7 @@
 
 from tkinter import *
 
-from tutorlib.gui.dialog import Dialog
+from tutorlib.gui.dialogs.dialog import Dialog
 
 
 class TextDialog(Dialog):

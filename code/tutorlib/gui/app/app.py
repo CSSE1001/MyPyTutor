@@ -5,13 +5,13 @@ import tkinter.messagebox as tkmessagebox
 
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
-from tutorlib.editor.editor_window import TutorEditor
-from tutorlib.gui.aboutdialog import TutAboutDialog
-from tutorlib.gui.feedbackdialog import FeedbackDialog
-from tutorlib.gui.font_chooser import FontChooser
-from tutorlib.gui.helpdialog import HelpDialog
-from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
-from tutorlib.gui.output import AnalysisOutput, TestOutput
+from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
+from tutorlib.gui.app.output import AnalysisOutput, TestOutput
+from tutorlib.gui.editor.editor_window import TutorEditor
+from tutorlib.gui.dialogs.about import TutAboutDialog
+from tutorlib.gui.dialogs.feedback import FeedbackDialog
+from tutorlib.gui.dialogs.font_chooser import FontChooser
+from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.interface.problems import TutorialPackage
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI

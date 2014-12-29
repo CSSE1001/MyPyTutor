@@ -25,7 +25,7 @@ import urllib.parse
 import urllib.error
 import tkinter.messagebox
 
-from tutorlib.gui.dialog import Dialog
+from tutorlib.gui.dialogs.dialog import Dialog
 
 ## The URL for the feedback CGI script.
 URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'

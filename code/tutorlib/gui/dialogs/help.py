@@ -20,7 +20,7 @@
 ## The MyPyTutor help dialog
 
 
-from tutorlib.gui.textdialog import TextDialog
+from tutorlib.gui.dialogs.text import TextDialog
 
 HELP_TEXT = """
 The MyPyTutor Python Tutorial System
