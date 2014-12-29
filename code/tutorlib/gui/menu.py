@@ -197,7 +197,7 @@ class TutorialMenu(tk.Menu):
         if self._tutorial_package is None:
             return
 
-        for problem_set in self._tutorial_package:
+        for problem_set in self._tutorial_package.problem_sets:
             submenu = tk.Menu(self._dynamic_problems_menu, tearoff=tk.FALSE)
             self._dynamic_problems_menu.add_cascade(
                 label='{}: {}'.format(problem_set.date, problem_set.name),

@@ -47,9 +47,9 @@ class TutorEditor(EditorWindow.EditorWindow):
     def __init__(self, parent, flist=None, root=None,
                  filename=None, online=False):
 
-        ## Support for Python >= 2.7.7 (TODO find a better way)
-        #if hasattr(macosxSupport, "_initializeTkVariantTests") and macosxSupport._tk_type is None:
-        #    macosxSupport._initializeTkVariantTests(root)
+        # Support for Python >= 2.7.7 (TODO find a better way)
+        if hasattr(macosxSupport, "_initializeTkVariantTests") and macosxSupport._tk_type is None:
+            macosxSupport._initializeTkVariantTests(root)
 
         if online:
             self.menu_specs.insert(4, ("online", "_Online"))

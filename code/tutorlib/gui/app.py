@@ -4,6 +4,7 @@ import tkinter.filedialog as tkfiledialog
 import tkinter.messagebox as tkmessagebox
 
 from tutorlib.config.configuration import load_config
+from tutorlib.editor.editor_window import TutorEditor
 from tutorlib.gui.font_chooser import FontChooser
 from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.output import AnalysisOutput, TestOutput
@@ -24,20 +25,25 @@ class TutorialApp(TutorialMenuDelegate):
         master.config(menu=self.menu)
 
         #### Set up local variables
+        ## Important top-level vars
         self.master = master
-
         self.cfg = load_config()
 
+        ## Vars with side effects
         self._select_tutorial_package(self.cfg.tutorials.default)
 
+        ## Objects
         self.interface = TutorialInterface()
         self.web_api = WebAPI()
+
+        ## Optionals / property bases
+        self.current_tutorial = None
+        self._editor = None
 
         #### Create GUI Widgets
         ## Top Frame
         top_frame = tk.Frame(master)
         top_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
-        self.editor = None
 
         ## Tutorial (html display of tutorial problem)
         self.tut = tut_tutorial.Tutorial(
@@ -72,6 +78,12 @@ class TutorialApp(TutorialMenuDelegate):
         self.analysis_output.pack(fill=tk.BOTH, expand=0)
 
     ## Properties
+    @property
+    def editor(self):
+        if self._editor is None:
+            self._editor = TutorEditor(self, root=self.master, online=False)
+            ## TODO: fix online
+        return self._editor
 
     ## Private methods
     def _select_tutorial_package(self, package_name):
@@ -88,7 +100,31 @@ class TutorialApp(TutorialMenuDelegate):
     ## TutorialMenuDelegate
     # problems
     def change_problem(self, increment=None, problem=None):
-        pass
+        if increment is not None:
+            if increment < 0:
+                f = self.tutorial_package.previous
+                increment = -increment
+            else:
+                f = self.tutorial_package.next
+
+            problem = self.current_tutorial
+
+            for _ in range(increment):
+                problem = f(self.current_tutorial)
+
+        ## TODO: actual selection
+        if self.editor.maybesave() == 'cancel':  # TODO: magic string
+            return
+
+        self.current_tutorial = problem
+
+        self.tut.add_text(self.current_tutorial.description)
+
+        answer_path = os.path.join(
+            self.tutorial_package.options.ans_dir,
+            '_'.join(self.current_tutorial.name.split()) + '.py'
+        )
+        self.editor.reset(answer_path, self.current_tutorial.preload_code_text)
 
     # online
     def login(self):

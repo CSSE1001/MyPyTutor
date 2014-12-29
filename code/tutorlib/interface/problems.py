@@ -38,9 +38,6 @@ class TutorialPackage():
             ex = TutorialPackageError('Failed to parse tutorial config file')
             raise ex from e
 
-    def __iter__(self):
-        return iter(self.problem_sets)
-
     def _parse_tutorial_config(self, f):
         self.problem_sets = []
         problem_set = None
@@ -85,3 +82,25 @@ class TutorialPackage():
                     raise ex from e
 
                 problem_set.add_problem(tutorial)
+
+    def _get_tutorial(self, current_tutorial, get_previous=True):
+        previous_tutorial = None
+        return_next = current_tutorial is None  # return first if None
+
+        for problem_set in self.problem_sets:
+            for tutorial in problem_set:
+                if return_next:
+                    return tutorial
+                elif tutorial == current_tutorial:
+                    if get_previous:
+                        return previous_tutorial or tutorial  # same if first
+                    return_next = True
+                previous_tutorial = tutorial
+
+        return tutorial  # if at end, return same
+
+    def next(self, current_tutorial):
+        return self._get_tutorial(current_tutorial, get_previous=False)
+
+    def previous(self, current_tutorial):
+        return self._get_tutorial(current_tutorial, get_previous=True)
