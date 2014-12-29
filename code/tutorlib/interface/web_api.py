@@ -54,23 +54,6 @@ class WebAPI():
         webbrowser.open(url)
 
     # general web communictions
-    def _send_data(self, form_dict):
-        if self.url is not None:
-            try:
-                URL = self.url.strip()
-                data = urllib.parse.urlencode(form_dict)
-                proxy_handler = urllib.request.ProxyHandler(proxies={})
-                request = urllib.request.build_opener(proxy_handler)
-                response = request.open(URL, data.encode('ascii'))
-                text = response.read().decode('ascii').strip()
-                #print text  # debugging
-                if text.startswith('mypytutor>>>'):
-                    return text[12:]
-                else:
-                    return '_send_data Exception: Invalid response'
-            except Exception as e:
-                return '_send_data Exception: '+str(e)
-
     def get_tut_zipfile(self):
         values = {'action': 'get_tut_zip_file'}
         result = self._send_data(values)
@@ -120,26 +103,6 @@ class WebAPI():
             return None
         else:
             return result
-
-    def change_password(self, passwd0, passwd1):
-        if passwd0 == '':
-            passwd0 = '-'
-        values = {'action': 'change_password',
-                  'username': self.user,
-                  'session_key': self.session_key,
-                  'password': passwd0,
-                  'password1': passwd1,
-                  }
-        result = self._send_data(values)
-        if '_send_data Exception' in result:
-            print("You don't appear to be connected.", file=sys.stderr)
-            return False
-        if result is None:
-            return False
-        if result.startswith('Error'):
-            return False
-        else:
-            return True
 
     def upload_answer(self, code):
         result = None
