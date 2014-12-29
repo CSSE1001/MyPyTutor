@@ -42,7 +42,7 @@ COLOURS = ['red', 'green', 'blue']
 INTRO_TEXT = """
 <p>
 <p>
-<h3>Welcome to MyPyTutor %s</h3>
+<h3>Welcome to MyPyTutor {version}</h3>
 
 The Problems menu contains the
 collection of problems to choose from.
@@ -57,7 +57,8 @@ Use the Online menu to interact with your online information.
 
 class TutorialFrame(Frame):
     def __init__(self, master, fontinfo, textlen):
-        Frame.__init__(self, master)
+        super().__init__(master)
+
         font_name = fontinfo[0]
         font_size = int(fontinfo[1])
         self.text = Text(self, height=textlen, wrap=WORD)
@@ -79,10 +80,12 @@ class TutorialFrame(Frame):
         self.tut_directory = None
 
     def splash(self, online, version):
+        text = INTRO_TEXT.format(version=version)
+
         if online:
-            self.add_text((INTRO_TEXT % version) + ONLINE_TEXT)
-        else:
-            self.add_text(INTRO_TEXT % version)
+            text += ONLINE_TEXT
+
+        self.add_text(text)
 
     def update_text_length(self, lines):
         self.text.config(height=lines)
@@ -109,9 +112,11 @@ class TutorialFrame(Frame):
                                'normal', 'roman'))
 
     def set_directory(self, directory):
+        # TODO: I'm not currently calling this
         self.tut_directory = directory
 
     def add_text(self, text):
+        # TODO: this method name is bad - it doesn't add, it replaces
         self.text.config(state=NORMAL)
         self.text.delete(1.0, END)
         self.text.insert(END, '\n')
@@ -128,7 +133,6 @@ class TutorialFrame(Frame):
 
 
 class TutorialHTMLParser(HTMLParser):
-
     def __init__(self, textobj, parent=None):
         super().__init__(self)
         self.header = ''

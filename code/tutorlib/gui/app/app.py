@@ -18,6 +18,9 @@ from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI
 
 
+VERSION = '3.0.0'
+
+
 class TutorialApp(TutorialMenuDelegate):
     def __init__(self, master):
         #### Set up the window
@@ -55,6 +58,7 @@ class TutorialApp(TutorialMenuDelegate):
             self.cfg.window_sizes.problem
         )
         self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
+        self.tutorial_frame.splash(online=True, version=VERSION)
 
         ## Short Problem Description
         self.short_description = tk.Label(top_frame, fg='blue')
