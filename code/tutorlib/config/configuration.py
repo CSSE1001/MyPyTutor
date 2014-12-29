@@ -124,7 +124,7 @@ def add_tutorial(config, window=None, as_default=True):  # TODO: check None work
     # prompt for a tutorial directory to add
     prompt = TutorialDirectoryPrompt(window)
     if prompt.result is None:
-        return
+        return 'Cancelled'
 
     tut_dir, ans_dir, name = prompt.result
 

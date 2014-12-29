@@ -14,7 +14,7 @@ from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
 from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
-from tutorlib.interface.problems import TutorialPackage
+from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI
 
@@ -115,14 +115,21 @@ class TutorialApp(TutorialMenuDelegate):
 
     ## Private methods
     def _select_tutorial_package(self, package_name):
-        if package_name is None:
+        if not package_name:
             # we can't change to a non-existent package, so we will need to
             # add a new one
             self.add_tutorial()
             return
 
         options = getattr(self.cfg, package_name)
-        self.tutorial_package = TutorialPackage(package_name, options)
+        try:
+            self.tutorial_package = TutorialPackage(package_name, options)
+        except TutorialPackageError as e:
+            tkmessagebox.showerror(
+                'Invalid Tutorial Package',
+                'Failed to load {}: {}'.format(package_name, e),
+            )
+            return
 
         # update menu
         self.menu.set_selected_tutorial_package(self.tutorial_package)
@@ -298,8 +305,14 @@ class TutorialApp(TutorialMenuDelegate):
     def add_tutorial(self):
         # if we don't have a default tutorial, we should add this one as the
         # default and then switch to it
-        as_default = self.cfg.tutorials.default is None
-        add_tutorial(self.cfg, as_default=as_default)
+        as_default = not self.cfg.tutorials.default
+        msg = add_tutorial(self.cfg, as_default=as_default, window=self.master)
+
+        if msg is not None:
+            tkmessagebox.showerror(
+                'Failed to Add Tutorial',
+                'Could not add tutorial: {}'.format(msg),
+            )
 
         if as_default:
             self._select_tutorial_package(self.cfg.tutorials.default)
