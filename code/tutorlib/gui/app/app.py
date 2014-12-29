@@ -7,6 +7,7 @@ from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output import AnalysisOutput, TestOutput
+from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
@@ -15,7 +16,6 @@ from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.interface.problems import TutorialPackage
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI
-import tutorlib.Tutorial as tut_tutorial  # TODO: fix stupid name
 
 
 class TutorialApp(TutorialMenuDelegate):
@@ -49,12 +49,12 @@ class TutorialApp(TutorialMenuDelegate):
         top_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
 
         ## Tutorial (html display of tutorial problem)
-        self.tut = tut_tutorial.Tutorial(
+        self.tutorial_frame = TutorialFrame(
             top_frame,
             (self.cfg.font.name, self.cfg.font.size),
             self.cfg.window_sizes.problem
         )
-        self.tut.pack(fill=tk.BOTH, expand=tk.TRUE)
+        self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
 
         ## Short Problem Description
         self.short_description = tk.Label(top_frame, fg='blue')
@@ -126,7 +126,7 @@ class TutorialApp(TutorialMenuDelegate):
 
         if hint is not None:
             html = '<p>\n<b>Hint: </b>{}'.format(hint)
-            self.tut.show_hint(html)
+            self.tutorial_frame.show_hint(html)
 
             # TODO: show/hide hints button
 
@@ -195,7 +195,7 @@ class TutorialApp(TutorialMenuDelegate):
         self.current_tutorial = problem
 
         # show the problem text and description
-        self.tut.add_text(self.current_tutorial.description)
+        self.tutorial_frame.add_text(self.current_tutorial.description)
         self.short_description.config(
             text=self.current_tutorial.short_description
         )

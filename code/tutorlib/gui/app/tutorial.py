@@ -25,7 +25,6 @@
 from tkinter import *
 from html.parser import HTMLParser
 import os
-import tkinter.messagebox
 
 FONTS_INFO = [('h1', 8, 'bold'),
               ('h2', 6, 'bold'),
@@ -56,7 +55,7 @@ Use the Online menu to interact with your online information.
 """
 
 
-class Tutorial(Frame):
+class TutorialFrame(Frame):
     def __init__(self, master, fontinfo, textlen):
         Frame.__init__(self, master)
         font_name = fontinfo[0]
@@ -243,128 +242,3 @@ class TutorialHTMLParser(HTMLParser):
         else:
             data = self._compress_data(data)
             self.textobj.insert(END, data)
-
-
-# Storing info about each tutorial
-
-class TutorialInfo(object):
-    class TutInfo(object):
-        def __init__(self, name):
-            self.name = name
-            self.problems_info = {}
-            self.problems_list = []
-            self.menuobj = None
-
-        def set_menuobj(self, menuobj):
-            self.menuobj = menuobj
-
-        def get_menuobj(self):
-            return self.menuobj
-
-        def add_problem(self, problem):
-            name = problem.name
-            self.problems_list.append(name)
-            self.problems_info[name] = problem
-
-        def set_problem_status(self, name, status):
-            self.problems_info[name].set_status(status)
-
-        def get_problem(self, name):
-            return self.problems_info[name]
-
-        def get_max_len(self):
-            max_len = 0
-            for key in self.problems_info:
-                max_len = max(max_len, len(self.problems_info[key].name))
-            return max_len
-
-    class ProblemInfo(object):
-        def __init__(self, name, tut):
-            self.name = name
-            self.tut = tut
-            self.status = '-'
-
-        def set_status(self, status):
-            self.status = status
-
-    def __init__(self, tut_dir):
-        try:
-            fullname = os.path.join(tut_dir, 'tutorials.txt')
-            f = open(fullname, 'U')
-        except:
-            tkinter.messagebox.showerror('Tutorial Error',
-                                         'Cannot open master file '+fullname)
-            return None
-
-        lines = [line.strip() for line in f]
-        f.close()
-        self.tut_list = []
-        self.tut_dict = {}
-        current_tut = ''
-        for line in lines:
-            if line:
-                if line[0] == '[':
-                    tut = line[1:-1]
-                    tut_info = TutorialInfo.TutInfo(tut)
-                    self.tut_list.append(tut)
-                    self.tut_dict[tut] = tut_info
-                    current_tut = tut
-                else:
-                    parts = line.split(':')
-                    tut_info.add_problem(TutorialInfo.ProblemInfo(*parts))
-        self.all_problems = [(t, p) for t in self.tut_list
-                             for p in self.tut_dict[t].problems_list]
-
-    def get_tutorial(self, name):
-        return self.tut_dict[name]
-
-    def get_tutorial_by_index(self, index):
-        return self.get_tutorial(self.tut_list[index])
-
-    def set_menu(self, tut_name, menuobj):
-        self.tut_dict[tut_name].set_menuobj(menuobj)
-
-    def get_menu(self, tut_name):
-        return self.tut_dict[tut_name].get_menuobj()
-
-    def get_problem(self, tut_name, problem_name):
-        return self.tut_dict[tut_name].get_problem(problem_name)
-
-    def set_problem_status(self, tut_name, problem_name, status):
-        self.tut_dict[tut_name].set_problem_status(problem_name, status)
-
-    def next_tutorial(self, tut_name, problem_name):
-        if (tut_name, problem_name) == (None, None):
-            # User hasn't opened a problem yet. Move to the first unsolved one.
-            # If all are solved, move to the first one.
-            for t, p in self.all_problems:
-                if self.get_problem(t, p).status == '-':
-                    return (t, p)
-            return self.all_problems[0]
-
-        index = self.all_problems.index((tut_name, problem_name))
-        if index+1 < len(self.all_problems):
-            return self.all_problems[index+1]
-        return (tut_name, problem_name)
-
-    def previous_tutorial(self, tut_name, problem_name):
-        index = self.all_problems.index((tut_name, problem_name))
-        if index > 0:
-            return self.all_problems[index-1]
-        return (tut_name, problem_name)
-
-    def __str__(self):
-        max_len = 0
-        for key in self.tut_dict:
-            max_len = max(max_len, self.tut_dict[key].get_max_len())
-
-        string = ''
-        for key in self.tut_list:
-            tut = self.tut_dict[key]
-            string += tut.name+'\n'
-            for pkey in tut.problems_list:
-                prob = tut.problems_info[pkey]
-                name = prob.name
-                spaces = max_len + 5 - len(name)
-                string += '    ' + name + spaces*' ' + prob.status + '\n'
-        return string
