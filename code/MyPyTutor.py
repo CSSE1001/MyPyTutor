@@ -21,7 +21,6 @@
 """The MyPyTutor application."""
 
 import tkinter as tk
-import os
 
 from tutorlib.gui.app.app import TutorialApp
 
