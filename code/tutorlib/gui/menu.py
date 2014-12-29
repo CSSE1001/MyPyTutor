@@ -99,38 +99,61 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
 
 
 class TutorialMenu(tk.Menu):
+    DYNAMIC_PROBLEMS_MENU = 'Problems'
+
     def __init__(self, master, delegate=None, structure=MENU_STRUCTURE):
+        super().__init__(master)
+
         assert delegate is None or isinstance(delegate, TutorialMenuDelegate)
         self.delegate = delegate
 
-        super().__init__(master)
+        self._structure = structure
+        self._tutorial_package = None
 
-        for submenu_name, submenu_entries in MENU_STRUCTURE:
-            submenu = tk.Menu(self, tearoff=0)
+        for submenu_name, submenu_entries in self._structure:
+            submenu = tk.Menu(self, tearoff=tk.FALSE)
             self.add_cascade(label=submenu_name, menu=submenu)
 
+            if submenu_name == TutorialMenu.DYNAMIC_PROBLEMS_MENU:
+                submenu.config(postcommand=self.build_dynamic_problems_menu)
+                self._dynamic_problems_menu = submenu
+                continue
+
             for entry_name, entry_hotkey, entry_cb_name in submenu_entries:
-                if entry_name is None:
-                    submenu.add_separator()
-                    continue
+                self._add_static_entry(
+                    submenu,
+                    submenu_name,
+                    entry_name,
+                    entry_hotkey,
+                    entry_cb_name
+                )
 
-                if entry_cb_name is None:
-                    entry_cb_name = entry_name
+    def _add_static_entry(self, submenu, submenu_name, entry_name,
+                entry_hotkey, entry_cb_name):
+        if entry_name is None:
+            submenu.add_separator()
+            return
 
-                cb_name = '{}_{}'.format(submenu_name, entry_cb_name)
-                cb_name = cb_name.lower()
-                valid_chars = string.ascii_lowercase + '_'
-                assert all(c in valid_chars for c in cb_name), \
-                        'Invalid callback name: {}'.format(cb_name)
+        if entry_cb_name is None:
+            entry_cb_name = entry_name
 
-                # remember that we need to put a closure around the callback
-                # name to make python capture it by value (cf by reference)
-                callback = (lambda n=cb_name: lambda: self.callback(n))()
+        cb_name = '{}_{}'.format(submenu_name, entry_cb_name)
+        cb_name = cb_name.lower()
+        valid_chars = string.ascii_lowercase + '_'
+        assert all(c in valid_chars for c in cb_name), \
+            'Invalid callback name: {}'.format(cb_name)
 
-                submenu.add_command(label=entry_name, command=callback)
+        # remember that we need to put a closure around the callback
+        # name to make python capture it by value (cf by reference)
+        callback = (lambda n=cb_name: lambda: self.callback(n))()
 
-                # TODO: entry_hotkey
-                # TODO: need to treat as both accellerator and binding (eg F6)
+        submenu.add_command(label=entry_name, command=callback)
+
+        # TODO: entry_hotkey
+        # TODO: need to treat as both accellerator and binding (eg F6)
+
+    def set_tutorial_package(self, tutorial_package):
+        self._tutorial_package = tutorial_package
 
     def callback(self, name):
         if self.delegate is None:
@@ -143,6 +166,48 @@ class TutorialMenu(tk.Menu):
             return method()
 
         return self.generic_menu_callback(name)
+
+    def problem_callback(self, tutorial):
+        self.delegate.change_problem(problem=tutorial)
+
+    def build_dynamic_problems_menu(self):
+        # remove existing entries
+        self._dynamic_problems_menu.delete(0, tk.END)
+
+        # add the static entries
+        menu_name = TutorialMenu.DYNAMIC_PROBLEMS_MENU
+
+        try:
+            static_entries = next(
+                sub for name, sub in self._structure if name == menu_name
+            )
+        except StopIteration:
+            raise AssertionError('Could not find dynamic menu')
+
+        for name, hotkey, cb_name in static_entries:
+            self._add_static_entry(
+                self._dynamic_problems_menu,
+                TutorialMenu.DYNAMIC_PROBLEMS_MENU,
+                name,
+                hotkey,
+                cb_name,
+            )
+
+        # add the dynamic entries
+        if self._tutorial_package is None:
+            return
+
+        for problem_set in self._tutorial_package:
+            submenu = tk.Menu(self._dynamic_problems_menu, tearoff=tk.FALSE)
+            self._dynamic_problems_menu.add_cascade(
+                label='{}: {}'.format(problem_set.date, problem_set.name),
+                menu=submenu,
+            )
+
+            for tutorial in problem_set:
+                # again, close over cb var
+                cb = (lambda t=tutorial: lambda: self.problem_callback(t))()
+                submenu.add_command(label=tutorial.name, command=cb)
 
     ## TutorialMenuDelegate callbacks
     def generic_menu_callback(self, name):

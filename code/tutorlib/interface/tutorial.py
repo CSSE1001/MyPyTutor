@@ -95,8 +95,9 @@ class Tutorial():
         self._preload_code_text = None
 
     def _assert_valid_file(self, file_name):
-        assert file_name in os.listdir(self.path), \
-            'Invalid .tut package: missing {}'.format(file_name)
+        assert os.path.exists(self.path) \
+                and file_name in os.listdir(self.path), \
+                'Invalid .tut package: missing {}'.format(file_name)
 
     def _assert_valid_module(self, module_name):
         assert module_name in Tutorial.SUBMODULES, \

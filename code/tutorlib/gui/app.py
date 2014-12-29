@@ -7,6 +7,7 @@ from tutorlib.config.configuration import load_config
 from tutorlib.gui.font_chooser import FontChooser
 from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.output import AnalysisOutput, TestOutput
+from tutorlib.interface.problems import TutorialPackage
 from tutorlib.interface.tutorial_interface import TutorialInterface
 from tutorlib.interface.web_api import WebAPI
 import tutorlib.Tutorial as tut_tutorial  # TODO: fix stupid name
@@ -18,10 +19,17 @@ class TutorialApp(TutorialMenuDelegate):
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
 
+        #### Set up our menu
+        self.menu = TutorialMenu(master, delegate=self)
+        master.config(menu=self.menu)
+
         #### Set up local variables
         self.master = master
 
         self.cfg = load_config()
+
+        self._select_tutorial_package(self.cfg.tutorials.default)
+
         self.interface = TutorialInterface()
         self.web_api = WebAPI()
 
@@ -63,14 +71,15 @@ class TutorialApp(TutorialMenuDelegate):
         )
         self.analysis_output.pack(fill=tk.BOTH, expand=0)
 
-        #### Set up our menu
-        self.menu = TutorialMenu(master, delegate=self)
-        master.config(menu=self.menu)
-
     ## Properties
-    @property
-    def current_tut_options(self):
-        return getattr(self.cfg, self.current_tut_name)
+
+    ## Private methods
+    def _select_tutorial_package(self, package_name):
+        options = getattr(self.cfg, package_name)
+        self.tutorial_package = TutorialPackage(options)
+
+        # update menu
+        self.menu.set_tutorial_package(self.tutorial_package)
 
     ## General callbacks
     def close(self, evt=None):
