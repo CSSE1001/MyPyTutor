@@ -5,7 +5,9 @@ import tkinter.messagebox as tkmessagebox
 
 from tutorlib.config.configuration import load_config
 from tutorlib.editor.editor_window import TutorEditor
+from tutorlib.gui.aboutdialog import TutAboutDialog
 from tutorlib.gui.font_chooser import FontChooser
+from tutorlib.gui.helpdialog import HelpDialog
 from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.output import AnalysisOutput, TestOutput
 from tutorlib.interface.problems import TutorialPackage
@@ -263,7 +265,7 @@ class TutorialApp(TutorialMenuDelegate):
 
     # help
     def show_help_dialog(self):
-        pass
+        HelpDialog(self.master, 'Help')
 
     def show_about_dialog(self):
-        pass
+        TutAboutDialog(self.master, 'About MyPyTutor')
