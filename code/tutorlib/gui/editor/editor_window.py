@@ -28,7 +28,7 @@ from tutorlib.gui.dialogs.help import HelpDialog
 import tutorlib.gui.editor.bindings as Bindings  # consistent naming with idlelib
 from tutorlib.gui.editor.io_binding import TutorIOBinding
 import tkinter.filedialog
-import tkinter.messagebox
+import tkinter.messagebox as tkmessagebox
 
 
 class TutorEditor(EditorWindow.EditorWindow):
@@ -127,7 +127,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         return "break"
 
     def possiblysave(self, title):
-        reply = "no"
+        reply = tkmessagebox.NO
         if self.io:
             if not self.get_saved():
                 if self.top.state() != 'normal':
@@ -135,17 +135,18 @@ class TutorEditor(EditorWindow.EditorWindow):
                 self.top.lift()
                 message = ("Do you want to save %s?" %
                            (self.filename or "this untitled document"))
-                m = tkinter.messagebox.Message(
+                m = tkmessagebox.Message(
                     title=title,
                     message=message,
                     icon=tkinter.messagebox.QUESTION,
                     type=tkinter.messagebox.YESNOCANCEL,
-                    master=self.text)
+                    master=self.text,
+                )
                 reply = m.show()
-                if reply == "yes":
+                if reply == tkmessagebox.YES:
                     self.io.save(None)
                     if not self.get_saved():
-                        reply = "cancel"
+                        reply = tkmessagebox.CANCEL
         return reply
 
     def close(self):

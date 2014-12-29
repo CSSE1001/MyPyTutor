@@ -152,7 +152,7 @@ class TutorialApp(TutorialMenuDelegate):
     def close(self, evt=None):
         # only close if the editor indicates that it's safe to do so
         # (this will prompt the student to save their code)
-        if self.editor.close() == 'yes':  # TODO: magic strings
+        if self.editor.close() == tkmessagebox.YES:
             self.logout()
             save_config(self.cfg)
 
@@ -326,7 +326,7 @@ class TutorialApp(TutorialMenuDelegate):
             )
         )
 
-        if str(should_remove) == 'yes':  # stupid tk constants
+        if str(should_remove) == tkmessagebox.YES:
             del self.cfg[self.tutorial_package.name]
             self.cfg.tutorials.names.remove(self.tutorial_package.name)
 

@@ -20,7 +20,7 @@
 ## It is a modification of idlelib/IOBinding.py
 
 from idlelib import IOBinding
-import tkinter.messagebox
+import tkinter.messagebox as tkmessagebox
 
 
 class TutorIOBinding(IOBinding.IOBinding):
@@ -44,7 +44,7 @@ class TutorIOBinding(IOBinding.IOBinding):
         # Code for use outside IDLE:
         if self.get_saved():
             reply = self.maybesave()
-            if reply == "cancel":
+            if reply == tkmessagebox.CANCEL:
                 self.text.focus_set()
                 return "break"
         if not editFile:
@@ -64,19 +64,21 @@ class TutorIOBinding(IOBinding.IOBinding):
     ## rather than a string - wrapping with str() fixes the problem.
     def maybesave(self):
         if self.get_saved():
-            return "yes"
+            return tkmessagebox.YES
+
         message = "Do you want to save %s before closing?" % (
             self.filename or "this untitled document")
-        m = tkinter.messagebox.Message(
+        m = tkmessagebox.Message(
             title="Save On Close",
             message=message,
-            icon=tkinter.messagebox.QUESTION,
-            type=tkinter.messagebox.YESNOCANCEL,
-            master=self.text)
+            icon=tkmessagebox.QUESTION,
+            type=tkmessagebox.YESNOCANCEL,
+            master=self.text,
+        )
         reply = str(m.show())
-        if reply == "yes":
+        if reply == tkmessagebox.YES:
             self.save(None)
             if not self.get_saved():
-                reply = "cancel"
+                reply = tkmessagebox.CANCEL
         self.text.focus_set()
         return reply
