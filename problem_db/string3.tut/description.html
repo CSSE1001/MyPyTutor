@@ -1,0 +1,36 @@
+<h3>Processing Strings Using a For Loop</h3>
+<p>
+    For loops provide another mechanism (like while loops) for carrying out repeated computations.
+    The main difference is that a for loop iterates through the elements of an iterable object.
+</p>
+<p>
+    A for statement has the form:
+</p>
+<p>
+    <pre>
+    for var in iterable:
+        body_code
+    </pre>
+<p>
+    where <tt>var</tt> is a variable, <tt>iterable</tt> is an iterable object and <tt>body_code</tt> is a sequence of statements.
+</p>
+<p>
+    In turn, each element of <tt>iterable</tt> is assigned to <tt>var</tt> and, in that context, <tt>body_code</tt> is evaluated.
+</p>
+
+<p>
+Typically, <tt>var</tt> appears in <tt>body_code</tt>
+</p>
+<p>
+    For example, the following prints the elements in a string one line at a time.
+    <br>
+    <pre>
+    for c in "hello world":
+        print c
+    </pre>
+</p>
+
+<p>
+    Write a function definition of <tt>occurrences(text1, text2)</tt> that takes two string arguments.
+    The function returns the number of times a character from the first argument occurs in the second argument.
+</p>

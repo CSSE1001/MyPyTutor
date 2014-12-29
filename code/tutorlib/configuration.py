@@ -26,8 +26,8 @@ def load_config():
     try:
         with open(CONFIG_FILE, 'rU') as f:
             parser.read_file(f)
-    except (IOError, configparser.ParsingError):
-        raise
+    except (IOError, FileNotFoundError, configparser.ParsingError):
+        # ignore parsing errors - we will just revert to defaults
         pass
 
     # transform this to a more useful format
@@ -95,8 +95,7 @@ def unwrap_value(section, option, value):
 
     # TODO: I vaguely remember a bug using is on builtins, should check
     if special_type is list:
-        elems = value.split(',')
-        return filter(None, elems)
+        return [elem for elem in value.split(',') if elem]
     elif special_type is int:
         return int(value)
 

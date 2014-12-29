@@ -1,0 +1,41 @@
+<h3>Exception Handling</h3>
+<p>
+    Attempting to run certain code may cause errors.
+    For example, you can't open a file that doesn't exist!
+</p>
+<p>
+    The convention in Python is to denote these error conditions using exceptions.
+    An exception may be 'raised' by one function, and 'caught' by another.
+    This problems deals with catching exceptions; the next problem shows you how to raise them.
+</p>
+<p>
+    One common cause of errors is converting user input to a useful type.
+    For example, if you try to turn the string <tt>'uhoh'</tt> into an integer, you'll see something like this:
+    <br>
+    <pre>
+        >>> int('uhoh')
+        Traceback (most recent call last):
+          File "stdin", line 1, in module
+        ValueError: invalid literal for int() with base 10: 'uhoh'
+    </pre>
+</p>
+<p>
+    Exceptions like this will crash your code.
+    For some reason, users don't like it when their code crashes.
+    Thankfully, we can use the keywords <tt>try</tt> and <tt>except</tt> to deal with exceptions in a structured way.
+</p>
+<p>
+    The syntax of a try/except statment (as you'd know from the course notes) is:
+    <br>
+    <pre>
+        try:
+            code_which_may_raise_an_exception()
+        except TypeOfException as variable_name:
+            # deal with the exception
+    </pre>
+</p>
+<p>
+    This problem requires you to write a function <tt>try_int(string)</tt> which converts an integer to a string.
+    Unlike the built-in function <tt>int</tt>, however, <tt>try_int</tt> should return <tt>None</tt> if the conversion fails (not raise an exception).
+    Use a try/except statement to achieve this.
+</p>

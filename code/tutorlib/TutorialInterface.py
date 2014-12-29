@@ -19,6 +19,7 @@
 # The main interface that deals both with the tutorial files and
 # online material.
 
+import ast
 import os
 import sys
 import traceback
@@ -29,13 +30,15 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-from tutorlib.analyser import CodeAnalyser
+from tutorlib.analyser import CodeAnalyser, TutorialNodeVisitor
 from tutorlib.online import SessionManager, RequestError, SERVER
 from tutorlib.tester import TutorialTester, StudentTestCase
 
-# keep PEP8 happy with CodeAnalyser and StudentTestCase
+# keep PEP8 happy
 # these imports are indirectly used in Tutorial, and must not be removed
+ast = ast
 CodeAnalyser = CodeAnalyser
+TutorialNodeVisitor = TutorialNodeVisitor
 StudentTestCase = StudentTestCase
 
 # a file for writing user code for exec'ing on
@@ -275,16 +278,26 @@ class TutorialInterface():
         # etc which they may need for their solution)
         gbls, lcls = self.tutorial.exec_submodule(Tutorial.SUPPORT_MODULE)
 
-        # load and run the tests
-        tester = TutorialTester(self.tutorial.test_classes, gbls, lcls)
-        tester.run(text, self.tutorial.student_function_name)
-
         # perform the static analysis
+        # this should only take place if there are no errors in parsing the
+        # student's code (as those would interfere with ast)
+        # we therefore collect those first, and only proceed if there were
+        # no such errors
+        # note that we may have an error with no line information (this will be
+        # the case with a NameError, for example)
         analyser = self.tutorial.analyser
-        analyser.analyse(text)
+        tester = TutorialTester(self.tutorial.test_classes, gbls, lcls)
 
-        ## TODO: run student code, highlight SyntaxError, NameError etc
-        ## TODO: should probably do this first
+        error_line = analyser.check_for_errors(text)
+        if error_line is not None:
+            self.editor.error_line(error_line)
+
+        if not analyser.errors:
+            # there were no errors, so it's safe to perform the analysis
+            analyser.analyse(text)
+
+            # we can likewise run the tests
+            tester.run(text, self.tutorial.student_function_name)
 
         return tester, analyser
 

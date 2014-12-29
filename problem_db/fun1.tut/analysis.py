@@ -1,26 +1,25 @@
-import ast
-
-
-class CodeVisitor(ast.NodeVisitor):
+class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
+        super().__init__()
+
         self.count = 1
         self.seen_inc = []
         self.seen_double = []
 
-    def visit_Call(self, t):
-        if t.func.id == 'double':
+    def visit_Call(self, node):
+        super().visit_Call(node)
+
+        func_name = TutorialNodeVisitor.identifier(node.func)
+        if func_name == 'double':
             self.seen_double.append(self.count)
             self.count += 1
-        elif t.func.id == 'increment':
+        elif func_name == 'increment':
             self.seen_inc.append(self.count)
             self.count += 1
 
 
 class Fun1Analyser(CodeAnalyser):
-    def analyse(self, text):
-        astree = ast.parse(text)
-        self.visitor.visit(astree)
-
+    def _analyse(self):
         if not self.visitor.seen_double:
             self.add_error("You need to use the double function in your single assignment statement")
         if not self.visitor.seen_inc:

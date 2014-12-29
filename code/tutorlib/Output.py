@@ -30,6 +30,7 @@ def get_code_font(fontsize):
 
 
 class TestsListbox(Listbox):
+    COLOR_NOT_RUN = 'black'
     COLOR_PASS = 'green'
     COLOR_FAIL = 'red'
     COLOR_ERROR = 'red'
@@ -41,6 +42,7 @@ class TestsListbox(Listbox):
         super().__init__(master, *args, font=font, **kwargs)
 
         self.color_mappings = {
+            TutorialTestResult.NOT_RUN: TestsListbox.COLOR_NOT_RUN,
             TutorialTestResult.PASS: TestsListbox.COLOR_PASS,
             TutorialTestResult.FAIL: TestsListbox.COLOR_FAIL,
             TutorialTestResult.ERROR: TestsListbox.COLOR_ERROR,
@@ -63,12 +65,20 @@ class TestsListbox(Listbox):
             color = self.color_mappings[result.status]
             self.itemconfig(idx, fg=color, selectbackground=color)
 
+        # shrink ourself
+        self.config(height=len(results))
+
         # store the results for later use
         self.results = results
 
     def get_selected_result(self):
         idx = self.curselection()[0]
         return self.results[idx]  # assume valid
+
+    def select_result(self, result):
+        assert result in self.results
+        idx = self.results.index(result)
+        self.selection_set(idx)
 
 
 class TestOutput(Frame):
@@ -96,6 +106,18 @@ class TestOutput(Frame):
     def set_test_results(self, results):
         self.test_results.set_test_results(results)
         self.output.clear_text()
+
+        # select the result, and then refresh the listbox
+        # we ideally want to select the first which is not a success
+        # if we passed everything, select the first result
+        try:
+            result = next(result for result in results
+                          if result.status != TutorialTestResult.PASS)
+        except StopIteration:
+            result = results[0]
+
+        self.test_results.select_result(result)
+        self.selected_test_result(None)
 
     def display_result(self, result):
         self.output.clear_text()
@@ -146,6 +168,9 @@ class Output(Frame):
             self.text.insert(END, text)
         self.text.config(state=DISABLED)
 
+    def add_line(self, text, style=None):
+        self.add_text(text + '\n', style=style)
+
     def set_font(self, font):
         self.text.config(font=font)
 
@@ -162,7 +187,7 @@ class AnalysisOutput(Output):
 
         # show the first error, and each warning
         for warning in analyser.warnings:
-            self.add_text(warning, Output.COLOR_WARNING)
+            self.add_line(warning, Output.COLOR_WARNING)
 
         if analyser.errors:
-            self.add_text(analyser.errors[0], Output.COLOR_ERROR)
+            self.add_line(analyser.errors[0], Output.COLOR_ERROR)

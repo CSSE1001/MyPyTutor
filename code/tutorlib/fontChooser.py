@@ -76,7 +76,7 @@ class FontChooser(Toplevel):
                                       '14', '16', '18', '20', '22'), font_size)
 
         self.labelFontSample = Label(frameFontSample,
-                                     atext='AaBbCcDdEe\nFfGgHhIiJjK\n1234567890\n#:+=(){}[]',
+                                     text='AaBbCcDdEe\nFfGgHhIiJjK\n1234567890\n#:+=(){}[]',
                                      justify=LEFT, font=self.editFont)
 
         frameFont.pack(side=LEFT, padx=5, pady=5, expand=TRUE, fill=BOTH)
