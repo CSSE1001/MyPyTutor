@@ -87,7 +87,7 @@ class Tutorial():
         _, config_lcls = self.exec_submodule(Tutorial.CONFIG_MODULE)
 
         self.short_description = config_lcls.get('SHORT_DESCRIPTION', '')
-        self.student_function_name = config_lcls.get('STUDENT_FUNCTION')
+        self.wrap_student_code = config_lcls.get('WRAP_STUDENT_CODE', False)
         self.timeout = config_lcls.get('TIMEOUT', 1)
 
         self.hints = config_lcls.get('HINTS', [])

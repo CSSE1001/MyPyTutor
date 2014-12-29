@@ -39,25 +39,24 @@ class TutorialTester():
             result.status == TutorialTestResult.PASS for result in self.results
         )
 
-    def run(self, code_text, student_function_name):
+    def run(self, code_text, wrap_student_code):
         # if no function name is given, we need to wrap their code
-        if student_function_name is None:
+        if wrap_student_code:
+            # TODO: this should probably be a global
+            student_function_name = '_function_under_test'
+
             # TODO: this will cause problems with line detection for errors
             # TODO: should probably intercept and modify exceptions
-            student_function_name = '_function_under_test'
             code_text = 'def {}():\n{}'.format(
                 student_function_name, indent(code_text)
             )
 
         for test_class in self.test_classes:
-            # TODO: remove student_function_name (now unnecessary)
-            result = self.run_test(
-                test_class, code_text, student_function_name
-            )
+            result = self.run_test(test_class, code_text)
 
             self._results[test_class] = result
 
-    def run_test(self, test_class, code_text, student_function_name):
+    def run_test(self, test_class, code_text):
         # grab a copy of our context to use
         # unfortunately, it's not robust to copy globals(), which means we
         # can't grab a nice deepcopy of test_gbls
@@ -84,7 +83,7 @@ class TutorialTester():
 
         # execute the student's code, and grab a reference to the function
         try:
-            exec(compile(code_text, 'student_code.py', 'exec'), lcls)
+            exec(compile(code_text, '<student_code>', 'exec'), lcls)
         except SyntaxError:  # assuming EOF
             return TutorialTestResult(
                 test_class.DESCRIPTION,

@@ -46,6 +46,6 @@ def _run_tests(tutorial, text):
         analyser.analyse(text)
 
         # we can likewise run the tests
-        tester.run(text, tutorial.student_function_name)
+        tester.run(text, tutorial.wrap_student_code)
 
     return tester, analyser
