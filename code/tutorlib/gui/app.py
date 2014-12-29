@@ -3,7 +3,8 @@ import tkinter as tk
 import tkinter.filedialog as tkfiledialog
 import tkinter.messagebox as tkmessagebox
 
-from tutorlib.config.configuration import load_config, save_config
+from tutorlib.config.configuration \
+        import add_tutorial, load_config, save_config
 from tutorlib.editor.editor_window import TutorEditor
 from tutorlib.gui.aboutdialog import TutAboutDialog
 from tutorlib.gui.feedbackdialog import FeedbackDialog
@@ -108,6 +109,12 @@ class TutorialApp(TutorialMenuDelegate):
 
     ## Private methods
     def _select_tutorial_package(self, package_name):
+        if package_name is None:
+            # we can't change to a non-existent package, so we will need to
+            # add a new one
+            self.add_tutorial()
+            return
+
         options = getattr(self.cfg, package_name)
         self.tutorial_package = TutorialPackage(options)
 
@@ -283,7 +290,13 @@ class TutorialApp(TutorialMenuDelegate):
         pass
 
     def add_tutorial(self):
-        pass
+        # if we don't have a default tutorial, we should add this one as the
+        # default and then switch to it
+        as_default = self.cfg.tutorials.default is None
+        add_tutorial(self.cfg, as_default=as_default)
+
+        if as_default:
+            self._select_tutorial_package(self.cfg.tutorials.default)
 
     def remove_current_tutorial(self):
         pass
