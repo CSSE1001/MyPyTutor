@@ -28,7 +28,8 @@ class TutorialPackage():
     TUTORIALS_FILE = 'tutorials.txt'
     CONFIG_FILE = 'config.txt'
 
-    def __init__(self, options):
+    def __init__(self, name, options):
+        self.name = name
         self.options = options
 
         path = os.path.join(options.tut_dir, TutorialPackage.CONFIG_FILE)

@@ -120,7 +120,7 @@ class TutorialApp(TutorialMenuDelegate):
             return
 
         options = getattr(self.cfg, package_name)
-        self.tutorial_package = TutorialPackage(options)
+        self.tutorial_package = TutorialPackage(package_name, options)
 
         # update menu
         self.menu.set_tutorial_package(self.tutorial_package)
@@ -266,32 +266,32 @@ class TutorialApp(TutorialMenuDelegate):
     def change_tutorial_directory(self):
         directory = self._ask_for_directory(
             prompt='Choose Tutorial Folder: {}'.format(
-                    self.current_tutorial.name
+                    self.tutorial_package.name
                 ),
-            initial_dir=self.current_tutorial.options.tut_dir,
+            initial_dir=self.tutorial_package.options.tut_dir,
         )
 
         if directory:
             # .current_tutorial.options is bound to cfg, so will change it
-            self.current_tutorial.options.tut_dir = directory
-            self._select_tutorial_package(self.current_tutorial.name)
+            self.tutorial_package.options.tut_dir = directory
+            self._select_tutorial_package(self.tutorial_package.name)
 
     def change_answers_directory(self):
         directory = self._ask_for_directory(
             prompt='Choose Answers Folder: {}'.format(
-                    self.current_tutorial.name
+                    self.tutorial_package.name
                 ),
-            initial_dir=self.current_tutorial.options.ans_dir,
+            initial_dir=self.tutorial_package.options.ans_dir,
         )
 
         if directory:
             # .current_tutorial.options is bound to cfg, so will change it
-            self.current_tutorial.options.ans_dir = directory
+            self.tutorial_package.options.ans_dir = directory
             self.editor.set_filename(self.answer_path)
             # TODO: relocate answers?
 
     def set_as_default_tutorial(self):
-        pass
+        self.cfg.tutorials.default = self.current_tutorial.name
 
     def add_tutorial(self):
         # if we don't have a default tutorial, we should add this one as the
@@ -303,7 +303,34 @@ class TutorialApp(TutorialMenuDelegate):
             self._select_tutorial_package(self.cfg.tutorials.default)
 
     def remove_current_tutorial(self):
-        pass
+        if self.cfg.tutorials.default == self.tutorial_package.name:
+            tkmessagebox.showerror(
+                'Remove Current Tutorial Error',
+                'You cannot remove the default tutorial.  ' \
+                'Try setting a new default first.'
+            )
+            return
+
+        if len(self.cfg.tutorials.names) == 1:
+            tkmessagebox.showerror(
+                'Remove Current Tutorial Error'
+                'You cannot remove the last tutorial.  ' \
+                'Try adding a new tutorial first.'
+            )
+            return
+
+        should_remove = tkmessagebox.askquestion(
+            'Remove Tutorial?',
+            'Do you really want to remove {}?'.format(
+                self.tutorial_package.name
+            )
+        )
+
+        if str(should_remove) == 'yes':  # stupid tk constants
+            del self.cfg[self.tutorial_package.name]
+            self.cfg.tutorials.names.remove(self.tutorial_package.name)
+
+            self._select_tutorial_package(self.cfg.tutorials.default)
 
     # feedback
     def feedback(self, problem_feedback=False):
