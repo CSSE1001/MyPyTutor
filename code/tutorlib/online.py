@@ -261,7 +261,7 @@ class LoginManager:
         data = {'action': 'userinfo'}
         url = self._url + '?' + urllib.parse.urlencode(data)
         response = self._opener.open(url)
-        text = response.read().decode('ascii')
+        text = response.read().decode('utf8')
 
         def set_details(text):
             # Get the user's details out of the server's response.
@@ -292,7 +292,7 @@ class LoginManager:
             response2 = self._opener.open(form_url, form_data)
 
             # Get the HTML text in the response.
-            text2 = response2.read().decode('ascii')
+            text2 = response2.read().decode('utf8')
 
             # If there is a login form in the response, the user's credentials are invalid.
             if any(f[0].get('name') == 'f' for f in FormParser.forms(text2)):
@@ -305,7 +305,7 @@ class LoginManager:
 
             # The next response should contain the information originally requested.
             response3 = self._opener.open(form_url, form_data)
-            text3 = response3.read().decode('ascii')
+            text3 = response3.read().decode('utf8')
             set_details(text3)
 
             # The login was successful
@@ -337,7 +337,7 @@ class LoginManager:
                 # The user needs to log in
                 self.login()
                 response = self._opener.open(url, data)
-            text = response.read().decode('ascii')
+            text = response.read().decode('utf8')
             return strip_header(text)
 
         except AuthError as e:
