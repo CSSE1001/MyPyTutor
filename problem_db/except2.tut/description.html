@@ -1,0 +1,17 @@
+<h3>Raising an Exception</h3>
+
+<p>
+    In the previous problem, you used a try/except statement to catch an exception.
+    This problem deals with the opposite situation: raising an exception in the first place.
+</p>
+
+<p>
+    One common situation in which you will want to raise an exception is where you need to indicate that some precondition that your code relies upon has not been met.
+    (You may also see the <tt>assert</tt> statement used for this purpose, but we won't cover that here.)
+</p>
+
+<p>
+    Write a function <tt>validate_input(string)</tt> which takes a command string in the format <tt>'command arg1 arg2'</tt> and returns the pair <tt>('command', [arg1, arg2])</tt>, where <tt>arg1</tt> and <tt>arg2</tt> have been converted to floats.
+    If the command is not one of <tt>'add'</tt>, <tt>'sub'</tt>, <tt>'mul'</tt>, or <tt>'div'</tt>, it must raise <tt>InvalidCommand</tt>.
+    If the arguments cannot be converted to <tt>floats</tt>, it must raise <tt>InvalidCommand</tt>.
+</p>
