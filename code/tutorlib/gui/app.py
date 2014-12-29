@@ -13,7 +13,6 @@ from tutorlib.gui.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.output import AnalysisOutput, TestOutput
 from tutorlib.interface.problems import TutorialPackage
 from tutorlib.interface.tests import StudentCodeError, run_tests
-from tutorlib.interface.tutorial_interface import TutorialInterface
 from tutorlib.interface.web_api import WebAPI
 import tutorlib.Tutorial as tut_tutorial  # TODO: fix stupid name
 
@@ -37,7 +36,6 @@ class TutorialApp(TutorialMenuDelegate):
         self._select_tutorial_package(self.cfg.tutorials.default)
 
         ## Objects
-        self.interface = TutorialInterface()
         self.web_api = WebAPI()
 
         ## Optionals / property bases
