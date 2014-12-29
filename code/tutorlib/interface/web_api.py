@@ -1,11 +1,12 @@
+import sys
 import urllib.parse
 import urllib.request
 import webbrowser
 
-from tutorlib.online import AuthError, LoginManager
+from tutorlib.interface.support import simple_hash
+from tutorlib.online import AuthError, RequestError, SessionManager, SERVER
 
 
-LOGIN_URL = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
 VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
 
 
@@ -14,7 +15,7 @@ VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
 class WebAPI():
     def __init__(self):
         self.url = None
-        self.login_manager = LoginManager(LOGIN_URL, self._manager_callback)
+        self.session_manager = SessionManager(SERVER, self._manager_callback)
 
     # user management (login, logout etc) methods
     def _manager_callback(self):
@@ -22,27 +23,27 @@ class WebAPI():
 
     @property
     def is_logged_in(self):
-        return self.login_manager.is_logged_in()
+        return self.session_manager.is_logged_in()
 
     @property
     def user(self):
         if not self.is_logged_in:
             return None
 
-        user_info = self.login_manager.user_info()
+        user_info = self.session_manager.user_info()
         return user_info['user']
 
     def login(self):
         # LoginManager raises on failure
         try:
-            self.login_manager.login()
+            self.session_manager.login()
             return True
         except AuthError:
             return False
 
     def logout(self):
         if self.is_logged_in:
-            self.login_manager.logout()
+            self.session_manager.logout()
 
     # visualiser
     def visualise(self, code_text):
@@ -56,11 +57,12 @@ class WebAPI():
     # general web communictions
     def get_tut_zipfile(self):
         values = {'action': 'get_tut_zip_file'}
-        result = self._send_data(values)
-        #print result
-        if '_send_data Exception' in result:
-            print("You don't appear to be connected.", file=sys.stderr)
-            return None
+        try:
+            result = self.session_manager.get(values)
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
+            return
+
         try:
             urlobj = urllib.request.URLopener({})
             urlobj.retrieve(result.strip(), "tutzip.zip")
@@ -69,104 +71,71 @@ class WebAPI():
             print(str(e))
             return None
 
-    def get_mpt27(self):
-        values = {'action': 'get_mpt27'}
-        result = self._send_data(values)
-        if '_send_data Exception' in result:
-            print("You don't appear to be connected.", file=sys.stderr)
-            return None
+    def get_mpt34(self):
+        values = {'action': 'get_mpt34'}
         try:
-            urlobj = urllib.request.URLopener({})
-            urlobj.retrieve(result.strip(), "mpt27.zip")
-            return "mpt27.zip"
-        except:
-            return None
+            result = self.session_manager.get(values)
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
+            return
 
-    def get_mpt26(self):
-        values = {'action': 'get_mpt26'}
-        result = self._send_data(values)
-        if '_send_data Exception' in result:
-            print("You don't appear to be connected.", file=sys.stderr)
-            return None
         try:
             urlobj = urllib.request.URLopener({})
-            urlobj.retrieve(result.strip(), "mpt26.zip")
-            return "mpt26.zip"
+            urlobj.retrieve(result.strip(), "mpt34.zip")
+            return "mpt34.zip"
         except:
             return None
 
     def get_version(self):
         values = {'action': 'get_version'}
-        result = self._send_data(values)
-        if '_send_data Exception' in result:
-            print("You don't appear to be connected.", file=sys.stderr)
-            return None
-        else:
-            return result
+        try:
+            return self.session_manager.get(values)
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
 
-    def upload_answer(self, code):
-        result = None
-        if self.tutorial is not None:
-            values = {'action': 'upload',
-                      'username': self.user,
-                      'session_key': self.session_key,
-                      'problem_name': self.tutorial.name,
+    def upload_answer(self, tutorial, code):
+        try:
+            values = {
+                      'action': 'upload',
+                      'problem_name': tutorial.name,
                       'code': code,
-                      }
-            result = self._send_data(values)
-            if '_send_data Exception' in result:
-                print("You don't appear to be connected.", file=sys.stderr)
-                return False
-
-        if result is None:
+                     }
+            result = self.session_manager.post(values)
+            return result.startswith('OK')
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
             return False
-        return result.startswith('OK')
 
     def download_answer(self):
-        result = None
-        if self.tutorial is not None:
-            values = {'action': 'download',
-                      'username': self.user,
-                      'session_key': self.session_key,
+        try:
+            values = {
+                      'action': 'download',
                       'problem_name': self.tutorial.name,
-                      }
-            result = self._send_data(values)
-            if '_send_data Exception' in result:
-                print("You don't appear to be connected.", file=sys.stderr)
-                return None
-        return result
+                     }
+            return self.session_manager.get(values)
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
+            return False
 
     def submit_answer(self, code):
-        self.run_tests(code)
-        result = None
-        if self.tutorial is not None:
-            if self.is_solved():
-                tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this
-                values = {'action': 'submit',
-                          'username': self.user,
-                          'session_key': self.session_key,
-                          'tut_id': tut_id,
-                          'tut_id_crypt': simple_hash(tut_id + self.user),
-                          'tut_check_num': self.num_checks,
-                          'code': code,
-                          }
-                result = self._send_data(values)
-                if '_send_data Exception' in result:
-                    print("You don't appear to be connected.", file=sys.stderr)
-                    return None
-            else:
-                result = 'Error: You can only submit when your answer is correct.'
-        return result
+        try:
+            tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this
+            values = {
+                      'action': 'submit',
+                      'tut_id': tut_id,
+                      'tut_id_crypt': simple_hash(tut_id + self.user),
+                      'tut_check_num': self.num_checks,
+                      'code': code,
+                     }
+            return self.session_manager.post(values)
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
+            return None
 
     def show_submit(self):
-        result = None
-        values = {'action': 'show',
-                  'username': self.user,
-                  'session_key': self.session_key,
-                  }
-        result = self._send_data(values)
-        if '_send_data Exception' in result:
-            print(result[10:], file=sys.stderr)
-            print("You don't appear to be connected.", file=sys.stderr)
+        values = {'action': 'show'}
+        try:
+            return self.session_manager.get(values)
+        except RequestError as e:
+            print(str(e), file=sys.stderr)
             return None
-        return result

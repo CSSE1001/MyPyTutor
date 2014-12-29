@@ -65,7 +65,9 @@ ACTIONS = {}
 
 
 class ActionError(Exception):
-    """An exception that represents some error in the request."""
+    """An exception that represents some error in the request.
+    Text messages of this error will be displayed to the user in the client.
+    """
     pass
 
 
