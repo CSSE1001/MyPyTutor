@@ -155,6 +155,9 @@ class TutorEditor(EditorWindow.EditorWindow):
             self._close()
         return reply
 
+    def set_filename(self, filename):
+        self.filename = filename
+
     def reset(self, filename, default):
         self.filename = filename
         if os.path.exists(filename):

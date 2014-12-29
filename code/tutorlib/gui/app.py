@@ -99,6 +99,13 @@ class TutorialApp(TutorialMenuDelegate):
             ## TODO: fix online
         return self._editor
 
+    @property
+    def answer_path(self):
+        return os.path.join(
+            self.tutorial_package.options.ans_dir,
+            '_'.join(self.current_tutorial.name.split()) + '.py'
+        )
+
     ## Private methods
     def _select_tutorial_package(self, package_name):
         options = getattr(self.cfg, package_name)
@@ -123,6 +130,12 @@ class TutorialApp(TutorialMenuDelegate):
             self.online_status.config(
                 text='Status: Logged in as {}'.format(logged_in_user)
             )
+
+    def _ask_for_directory(self, initial_dir=None, prompt='Choose Directory'):
+        if initial_dir is None or not os.path.exists(initial_dir):
+            initial_dir = os.path.expanduser('~')
+
+        return tkfiledialog.askdirectory(title=prompt, initialdir=initial_dir)
 
     ## General callbacks
     def close(self, evt=None):
@@ -181,11 +194,9 @@ class TutorialApp(TutorialMenuDelegate):
         )
 
         # set up the editor
-        answer_path = os.path.join(
-            self.tutorial_package.options.ans_dir,
-            '_'.join(self.current_tutorial.name.split()) + '.py'
+        self.editor.reset(
+            self.answer_path, self.current_tutorial.preload_code_text
         )
-        self.editor.reset(answer_path, self.current_tutorial.preload_code_text)
         self.editor.undo.reset_undo()
 
         # set up the hints toolbar
@@ -241,20 +252,32 @@ class TutorialApp(TutorialMenuDelegate):
 
         self.update_fonts()
 
-    def _ask_for_directory(self, initial_dir=None, prompt='Choose Directory'):
-        if initial_dir is None or not os.path.exists(initial_dir):
-            initial_dir = os.path.expanduser('~')
-
-        return tkfiledialog.askdirectory(title=prompt, initialdir=initial_dir)
-
     def change_tutorial_directory(self):
         directory = self._ask_for_directory(
-            prompt='Choose Tutorial Folder: {}'.format(self.current_tut_name),
-            initial_dir=self.current_tut_options.tut_dir,
+            prompt='Choose Tutorial Folder: {}'.format(
+                    self.current_tutorial.name
+                ),
+            initial_dir=self.current_tutorial.options.tut_dir,
         )
 
+        if directory:
+            # .current_tutorial.options is bound to cfg, so will change it
+            self.current_tutorial.options.tut_dir = directory
+            self._select_tutorial_package(self.current_tutorial.name)
+
     def change_answers_directory(self):
-        pass
+        directory = self._ask_for_directory(
+            prompt='Choose Answers Folder: {}'.format(
+                    self.current_tutorial.name
+                ),
+            initial_dir=self.current_tutorial.options.ans_dir,
+        )
+
+        if directory:
+            # .current_tutorial.options is bound to cfg, so will change it
+            self.current_tutorial.options.ans_dir = directory
+            self.editor.set_filename(self.answer_path)
+            # TODO: relocate answers?
 
     def set_as_default_tutorial(self):
         pass
