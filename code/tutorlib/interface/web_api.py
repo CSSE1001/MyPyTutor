@@ -39,7 +39,8 @@ class WebAPI():
             return False
 
     def logout(self):
-        self.login_manager.logout()
+        if self.is_logged_in:
+            self.login_manager.logout()
 
     # general web communictions
     def _send_data(self, form_dict):
