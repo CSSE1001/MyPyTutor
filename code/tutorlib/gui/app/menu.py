@@ -72,7 +72,7 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def set_as_default_tutorial(self):
+    def set_as_default_package(self):
         pass
 
     @abstractmethod
@@ -81,6 +81,10 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
 
     @abstractmethod
     def remove_current_tutorial(self):
+        pass
+
+    @abstractmethod
+    def change_tutorial_package(self, package_name):
         pass
 
     # feedback
@@ -100,6 +104,7 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
 
 class TutorialMenu(tk.Menu):
     DYNAMIC_PROBLEMS_MENU = 'Problems'
+    DYNAMIC_TUTORIAL_PACKAGES_MENU = 'Preferences'
 
     def __init__(self, master, delegate=None, structure=MENU_STRUCTURE):
         super().__init__(master)
@@ -108,7 +113,9 @@ class TutorialMenu(tk.Menu):
         self.delegate = delegate
 
         self._structure = structure
-        self._tutorial_package = None
+        self._selected_tutorial_package = None
+        self._tutorial_package_names = None
+        self._selected_tutorial_package_name_var = tk.StringVar()
 
         for submenu_name, submenu_entries in self._structure:
             submenu = tk.Menu(self, tearoff=tk.FALSE)
@@ -117,6 +124,12 @@ class TutorialMenu(tk.Menu):
             if submenu_name == TutorialMenu.DYNAMIC_PROBLEMS_MENU:
                 submenu.config(postcommand=self.build_dynamic_problems_menu)
                 self._dynamic_problems_menu = submenu
+                continue
+            elif submenu_name == TutorialMenu.DYNAMIC_TUTORIAL_PACKAGES_MENU:
+                submenu.config(
+                    postcommand=self.build_dynamic_tutorial_packages_menu
+                )
+                self._dynamic_tutorial_packages_menu = submenu
                 continue
 
             for entry_name, entry_hotkey, entry_cb_name in submenu_entries:
@@ -152,8 +165,12 @@ class TutorialMenu(tk.Menu):
         # TODO: entry_hotkey
         # TODO: need to treat as both accellerator and binding (eg F6)
 
-    def set_tutorial_package(self, tutorial_package):
-        self._tutorial_package = tutorial_package
+    def set_selected_tutorial_package(self, tutorial_package):
+        self._selected_tutorial_package = tutorial_package
+        self._selected_tutorial_package_name_var.set(tutorial_package.name)
+
+    def set_tutorial_packages(self, package_names):
+        self._tutorial_package_names = package_names
 
     def callback(self, name):
         if self.delegate is None:
@@ -170,13 +187,14 @@ class TutorialMenu(tk.Menu):
     def problem_callback(self, tutorial):
         self.delegate.change_problem(problem=tutorial)
 
-    def build_dynamic_problems_menu(self):
+    def tutorial_package_callback(self, package_name):
+        self.delegate.change_tutorial_package(package_name)
+
+    def _prepare_dynamic_menu(self, menu, menu_name):
         # remove existing entries
-        self._dynamic_problems_menu.delete(0, tk.END)
+        menu.delete(0, tk.END)
 
-        # add the static entries
-        menu_name = TutorialMenu.DYNAMIC_PROBLEMS_MENU
-
+        # get the static entries
         try:
             static_entries = next(
                 sub for name, sub in self._structure if name == menu_name
@@ -184,20 +202,20 @@ class TutorialMenu(tk.Menu):
         except StopIteration:
             raise AssertionError('Could not find dynamic menu')
 
+        # add the stataic entries
         for name, hotkey, cb_name in static_entries:
-            self._add_static_entry(
-                self._dynamic_problems_menu,
-                TutorialMenu.DYNAMIC_PROBLEMS_MENU,
-                name,
-                hotkey,
-                cb_name,
-            )
+            self._add_static_entry(menu, menu_name, name, hotkey, cb_name)
+
+    def build_dynamic_problems_menu(self):
+        self._prepare_dynamic_menu(
+            self._dynamic_problems_menu, TutorialMenu.DYNAMIC_PROBLEMS_MENU
+        )
 
         # add the dynamic entries
-        if self._tutorial_package is None:
+        if self._selected_tutorial_package is None:
             return
 
-        for problem_set in self._tutorial_package.problem_sets:
+        for problem_set in self._selected_tutorial_package.problem_sets:
             submenu = tk.Menu(self._dynamic_problems_menu, tearoff=tk.FALSE)
             self._dynamic_problems_menu.add_cascade(
                 label='{}: {}'.format(problem_set.date, problem_set.name),
@@ -208,6 +226,36 @@ class TutorialMenu(tk.Menu):
                 # again, close over cb var
                 cb = (lambda t=tutorial: lambda: self.problem_callback(t))()
                 submenu.add_command(label=tutorial.name, command=cb)
+
+    def build_dynamic_tutorial_packages_menu(self):
+        self._prepare_dynamic_menu(
+            self._dynamic_tutorial_packages_menu,
+            TutorialMenu.DYNAMIC_TUTORIAL_PACKAGES_MENU,
+        )
+
+        # add the dynamic entries
+        if self._tutorial_package_names is None:
+            return
+
+        submenu = tk.Menu(
+            self._dynamic_tutorial_packages_menu,
+            tearoff=tk.FALSE,
+        )
+        self._dynamic_tutorial_packages_menu.add_cascade(
+            label='Select Tutorial Package',
+            menu=submenu,
+        )
+
+        for package_name in self._tutorial_package_names:
+            # again, close over cb var
+            cb = (lambda n=package_name: \
+                      lambda: self.tutorial_package_callback(n))()
+
+            submenu.add_radiobutton(
+                label=package_name,
+                variable=self._selected_tutorial_package_name_var,
+                command=cb,
+            )
 
     ## TutorialMenuDelegate callbacks
     def generic_menu_callback(self, name):
@@ -241,7 +289,7 @@ class TutorialMenu(tk.Menu):
         self.delegate.change_answers_directory()
 
     def menu_preferences_set_default(self):
-        self.delegate.set_as_default_tutorial()
+        self.delegate.set_as_default_package()
 
     def menu_preferences_add_tutorial(self):
         self.delegate.add_tutorial()

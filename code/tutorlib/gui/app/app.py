@@ -38,6 +38,7 @@ class TutorialApp(TutorialMenuDelegate):
 
         ## Vars with side effects
         self._select_tutorial_package(self.cfg.tutorials.default)
+        self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
         ## Objects
         self.web_api = WebAPI()
@@ -123,7 +124,7 @@ class TutorialApp(TutorialMenuDelegate):
         self.tutorial_package = TutorialPackage(package_name, options)
 
         # update menu
-        self.menu.set_tutorial_package(self.tutorial_package)
+        self.menu.set_selected_tutorial_package(self.tutorial_package)
 
     def _next_hint(self):
         hint = self.current_tutorial.next_hint
@@ -290,8 +291,8 @@ class TutorialApp(TutorialMenuDelegate):
             self.editor.set_filename(self.answer_path)
             # TODO: relocate answers?
 
-    def set_as_default_tutorial(self):
-        self.cfg.tutorials.default = self.current_tutorial.name
+    def set_as_default_package(self):
+        self.cfg.tutorials.default = self.tutorial_package.name
 
     def add_tutorial(self):
         # if we don't have a default tutorial, we should add this one as the
@@ -301,6 +302,8 @@ class TutorialApp(TutorialMenuDelegate):
 
         if as_default:
             self._select_tutorial_package(self.cfg.tutorials.default)
+
+        self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
     def remove_current_tutorial(self):
         if self.cfg.tutorials.default == self.tutorial_package.name:
@@ -331,6 +334,11 @@ class TutorialApp(TutorialMenuDelegate):
             self.cfg.tutorials.names.remove(self.tutorial_package.name)
 
             self._select_tutorial_package(self.cfg.tutorials.default)
+
+            self.menu.set_tutorial_packages(self.cfg.tutorials.names)
+
+    def change_tutorial_package(self, package_name):
+        self._select_tutorial_package(package_name)
 
     # feedback
     def feedback(self, problem_feedback=False):
