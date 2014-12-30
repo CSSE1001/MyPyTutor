@@ -10,7 +10,7 @@ from tutorlib.analysis.scope_manager import NodeScopeManager
 
 
 class DefinesAllPossibleVisits(type):
-    '''
+    """
     Metaclass for ast.NodeVisitor subclasses which aliases all possible
     concrete visits to .generic_visit
 
@@ -21,7 +21,7 @@ class DefinesAllPossibleVisits(type):
     aware exactly which visit_ClassName methods the class in question overrode
     at any given point in time.
 
-    '''
+    """
     def __new__(mcs, clsname, bases, dct):
         is_node_class = lambda obj: inspect.isclass(obj) \
                 and issubclass(obj, ast.AST) and obj is not ast.AST
@@ -43,7 +43,7 @@ class DefinesAllPossibleVisits(type):
 
 
 class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
-    '''
+    """
     Custom ast.NodeVisitor subclass for visiting student code.
 
     This class automatically builds up some useful information on the node tree
@@ -63,7 +63,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           visitor (by default, depth first).  Quering the defaultdict for
           functions which were not called will return an empty list.
 
-    '''
+    """
     def __init__(self):
         self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(ClassDefinition)
@@ -87,7 +87,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         return self._scopes.peek_class()
 
     def generic_visit(self, node):
-        '''
+        """
         Do nothing.
 
         This intentionally disables the default logic in .generic_visit (which
@@ -122,11 +122,11 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.AST): The node to do absolutely nothing with.
 
-        '''
+        """
         pass
 
     def leave(self, node):
-        '''
+        """
         Custom equivalent of .visit, called when we leave a node.
 
         This implementation is based off the ast.NodeVisitor.visit source code.
@@ -140,13 +140,13 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           Whatever the .leave_ClassName or .generic_visit method returns
           (probably None).
 
-        '''
+        """
         method = 'leave_{}'.format(node.__class__.__name__)
         visitor = getattr(self, method, self.generic_leave)
         return visitor(node)
 
     def generic_leave(self, node):
-        '''
+        """
         Do nothing.
 
         There is no special logic required for leaving a node.
@@ -154,11 +154,11 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.AST): The node we are leaving.
 
-        '''
+        """
         pass
 
     def visit_FunctionDef(self, node):
-        '''
+        """
         Default logic for visiting a FunctionDef node.
 
         Add the function to our stack of scopes, and record the function
@@ -167,7 +167,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.FunctionDef): The node we are visiting.
 
-        '''
+        """
         function_name = TutorialNodeVisitor.identifier(node)
 
         # add this to our scopes
@@ -181,7 +181,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         self.functions[function_name] = FunctionDefinition(node)
 
     def leave_FunctionDef(self, node):
-        '''
+        """
         Default logic for leaving a FunctionDef node.
 
         Remove the function from our stack of scopes.
@@ -189,7 +189,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.FunctionDef): The node we are leaving.
 
-        '''
+        """
         function_name = TutorialNodeVisitor.identifier(node)
 
         # remove this from our scopes
@@ -201,7 +201,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
             )
 
     def visit_ClassDef(self, node):
-        '''
+        """
         Default logic for visiting a ClassDef node.
 
         Add the class to our stack of scopes, and record the class details
@@ -210,7 +210,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.ClassDef): The node we are visiting.
 
-        '''
+        """
         class_name = TutorialNodeVisitor.identifier(node)
 
         # add this to our scopes
@@ -224,7 +224,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         self.classes[class_name] = ClassDefinition(node)
 
     def leave_ClassDef(self, node):
-        '''
+        """
         Default logic for leaving a ClassDef node.
 
         Remove the class from our stack of scopes.
@@ -232,7 +232,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.ClassDef): The node we are leaving.
 
-        '''
+        """
         class_name = TutorialNodeVisitor.identifier(node)
 
         # remove this from our scopes
@@ -244,7 +244,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
             )
 
     def visit_Call(self, node):
-        '''
+        """
         Default logic for visiting a Call node.
 
         Record information about the call in .calls, using a Call object.
@@ -252,7 +252,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         Args:
           node (ast.Call): The node we are visiting.
 
-        '''
+        """
         function_name = TutorialNodeVisitor.identifier(node.func)
 
         call = Call(node)

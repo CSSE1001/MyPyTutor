@@ -17,11 +17,11 @@ class _AttributeHolder():
 
 
 class Namespace(_AttributeHolder):
-    '''
+    """
     Recursively transforms a set of keyword arguments into accessible
     attributes (which behaves similarly to a python module).
 
-    '''
+    """
     def __init__(self, **kwargs):
         for name, val in kwargs.items():
             setattr(self, name, val)

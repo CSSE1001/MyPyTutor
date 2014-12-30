@@ -1,8 +1,8 @@
 class ScopeManagerError(Exception):
-    '''
+    """
     Errors raised by the NodeScopeManager class.
 
-    '''
+    """
     pass
 
 

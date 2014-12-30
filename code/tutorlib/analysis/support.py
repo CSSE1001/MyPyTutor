@@ -2,23 +2,23 @@ from collections.abc import Sequence
 
 
 class StaticAnalysisError(Exception):
-    '''
+    """
     An error encountered in static analysis.
 
-    '''
+    """
     pass
 
 
 class NonePaddedList(Sequence):
-    '''
+    """
     A sequence which returns None instead of raising IndexError when an
     out-of-range index is requested.
 
     Both __len__ and __iter__ will operate as on the underlying sequence.
 
-    '''
+    """
     def __init__(self, iterable=None):
-        '''
+        """
         Create a new NonePaddedList object.
 
         Args:
@@ -28,7 +28,7 @@ class NonePaddedList(Sequence):
               inconsistent results.
               Defaults to None.  If None, will be treated as an empty list.
 
-        '''
+        """
         if iterable is None:
             iterable = []
         self._data = list(iterable)
@@ -37,7 +37,7 @@ class NonePaddedList(Sequence):
         return 'NonePaddedList({!r})'.format(self._data)
 
     def __getitem__(self, item):
-        '''
+        """
         Return the value at the given index, or None.
 
         Returns:
@@ -46,22 +46,22 @@ class NonePaddedList(Sequence):
 
           None otherwise.
 
-        '''
+        """
         if item < len(self):
             return self._data[item]
         return None
 
     def __len__(self):
-        '''
+        """
         Return the length of this NonePaddedList.
 
         Returns:
           The length of the iterable this NonePaddedList was constructed with.
-        '''
+        """
         return len(self._data)
 
     def __iter__(self):
-        '''
+        """
         Yield elements of self.
 
         This override is necessary because the default Sequence.__iter__
@@ -79,6 +79,6 @@ class NonePaddedList(Sequence):
         Yields:
           Elements of the iterable this NonePaddedList was constructed with.
 
-        '''
+        """
         for idx in range(len(self)):
             yield self[idx]

@@ -1,4 +1,4 @@
-'''
+"""
 Attributes:
   CONFIG_FILE (str, constant): The full path to the MyPyTutor config file.
   SPECIAL_FORMATS ({(str, str): function(str) -> type}): Special formats for
@@ -6,7 +6,7 @@ Attributes:
       option).  The corresponding value is the special type used for the
       configuration key (eg int, float, list).
 
-'''
+"""
 import configparser
 import os
 import sys
@@ -29,7 +29,7 @@ SPECIAL_FORMATS = {
 
 
 def load_config():
-    '''
+    """
     Load the MyPyTutor configuration file.
 
     If the file does not exist, cannot be opened, or cannot be parsed, then
@@ -52,7 +52,7 @@ def load_config():
 
       Then the attribute `result.section_name.key1` will equal `value`.
 
-    '''
+    """
     # parse the config file
     parser = configparser.ConfigParser()
 
@@ -106,7 +106,7 @@ def load_config():
 
 
 def save_config(config):
-    '''
+    """
     Save the given config data to disk.
 
     All values will be wrapped before saving (and so converted back to strings,
@@ -115,7 +115,7 @@ def save_config(config):
     Args:
       config (Namespace): The configuration data to save.
 
-    '''
+    """
     # build up the config parser
     parser = configparser.ConfigParser()
 
@@ -132,7 +132,7 @@ def save_config(config):
 
 
 def unwrap_value(section, option, value):
-    '''
+    """
     Return the unwrapped value corresponding to the given config key.
 
     Unwrapping values involves converting them to the appropriate Python data
@@ -149,7 +149,7 @@ def unwrap_value(section, option, value):
 
       If no special format applies, return the value as a string.
 
-    '''
+    """
     special_type = SPECIAL_FORMATS.get((section, option))
     if special_type is None:
         return value
@@ -164,7 +164,7 @@ def unwrap_value(section, option, value):
 
 
 def wrap_value(section, option, value):
-    '''
+    """
     Return the wrapped value corresponding to the given config key.
 
     Wrapping values involves converting them back from the appropriate Python
@@ -180,7 +180,7 @@ def wrap_value(section, option, value):
     Returns:
       The value, converted to a string.
 
-    '''
+    """
     special_type = SPECIAL_FORMATS.get((section, option))
     if special_type is None:
         return str(value)
@@ -200,7 +200,7 @@ def wrap_value(section, option, value):
 
 
 def add_tutorial(config, window=None, as_default=True):
-    '''
+    """
     Prompt the user to add a tutorial to the given configuration datta.
 
     Args:
@@ -215,7 +215,7 @@ def add_tutorial(config, window=None, as_default=True):
 
       An error message as a string, otherwise.
 
-    '''
+    """
     # prompt for a tutorial directory to add
     prompt = TutorialDirectoryPrompt(window)
     if prompt.result is None:

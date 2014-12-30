@@ -6,7 +6,7 @@ from tutorlib.analysis.support import StaticAnalysisError
 
 
 def identifier(node, suppress_exceptions=False):
-    '''
+    """
     Return the identifier of the given node.
 
     In this context, an identifier is considered to be equivalent to a
@@ -49,7 +49,7 @@ def identifier(node, suppress_exceptions=False):
       StaticAnalysisError: If the node has no defined identifier (according to
           the rules used in this function), and suppress_exceptions is False.
 
-    '''
+    """
     mappings = {
         # stmt
         ast.FunctionDef: attrgetter('name'),
@@ -78,7 +78,7 @@ def identifier(node, suppress_exceptions=False):
 
 
 def involved_identifiers(*nodes):
-    '''
+    """
     Return a list of all identifiers involved in a statement or expression.
 
     This method attempts to return *all* of the involved identifiers, and so
@@ -111,7 +111,7 @@ def involved_identifiers(*nodes):
           supported, but the advantage is that common errors (such as passing
           a list in place of *nodes) will be caught immediately.
 
-    '''
+    """
     identifiers = []
 
     for node in nodes:
