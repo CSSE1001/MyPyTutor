@@ -5,6 +5,7 @@ from tkinter import ttk
 class Dialog(tk.Toplevel):
     def __init__(self, parent, title, allow_cancel=False):
         super().__init__(parent)
+        parent = parent if parent is not None else self.master  # default to tk
         self.parent = parent
 
         self.configure(borderwidth=5)
