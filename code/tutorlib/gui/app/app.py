@@ -106,13 +106,6 @@ class TutorialApp(TutorialMenuDelegate):
             ## TODO: fix online
         return self._editor
 
-    @property
-    def answer_path(self):
-        return os.path.join(
-            self.tutorial_package.options.ans_dir,
-            '_'.join(self.current_tutorial.name.split()) + '.py'
-        )
-
     ## Private methods
     def _select_tutorial_package(self, package_name):
         if not package_name:
@@ -215,7 +208,8 @@ class TutorialApp(TutorialMenuDelegate):
 
         # set up the editor
         self.editor.reset(
-            self.answer_path, self.current_tutorial.preload_code_text
+            self.current_tutorial.answer_path,
+            self.current_tutorial.preload_code_text,
         )
         self.editor.undo.reset_undo()
 
@@ -303,7 +297,7 @@ class TutorialApp(TutorialMenuDelegate):
         if directory:
             # .current_tutorial.options is bound to cfg, so will change it
             self.tutorial_package.options.ans_dir = directory
-            self.editor.set_filename(self.answer_path)
+            self.editor.set_filename(self.current_tutorial.answer_path)
             # TODO: relocate answers?
 
     def set_as_default_package(self):

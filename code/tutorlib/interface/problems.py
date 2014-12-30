@@ -97,9 +97,14 @@ class TutorialPackage():
                         'Encountered problem description before section header'
                     )
 
-                path = os.path.join(self.options.tut_dir, directory)
+                tutorial_path = os.path.join(self.options.tut_dir, directory)
+                answer_path = os.path.join(
+                    self.options.ans_dir,
+                    '{}.py'.format(name.replace(' ', '_'))
+                )
+
                 try:
-                    tutorial = Tutorial(name, path)
+                    tutorial = Tutorial(name, tutorial_path, answer_path)
                 except AssertionError as e:
                     # TODO: in testing, ignore this
                     # TODO: in production, remove the continue

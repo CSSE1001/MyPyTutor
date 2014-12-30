@@ -73,13 +73,16 @@ class Tutorial():
     TESTS_VARIABLE_NAME = 'TEST_CLASSES'
     ANALYSIS_VARIABLE_NAME = 'ANALYSER'
 
-    def __init__(self, name, path):
+    def __init__(self, name, tutorial_path, answer_path):
         self.name = name
-        self.path = path
+        self.tutorial_path = tutorial_path
+        self.answer_path = answer_path
 
         # load the description
         self._assert_valid_file(Tutorial.DESCRIPTION_FILE)
-        description_path = os.path.join(self.path, Tutorial.DESCRIPTION_FILE)
+        description_path = os.path.join(
+            self.tutorial_path, Tutorial.DESCRIPTION_FILE
+        )
         with open(description_path, 'rU') as f:
             self.description = f.read()
 
@@ -97,8 +100,8 @@ class Tutorial():
         self._preload_code_text = None
 
     def _assert_valid_file(self, file_name):
-        assert os.path.exists(self.path) \
-                and file_name in os.listdir(self.path), \
+        assert os.path.exists(self.tutorial_path) \
+                and file_name in os.listdir(self.tutorial_path), \
                 'Invalid .tut package: missing {}'.format(file_name)
 
     def _assert_valid_module(self, module_name):
@@ -109,13 +112,13 @@ class Tutorial():
 
     def exec_submodule(self, module_name, gbls=None, lcls=None):
         self._assert_valid_module(module_name)
-        path = os.path.join(self.path, module_name)
+        path = os.path.join(self.tutorial_path, module_name)
 
         return exec_module(path, gbls=gbls, lcls=lcls)
 
     def read_submodule(self, module_name):
         self._assert_valid_module(module_name)
-        path = os.path.join(self.path, module_name)
+        path = os.path.join(self.tutorial_path, module_name)
 
         with open(path, 'rU') as f:
             return f.read()
