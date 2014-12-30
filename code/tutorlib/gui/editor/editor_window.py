@@ -159,13 +159,13 @@ class TutorEditor(EditorWindow.EditorWindow):
     def set_filename(self, filename):
         self.filename = filename
 
-    def reset(self, filename, default):
-        self.filename = filename
-        if os.path.exists(filename):
-            self.io.open(editFile=filename)
+    def reset(self, tutorial):
+        self.filename = tutorial.answer_path
+        if os.path.exists(self.filename):
+            self.io.open(editFile=self.filename)
         else:
-            self.preload(default)
-            self.io.set_filename(filename)
+            self.preload(tutorial.preload_code_text)
+            self.io.set_filename(self.filename)
 
     def preload(self, text):
         self.text.delete(1.0, tk.END)

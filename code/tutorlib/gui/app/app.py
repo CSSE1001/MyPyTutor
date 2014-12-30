@@ -339,10 +339,7 @@ class TutorialApp(TutorialMenuDelegate):
         )
 
         # set up the editor
-        self.editor.reset(
-            self.current_tutorial.answer_path,
-            self.current_tutorial.preload_code_text,
-        )
+        self.editor.reset(self.current_tutorial)
         self.editor.undo.reset_undo()
 
         # set up the hints toolbar
