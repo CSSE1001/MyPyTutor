@@ -11,11 +11,12 @@ class NodeScopeManager():
     A class for managing nested scopes encountered when parsing a Python
     source file.
 
-    Attributes:
+    Class Attributes:
       CLASS (constant): Identifier for a class scope.
       FUNCTION (constant): Identifier for a function scope.
       TYPES (constant): Exhaustive list of supported scope types.
 
+    Attributes:
       current_scope_name (str): The fully-qualified name of the current scope.
 
     """

@@ -9,13 +9,14 @@ class ListGeneratingNodeVisitor(ast.NodeVisitor):
     This makes use of the default implementation of NodeVisitor.generic_visit,
     which recursively visits children of nodes.
 
-    Attributes:
+    Class Attributes:
       VISIT (constant): Identifier for the start of a node visit.  This is
           appended to the events list immediately before a node is visited.
       LEAVE (constant): Identifier for thee end of a node visit.  This is
           appended to the events list immediately after a node is visited (and
           so also after all of its children have been visited).
 
+    Attributes:
       events ([constant, ast.AST]): List of visitation events.  The first item
           in each pair will be one of VISIT or LEAVE, as appropriate.  The
           second item in each pair is the node in question.
