@@ -1,4 +1,5 @@
 import ast
+from hashlib import sha512
 import os
 
 from tutorlib.analysis.analyser import CodeAnalyser
@@ -98,6 +99,23 @@ class Tutorial():
 
         # initial values for lazy properties
         self._preload_code_text = None
+
+        # store the answer hash so we can check for answers later
+        self.update_answer_hash()
+
+    def _get_answer_hash(self):
+        if os.path.exists(self.answer_path):
+            with open(self.answer_path) as f:
+                data = f.read().encode('utf8')
+                return sha512(data).digest()
+        return None
+
+    def update_answer_hash(self):
+        self._answer_hash = self._get_answer_hash()
+
+    @property
+    def answer_has_changed(self):
+        return self._get_answer_hash() != self._answer_hash
 
     def _assert_valid_file(self, file_name):
         assert os.path.exists(self.tutorial_path) \

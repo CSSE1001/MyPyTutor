@@ -427,12 +427,78 @@ class TutorialApp(TutorialMenuDelegate):
         submissions = self.web_api.get_submissions()
         # TODO: display submissions
 
-    def synchronise(self):
+    def synchronise(self, is_automatic_sync=False):
         """
         Synchronise the tutorial answers.
 
+        If our answer has changed since it was first loaded from disk, we
+        presume that it now represents the student's latest attempt.  We
+        therefore upload it to the server, and replace whatever is there.
+
+        If our answer has not changed since we loaded it from disk, we need to
+        check whether the server has an up-to-date copy of the problem.  At
+        this point, we have to choose between two options.
+
+        The first option is to presume that synchronisation works perfectly all
+        the time, with the consequence that if the server has a different copy
+        of the answer, then it must be this computer that is out of sync.
+        That option would lead to much more elegant code, as we would just need
+        to query and compare the hash.
+        The catch with this approach is that if synchronisation fails (eg, if
+        MyPyTutor does not have an active internet connection when it closes),
+        then we might mistakenly overwrite new code.  That would not make the
+        students happen at all...
+
+        Alternatively, we can query the server for both the hash and the date
+        of the latest upload (which it could just read off the file system).
+        If the hashes differ, we could defer to the problem which was updated
+        most recently.  This could either mean uploading to the server, or
+        downloading from the server.  (Either way, we should make sure to put
+        them back in sync.)
+
+        The latter version is preferable.
+        However, it still involves the possibility of overwriting student code.
+        As a result, we should only overwrite local code if the student has
+        initiated the synchronisation themselves (via the menu command), cf it
+        being automatically started (eg as part of the close handler).
+
+        Since we don't really want to be out of sync, if the sync is *not*
+        automatic and the student
+
         """
-        raise NotImplementedError()
+        for problem_set in self.tutorial_package.problem_sets:
+            for tutorial in problem_set:
+                should_upload = False
+
+                # if our answer has changed, then we presume we have the
+                # authoritative source (as the student has worked on the code)
+                if tutorial.answer_has_changed:
+                    should_upload = True
+
+                # otherwise, we should still upload if we have a more
+                # up-to-date version
+
+                if should_upload:
+                    # grab the code
+                    with open(tutorial.answer_path) as f:
+                        code = f.read()
+
+                    success = self.web_api.upload_answer(tutorial, code)
+
+                    if not success:
+                        tkmessagebox.showerror(
+                            'Could Not Uplaod Answer Code',
+                            'Please check that you are correctly logged in, ' \
+                            'and that your internet connection is active.'
+                        )
+                        return  # no more we can do here
+
+                    tutorial.update_answer_hash()  # this answer is now synced
+
+        tkmessagebox.showinfo(
+            'Synchronisation Complete!',
+            'Your answers have been successfully synchronised with the server',
+        )
 
     # tools
     def show_visualiser(self):
