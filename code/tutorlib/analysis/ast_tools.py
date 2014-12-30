@@ -7,7 +7,13 @@ from tutorlib.analysis.support import StaticAnalysisError
 
 def identifier(node, suppress_exceptions=False):
     '''
-    identifier(ast.AST) -> str
+    Return the identifier of the given node.
+
+    In this context, an identifier is considered to be equivalent to a
+    reference, a variable, or an object.  Certain ast nodes contain multiple
+    identifiers (for example, ast.Attribute will have an identifier both for
+    the attribute and the associated value).  In those cases, only one such
+    identifier will be returned.  See the source code for details.
 
     Depending on the context, an ast node may store the relevant identifier
     on one of a number of properties.  This is a direct consequence of the
@@ -25,6 +31,23 @@ def identifier(node, suppress_exceptions=False):
     versions of the ast module being imported (for whatever reason), but
     that should be caught by the trailing exception.  In other words, if
     this exception is raised, that's probably why.
+
+    Args:
+      node (ast.Node): The node to return the identifier of.
+      suppress_exceptions (bool, optional): Whether exceptions should be
+          suppressed.  If True, then this method will return None if an
+          identifier cannot be found.  Defaults to False.
+
+    Returns:
+      The identifier of the node, as a str.
+
+      If the node has no defined identifier (according to the rules used in
+      this function), and suppress_exceptions is True, then None will be
+      returned.
+
+    Raises:
+      StaticAnalysisError: If the node has no defined identifier (according to
+          the rules used in this function), and suppress_exceptions is False.
 
     '''
     mappings = {
@@ -56,9 +79,12 @@ def identifier(node, suppress_exceptions=False):
 
 def involved_identifiers(*nodes):
     '''
-    involved_identifiers(ast.AST) -> [str]
-
     Return a list of all identifiers involved in a statement or expression.
+
+    This method attempts to return *all* of the involved identifiers, and so
+    its result will *not* be equivalent to that of the identifier function.
+    See the source code for a description of the node properties which are
+    considered to be identifiers.
 
     It's often necessary to check if a student has used a particular
     identifier in a particular context.
@@ -70,16 +96,30 @@ def involved_identifiers(*nodes):
     This method will recursively determine all identifiers which have been
     used in a statement, regardless of the complexity of the ast tree.
 
+    Args:
+      *nodes (ast.AST, ...): A variable-length arguments list of the nodes to
+          return identifiers for.
+
+    Returns:
+      A list of all involved identifiers, as strings.
+
+      The order of this list is not defined.
+
+    Raises:
+      StaticAnalysisError: If any variable-length argument is not a subclass
+          of ast.AST (ie, is not a node).  Duck typing is therefore not
+          supported, but the advantage is that common errors (such as passing
+          a list in place of *nodes) will be caught immediately.
+
     '''
     identifiers = []
 
     for node in nodes:
         if not isinstance(node, ast.AST):
             raise StaticAnalysisError(
-                'involved_identifiers must be '
-                'called on ast nodes (got {!r} instead).  Did you mean '
-                'to call this method with *varargs?  You called it with '
-                '{!r} instead'.format(node, nodes)
+                'involved_identifiers must be called on ast nodes.  '
+                'Did you mean to call this method with *varargs?  '
+                'You called it with {!r} instead'.format(node)
             )
 
         # if this node has an identifier, start out with that
@@ -181,6 +221,45 @@ def involved_identifiers(*nodes):
 
 
 def value(node, suppress_exceptions=False):
+    """
+    Return the value of the given node.
+
+    Value in this context means literal value.  However, not all literals are
+    currently supported.  Certain literals (such as comprehensions) would
+    result in complex return values and are extremely unlikely to occur in
+    practice, even if theoretically possible.
+
+    Num, Str, Bytes, NameConstant, Set, List, Tuple, and Dict are supported.
+
+    If a literal contains a non-literal element, or a component which cannot
+    otherwise be parsed, then a StaticAnalysisError will be raised.  Note that
+    this is an *extremely* common situation, and so the normal use case for
+    this function *will* involve suppressing exceptions.
+
+    For example, the list [1, 2, 3, f()] cannot be parsed without exceptions,
+    even though the first three elements are constant, because of the function
+    call in the last position.
+
+    Args:
+      node (ast.Node): The node to return the value of.
+      suppress_exceptions (bool, optional): Whether exceptions should be
+          suppressed.  If True, then this method will return None if a
+          value cannot be found.  Note that as mentioned above, many use cases
+          will raise exceptions, and so this should usually be given as True.
+          For consistency, suppress_exceptions defaults to False.
+
+    Returns:
+      The value of the node, as a Python object.
+
+      For example, the value of an ast.Num will be an integer or float as
+      appropriate, and the value of an ast.List will be a list.
+
+    Raises:
+      StaticAnalysisError: If the node, *or any subnode* (such as an element of
+          a list, to any degree of nesting) has no defined value (according to
+          the rules used in this function), and suppress_exceptions is False.
+
+    """
     # note that this is not an extensive set of mappings
     # full mappings have not been provided because trying to parse
     # arbitrarily complicated expressions leads to madness (eg, functions
