@@ -4,7 +4,8 @@ import urllib.request
 import webbrowser
 
 from tutorlib.interface.support import simple_hash
-from tutorlib.online import AuthError, RequestError, SessionManager, SERVER
+from tutorlib.online.exceptions import AuthError, RequestError
+from tutorlib.online.session import SessionManager
 
 
 VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
@@ -15,11 +16,7 @@ VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
 class WebAPI():
     def __init__(self):
         self.url = None
-        self.session_manager = SessionManager(SERVER, self._manager_callback)
-
-    # user management (login, logout etc) methods
-    def _manager_callback(self):
-        pass
+        self.session_manager = SessionManager()
 
     @property
     def is_logged_in(self):

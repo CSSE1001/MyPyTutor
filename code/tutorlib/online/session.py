@@ -27,133 +27,22 @@
 # These methods return a string with the response, or raise a RequestError if
 # there was something wrong with the request.
 
-import urllib.request
-import urllib.parse
-import html.parser
-import http.client
 import http.cookiejar
+import http.client
 import json
 import sys
-import tkinter as tk
-import tkinter.messagebox
+import tkinter.messagebox as tkmessagebox
+import urllib.parse
+import urllib.request
 
 from tutorlib.gui.dialogs.login import LoginDialog
+from tutorlib.online.exceptions import AuthError, BadResponse
+from tutorlib.online.parser import FormParser, strip_header
+
 
 LOGIN_DOMAIN = 'auth.uq.edu.au'
 LOGOUT_URL = 'http://api.uqcloud.net/logout'
 SERVER = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
-
-
-class AuthError(Exception):
-    """An exception representing login failures.
-    This usually means that the user has cancelled a login attempt.
-    """
-    pass
-
-
-class BadResponse(Exception):
-    """An exception representing invalid responses from the web server.
-    These errors should not normally occur, and should be reported to the
-    maintainer as a bug.
-    """
-    pass
-
-
-class RequestError(Exception):
-    """An exception representing errors returned by the web server.
-    These errors occur when the request could not be satisfied for some reason.
-    """
-    pass
-
-
-def strip_header(text):
-    MPT_HEADER = 'mypytutor>>>'
-    ERROR_HEADER = 'mypytutor_error>>>'
-    if text.startswith(MPT_HEADER):
-        return text[len(MPT_HEADER):]
-    elif text.startswith(ERROR_HEADER):
-        raise RequestError(text[len(ERROR_HEADER):])
-    else:
-        raise BadResponse("Invalid response from server: {!r}"
-                          .format(text[:len(MPT_HEADER)] + '...'
-                                  if len(text) > len(MPT_HEADER)+3 else text))
-
-
-class FormParser(html.parser.HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self._forms = []
-        self._this_form = None
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'form':
-            self._this_form = []
-            self._forms.append((dict(attrs), self._this_form))
-
-        if tag == 'input' and self._this_form is not None:
-            self._this_form.append(dict(attrs))
-
-    def handle_endtag(self, tag):
-        if tag == 'form':
-            self._this_form = None
-
-    def get_forms(self):
-        return self._forms
-
-    @classmethod
-    def forms(cls, text):
-        """Return a list of all forms in the given HTML text.
-
-        Each entry in the list is a pair (form, inputs), where `form` is a
-        dictionary of attributes on the <form> tag, and `inputs` is a list of
-        attribute dictionaries on the <input> tags.
-        """
-        parser = cls()
-        parser.feed(text)
-        return parser.get_forms()
-
-    @classmethod
-    def get_auth_form(cls, text):
-        """Extract details of a login form from auth.uq.edu.au, given the HTML
-        text.
-
-        Return a pair (action, data), where `action` is the action attribute
-        of the <form> tag, and `data` is a dictionary of existing name/value
-        attributes for each <input> tag.
-
-        If the form doesn't look as expected, a BadResponse will be raised.
-        """
-        # Find the login form, if there is one
-        forms = [f for f in cls.forms(text) if f[0].get('name') == 'f']
-        if len(forms) != 1:
-            raise BadResponse("Error parsing login form: no login form found")
-        form = forms[0]
-
-        # Get the 'name' and 'value' attributes already in the form
-        data = {attrs['name']: attrs.get('value', '')
-                for attrs in form[1] if 'name' in attrs}
-        if 'username' not in data or 'password' not in data:
-            raise BadResponse("Error parsing login form: form has no username/password field")
-        return (form[0]['action'], data)
-
-    @classmethod
-    def get_consume_form(cls, text):
-        """Extract details of the form to redirect to api.uqcloud.net/saml/consume.
-
-        Return a pair (action, data) as with the get_auth_form method.
-        If the form doesn't look as expected, a BadResponse will be raised.
-        """
-        # Find the form, if there is one
-        forms = [f for f in cls.forms(text)
-                 if f[0].get('action') == 'https://api.uqcloud.net/saml/consume']
-        if len(forms) != 1:
-            raise BadResponse("Error parsing login form: no form to /saml/consume")
-        form = forms[0]
-
-        # Get the name/values out of the response.
-        data = {attrs['name']: attrs.get('value', '')
-                for attrs in form[1] if 'name' in attrs}
-        return (form[0]['action'], data)
 
 
 def make_opener():
@@ -169,12 +58,15 @@ class SessionManager:
     """A class to manage login sessions, as well as sending/receiving data from
     the web server."""
 
-    def __init__(self, url, listener):
+    def __init__(self, url=SERVER, listener=None):
         """Constructor.
         `url` is the location of the MyPyTutor server.
         `listener` is a callback method. This method will get called when the
         user logs in or out, so that the view can update accordingly.
         """
+        if listener is None:
+            listener = lambda: None
+
         self._url = url
         self._callback = listener
         self._user = None
@@ -209,8 +101,10 @@ class SessionManager:
         # If we didn't get redirected to the login form, we're already in.
         if urllib.parse.urlsplit(response.geturl()).netloc != LOGIN_DOMAIN:
             set_details(text)
-            tkinter.messagebox.showerror('Login Error',
-                "You are already logged in as {}.".format(self._user['user']))
+            tkmessagebox.showerror(
+                'Login Error',
+                "You are already logged in as {}.".format(self._user['user'])
+            )
             return
 
         # Construct a callback for the login dialog box.
@@ -297,8 +191,3 @@ class SessionManager:
         """Send an HTTP GET request to the server."""
         url = self._url + '?' + urllib.parse.urlencode(data)
         return self._request(url, None)
-
-
-if __name__ == '__main__':
-    mgr = SessionManager(SERVER, lambda: print("Listen!"))
-    print(mgr.get({'action': 'userinfo'}))
