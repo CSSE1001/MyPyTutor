@@ -120,7 +120,7 @@ class WebAPI():
         }
         return self._get(values)
 
-    def submit_answer(self, code):
+    def submit_answer(self, tutorial, code):
         tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this
         values = {
             'action': 'submit',
@@ -131,7 +131,7 @@ class WebAPI():
         }
         return self._post(values)
 
-    def show_submissions(self):
+    def get_submissions(self):
         values = {
             'action': 'show',
         }

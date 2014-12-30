@@ -23,6 +23,32 @@ VERSION = '3.0.0'
 
 
 class TutorialApp(TutorialMenuDelegate):
+    '''
+    The main MyPyTutor application.
+
+    Attributes:
+      cfg (Namespace): The MyPyTutor configuration options.
+      current_tutorial (Tutorial): The currently selected tutorial problem.
+      tutorial_package (TutorialPackage): The selected tutorial package.
+      web_api (WebAPI): The web API for the app.
+
+    GUI Attributes:
+      analysis_output (AnalysisOutput): The frame displaying the current static
+          analysis results.
+      editor (TutorEditor): The edit window (where students write their code).
+      hint_button (Button): The button which, when clicked, causes the next
+          hint to be displayed.
+      master (tk.Wm): The base tk window that the app is displayed in.
+      menu (TutorialMenu): The menubar.
+      online_status (Label): The label showing whether the student is currently
+          logged in (ie, authenticated).
+      short_description (Label): The label containing the short description
+          of the current tutorial problem.
+      test_output (TestOutput): The frame displaying the current test results.
+      tutorial_frame (TutorialFrame): The frame which displays the tutorial
+          problem and associated data, such as hints.
+
+    '''
     def __init__(self, master):
         #### Set up the window
         master.title('MyPyTutor')
@@ -101,6 +127,17 @@ class TutorialApp(TutorialMenuDelegate):
     ## Properties
     @property
     def editor(self):
+        '''
+        Return a reference to the editor window.
+
+        If the editor is not currently visible, accessing it via this property
+        will create it and set it to visible.
+
+        This behaviour is intended to permit lazy construction of the editor.
+
+        Returns:
+          The editor window (an instance of TutorEditor).
+        '''
         if self._editor is None:
             self._editor = TutorEditor(self, root=self.master, online=False)
             ## TODO: fix online
@@ -108,13 +145,29 @@ class TutorialApp(TutorialMenuDelegate):
 
     ## Private methods
     def _select_tutorial_package(self, package_name):
+        '''
+        Select the tutorial package with the given name.
+
+        If no name is provided, prompt the user to add a new tutorial.
+
+        If a name is provided but the package cannot be loaded, display an
+        error to the user but otherwise do nothing.
+        This may leave the application in an inconsistent state.
+
+        Args:
+          package_name (str): The name of the package to select.
+
+        '''
         if not package_name:
             # we can't change to a non-existent package, so we will need to
             # add a new one
             self.add_tutorial()
             return
 
+        assert hasattr(self.cfg, package_name), \
+                'Attempt to select unknown package: {}'.format(package_name)
         options = getattr(self.cfg, package_name)
+
         try:
             self.tutorial_package = TutorialPackage(package_name, options)
         except TutorialPackageError as e:
@@ -128,6 +181,12 @@ class TutorialApp(TutorialMenuDelegate):
         self.menu.set_selected_tutorial_package(self.tutorial_package)
 
     def _next_hint(self):
+        '''
+        Display the next hint.
+
+        If there are no more hints to display, do nothing.
+
+        '''
         hint = self.current_tutorial.next_hint
 
         if hint is not None:
@@ -137,6 +196,15 @@ class TutorialApp(TutorialMenuDelegate):
             # TODO: show/hide hints button
 
     def _set_online_status(self, logged_in_user=None):
+        '''
+        Update the online status label.
+
+        Args:
+          logged_in_user (str, optional): The username of the student who is
+              logged in.  Defaults to None, which indicates that the student
+              has logged out.
+
+        '''
         if logged_in_user is None:
             self.online_status.config(text='Status: Not Logged In')
         else:
@@ -145,6 +213,20 @@ class TutorialApp(TutorialMenuDelegate):
             )
 
     def _ask_for_directory(self, initial_dir=None, prompt='Choose Directory'):
+        '''
+        Display a tk filedialog which prompts the user to select a directory.
+
+        Args:
+          initial_dir (str, optional): The initial directory to display in the
+              filedialog.  If initial_dir is not provided or does not exist,
+              defaults to the user's home directory.
+          prompt (str, optional): The prompt to display in the filedialog.
+              Defaults to 'Choose Directory'.
+
+        Returns:
+          The result of tkfiledialog.askdirectory
+
+        '''
         if initial_dir is None or not os.path.exists(initial_dir):
             initial_dir = os.path.expanduser('~')
 
@@ -152,8 +234,13 @@ class TutorialApp(TutorialMenuDelegate):
 
     ## General callbacks
     def close(self, evt=None):
-        # only close if the editor indicates that it's safe to do so
-        # (this will prompt the student to save their code)
+        '''
+        Close event for the TutorialApp.
+
+        The app will only be closed if the .editor indicates that it is safe
+        to do so (this will prompt the student to save their code).
+
+        '''
         if self.editor.close() == tkmessagebox.YES:
             self.logout()
             save_config(self.cfg)
@@ -162,6 +249,24 @@ class TutorialApp(TutorialMenuDelegate):
 
     ## Public-ish methods
     def run_tests(self):
+        '''
+        Test and analyse the student code.
+
+        If there is a compilation error in the student code, highlight the line
+        of that error in the editor and return.
+
+        Otherwise, update `.test_output` and `.analysis_output` with the
+        results of the testing and analysis respectively.
+
+        Returns:
+          Whether the code passes the tests and the analysis.
+
+          The code will pass iff it passes every test case *and* causes no
+          analysis errors.
+          The second requirement is important, as it helps to avoid 'cheat'
+          solutions (such as using the `sum` function when instructed not to).
+
+        '''
         code_text = self.editor.get_text()
 
         # run the tests
@@ -182,6 +287,35 @@ class TutorialApp(TutorialMenuDelegate):
     ## TutorialMenuDelegate
     # problems
     def change_problem(self, increment=None, problem=None):
+        '''
+        Change the tutorial problem.
+
+        If the student currently has a problem open with unsaved changes, they
+        will be prompted to save those changes.  If they choose to cancel,
+        this function will return.
+
+        Either `increment` or `problem` must be provided.  If `increment` is
+        provided, it will be interpreted as an instruction to go to the problem
+        `increment` after (or before) the current problem.  If `problem` is
+        provided, that problem will be switched to directly.
+
+        After the current problem is selected, the `.tutorial_frame`,
+        `.short_description`,  and `.editor` are updated as appropriate.
+
+        Tests are automatically run on the new tutorial.  As a side effect,
+        both `.test_output` and `.analysis_output` will be updated.
+
+        Args:
+          increment (int, optional): The number of problems to skip, relative
+              to the current problem.  An increment of 1 will select the next
+              problem; -1 will select the previous problem.  Defaults to None.
+          problem (Tutorial, optional): The problem to change to.  Defaults to
+              None.  If `increment` is not provided, `problem` must be.
+
+        '''
+        if self.editor.maybesave() == tkmessagebox.CANCEL:
+            return
+
         if increment is not None:
             if increment < 0:
                 f = self.tutorial_package.previous
@@ -194,10 +328,8 @@ class TutorialApp(TutorialMenuDelegate):
             for _ in range(increment):
                 problem = f(self.current_tutorial)
 
-        if self.editor.maybesave() == 'cancel':  # TODO: magic string
-            return
-
         # set the current tutorial
+        assert problem is not None
         self.current_tutorial = problem
 
         # show the problem text and description
@@ -225,6 +357,17 @@ class TutorialApp(TutorialMenuDelegate):
 
     # online
     def login(self):
+        '''
+        Attempt to log the student in to the MyPyTutor system.
+
+        If the login fails, show the student an error message.
+
+        If the login succeeds, set the online status appropriately.
+
+        Returns:
+          Whether the login attempt succeeded.
+
+        '''
         if not self.web_api.login():
             tkmessagebox.showerror(
                 'Login failed',
@@ -239,19 +382,46 @@ class TutorialApp(TutorialMenuDelegate):
         return True
 
     def logout(self):
+        '''
+        Log the student out of the MyPyTutor system, and set the online status
+        to reflect this.
+
+        '''
         self.web_api.logout()
 
         self._set_online_status(logged_in_user=None)
 
     def submit(self):
-        if not self.web_api.is_logged_in() or not self.login():
+        '''
+        Submit the current tutorial problem.
+
+        The student may only submit if logged on, and if their answer is
+        correct (ie, if it passes all tests and raises no analysis errors).
+
+        Attempting to submit will prompt the student to log on (if they are not
+        already logged in), and will re-run the tests.
+
+        '''
+        if not self.login():
             return
 
         if self.run_tests():
-            self.web_api.submit(self.tutorial)
+            self.web_api.submit_answer(
+                self.current_tutorial, self.editor.get_text()
+            )
 
     def show_submissions(self):
-        if not self.web_api.is_logged_in() or self.login():
+        '''
+        Show the student their submission history.
+
+        This will indicate which problems have been completed, and which
+        still need to be done.
+
+        The student must be logged on to show their submissions.  This method
+        will prompt the student to login if necessary.
+
+        '''
+        if not self.login():
             return
 
         submissions = self.web_api.get_submissions()
@@ -259,9 +429,23 @@ class TutorialApp(TutorialMenuDelegate):
 
     # tools
     def show_visualiser(self):
+        '''
+        Open a web browser with the student's current code pre-loaded into the
+        online visualiser tool.
+
+        No login is necessary; the tool is publicly available.
+
+        '''
         self.web_api.visualise(self.editor.get_text())
 
-    def show_interpreter(self):
+    def reload_interpreter(self):
+        '''
+        Reload the interpeter window with the latest version of the
+        student's code.
+
+        If the interpreter is not visible, it should be opened.
+
+        '''
         raise NotImplementedError('Interpeter not yet implemented')
 
     # preferences
@@ -274,6 +458,16 @@ class TutorialApp(TutorialMenuDelegate):
         self.update_fonts()
 
     def change_tutorial_directory(self):
+        '''
+        Prompt to change the current tutorial directory.
+
+        This is the directory that the tutorial problems are read from.
+
+        If the tutorial directory is changed, reload the current tutorial
+        package.  This may cause an error popup if the new directory is
+        not valid.
+
+        '''
         directory = self._ask_for_directory(
             prompt='Choose Tutorial Folder: {}'.format(
                     self.tutorial_package.name
@@ -287,6 +481,18 @@ class TutorialApp(TutorialMenuDelegate):
             self._select_tutorial_package(self.tutorial_package.name)
 
     def change_answers_directory(self):
+        '''
+        Prompt to change the current answers directory.
+
+        This is the directory that the tutorial answers are written to.
+
+        If the answers directory is changed, reload the current tutorial
+        package.  This will update the `.answer_path` property on each tutorial
+        object.  The `.current_tutorial` will then be updated to match this
+        (so that it does not contain a reference to the old object).  Finally,
+        the save path for the editor must also be updated.
+
+        '''
         directory = self._ask_for_directory(
             prompt='Choose Answers Folder: {}'.format(
                     self.tutorial_package.name
@@ -297,13 +503,34 @@ class TutorialApp(TutorialMenuDelegate):
         if directory:
             # .current_tutorial.options is bound to cfg, so will change it
             self.tutorial_package.options.ans_dir = directory
+            self._select_tutorial_package(self.tutorial_package.name)
+
+            # need to update reference to Tutorial in new (reloaded) package
+            self.current_tutorial = self.tutorial_package.tutorial_with_name(
+                self.current_tutorial.name
+            )
             self.editor.set_filename(self.current_tutorial.answer_path)
             # TODO: relocate answers?
 
     def set_as_default_package(self):
+        '''
+        Set the current tutorial package as the default tutorial package.
+
+        '''
         self.cfg.tutorials.default = self.tutorial_package.name
 
-    def add_tutorial(self):
+    def add_tutorial_package(self):
+        '''
+        Prompt the user to add a tutorial package.
+
+        If there is no default tutorial package, then this tutorial package
+        will be added as the default.  Otherwise, it will be added as an
+        ordinary package.
+
+        If the package was added as the default package, it will be selected
+        automatically.
+
+        '''
         # if we don't have a default tutorial, we should add this one as the
         # default and then switch to it
         as_default = not self.cfg.tutorials.default
@@ -314,13 +541,26 @@ class TutorialApp(TutorialMenuDelegate):
                 'Failed to Add Tutorial',
                 'Could not add tutorial: {}'.format(msg),
             )
+            return
 
         if as_default:
             self._select_tutorial_package(self.cfg.tutorials.default)
 
         self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
-    def remove_current_tutorial(self):
+    def remove_current_tutorial_package(self):
+        '''
+        Remove the current tutorial package.
+
+        It is not possible to remove the default tutorial package, or the only
+        tutorial package which is available.
+
+        The user will be prompted to confirm the package's removal.  If they
+        choose to proceed, the default tutorial package will be selected.
+
+        This process does not delete any problem or answer files.
+
+        '''
         if self.cfg.tutorials.default == self.tutorial_package.name:
             tkmessagebox.showerror(
                 'Remove Current Tutorial Error',
@@ -353,10 +593,27 @@ class TutorialApp(TutorialMenuDelegate):
             self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
     def change_tutorial_package(self, package_name):
+        '''
+        Change the selected tutorial package.
+
+        Args:
+          package_name (str): The name of the tutorial package to change to.
+
+        '''
         self._select_tutorial_package(package_name)
 
     # feedback
     def feedback(self, problem_feedback=False):
+        '''
+        Display a window which enables the user to provide feedback.
+
+        Args:
+          problem_feedback (bool, optional): Whether the feedback is about the
+              current problem.  If True, then information about the problem
+              will be included along with the feedback message.  Defaults to
+              False.
+
+        '''
         if problem_feedback:
             FeedbackDialog(
                 self.master,
@@ -369,7 +626,15 @@ class TutorialApp(TutorialMenuDelegate):
 
     # help
     def show_help_dialog(self):
+        '''
+        Show the help dialog.
+
+        '''
         HelpDialog(self.master, 'Help')
 
     def show_about_dialog(self):
+        '''
+        Show the about dialog.
+
+        '''
         TutAboutDialog(self.master, 'About MyPyTutor')

@@ -68,7 +68,7 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def show_interpreter(self):
+    def reload_interpreter(self):
         pass
 
     # preferences
@@ -89,11 +89,11 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_tutorial(self):
+    def add_tutorial_package(self):
         pass
 
     @abstractmethod
-    def remove_current_tutorial(self):
+    def remove_current_tutorial_package(self):
         pass
 
     @abstractmethod
@@ -296,7 +296,7 @@ class TutorialMenu(tk.Menu):
         self.delegate.show_visualiser()
 
     def menu_tools_interpreter(self):
-        self.delegate.show_interpreter()
+        self.delegate.reload_interpreter()
 
     def menu_preferences_fonts(self):
         self.delegate.configure_fonts()
@@ -311,10 +311,10 @@ class TutorialMenu(tk.Menu):
         self.delegate.set_as_default_package()
 
     def menu_preferences_add_tutorial(self):
-        self.delegate.add_tutorial()
+        self.delegate.add_tutorial_package()
 
     def menu_preferences_remove_current_tutorial(self):
-        self.delegate.remove_current_tutorial()
+        self.delegate.remove_current_tutorial_package()
 
     def menu_feedback_problem(self):
         self.delegate.feedback(problem_feedback=True)

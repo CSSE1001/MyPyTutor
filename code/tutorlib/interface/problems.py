@@ -137,3 +137,10 @@ class TutorialPackage():
 
     def previous(self, current_tutorial):
         return self._get_tutorial(current_tutorial, get_previous=True)
+
+    def tutorial_with_name(self, tutorial_name):
+        for problem_set in self.problem_sets:
+            for tutorial in problem_set:
+                if tutorial.name == tutorial_name:
+                    return tutorial
+        return None
