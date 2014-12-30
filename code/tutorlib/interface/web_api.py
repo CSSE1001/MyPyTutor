@@ -29,6 +29,9 @@ class WebAPI():
         return user_info['user']
 
     def login(self):
+        if self.is_logged_in:
+            return
+
         # LoginManager raises on failure
         try:
             self.session_manager.login()
