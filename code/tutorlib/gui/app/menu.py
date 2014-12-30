@@ -14,6 +14,8 @@ MENU_STRUCTURE = [
         (None, None, None),
         ('Submit Answer', 'F6', 'submit'),
         ('Show Submissions', None, 'submissions'),
+        (None, None, None),
+        ('Synchronise Solutions', None, 'sync'),
     ]),
     ('Tools', [
         ('Visualise Code', None, 'visualise'),
@@ -60,6 +62,10 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
 
     @abstractmethod
     def show_submissions(self):
+        pass
+
+    @abstractmethod
+    def synchronise(self):
         pass
 
     # tools
@@ -291,6 +297,9 @@ class TutorialMenu(tk.Menu):
 
     def menu_online_submissions(self):
         self.delegate.show_submissions()
+
+    def menu_online_sync(self):
+        self.delegate.synchronise()
 
     def menu_tools_visualise(self):
         self.delegate.show_visualiser()

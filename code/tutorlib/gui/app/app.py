@@ -427,6 +427,13 @@ class TutorialApp(TutorialMenuDelegate):
         submissions = self.web_api.get_submissions()
         # TODO: display submissions
 
+    def synchronise(self):
+        """
+        Synchronise the tutorial answers.
+
+        """
+        raise NotImplementedError()
+
     # tools
     def show_visualiser(self):
         """
