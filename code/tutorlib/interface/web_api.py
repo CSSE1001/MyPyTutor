@@ -11,8 +11,6 @@ from tutorlib.online.session import SessionManager
 VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
 
 
-# TODO: this will need to wait for a proper refactor until Jackson and I have
-# TODO: worked out how to structure this
 class WebAPI():
     def __init__(self):
         self.url = None
@@ -52,87 +50,86 @@ class WebAPI():
         webbrowser.open(url)
 
     # general web communictions
-    def get_tut_zipfile(self):
-        values = {'action': 'get_tut_zip_file'}
+    def _request(self, f, values):
         try:
-            result = self.session_manager.get(values)
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
-            return
+            return f(values)
+        except (AuthError, RequestError) as e:
+            print(e, file=sys.stderr)  # TODO: this print doesn't feel right
+            return None
+
+    def _get(self, values):
+        return self._request(self.session_manager.get, values)
+
+    def _post(self, values):
+        return self._request(self.session_manager.post, values)
+
+    def _download(self, url, filename):
+        urlobj = urllib.request.URLopener({})
 
         try:
-            urlobj = urllib.request.URLopener({})
-            urlobj.retrieve(result.strip(), "tutzip.zip")
-            return "tutzip.zip"
-        except Exception as e:
-            print(str(e))
+            filename, _ = urlobj.retrieve(url, filename=filename)
+            return filename
+        except Exception:  # could be lots of things; what matters is it failed
             return None
+
+    def get_tut_zipfile(self):
+        values = {
+            'action': 'get_tut_zip_file',
+        }
+
+        result = self._get(values)
+        if result is None:
+            return None
+
+        return self._download(result.strip(), 'tutzip.zip')
 
     def get_mpt34(self):
-        values = {'action': 'get_mpt34'}
-        try:
-            result = self.session_manager.get(values)
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
-            return
+        values = {
+            'action': 'get_mpt34',
+        }
 
-        try:
-            urlobj = urllib.request.URLopener({})
-            urlobj.retrieve(result.strip(), "mpt34.zip")
-            return "mpt34.zip"
-        except:
+        result = self._get(values)
+        if result is None:
             return None
+
+        return self._download(result.strip(), 'mpt34.zip')
 
     def get_version(self):
-        values = {'action': 'get_version'}
-        try:
-            return self.session_manager.get(values)
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
+        values = {
+            'action': 'get_version',
+        }
+        return self._get(values)
 
     def upload_answer(self, tutorial, code):
-        try:
-            values = {
-                      'action': 'upload',
-                      'problem_name': tutorial.name,
-                      'code': code,
-                     }
-            result = self.session_manager.post(values)
-            return result.startswith('OK')
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
-            return False
+        values = {
+            'action': 'upload',
+            'problem_name': tutorial.name,
+            'code': code,
+        }
 
-    def download_answer(self):
-        try:
-            values = {
-                      'action': 'download',
-                      'problem_name': self.tutorial.name,
-                     }
-            return self.session_manager.get(values)
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
-            return False
+        result = self._post(values)
+        return result is not None and result.startswith('OK')
+
+    def download_answer(self, tutorial):
+        values = {
+            'action': 'download',
+            'problem_name': tutorial.name,
+        }
+        return self._get(values)
 
     def submit_answer(self, code):
-        try:
-            tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this
-            values = {
-                      'action': 'submit',
-                      'tut_id': tut_id,
-                      'tut_id_crypt': simple_hash(tut_id + self.user),
-                      'tut_check_num': self.num_checks,
-                      'code': code,
-                     }
-            return self.session_manager.post(values)
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
-            return None
+        tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this
+        values = {
+            'action': 'submit',
+            'tut_id': tut_id,
+            'tut_id_crypt': simple_hash(tut_id + self.user),
+            'tut_check_num': self.num_checks,
+            'code': code,
+        }
+        return self._post(values)
 
-    def show_submit(self):
-        values = {'action': 'show'}
-        try:
-            return self.session_manager.get(values)
-        except RequestError as e:
-            print(str(e), file=sys.stderr)
-            return None
+    def show_submissions(self):
+        values = {
+            'action': 'show',
+        }
+        return self._get(values)

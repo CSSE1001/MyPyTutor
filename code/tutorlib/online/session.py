@@ -30,13 +30,12 @@
 import http.cookiejar
 import http.client
 import json
-import sys
 import tkinter.messagebox as tkmessagebox
 import urllib.parse
 import urllib.request
 
 from tutorlib.gui.dialogs.login import LoginDialog
-from tutorlib.online.exceptions import AuthError, BadResponse
+from tutorlib.online.exceptions import AuthError, BadResponse, RequestError
 from tutorlib.online.parser import FormParser, strip_header
 
 
@@ -159,7 +158,8 @@ class SessionManager:
         If data is None, send a GET request, otherwise a POST request.
 
         Return the text of the response, with the MyPyTutor header stripped,
-        or raise a RequestError if the server doesn't like your request.
+        or raise a RequestError if the server doesn't like your request, or
+        an AuthError if the user is not logged on.
 
         If the user is not logged in, prompt them to log in. If they fail to
         log in, show an error message box.
@@ -174,13 +174,19 @@ class SessionManager:
             return strip_header(text)
 
         except AuthError as e:
-            print("You need to be logged in to do that.", file=sys.stderr)
+            raise  # just to indicate that this is a possible error
         except http.client.HTTPException as e:
-            print("Connection Error. Check your network connection and try "
-                  "again.\n({})".format(type(e).__name__), file=sys.stderr)
+            ex = RequestError(
+                'Connection Error.  '
+                'Check your network connection and try again.'
+            )
+            raise ex from e
         except BadResponse as e:
-            print("Unexpected error: please report to maintainer.\n"
-                  "Details: {}".format(type(e).__name__, e), file=sys.stderr)
+            ex = RequestError(
+                'Unexpected Error.  '
+                'Please report to maintainer.'
+            )
+            raise ex from e
 
     def post(self, data):
         """Send an HTTP POST request to the server."""
