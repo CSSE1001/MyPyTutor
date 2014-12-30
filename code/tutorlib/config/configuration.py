@@ -1,3 +1,12 @@
+'''
+Attributes:
+  CONFIG_FILE (str, constant): The full path to the MyPyTutor config file.
+  SPECIAL_FORMATS ({(str, str): function(str) -> type}): Special formats for
+      specific configuration keys.  Keys are identified by the pair (section,
+      option).  The corresponding value is the special type used for the
+      configuration key (eg int, float, list).
+
+'''
 import configparser
 import os
 import sys
@@ -7,8 +16,8 @@ from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
 
 # The config file is stored in the same directory as MyPyTutor.py
-SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
-CONFIG_FILE = os.path.join(SCRIPT_DIR, 'mypytutor.cfg')
+_SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+CONFIG_FILE = os.path.join(_SCRIPT_DIR, 'mypytutor.cfg')
 
 SPECIAL_FORMATS = {
     ('font', 'size'): int,
@@ -20,6 +29,30 @@ SPECIAL_FORMATS = {
 
 
 def load_config():
+    '''
+    Load the MyPyTutor configuration file.
+
+    If the file does not exist, cannot be opened, or cannot be parsed, then
+    revert to using default configuration values.
+
+    If the config file can be opened and parsed, but is missing any default
+    configuration value, revert to using that value for the relevant key.
+
+    All values will be unwrapped (and so converted to the appropriate format,
+    according to the SPECIAL_FORMATS module variable).
+
+    Returns:
+      A Namespace mapping configuration sections to a Namespace mapping
+      section options to values.
+
+      For example, if the configuration file looks like this:
+
+          [section_name]
+          key1 = value
+
+      Then the attribute `result.section_name.key1` will equal `value`.
+
+    '''
     # parse the config file
     parser = configparser.ConfigParser()
 
@@ -73,6 +106,16 @@ def load_config():
 
 
 def save_config(config):
+    '''
+    Save the given config data to disk.
+
+    All values will be wrapped before saving (and so converted back to strings,
+    which is necessary for the ConfigParser to play nice).
+
+    Args:
+      config (Namespace): The configuration data to save.
+
+    '''
     # build up the config parser
     parser = configparser.ConfigParser()
 
@@ -89,6 +132,24 @@ def save_config(config):
 
 
 def unwrap_value(section, option, value):
+    '''
+    Return the unwrapped value corresponding to the given config key.
+
+    Unwrapping values involves converting them to the appropriate Python data
+    type (from strs, which is all the ConfigParser can understand).  The module
+    variable SPECIAL_FORMATS is used to determine the types to convert to.
+
+    Args:
+      section (str): The configuration section corresponding to the value.
+      option (str): The configuration option corresponding to the value.
+      value: (str): The value to convert.
+
+    Returns:
+      The value, converted to the relevant special format.
+
+      If no special format applies, return the value as a string.
+
+    '''
     special_type = SPECIAL_FORMATS.get((section, option))
     if special_type is None:
         return value
@@ -99,13 +160,32 @@ def unwrap_value(section, option, value):
     elif special_type is int:
         return int(value)
 
-    assert 0, 'Unknown special type {}'.format(special_type)
+    raise AssertionError('Unknown special type {}'.format(special_type))
 
 
 def wrap_value(section, option, value):
+    '''
+    Return the wrapped value corresponding to the given config key.
+
+    Wrapping values involves converting them back from the appropriate Python
+    data type to strs, which is all the ConfigParser can understand.  The
+    module variable SPECIAL_FORMATS is used to determine the types to convert
+    from, and it is assumed that the value is in fact of the correct type.
+
+    Args:
+      section (str): The configuration section corresponding to the value.
+      option (str): The configuration option corresponding to the value.
+      value: (object): The value to convert.
+
+    Returns:
+      The value, converted to a string.
+
+    '''
     special_type = SPECIAL_FORMATS.get((section, option))
     if special_type is None:
         return str(value)
+
+    assert isinstance(value, special_type)
 
     # TODO: I vaguely remember a bug using is on builtins, should check
     if special_type is list:
@@ -116,11 +196,26 @@ def wrap_value(section, option, value):
     elif special_type is int:
         return str(value)
 
-    assert 0, 'Unknown special type {}'.format(special_type)
+    raise AssertionError('Unknown special type {}'.format(special_type))
 
 
-def add_tutorial(config, window=None, as_default=True):  # TODO: check None works
-    # TODO: proper comment; for now NB that None means ok, string means error
+def add_tutorial(config, window=None, as_default=True):
+    '''
+    Prompt the user to add a tutorial to the given configuration datta.
+
+    Args:
+      config (Namespace): The configuration data to work with.
+      window (tk.Wm, optional): The base window of the prompt to show the user.
+          Defaults to None (which, in tk, is eqivalent to the root window).
+      as_default (bool, optional): Whether the added tutorial should be set as
+          the new default tutorial.  Defaults to True.
+
+    Returns:
+      None, if the tutorial was successfully added.
+
+      An error message as a string, otherwise.
+
+    '''
     # prompt for a tutorial directory to add
     prompt = TutorialDirectoryPrompt(window)
     if prompt.result is None:
