@@ -37,6 +37,8 @@ import sys
 import tkinter as tk
 import tkinter.messagebox
 
+from tutorlib.gui.dialogs.login import LoginDialog
+
 LOGIN_DOMAIN = 'auth.uq.edu.au'
 LOGOUT_URL = 'http://api.uqcloud.net/logout'
 SERVER = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
@@ -154,73 +156,6 @@ class FormParser(html.parser.HTMLParser):
         return (form[0]['action'], data)
 
 
-# TODO: refactor this to use tutorlib.gui.dialog.Dialog
-class LoginDialog(tk.Toplevel):
-    """Tkinter dialog box for a log in form.
-    """
-    def __init__(self, callback, title="Login"):
-        """Constructor.
-        The callback should accept two parameters, a username and a password,
-        and should return True if they are valid, and False otherwise.
-        """
-        super().__init__(bd=5)
-        self.callback = callback
-
-        # Set window properties
-        self.title(title)
-        x = self.master.winfo_rootx()
-        y = self.master.winfo_rooty()
-        self.geometry("+%d+%d" % (x+20, y+20))
-        self.resizable(height=False, width=False)
-        self.transient(self.master)
-
-        # Set bindings
-        self.protocol("WM_DELETE_WINDOW", self.cancel)
-        self.bind('<Escape>', lambda e: self.cancel())
-        self.bind('<Return>', lambda e: self.submit())
-
-        # Create widgets
-        userframe = tk.Frame(self)
-        userframe.pack(side=tk.TOP, expand=True, fill=tk.X)
-        tk.Label(userframe, text='Username: ') \
-            .pack(side=tk.LEFT, anchor=tk.W, expand=True)
-        self.user = tk.Entry(userframe, width=20)
-        self.user.pack(side=tk.LEFT)
-
-        passframe = tk.Frame(self)
-        passframe.pack(side=tk.TOP, expand=True, fill=tk.X)
-        tk.Label(passframe, text='Password: ') \
-            .pack(side=tk.LEFT, anchor=tk.W, expand=True)
-        self.password = tk.Entry(passframe, width=20, show="*")
-        self.password.pack(side=tk.LEFT)
-
-        frameButtons = tk.Frame(self)
-        frameButtons.pack(side=tk.TOP)
-        tk.Button(frameButtons, text='Submit', command=self.submit) \
-            .pack(side=tk.LEFT, expand=True)
-        tk.Button(frameButtons, text='Cancel', command=self.cancel) \
-            .pack(side=tk.LEFT, expand=True)
-
-        self.user.focus_set()
-        self.grab_set()
-        self.wait_visibility()
-        self.wait_window()
-
-    def cancel(self):
-        self.destroy()
-
-    def submit(self):
-        user = self.user.get().strip()
-        password = self.password.get()
-        success = self.callback(user, password)
-        if success:
-            self.destroy()
-        else:
-            tkinter.messagebox.showerror('Login Error',
-                                         'Incorrect user name or password')
-            self.password.delete(0, tk.END)
-
-
 def make_opener():
     """Make a URL opener with cookies enabled, and proxies disabled."""
     cookiejar = http.cookiejar.CookieJar()
@@ -315,7 +250,7 @@ class SessionManager:
             # The login was successful
             return True
 
-        LoginDialog(submit_login)
+        LoginDialog(None, submit_login)
         if not self.is_logged_in():
             raise AuthError("Not logged in.")
 
