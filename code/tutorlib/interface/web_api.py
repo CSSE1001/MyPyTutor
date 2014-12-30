@@ -30,7 +30,7 @@ class WebAPI():
 
     def login(self):
         if self.is_logged_in:
-            return
+            return True
 
         # LoginManager raises on failure
         try:
@@ -54,6 +54,10 @@ class WebAPI():
 
     # general web communictions
     def _request(self, f, values):
+        # must be logged in to make a request
+        if not self.login():
+            return None
+
         try:
             return f(values)
         except (AuthError, RequestError) as e:
