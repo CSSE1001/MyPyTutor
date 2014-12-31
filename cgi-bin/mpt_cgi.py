@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 
+import base64
 import cgi
 import datetime
+import hashlib
 import inspect
 import json
 import os
@@ -252,6 +254,36 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
         code = f.read()
 
     return code
+
+
+@action('answer_info')
+def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # grab our path
+    tutorial_path = _get_answer_path(
+        user, tutorial_package_name, problem_set_name, tutorial_name,
+    )
+    if tutorial_path is None:
+        raise ActionError('No code exists for this problem')
+
+    # get our information
+    with open(tutorial_path) as f:
+        data = f.read().encode('utf8')
+        answer_hash = hashlib.sha512(data).digest()
+
+    timestamp = os.path.getmtime(tutorial_path)
+
+    # encode hash as base64
+    answer_hash = base64.b64encode(answer_hash)
+
+    response_dict = {
+        'hash': answer_hash,
+        'timestamp': timestamp,
+    }
+
+    return json.dumps(response_dict)
 
 
 @action('submit')

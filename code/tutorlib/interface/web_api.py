@@ -1,3 +1,5 @@
+import base64
+import json
 import sys
 import urllib.parse
 import urllib.request
@@ -123,6 +125,39 @@ class WebAPI():
             'tutorial_name': tutorial.name,
         }
         return self._get(values)
+
+    def answer_info(self, tutorial, problem_set, tutorial_package):
+        values = {
+            'action': 'answer_info',
+            'tutorial_package_name': tutorial_package.name,
+            'problem_set_name': problem_set.name,
+            'tutorial_name': tutorial.name,
+        }
+        response = self._get(values)
+
+        if response is None:
+            return None, None
+
+        try:
+            d = json.loads(response)
+        except ValueError:
+            print(
+                "Could not decode response: {}".format(response),
+                file=sys.stderr,
+            )  # TODO: keep this?  I feel like it should raise WebAPIFuckup()
+            return None, None
+
+        if 'hash' not in d or 'timestamp' not in d:
+            print(
+                'Missing keys on response dictionary: {}'.format(response),
+                file=sys.stderr,
+            )
+            return None, None
+
+        answer_hash = base64.b64decode(d['hash'])
+        timestamp = d['timestamp']
+
+        return answer_hash, timestamp
 
     def submit_answer(self, tutorial, code):
         tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this

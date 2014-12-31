@@ -69,6 +69,7 @@ class TutorialApp(TutorialMenuDelegate):
 
         ## Objects
         self.web_api = WebAPI()
+        master.after(0, self.synchronise)  # post event immediately after init
 
         ## Optionals / property bases
         self.current_tutorial = None
@@ -236,7 +237,7 @@ class TutorialApp(TutorialMenuDelegate):
         """
         Upload the answer for the given tutorial to the server.
 
-        Assumes that the tutorial is part of the current tutorial package.
+        The tutorial must be part of the current tutorial package.
 
         Args:
           tutorial (Tutorial): The tutorial to upload the answer for.
@@ -260,6 +261,18 @@ class TutorialApp(TutorialMenuDelegate):
         )
 
     def _download_answer(self, tutorial):
+        """
+        Download the answer for the given tutorial from the server.
+
+        The tutorial must be part of the current tutorial package.
+
+        Args:
+          tutorial (Tutorial): The tutorial to download the answer for.
+
+        Returns:
+          Whether the download was successful.
+
+        """
         problem_set = self.tutorial_package.problem_set_containing(tutorial)
         assert problem_set is not None, \
                 'Tutorial {} not found in current package'.format(tutorial)
@@ -268,11 +281,41 @@ class TutorialApp(TutorialMenuDelegate):
             tutorial, problem_set, self.tutorial_package
         )
         if response is None:
-            return None  # no tutorial to download
+            return False  # no tutorial to download, or download error
 
         # write it to disk
         with open(tutorial.answer_path, 'w') as f:
             f.write(response)
+
+        return True
+
+    def _get_answer_info(self, tutorial):
+        """
+        Get the hash and modification time of the student's answer to the
+        given tutorial on the server.
+
+        This information can be compared to local data in order to determine
+        whether the latest version of the tutorial is on the server or is
+        available locally.
+
+        The tutorial must be part of the current tutorial package.
+
+        Args:
+          tutorial (Tutorial): The tutorial to query the server about.
+
+        Returns:
+          A tuple of the answer information.
+          The first element of the tuple is the hash of the answer file.
+          The second element of the tuple is the file's modification time.
+
+        """
+        problem_set = self.tutorial_package.problem_set_containing(tutorial)
+        assert problem_set is not None, \
+            'Tutorial {} not found in current package'.format(tutorial)
+
+        return self.web_api.answer_info(
+            tutorial, problem_set, self.tutorial_package
+        )
 
     ## General callbacks
     def close(self, evt=None):
@@ -284,7 +327,9 @@ class TutorialApp(TutorialMenuDelegate):
 
         """
         if self.editor.close() == tkmessagebox.YES:
+            self.synchronise(suppress_popups=True)
             self.logout()
+
             save_config(self.cfg)
 
             self.master.destroy()
@@ -466,80 +511,71 @@ class TutorialApp(TutorialMenuDelegate):
         submissions = self.web_api.get_submissions()
         # TODO: display submissions
 
-    def synchronise(self, is_automatic_sync=False):
+    def synchronise(self, suppress_popups=False, no_login=None):
         """
         Synchronise the tutorial answers.
 
-        If our answer has changed since it was first loaded from disk, we
-        presume that it now represents the student's latest attempt.  We
-        therefore upload it to the server, and replace whatever is there.
+        A tutorial will be downloaded from the server iff:
+          * there is no local answer, but there is one on the server; or
+          * the local and remote answers differ, but the remote one was
+            modified after the local one.
 
-        If our answer has not changed since we loaded it from disk, we need to
-        check whether the server has an up-to-date copy of the problem.  At
-        this point, we have to choose between two options.
+        A tutorial will be uploaded to the server iff:
+          * there is no answer on the server, but there is a local one; or
+          * the local and remote answers differ, but the local one was modified
+            at the same time as or before the one on the server.
 
-        The first option is to presume that synchronisation works perfectly all
-        the time, with the consequence that if the server has a different copy
-        of the answer, then it must be this computer that is out of sync.
-        That option would lead to much more elegant code, as we would just need
-        to query and compare the hash.
-        The catch with this approach is that if synchronisation fails (eg, if
-        MyPyTutor does not have an active internet connection when it closes),
-        then we might mistakenly overwrite new code.  That would not make the
-        students happen at all...
-
-        Alternatively, we can query the server for both the hash and the date
-        of the latest upload (which it could just read off the file system).
-        If the hashes differ, we could defer to the problem which was updated
-        most recently.  This could either mean uploading to the server, or
-        downloading from the server.  (Either way, we should make sure to put
-        them back in sync.)
-
-        The latter version is preferable.
-        However, it still involves the possibility of overwriting student code.
-        As a result, we should only overwrite local code if the student has
-        initiated the synchronisation themselves (via the menu command), cf it
-        being automatically started (eg as part of the close handler).
-
-        Since we don't really want to be out of sync, if the sync is *not*
-        automatic and the student
+        Args:
+          suppress_popups (bool, optional): If True, do not show any popup
+              messages.  This is intended to be used when the synchronisation
+              is taking place as part of the close handler.  Defaults to False.
+          no_login (bool, optional): If True, do not attempt to login; if the
+              user is not logged in, exit immediately and silently.  Defaults
+              to the same value as suppress_popups.
 
         """
-        return self._download_answer(self.current_tutorial)
+        if no_login is None:
+            no_login = suppress_popups
+
+        # if we're not logged in, and we are told not to, or can't, then quit
+        if not self.web_api.is_logged_in:
+            if no_login or not self.login():
+                return
 
         for problem_set in self.tutorial_package.problem_sets:
             for tutorial in problem_set:
-                should_upload = False
+                remote_hash, remote_mtime = self._get_answer_info(tutorial)
 
-                # if our answer has changed, then we presume we have the
-                # authoritative source (as the student has worked on the code)
-                if tutorial.answer_has_changed:
-                    should_upload = True
+                if not tutorial.has_answer:
+                    if remote_hash is not None:  # there exists a remote copy
+                        self._download_answer(tutorial)
+                    continue
 
-                # otherwise, we should still upload if we have a more
-                # up-to-date version
+                local_hash, local_mtime = tutorial.answer_info
 
-                if should_upload:
-                    # grab the code
-                    with open(tutorial.answer_path) as f:
-                        code = f.read()
+                if local_hash == remote_hash:  # no changes
+                    continue
 
-                    success = self.web_api.upload_answer(tutorial, code)
+                if remote_hash is None or local_mtime >= remote_mtime:
+                    success = self._upload_answer(tutorial)
+                else:
+                    success = self._download_answer(tutorial)
 
-                    if not success:
+                if not success:
+                    if not suppress_popups:
                         tkmessagebox.showerror(
-                            'Could Not Uplaod Answer Code',
+                            'Could Not Synchronise Answer Code',
                             'Please check that you are correctly logged in, ' \
                             'and that your internet connection is active.'
                         )
-                        return  # no more we can do here
+                    return  # no more we can do here
 
-                    tutorial.update_answer_hash()  # this answer is now synced
-
-        tkmessagebox.showinfo(
-            'Synchronisation Complete!',
-            'Your answers have been successfully synchronised with the server',
-        )
+        if not suppress_popups:
+            tkmessagebox.showinfo(
+                'Synchronisation Complete!',
+                'Your answers have been successfully synchronised with the ' \
+                'server.',
+            )
 
     # tools
     def show_visualiser(self):
