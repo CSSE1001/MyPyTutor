@@ -103,20 +103,24 @@ class WebAPI():
         }
         return self._get(values)
 
-    def upload_answer(self, tutorial, code):
+    def upload_answer(self, tutorial, problem_set, tutorial_package, code):
         values = {
             'action': 'upload',
-            'problem_name': tutorial.name,
             'code': code,
+            'tutorial_package_name': tutorial_package.name,
+            'problem_set_name': problem_set.name,
+            'tutorial_name': tutorial.name,
         }
 
         result = self._post(values)
         return result is not None and result.startswith('OK')
 
-    def download_answer(self, tutorial):
+    def download_answer(self, tutorial, problem_set, tutorial_package):
         values = {
             'action': 'download',
-            'problem_name': tutorial.name,
+            'tutorial_package_name': tutorial_package.name,
+            'problem_set_name': problem_set.name,
+            'tutorial_name': tutorial.name,
         }
         return self._get(values)
 

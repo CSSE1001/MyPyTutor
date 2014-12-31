@@ -119,60 +119,121 @@ def userinfo():
     return json.dumps(result)
 
 
+def _get_answer_path(user, tutorial_package_name, problem_set_name,
+        tutorial_name, create_dir=False):
+    """
+    File structure:
+      base_dir/
+        data/
+          <username>/
+            answers/
+              <tutorial_package_name>/
+                <problem_set_name>/
+                  <tutorial_name>
+
+    Args:
+      user (str): The username of the current user.
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').  Note
+          that the student could theoretically change this on us, but as far
+          as uploading goes, the actual name is not significant (provided that
+          it remains consistent between calls).
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+      create_dir (bool, optional): Whether to create the problem set directory
+          if it does not already exist.  Defaults to False.
+
+    Returns:
+      The path to the answer file for the given tutorial details.
+      None if the problem_set does not exist, and create_dir is False.
+
+    """
+    # get rid of evil spaces in filenames
+    tutorial_package_name = tutorial_package_name.replace(' ', '_')
+    problem_set_name = problem_set_name.replace(' ', '_')
+    tutorial_name = tutorial_name.replace(' ', '_')
+
+    # create/get our directory structure
+    problem_set_dir = os.path.join(
+        data_dir,
+        user,
+        'answers',
+        tutorial_package_name,
+        problem_set_name,
+    )
+    if not os.path.exists(problem_set_dir):
+        if not create_dir:
+            return None
+
+        os.makedirs(problem_set_dir)  # TODO: set mode
+
+    return os.path.join(problem_set_dir, tutorial_name)
+
+
 @action('upload')
-def upload_code(code, problem_name):
+def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
+    """
+    Store the given code on the server for the student's account.
+
+    File structure:
+      base_dir/
+        data/
+          <username>/
+            answers/
+              <tutorial_package_name>/
+                <problem_set_name>/
+                  <tutorial_name>
+
+    Args:
+      code (str): The student's code.
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').  Note
+          that the student could theoretically change this on us, but as far
+          as uploading goes, the actual name is not significant (provided that
+          it remains consistent between calls).
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+
+    """
+    # authenticate the user
     user = uqauth.get_user()
-    text = code
-    if len(text) > 2000:
+
+    # immediately fail if the student is trying to send us too much junk
+    # (so that we can't easily be DOSed)
+    if len(code) > 5*1024:
         raise ActionError('Code exceeds maximum length')
-    code_file = os.path.join(data_dir, user+'.code')
-    header = '##$$%s$$##\n' % problem_name
-    if os.path.exists(code_file):
-        fd = open(code_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        pos = file_text.find(header)
-        if pos == -1:
-            fd = open(code_file, 'a')
-            fd.write(header + text)
-            fd.close()
-        else:
-            front = file_text[:pos]
-            end_pos = file_text.find('##$$', pos+4)
-            if end_pos == -1:
-                new_text = front + header + text
-            else:
-                new_text = front + header + text + file_text[end_pos:]
-            fd = open(code_file, 'w')
-            fd.write(new_text)
-            fd.close()
-        return "OK"
-    else:
-        fd = open(code_file, 'w')
-        fd.write(header + text)
-        fd.close()
-        return "OK"
+
+    # grab our path
+    tutorial_path = _get_answer_path(
+        user, tutorial_package_name, problem_set_name, tutorial_name,
+        create_dir=True,
+    )
+
+    with open(tutorial_path, 'w') as f:
+        f.write(code)
+
+    return "OK"
 
 
 @action('download')
-def download_code(problem_name):
+def download_code(tutorial_package_name, problem_set_name, tutorial_name):
+    # authenticate the user
     user = uqauth.get_user()
-    code_file = os.path.join(data_dir, user+'.code')
-    header = '##$$%s$$##\n' % problem_name
-    if os.path.exists(code_file):
-        fd = open(code_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        pos = file_text.find(header)
-        if pos == -1:
-            raise ActionError("No code to download")
-        else:
-            front = file_text[:pos]
-            end_pos = file_text.find('##$$', pos+4)
-            text = file_text[pos+len(header):end_pos]
-            return text
-    else:
-        raise ActionError("No code to download")
+
+    # grab our path
+    tutorial_path = _get_answer_path(
+        user, tutorial_package_name, problem_set_name, tutorial_name,
+    )
+    if tutorial_path is None:
+        raise ActionError('No code to download')  # TODO: is this an error?
+
+    # read the file
+    with open(tutorial_path) as f:
+        code = f.read()
+
+    return code
 
 
 @action('submit')

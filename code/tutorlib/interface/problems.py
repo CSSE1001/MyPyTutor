@@ -308,3 +308,22 @@ class TutorialPackage():
                 if tutorial.name == tutorial_name:
                     return tutorial
         return None
+
+    def problem_set_containing(self, tutorial):
+        """
+        Return the problem set containing the given tutorial.
+
+        Args:
+          tutorial (Tutorial): The tutorial to search for.
+
+        Returns:
+          The problem set containing the tutorial, if one exists.
+          None otherwise.
+
+        """
+        for problem_set in self.problem_sets:
+            for ps_tutorial in problem_set:
+                if ps_tutorial == tutorial:
+                    return problem_set
+
+        return None

@@ -232,6 +232,48 @@ class TutorialApp(TutorialMenuDelegate):
 
         return tkfiledialog.askdirectory(title=prompt, initialdir=initial_dir)
 
+    def _upload_answer(self, tutorial):
+        """
+        Upload the answer for the given tutorial to the server.
+
+        Assumes that the tutorial is part of the current tutorial package.
+
+        Args:
+          tutorial (Tutorial): The tutorial to upload the answer for.
+
+        Returns:
+          Whether the upload was successful.
+
+        """
+        if not os.path.exists(tutorial.answer_path):
+            return False
+
+        with open(tutorial.answer_path) as f:
+            code = f.read()
+
+        problem_set = self.tutorial_package.problem_set_containing(tutorial)
+        assert problem_set is not None,\
+                'Tutorial {} not found in current package'.format(tutorial)
+
+        return self.web_api.upload_answer(
+            tutorial, problem_set, self.tutorial_package, code
+        )
+
+    def _download_answer(self, tutorial):
+        problem_set = self.tutorial_package.problem_set_containing(tutorial)
+        assert problem_set is not None, \
+                'Tutorial {} not found in current package'.format(tutorial)
+
+        response = self.web_api.download_answer(
+            tutorial, problem_set, self.tutorial_package
+        )
+        if response is None:
+            return None  # no tutorial to download
+
+        # write it to disk
+        with open(tutorial.answer_path, 'w') as f:
+            f.write(response)
+
     ## General callbacks
     def close(self, evt=None):
         """
@@ -463,6 +505,8 @@ class TutorialApp(TutorialMenuDelegate):
         automatic and the student
 
         """
+        return self._download_answer(self.current_tutorial)
+
         for problem_set in self.tutorial_package.problem_sets:
             for tutorial in problem_set:
                 should_upload = False
