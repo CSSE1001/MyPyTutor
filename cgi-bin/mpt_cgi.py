@@ -176,15 +176,6 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
     """
     Store the given code on the server for the student's account.
 
-    File structure:
-      base_dir/
-        data/
-          <username>/
-            answers/
-              <tutorial_package_name>/
-                <problem_set_name>/
-                  <tutorial_name>
-
     Args:
       code (str): The student's code.
       tutorial_package_name (str): The name of the tutorial package (eg, for
@@ -195,6 +186,12 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
       problem_set_name (str): The name of the problem set (eg, 'Introduction').
       tutorial_name (str): The name of the tutorial problem (note that this
           will be, eg, 'Using Functions', not 'fun1.tut').
+
+    Returns:
+      'OK' if successful.
+
+    Raises:
+      ActionError: If the code is too large.
 
     """
     # authenticate the user
@@ -219,6 +216,27 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
 
 @action('download')
 def download_code(tutorial_package_name, problem_set_name, tutorial_name):
+    """
+    Retrieve the given code on the server for the student's account.
+
+    Args:
+      code (str): The student's code.
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').  Note
+          that the student could theoretically change this on us, but as far
+          as uploading goes, the actual name is not significant (provided that
+          it remains consistent between calls).
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+
+    Returns:
+      The student code, as a string.
+
+    Raises:
+      ActionError: If there is no code to download.
+
+    """
     # authenticate the user
     user = uqauth.get_user()
 
