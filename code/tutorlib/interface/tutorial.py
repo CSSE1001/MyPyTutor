@@ -157,12 +157,7 @@ class Tutorial():
         self.answer_path = answer_path
 
         # load the description
-        self._assert_valid_file(Tutorial.DESCRIPTION_FILE)
-        description_path = os.path.join(
-            self.tutorial_path, Tutorial.DESCRIPTION_FILE
-        )
-        with open(description_path, 'rU') as f:
-            self.description = f.read()
+        self.description = self.read_file(Tutorial.DESCRIPTION_FILE)
 
         # parse the config file
         _, config_lcls = self.exec_submodule(Tutorial.CONFIG_MODULE)
@@ -178,22 +173,65 @@ class Tutorial():
         self._preload_code_text = None
 
     def _get_answer_hash(self):
-        if os.path.exists(self.answer_path):
-            with open(self.answer_path) as f:
-                data = f.read().encode('utf8')
-                return sha512(data).digest()
-        return None
+        with open(self.answer_path) as f:
+            data = f.read().encode('utf8')
+            return sha512(data).digest()
 
     def _get_answer_mtime(self):
         return os.path.getmtime(self.answer_path)
 
     @property
     def answer_info(self):
+        """
+        Return the hash and modification time of the local answer file.
+
+        Returns:
+          A two-element tuple conttaining the answer information.
+          The first element of the tuple is the hash of the current contents
+          of the student's answer.
+          The second element of the tuple is the modification time of the local
+          answer file (as a unix time -- this is supported on Windows).
+
+          If no answer file exists, both elements will be None.
+
+        """
+        if not os.path.exists(self.answer_path):
+            return None, None
         return self._get_answer_hash(), self._get_answer_mtime()
 
     @property
     def has_answer(self):
+        """
+        Return whether a local answer exsits to this tutorial.
+
+        """
         return os.path.exists(self.answer_path)
+
+    @property
+    def hash(self):
+        """
+        Return a hash of the entire tutorial problem (.tut directory).
+
+        This is defined as a hash of the string comprised of the contents of
+        each submodule and other file (in that order) in the package.
+
+        Each required submodule and file must actually exist.
+
+        Returns:
+          A sha512 hash of the tutorial problem, according to the above rules.
+
+        """
+        hash_obj = sha512()
+
+        for module_name in self.SUBMODULES:
+            text = self.read_submodule(module_name).encode('utf8')
+            hash_obj.update(text)
+
+        for file_name in self.FILES:
+            text = self.read_file(file_name).encode('utf8')
+            hash_obj.update(text)
+
+        return hash_obj.digest()
 
     def _assert_valid_file(self, file_name):
         """
@@ -266,6 +304,19 @@ class Tutorial():
         """
         self._assert_valid_module(module_name)
         path = os.path.join(self.tutorial_path, module_name)
+
+        with open(path) as f:
+            return f.read()
+
+    def read_file(self, file_name):
+        """
+        Read and return the text of the given file.
+        :param file_name:
+        :return:
+        """
+        assert file_name in self.FILES  # TODO: can't quite merge into the below call, because that's used from _assert_valid_module
+        self._assert_valid_file(file_name)
+        path = os.path.join(self.tutorial_path, file_name)
 
         with open(path) as f:
             return f.read()
