@@ -9,6 +9,7 @@ import json
 import os
 import shutil
 import functools
+from werkzeug.utils import secure_filename
 
 import uqauth
 
@@ -153,10 +154,11 @@ def _get_answer_path(user, tutorial_package_name, problem_set_name,
       None if the problem_set does not exist, and create_dir is False.
 
     """
-    # get rid of evil spaces in filenames
-    tutorial_package_name = tutorial_package_name.replace(' ', '_')
-    problem_set_name = problem_set_name.replace(' ', '_')
-    tutorial_name = tutorial_name.replace(' ', '_')
+    # sanitise the path components
+    # this is essential to avoid, eg, tutorial_name='hi/../../passwords.uhoh'
+    tutorial_package_name = secure_filename(tutorial_package_name)
+    problem_set_name = secure_filename(problem_set_name)
+    tutorial_name = secure_filename(tutorial_name)
 
     # create/get our directory structure
     problem_set_dir = os.path.join(
