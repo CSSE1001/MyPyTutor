@@ -268,7 +268,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
     tutorial_path = _get_answer_path(
         user, tutorial_package_name, problem_set_name, tutorial_name,
     )
-    if tutorial_path is None:
+    if not os.path.exists(tutorial_path):
         raise ActionError('No code exists for this problem')
 
     # get our information
