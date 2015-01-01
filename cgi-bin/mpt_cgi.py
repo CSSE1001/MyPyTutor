@@ -21,7 +21,7 @@ base_dir = "/opt/local/share/MyPyTutor/MPT3_CSSE1001"
 # where student data is to be put/found
 data_dir = os.path.join(base_dir, "data")
 answers_dir = os.path.join(data_dir, "answers")
-submissions_dir - os.path.join(data_dir, "submissions")
+submissions_dir = os.path.join(data_dir, "submissions")
 
 # the file containing the timestamp for the tutorial problems
 timestamp_file = os.path.join(base_dir, "config.txt")
