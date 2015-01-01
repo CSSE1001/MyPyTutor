@@ -19,6 +19,8 @@ base_dir = "/opt/local/share/MyPyTutor/MPT3_CSSE1001"
 
 # where student data is to be put/found
 data_dir = os.path.join(base_dir, "data")
+answers_dir = os.path.join(data_dir, "answers")
+submissions_dir - os.path.join(data_dir, "submissions")
 
 # the file containing the timestamp for the tutorial problems
 timestamp_file = os.path.join(base_dir, "config.txt")
@@ -127,8 +129,8 @@ def _get_answer_path(user, tutorial_package_name, problem_set_name,
     File structure:
       base_dir/
         data/
-          <username>/
-            answers/
+          answers/
+            <username>/
               <tutorial_package_name>/
                 <problem_set_name>/
                   <tutorial_name>
@@ -158,9 +160,8 @@ def _get_answer_path(user, tutorial_package_name, problem_set_name,
 
     # create/get our directory structure
     problem_set_dir = os.path.join(
-        data_dir,
+        answers_dir,
         user,
-        'answers',
         tutorial_package_name,
         problem_set_name,
     )
