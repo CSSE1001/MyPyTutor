@@ -15,7 +15,7 @@ StudentTestCase = StudentTestCase
 
 
 def exec_module(path, gbls=None, lcls=None):
-    '''
+    """
     Execute the module at the given path using the provided globals and locals
 
     NB: Here be massive, fire-breathing dragons.
@@ -40,7 +40,33 @@ def exec_module(path, gbls=None, lcls=None):
         marked above.
 
         To avoid this, we need to also extract A into a scope that B can see.
-    '''
+
+    Args:
+      path (str): The path of the module to execute.
+      gbls (dict, optional): The globals dictionary to use.  Defaults to None.
+      lcls (dict, optional): The locals dictionary to use.  Defaults to None.
+          If both gbls and lcls are None, then lcls will *not* be initialised
+          to be the same dictionary as gbls.
+
+    Returns:
+      The globals and locals dictionaries, as updated by executing the module.
+
+      If gbls and/or lcls were provided as arguments, those same dictionaries
+      will be returned here.
+
+    Raises:
+      AssertionError: If lcls is provided, but gbls is not.  This is an error
+          condition because it will almost certainly lead to unexpected results
+          when calling exec, which does not accept keyworod arguments and so
+          must be provided with a new (empty) gbls dict.  If the intention is
+          to capture all variablees in the one dict, only gbls should be given.
+
+    """
+    assert lcls is None or gbls is not None, \
+            'exec_module was called with a locals dictionary, but no globals' \
+            'dictionary. This behaviour is not sensibly supported by exec, ' \
+            'and so is considered an error condition.'
+
     if gbls is None:
         gbls = {}
     if lcls is None:
@@ -53,6 +79,46 @@ def exec_module(path, gbls=None, lcls=None):
 
 
 class Tutorial():
+    """
+    A representation of a single tutorial problem.
+
+    Class Attributes:
+      ANALYSIS_MODULE (constant): The name of the static analysis file within
+          the tutorial package.
+      CONFIG_MODULE (constant): The name of the configuration file within the
+          tutorial package.
+      PRELOAD_MODULE (constant): The name of the file containing code to
+          display to the student when first loading the tutorial.
+      SUPPORT_MODULE (constant): The name of the file containing code to
+          execute prior to running the student code.
+      TESTS_MODULE (constant): The name of the unit tests file within the
+          tutorial package.
+      SUBMODULES ([constant]): A list of all package submodule names.
+
+      DESCRIPTION_FILE (constant): The name of the tutorial description file.
+      FILES ([constant]): A list of all files, other than modules, in the
+          tutorial package.
+
+      TESTS_VARIABLE_NAME (constant): The name of the variable declared in
+          TESTS_MODULE which will contain a list of test classes to use.
+      ANALYSIS_VARIABLE_NAME (constant): The name of the variable decalred in
+          ANALYSIS_MODULE which will contain the analyser to use.
+
+    Attributes:
+      name (str): The name of the tutorial.
+      short_description (str): A short description of the tutorial problem.
+      hints ([str]): All hints for this tutorial.
+
+      answer_path (str): The path to the student's answer (on the local disk).
+      tutorial_path (str): The path of the tutorial package (.tut directory).
+
+      timeout (int): Maximum run time of the tutorial code, in seconds.
+      wrap_student_code (bool): Whether the student code for this tutorial will
+          need to be wrapped in a function before being run.  (This will be
+          necessary wherever the student is not required to declare any
+          functions.)
+
+    """
     ANALYSIS_MODULE = 'analysis.py'
     CONFIG_MODULE = 'config.py'
     PRELOAD_MODULE = 'preload.py'
@@ -75,6 +141,17 @@ class Tutorial():
     ANALYSIS_VARIABLE_NAME = 'ANALYSER'
 
     def __init__(self, name, tutorial_path, answer_path):
+        """
+        Initialise a new Tutorial object.
+
+        Args:
+          name (str): The name of the tutorial.
+          tutorial_path (str): The path of the tutorial package (.tut
+              directory).  This must exist and contain the correct files.
+          answer_path (str): The path to the student's answer (on the local
+              disk).  This need not exist yet.
+
+        """
         self.name = name
         self.tutorial_path = tutorial_path
         self.answer_path = answer_path
@@ -119,27 +196,78 @@ class Tutorial():
         return os.path.exists(self.answer_path)
 
     def _assert_valid_file(self, file_name):
+        """
+        Assert that the given filename exists in the tutorial package.
+
+        Args:
+          file_name (str): The name of the file to check.
+
+        Raises:
+          AssertionError: If the file is not present.
+
+        """
         assert os.path.exists(self.tutorial_path) \
                 and file_name in os.listdir(self.tutorial_path), \
                 'Invalid .tut package: missing {}'.format(file_name)
 
     def _assert_valid_module(self, module_name):
+        """
+        Assert that the given module exists in the tutorial package.
+
+        Args:
+          module_name (str): The name of the module to check.
+
+        Raises:
+          AssertionError: If the module is not present, or if the requested
+              module is not a valid module name for a tutorial package.
+
+        """
         assert module_name in Tutorial.SUBMODULES, \
             'Unknown submodule: {}'.format(module_name)
 
         self._assert_valid_file(module_name)
 
     def exec_submodule(self, module_name, gbls=None, lcls=None):
+        """
+        Execute the given submodule, and return the resulting globals and
+        locals dictionaries.
+
+        The submodule must exist and be valid.
+
+        Args:
+          module_name (str): The name of the module to execute.
+          gbls (dict, optional): The globals dictionary to use, if any.
+              Defaults to None.
+          lcls (dict, optional): The locals dictionary to use, if any.
+              Defaults to None.
+
+        Returns:
+          The globals and locals dictionaries, as updated by executing the
+          module, or new dictionaries if none were provided.
+
+        """
         self._assert_valid_module(module_name)
         path = os.path.join(self.tutorial_path, module_name)
 
         return exec_module(path, gbls=gbls, lcls=lcls)
 
     def read_submodule(self, module_name):
+        """
+        Read and return the text of the given submodule.
+
+        The submodule must exist and be valid.
+
+        Args:
+          module_name (str): The name of the module to read.
+
+        Returns:
+          A string containing the full text of the module file.
+
+        """
         self._assert_valid_module(module_name)
         path = os.path.join(self.tutorial_path, module_name)
 
-        with open(path, 'rU') as f:
+        with open(path) as f:
             return f.read()
 
     # TODO: it's debateable whether these should be properties, as their state
