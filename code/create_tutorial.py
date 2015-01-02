@@ -60,6 +60,7 @@ def generate_text(tutorial_text, destination_dir, source_dir):
     tutorials, extra_files = parse_tutorial(tutorial_text)
 
     # Create index files
+    # TODO: change tut_admin.txt to tutorial_hashes, in correct format
     admin_fid = open(os.path.join(parent_dir, 'tut_admin.txt'), 'w')
     tut_fid = open(os.path.join(destination_dir, 'tutorials.txt'), 'w')
     with admin_fid, tut_fid:
