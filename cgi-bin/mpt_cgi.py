@@ -12,46 +12,22 @@ import shutil
 import functools
 from werkzeug.utils import secure_filename
 
+import support
 import uqauth
 
 ######## start config #################################
 
-# Base directory for server file storage
-base_dir = "/opt/local/share/MyPyTutor/MPT3_CSSE1001"
-
-# where student data is to be put/found
-data_dir = os.path.join(base_dir, "data")
-answers_dir = os.path.join(data_dir, "answers")
-submissions_dir = os.path.join(data_dir, "submissions")
-
 # the file containing the timestamp for the tutorial problems
-timestamp_file = os.path.join(base_dir, "config.txt")
+#timestamp_file = os.path.join(base_dir, "config.txt")  # TODO: refactor
 
 # the file containing the version number of MyPyTutor
-mpt_version_file = os.path.join(base_dir, "mpt_version.txt")
+#mpt_version_file = os.path.join(base_dir, "mpt_version.txt") # TODO: refactor
 
-# the file containing the tutorial information
-tutorial_hashes_file = os.path.join(submissions_dir, "tutorial_hashes")
+# static files (eg zipfiles)
+TUTORIAL_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
+MPT34_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
 
-submission_log_name = "submission_log"
 
-# the zip file containing the tutorial info
-tut_zipfile_url = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
-
-# the zip file containing MyPyTutor2.5
-#mpt25_url = "https://student.eait.uq.edu.au/mypytutor/MyPyTutor/CSSE1001/MyPyTutor25.zip"
-# the zip file containing MyPyTutor2.6
-#mpt26_url = "http://mypytutor.cloud.itee.uq.edu.au/MyPyTutor/CSSE1001/MyPyTutor26.zip"
-# the zip file containing MyPyTutor2.7
-#mpt27_url = "http://csse1001.uqcloud.net/mpt/MyPyTutor27.zip"
-# the zip file containing MyPyTutor3.4
-mpt34_url = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
-
-# datetime format used in due dates
-date_format = "%H_%d/%m/%y"
-
-# hour of day (24hr clock) for due time
-due_hour = 17
 
 ######## end config   #################################
 
@@ -127,70 +103,6 @@ def userinfo():
     return json.dumps(result)
 
 
-def _get_answer_path(user, tutorial_package_name, problem_set_name,
-        tutorial_name, create_dir=False):
-    """
-    Get a path indicating where the server copy of the student's answer to the
-    given tutorial problem should be stored.
-
-    File structure:
-      base_dir/
-        data/
-          answers/
-            <username>/
-              <tutorial_package_name>/
-                <problem_set_name>/
-                  <tutorial_name>
-
-    Note that it's possible for students to rename the tutorial package (and
-    theoretically also the problem sets, but with a lot more work).  This
-    function will make use of whatever name the student has chosen to assign
-    to the tutorial package.
-    Because we just store copies of the answer, and don't do any checking off
-    this directly, that's not an issue.  (After all, we're just looking to
-    mirror, in a sense, the local filesystem.)
-
-    The only way we could end up with issues is if the student creates two
-    installations of MyPyTutor, with different names for the same package, and
-    then syncs both of them with the server.
-
-    Args:
-      user (str): The username of the current user.
-      tutorial_package_name (str): The name of the tutorial package (eg, for
-          UQ students, this will be something like 'CSSE1001Tutorials').
-      problem_set_name (str): The name of the problem set (eg, 'Introduction').
-      tutorial_name (str): The name of the tutorial problem (note that this
-          will be, eg, 'Using Functions', not 'fun1.tut').
-      create_dir (bool, optional): Whether to create the problem set directory
-          if it does not already exist.  Defaults to False.
-
-    Returns:
-      The path to the answer file for the given tutorial details.
-      None if the problem_set does not exist, and create_dir is False.
-
-    """
-    # sanitise the path components
-    # this is essential to avoid, eg, tutorial_name='hi/../../passwords.uhoh'
-    tutorial_package_name = secure_filename(tutorial_package_name)
-    problem_set_name = secure_filename(problem_set_name)
-    tutorial_name = secure_filename(tutorial_name)
-
-    # create/get our directory structure
-    problem_set_dir = os.path.join(
-        answers_dir,
-        user,
-        tutorial_package_name,
-        problem_set_name,
-    )
-    if not os.path.exists(problem_set_dir):
-        if not create_dir:
-            return None
-
-        os.makedirs(problem_set_dir)  # TODO: set mode
-
-    return os.path.join(problem_set_dir, tutorial_name)
-
-
 @action('upload')
 def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
     """
@@ -219,14 +131,10 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
     if len(code) > 5*1024:
         raise ActionError('Code exceeds maximum length')
 
-    # grab our path
-    tutorial_path = _get_answer_path(
-        user, tutorial_package_name, problem_set_name, tutorial_name,
-        create_dir=True,
+    # write the answer
+    support.write_answer(
+        user, tutorial_package_name, problem_set_name, tutorial_name, code
     )
-
-    with open(tutorial_path, 'w') as f:
-        f.write(code)
 
     return "OK"
 
@@ -254,16 +162,12 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
     # authenticate the user
     user = uqauth.get_user()
 
-    # grab our path
-    tutorial_path = _get_answer_path(
-        user, tutorial_package_name, problem_set_name, tutorial_name,
+    # read the answer
+    code = support.read_answer(
+        user, tutorial_package_name, problem_set_name, tutorial_name
     )
-    if tutorial_path is None:
+    if code is None:
         raise ActionError('No code to download')  # TODO: is this an error?
-
-    # read the file
-    with open(tutorial_path) as f:
-        code = f.read()
 
     return code
 
@@ -286,8 +190,6 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
 
       The first element of the tuple is a base32 encoding of the sha512 hash
       of the server copy of the student's answer.
-      We use base32 strings through for consistency (as they are required for
-      submission filenames, given that basee64 contains invalid chars).
 
       The second element is the last-modified time of the answer, as a unix
       timestamp.
@@ -299,212 +201,23 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
     # authenticate the user
     user = uqauth.get_user()
 
-    # grab our path
-    tutorial_path = _get_answer_path(
-        user, tutorial_package_name, problem_set_name, tutorial_name,
+    # grab our data
+    answer_hash = support.get_answer_hash(
+        user, tutorial_package_name, problem_set_name, tutorial_name
     )
-    if not os.path.exists(tutorial_path):
+    timestamp = support.get_answer_modification_time(
+        user, tutorial_package_name, problem_set_name, tutorial_name
+    )
+    if answer_hash is None or timestamp is None:
         raise ActionError('No code exists for this problem')
 
-    # get our information
-    with open(tutorial_path) as f:
-        data = f.read().encode('utf8')
-        answer_hash = hashlib.sha512(data).digest()
-
-    timestamp = os.path.getmtime(tutorial_path)
-
-    # encode hash as base32
-    answer_hash = base64.b32encode(answer_hash)
-
+    # build our response
     response_dict = {
         'hash': answer_hash,
         'timestamp': timestamp,
     }
 
     return json.dumps(response_dict)
-
-
-TutorialInfo = namedtuple(
-    'TutorialInfo',
-    ['hash', 'due', 'package_name', 'problem_set_name', 'tutorial_name']
-)
-
-
-def _parse_tutorial_hashes():
-    """
-    Get all valid tutorial hashes, as TutorialInfo objects.
-
-    Format of tutorial_hashes file:
-      hash due_hh_dd_mm_yy package_name problem_set_name tutorial_name
-
-    It is assumed that there will be no hash collisions.  If there are, this
-    can be fixed by editing one of the package files ;)
-
-    Hashes are sha512, encoded as base32 strings.
-
-    This function assumes that the tutorial_hashes file is in the correct
-    format, and so does not handle errors which would result from a
-    badly-formatted file.
-
-    Returns:
-      A list of TutorialInfo objects, corresponding to the tutorials in
-      the tutorial_hashes file.
-
-    """
-    data = []
-
-    with open(tutorial_hashes_file) as f:
-        for line in filter(None, map(str.strip, f)):
-            hash_str, due_date_str, pkg_name, pset_name, tut_name \
-                    = line.split()
-
-            due_date = datetime.datetime.strptime(due_date_str, date_format)
-
-            tutorial_info = TutorialInfo(
-                hash_str, due_date, pkg_name, pset_name, tut_name
-            )
-            data.append(tutorial_info)
-
-    return data
-
-
-def _get_or_create_user_submissions_dir(user):
-    """
-    Get the submissions directory for the user.
-
-    If the directory does not exist, create it.
-
-    Assumes that the username cannot be spoofed (and so does not need to be
-    sanitised prior to use).
-
-    Args:
-      user (str): The username to get the submissions directory for.
-
-    Returns:
-      The path to the submissions directory for the given user.
-
-    """
-    submissions_path = os.path.join(submissions_dir, user)
-
-    if not os.path.exists(submissions_dir):
-        os.mkdir(submissions_path)  # TODO: mode
-
-    return submissions_path
-
-
-def _get_or_create_user_submissions_file(user):
-    """
-    Get the path to the submissions log file for the given user.
-
-    The file will be created if it does not exist.
-
-    Args:
-      user (str): The username to get the submissions file for.
-
-    Returns:
-      The path to the submissions file for the given user.
-
-    """
-    # we assume that the username does not need sanitisation
-    user_submissions_dir = _get_or_create_user_submissions_dir(user)
-    submission_log_path = os.path.join(
-        user_submissions_dir, submission_log_name
-    )
-
-    # create the file if it does not exist
-    if not os.path.exists(submission_log_path):
-        with open(submission_log_path, 'w') as f:
-            pass
-
-    return submission_log_path
-
-
-TutorialSubmission = namedtuple('TutorialSubmission', ['hash', 'submitted'])
-
-
-def _parse_submission_log(user):
-    """
-    Get the submission log for the given user.
-
-    Format of submission_log file:
-      hash submitted_dd_mm_yy
-
-    Hashes are sha512, encoded as base32 strings.
-
-    We don't store information in the submission_log about whether or not the
-    tutorial was submittted on time, as that would be redundant.
-
-    Args:
-      user (str): The username to get the submissions log for.
-
-    Returns:
-      A list of TutorialSubmission objects representing the user's submissions.
-
-    """
-    data = []
-
-    submission_log_path = _get_or_create_user_submissions_file(user)
-
-    # parse the file itself
-    with open(submission_log_path) as f:
-        for line in filter(None, map(str.strip, f)):
-            hash_str, submitted_date_str = line.split()
-
-            submitted_date = datetime.datetime.strptime(
-                submitted_date_str, date_format
-            )
-
-            submission_info = TutorialSubmission(hash_str, submitted_date)
-            data.append(submission_info)
-
-    return data
-
-
-def _add_submission(user, tutorial_hash, code):
-    """
-    Submit the tutorial with the given hash for the given user.
-
-    This involves updating the user's submission log, as well as saving the
-    actual code to disk.
-
-    Args:
-      user (str): The user who submitted the tutorial problem answer.
-      tutorial_hash (str): The tutorial hash, as a base32 string.
-      code (str): The user's code.
-
-    Returns:
-      A TutorialSubmission object corresponding to the submission.
-
-    """
-    # build our data
-    submitted_date = datetime.datetime.now()
-    submitted_date_str = submitted_date.strftime(date_format)
-
-    submission = TutorialSubmission(tutorial_hash, submitted_date)
-
-    # write to the log
-    submission_log_path = _get_or_create_user_submissions_file(user)
-
-    with open(submission_log_path, 'a') as f:
-        f.write(' '.join([tutorial_hash, submitted_date_str]))
-
-    # a base32 hash should NEVER need to be sanitised, with the exception of
-    # removing the padding characters
-    # if it does, something is VERY wrong
-    stripped_b32_hash = tutorial_hash.strip('=')
-    if stripped_b32_hash != secure_filename(stripped_b32_hash):
-        raise ActionError('Invalid hash: {}'.format(stripped_b32_hash))
-
-    # write the student's code to file
-    # this file should not exist, but if it does, overwrite it
-    user_submissions_dir = _get_or_create_user_submissions_dir(user)
-    answer_path = os.path.join(user_submissions_dir, stripped_b32_hash)
-
-    with open(answer_path, 'w') as f:
-        f.write(code)
-
-    # return the TutorialSubmission object
-    return submission
 
 
 @action('submit')
@@ -521,23 +234,9 @@ def submit_answer(tutorial_hash, code):
     hash collisions (come on, what are the odds...those totally aren't famous
     last words).
 
-    As far as storing results, we're currently putting them on the filesystem,
-    rather than worrying about a database.  (Wouldn't be too hard to change.)
-
-    Our file structure looks something like this:
-      base_dir/
-        answers/  <- we DO NOT update this when an answer is submitted
-        submissions/
-          tutorial_hashes <- static var, pointing to text file
-          <username>/
-            submission_log <- see below
-            <submitted_answer_hash> <- file containing answer code
-
-    First, we check that the given hash actually exists, by looking in our
-    configuration file (tutorial_hashes).
-
-    If the file does exist, we update the submission_log for the given user,
-    and then store the answer in a file named after the tutorial hash.
+    First, we check that the given hash actually exists.  If it does, we can
+    go ahead and add the submission.  Implementation details are hidden in the
+    support file (so that we can switch backends if needed).
 
     Args:
       tutorial_hash (str): The sha512 hash of the tutorial folder, encoded as
@@ -557,7 +256,7 @@ def submit_answer(tutorial_hash, code):
     user = uqauth.get_user()
 
     # check that the tutorial actually exists
-    hashes = _parse_tutorial_hashes()
+    hashes = support.parse_tutorial_hashes()
 
     try:
         tutorial_info = next(ti for ti in hashes if ti.hash == tutorial_hash)
@@ -565,7 +264,7 @@ def submit_answer(tutorial_hash, code):
         raise ActionError('Invalid tutorial: {}'.format(tutorial_hash))
 
     # check if the student has already submitted this tutorial
-    submissions = _parse_submission_log(user)
+    submissions = support.parse_submission_log(user)
 
     try:
         next(si for si in submissions if si.hash == tutorial_hash)
@@ -576,7 +275,9 @@ def submit_answer(tutorial_hash, code):
         pass  # we want this -- no such tutorial has been submitted
 
     # write out the submission
-    submission = _add_submission(user, tutorial_hash, code)
+    submission = support.add_submission(user, tutorial_hash, code)
+    if submission is None:
+        raise ActionError('Could not add submission: {}'.format(tutorial_hash))
 
     # return either 'OK' or 'LATE'
     return 'OK' if submission.submitted <= tutorial_info.due else 'LATE'
@@ -738,12 +439,12 @@ def get_user_subs(the_user):
 
 @action('get_tut_zip_file')
 def get_tut_zip_file():
-    return tut_zipfile_url
+    return TUTORIAL_ZIPFILE_URL
 
 
 @action('get_mpt34')
 def get_mpt34():
-    return mpt34_url
+    return MPT34_ZIPFILE_URL
 
 
 @action('get_version')
