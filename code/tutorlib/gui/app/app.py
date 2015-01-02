@@ -490,8 +490,19 @@ class TutorialApp(TutorialMenuDelegate):
             return
 
         if self.run_tests():
-            self.web_api.submit_answer(
+            result = self.web_api.submit_answer(
                 self.current_tutorial, self.editor.get_text()
+            )
+            if result is None:
+                tkmessagebox.showerror(
+                    'Submission Failed',
+                    'It was not possible to submit your answer.  Reason: ',
+                )
+                return
+
+            tkmessagebox.showinfo(
+                'Submission Successful!',
+                'Code submitted {}'.format('on time' if result else 'late'),
             )
 
     def show_submissions(self):

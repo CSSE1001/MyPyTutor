@@ -171,7 +171,16 @@ class WebAPI():
             'tutorial_hash': tutorial_hash,
             'code': code,
         }
-        return self._post(values)
+        response = self._post(values)
+        if response is None:
+            return None
+
+        response = response.strip()
+
+        assert response in ('OK', 'LATE'), \
+                'Unknown response to submission: {}'.format(response)
+
+        return response == 'OK'
 
     def get_submissions(self):
         values = {
