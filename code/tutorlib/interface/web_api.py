@@ -184,6 +184,31 @@ class WebAPI():
 
     def get_submissions(self):
         values = {
-            'action': 'show',
+            'action': 'get_submissions',
         }
-        return self._get(values)
+        response = self._get(values)
+
+        if response is None:
+            return None
+
+        # parse our response
+        try:
+            results = json.loads(response)
+        except ValueError:
+            print(
+                "Could not decode response: {}".format(response),
+                file=sys.stderr,
+            )  # TODO: keep this?  I feel like it should raise WebAPIFuckup()
+            return None
+
+        # convert from literal strings to builtins
+        # TODO: alternative is to have, eg WebAPI.{OK,LATE,MISSING}
+        mappings = {
+            'OK': True,
+            'LATE': False,
+            'MISSING': None,
+        }
+
+        # TODO: convert mappings
+        # TODO: convert hashes to tutorials
+

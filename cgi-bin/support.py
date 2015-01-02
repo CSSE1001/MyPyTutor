@@ -311,7 +311,7 @@ def _get_or_create_user_submissions_file(user):
     return submission_log_path
 
 
-TutorialSubmission = namedtuple('TutorialSubmission', ['hash', 'submitted'])
+TutorialSubmission = namedtuple('TutorialSubmission', ['hash', 'date'])
 
 
 def parse_submission_log(user):

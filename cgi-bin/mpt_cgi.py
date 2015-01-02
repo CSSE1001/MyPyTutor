@@ -280,20 +280,44 @@ def submit_answer(tutorial_hash, code):
         raise ActionError('Could not add submission: {}'.format(tutorial_hash))
 
     # return either 'OK' or 'LATE'
-    return 'OK' if submission.submitted <= tutorial_info.due else 'LATE'
+    return 'OK' if submission.date <= tutorial_info.due else 'LATE'
 
 
-@action('show')
+@action('get_submissions')
 def show_submit():
+    """
+    Return the submissions for the current user.
+
+    Returns:
+      A list of two-element tuples.
+      Each tuple represents a single tutorial.
+
+      The first element in the tuple is the hash of the tutorial package (in
+      the same format as usual, ie base32 encoded sha512 hash).
+
+      The second element in the tuple is one of 'MISSING', 'OK', and 'LATE'.
+
+    """
+    # authenticate the user
     user = uqauth.get_user()
-    sub_file = os.path.join(data_dir, user+'.sub')
-    if os.path.exists(sub_file):
-        fd = open(sub_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        return file_text
-    else:
-        return ''
+
+    # get our data
+    hashes = support.parse_tutorial_hashes()
+    submissions = {sub.hash: sub for sub in support.parse_submission_log(user)}
+
+    # check if our submissions are late or not
+    results = []
+
+    for tutorial_info in hashes:
+        status = 'MISSING'
+
+        submission = submissions.get(tutorial_info.hash)
+        if submission is not None:
+            status = 'OK' if submission.date <= tutorial_info.due else 'LATE'
+
+        results.append((tutorial_info.hash, status))
+
+    return json.dumps(results)
 
 
 @action('match', admin=True)
