@@ -121,7 +121,7 @@ def read_answer(user, tutorial_package_name, problem_set_name, tutorial_name):
         user, tutorial_package_name, problem_set_name, tutorial_name,
         create_dir=True,
     )
-    if path is None:
+    if path is None or not os.path.exists(path):
         return None
 
     with open(path) as f:
@@ -341,7 +341,7 @@ def parse_submission_log(user):
         for line in filter(None, map(str.strip, f)):
             hash_str, submitted_date_str = line.split()
 
-            submitted_date = datetime.datetime.strptime(
+            submitted_date = datetime.strptime(
                 submitted_date_str, DUE_DATE_FORMAT
             )
 
@@ -369,7 +369,7 @@ def add_submission(user, tutorial_hash, code):
 
     """
     # build our data
-    submitted_date = datetime.datetime.now()
+    submitted_date = datetime.now()
     submitted_date_str = submitted_date.strftime(DUE_DATE_FORMAT)
 
     submission = TutorialSubmission(tutorial_hash, submitted_date)
