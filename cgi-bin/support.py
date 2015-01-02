@@ -26,6 +26,7 @@ File structure:
 import base64
 from collections import namedtuple
 from datetime import datetime
+import dateutil.parser
 import hashlib
 import os
 from werkzeug.utils import secure_filename
@@ -341,9 +342,7 @@ def parse_submission_log(user):
         for line in filter(None, map(str.strip, f)):
             hash_str, submitted_date_str = line.split()
 
-            submitted_date = datetime.strptime(
-                submitted_date_str, DUE_DATE_FORMAT
-            )
+            submitted_date = dateutil.parser.parse(submitted_date_str)
 
             submission_info = TutorialSubmission(hash_str, submitted_date)
             data.append(submission_info)
@@ -370,7 +369,7 @@ def add_submission(user, tutorial_hash, code):
     """
     # build our data
     submitted_date = datetime.now()
-    submitted_date_str = submitted_date.strftime(DUE_DATE_FORMAT)
+    submitted_date_str = submitted_date.isoformat()
 
     submission = TutorialSubmission(tutorial_hash, submitted_date)
 
