@@ -2,6 +2,7 @@
 
 import base64
 import cgi
+from collections import namedtuple
 import datetime
 import hashlib
 import inspect
@@ -30,7 +31,9 @@ timestamp_file = os.path.join(base_dir, "config.txt")
 mpt_version_file = os.path.join(base_dir, "mpt_version.txt")
 
 # the file containing the tutorial information
-tut_info_file = os.path.join(base_dir, "tut_admin.txt")
+tutorial_hashes_file = os.path.join(submissions_dir, "tutorial_hashes")
+
+submission_log_name = "submission_log"
 
 # the zip file containing the tutorial info
 tut_zipfile_url = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
@@ -45,7 +48,7 @@ tut_zipfile_url = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
 mpt34_url = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
 
 # datetime format used in due dates
-date_format = "%d/%m/%y"
+date_format = "%H_%d/%m/%y"
 
 # hour of day (24hr clock) for due time
 due_hour = 17
@@ -281,8 +284,10 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
     Returns:
       A two-element tuple.
 
-      The first element of the tuple is a base64 encoding of the sha512 hash
+      The first element of the tuple is a base32 encoding of the sha512 hash
       of the server copy of the student's answer.
+      We use base32 strings through for consistency (as they are required for
+      submission filenames, given that basee64 contains invalid chars).
 
       The second element is the last-modified time of the answer, as a unix
       timestamp.
@@ -308,8 +313,8 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
 
     timestamp = os.path.getmtime(tutorial_path)
 
-    # encode hash as base64
-    answer_hash = base64.b64encode(answer_hash)
+    # encode hash as base32
+    answer_hash = base64.b32encode(answer_hash)
 
     response_dict = {
         'hash': answer_hash,
@@ -319,58 +324,262 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
     return json.dumps(response_dict)
 
 
+TutorialInfo = namedtuple(
+    'TutorialInfo',
+    ['hash', 'due', 'package_name', 'problem_set_name', 'tutorial_name']
+)
+
+
+def _parse_tutorial_hashes():
+    """
+    Get all valid tutorial hashes, as TutorialInfo objects.
+
+    Format of tutorial_hashes file:
+      hash due_hh_dd_mm_yy package_name problem_set_name tutorial_name
+
+    It is assumed that there will be no hash collisions.  If there are, this
+    can be fixed by editing one of the package files ;)
+
+    Hashes are sha512, encoded as base32 strings.
+
+    This function assumes that the tutorial_hashes file is in the correct
+    format, and so does not handle errors which would result from a
+    badly-formatted file.
+
+    Returns:
+      A list of TutorialInfo objects, corresponding to the tutorials in
+      the tutorial_hashes file.
+
+    """
+    data = []
+
+    with open(tutorial_hashes_file) as f:
+        for line in filter(None, map(str.strip, f)):
+            hash_str, due_date_str, pkg_name, pset_name, tut_name \
+                    = line.split()
+
+            due_date = datetime.datetime.strptime(due_date_str, date_format)
+
+            tutorial_info = TutorialInfo(
+                hash_str, due_date, pkg_name, pset_name, tut_name
+            )
+            data.append(tutorial_info)
+
+    return data
+
+
+def _get_or_create_user_submissions_dir(user):
+    """
+    Get the submissions directory for the user.
+
+    If the directory does not exist, create it.
+
+    Assumes that the username cannot be spoofed (and so does not need to be
+    sanitised prior to use).
+
+    Args:
+      user (str): The username to get the submissions directory for.
+
+    Returns:
+      The path to the submissions directory for the given user.
+
+    """
+    submissions_path = os.path.join(submissions_dir, user)
+
+    if not os.path.exists(submissions_dir):
+        os.mkdir(submissions_path)  # TODO: mode
+
+    return submissions_path
+
+
+def _get_or_create_user_submissions_file(user):
+    """
+    Get the path to the submissions log file for the given user.
+
+    The file will be created if it does not exist.
+
+    Args:
+      user (str): The username to get the submissions file for.
+
+    Returns:
+      The path to the submissions file for the given user.
+
+    """
+    # we assume that the username does not need sanitisation
+    user_submissions_dir = _get_or_create_user_submissions_dir(user)
+    submission_log_path = os.path.join(
+        user_submissions_dir, submission_log_name
+    )
+
+    # create the file if it does not exist
+    if not os.path.exists(submission_log_path):
+        with open(submission_log_path, 'w') as f:
+            pass
+
+    return submission_log_path
+
+
+TutorialSubmission = namedtuple('TutorialSubmission', ['hash', 'submitted'])
+
+
+def _parse_submission_log(user):
+    """
+    Get the submission log for the given user.
+
+    Format of submission_log file:
+      hash submitted_dd_mm_yy
+
+    Hashes are sha512, encoded as base32 strings.
+
+    We don't store information in the submission_log about whether or not the
+    tutorial was submittted on time, as that would be redundant.
+
+    Args:
+      user (str): The username to get the submissions log for.
+
+    Returns:
+      A list of TutorialSubmission objects representing the user's submissions.
+
+    """
+    data = []
+
+    submission_log_path = _get_or_create_user_submissions_file(user)
+
+    # parse the file itself
+    with open(submission_log_path) as f:
+        for line in filter(None, map(str.strip, f)):
+            hash_str, submitted_date_str = line.split()
+
+            submitted_date = datetime.datetime.strptime(
+                submitted_date_str, date_format
+            )
+
+            submission_info = TutorialSubmission(hash_str, submitted_date)
+            data.append(submission_info)
+
+    return data
+
+
+def _add_submission(user, tutorial_hash, code):
+    """
+    Submit the tutorial with the given hash for the given user.
+
+    This involves updating the user's submission log, as well as saving the
+    actual code to disk.
+
+    Args:
+      user (str): The user who submitted the tutorial problem answer.
+      tutorial_hash (str): The tutorial hash, as a base32 string.
+      code (str): The user's code.
+
+    Returns:
+      A TutorialSubmission object corresponding to the submission.
+
+    """
+    # build our data
+    submitted_date = datetime.datetime.now()
+    submitted_date_str = submitted_date.strftime(date_format)
+
+    submission = TutorialSubmission(tutorial_hash, submitted_date)
+
+    # write to the log
+    submission_log_path = _get_or_create_user_submissions_file(user)
+
+    with open(submission_log_path, 'a') as f:
+        f.write(' '.join([tutorial_hash, submitted_date_str]))
+
+    # a base32 hash should NEVER need to be sanitised, with the exception of
+    # removing the padding characters
+    # if it does, something is VERY wrong
+    stripped_b32_hash = tutorial_hash.strip('=')
+    if stripped_b32_hash != secure_filename(stripped_b32_hash):
+        raise ActionError('Invalid hash: {}'.format(stripped_b32_hash))
+
+    # write the student's code to file
+    # this file should not exist, but if it does, overwrite it
+    user_submissions_dir = _get_or_create_user_submissions_dir(user)
+    answer_path = os.path.join(user_submissions_dir, stripped_b32_hash)
+
+    with open(answer_path, 'w') as f:
+        f.write(code)
+
+    # return the TutorialSubmission object
+    return submission
+
+
 @action('submit')
-def submit_answer(tut_id, tut_id_crypt, tut_check_num, code):
+def submit_answer(tutorial_hash, code):
+    """
+    Submit the student's answer for the given tutorial.
+
+    When we store the answer, we make use of the student's own local naming
+    scheme (eg, they could call the tutorial package 'Bob' if they wanted).
+    This obviously won't work for submissions; we need consistency.
+
+    Instead, what we do is we take a hash of the entire tutorial package and
+    use that to uniquely identify the package.  We ignore the possiblity of
+    hash collisions (come on, what are the odds...those totally aren't famous
+    last words).
+
+    As far as storing results, we're currently putting them on the filesystem,
+    rather than worrying about a database.  (Wouldn't be too hard to change.)
+
+    Our file structure looks something like this:
+      base_dir/
+        answers/  <- we DO NOT update this when an answer is submitted
+        submissions/
+          tutorial_hashes <- static var, pointing to text file
+          <username>/
+            submission_log <- see below
+            <submitted_answer_hash> <- file containing answer code
+
+    First, we check that the given hash actually exists, by looking in our
+    configuration file (tutorial_hashes).
+
+    If the file does exist, we update the submission_log for the given user,
+    and then store the answer in a file named after the tutorial hash.
+
+    Args:
+      tutorial_hash (str): The sha512 hash of the tutorial folder, encoded as
+          a base32 string.
+      code (str): The student's code.
+
+    Returns:
+      'OK' if submitted on time.
+      'LATE' if submitted late.
+
+    Raises:
+      ActionError: If tutorial hash does not match a known tutorial package,
+          or if the student has already submitted this tutorial.
+
+    """
+    # authenticate the user
     user = uqauth.get_user()
-    if tut_id_crypt != str(_sh(tut_id + user)):
-        raise ActionError("Error 901. Report this error to a maintainer.")
-    #admin_file = os.path.join(data_dir, 'tut_admin.txt')
-    admin_fid = open(tut_info_file, 'U')
-    admin_lines = admin_fid.readlines()
-    admin_fid.close()
-    found = False
-    section = ''
-    tut_name = ''
-    for line in admin_lines:
-        if line.startswith('['):
-            section = line.strip()[:-1]
-        elif line.startswith(tut_id):
-            found = True
-            tut_name = line.split(' ', 1)[1].strip()
-            break
-    if tut_name == '' or section == '':
-        raise ActionError("Tutorial not found")
-    first_word = section.split(' ', 1)[0][1:]
+
+    # check that the tutorial actually exists
+    hashes = _parse_tutorial_hashes()
+
     try:
-        due_date = datetime.datetime.strptime(first_word, date_format)
-        due_time = due_date.replace(hour=due_hour)
-    except Exception as e:
-        #print e
-        due_time = None
-    today = datetime.datetime.today()
-    sub_file = os.path.join(data_dir, user+'.sub')
-    header = '\n##$$%s$$##\n' % tut_name
-    if due_time and today > due_time:
-        msg = "LATE"
-        sub_text = header + 'LATE\n' + tut_check_num + '\n' + code
-    else:
-        msg = "OK"
-        sub_text = header + 'OK\n' + tut_check_num + '\n' + code
-    if os.path.exists(sub_file):
-        fd = open(sub_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        if header in file_text:
-            raise ActionError("Already submitted")
-        fd = open(sub_file, 'a')
-        fd.write(sub_text)
-        fd.close()
-        return msg
-    else:
-        fd = open(sub_file, 'w')
-        fd.write(sub_text)
-        fd.close()
-        return msg
+        tutorial_info = next(ti for ti in hashes if ti.hash == tutorial_hash)
+    except StopIteration:
+        raise ActionError('Invalid tutorial: {}'.format(tutorial_hash))
+
+    # check if the student has already submitted this tutorial
+    submissions = _parse_submission_log(user)
+
+    try:
+        next(si for si in submissions if si.hash == tutorial_hash)
+        raise ActionError(
+            'Tutorial already submitted: {}'.format(tutorial_hash)
+        )
+    except StopIteration:
+        pass  # we want this -- no such tutorial has been submitted
+
+    # write out the submission
+    submission = _add_submission(user, tutorial_hash, code)
+
+    # return either 'OK' or 'LATE'
+    return 'OK' if submission.submitted <= tutorial_info.due else 'LATE'
 
 
 @action('show')
@@ -541,17 +750,6 @@ def get_mpt34():
 def get_version():
     with open(mpt_version_file, 'rU') as f:
         return f.read().strip()
-
-
-def _sh(text):
-    hash_value = 5381
-    num = 0
-    for c in text:
-        if num > 40:
-            break
-        num += 1
-        hash_value = 0x00ffffff & ((hash_value << 5) + hash_value + ord(c))
-    return hash_value
 
 
 def main():

@@ -158,18 +158,17 @@ class WebAPI():
             )
             return None, None
 
-        answer_hash = base64.b64decode(d['hash'])
+        answer_hash = base64.b32decode(d['hash'])
         timestamp = d['timestamp']
 
         return answer_hash, timestamp
 
     def submit_answer(self, tutorial, code):
-        tut_id = self.data.get('ID')  # TODO: work out what ID is and then replace this
+        tutorial_hash = base64.b32encode(tutorial.hash)
+
         values = {
             'action': 'submit',
-            'tut_id': tut_id,
-            'tut_id_crypt': simple_hash(tut_id + self.user),
-            'tut_check_num': self.num_checks,
+            'tutorial_hash': tutorial_hash,
             'code': code,
         }
         return self._post(values)
