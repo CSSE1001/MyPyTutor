@@ -127,6 +127,9 @@ def userinfo():
 def _get_answer_path(user, tutorial_package_name, problem_set_name,
         tutorial_name, create_dir=False):
     """
+    Get a path indicating where the server copy of the student's answer to the
+    given tutorial problem should be stored.
+
     File structure:
       base_dir/
         data/
@@ -136,13 +139,22 @@ def _get_answer_path(user, tutorial_package_name, problem_set_name,
                 <problem_set_name>/
                   <tutorial_name>
 
+    Note that it's possible for students to rename the tutorial package (and
+    theoretically also the problem sets, but with a lot more work).  This
+    function will make use of whatever name the student has chosen to assign
+    to the tutorial package.
+    Because we just store copies of the answer, and don't do any checking off
+    this directly, that's not an issue.  (After all, we're just looking to
+    mirror, in a sense, the local filesystem.)
+
+    The only way we could end up with issues is if the student creates two
+    installations of MyPyTutor, with different names for the same package, and
+    then syncs both of them with the server.
+
     Args:
       user (str): The username of the current user.
       tutorial_package_name (str): The name of the tutorial package (eg, for
-          UQ students, this will be something like 'CSSE1001Tutorials').  Note
-          that the student could theoretically change this on us, but as far
-          as uploading goes, the actual name is not significant (provided that
-          it remains consistent between calls).
+          UQ students, this will be something like 'CSSE1001Tutorials').
       problem_set_name (str): The name of the problem set (eg, 'Introduction').
       tutorial_name (str): The name of the tutorial problem (note that this
           will be, eg, 'Using Functions', not 'fun1.tut').
@@ -184,10 +196,7 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
     Args:
       code (str): The student's code.
       tutorial_package_name (str): The name of the tutorial package (eg, for
-          UQ students, this will be something like 'CSSE1001Tutorials').  Note
-          that the student could theoretically change this on us, but as far
-          as uploading goes, the actual name is not significant (provided that
-          it remains consistent between calls).
+          UQ students, this will be something like 'CSSE1001Tutorials').
       problem_set_name (str): The name of the problem set (eg, 'Introduction').
       tutorial_name (str): The name of the tutorial problem (note that this
           will be, eg, 'Using Functions', not 'fun1.tut').
@@ -227,10 +236,7 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
     Args:
       code (str): The student's code.
       tutorial_package_name (str): The name of the tutorial package (eg, for
-          UQ students, this will be something like 'CSSE1001Tutorials').  Note
-          that the student could theoretically change this on us, but as far
-          as uploading goes, the actual name is not significant (provided that
-          it remains consistent between calls).
+          UQ students, this will be something like 'CSSE1001Tutorials').
       problem_set_name (str): The name of the problem set (eg, 'Introduction').
       tutorial_name (str): The name of the tutorial problem (note that this
           will be, eg, 'Using Functions', not 'fun1.tut').
@@ -267,10 +273,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
 
     Args:
       tutorial_package_name (str): The name of the tutorial package (eg, for
-          UQ students, this will be something like 'CSSE1001Tutorials').  Note
-          that the student could theoretically change this on us, but as far
-          as uploading goes, the actual name is not significant (provided that
-          it remains consistent between calls).
+          UQ students, this will be something like 'CSSE1001Tutorials').
       problem_set_name (str): The name of the problem set (eg, 'Introduction').
       tutorial_name (str): The name of the tutorial problem (note that this
           will be, eg, 'Using Functions', not 'fun1.tut').
