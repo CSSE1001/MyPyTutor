@@ -22,9 +22,13 @@
 ## An application for creating tutorials by collecting together
 ## individual problems.
 
+import base64
+from datetime import datetime
 import os
 import sys
 import shutil
+from tutorlib.config.namespaces import Namespace
+from tutorlib.interface.problems import TutorialPackage
 from tutorlib.interface.tutorial import Tutorial
 import problemlib.Configuration as Configuration
 import uuid
@@ -33,6 +37,12 @@ import zipfile
 import glob
 import logging
 import py_compile
+
+
+DUE_DATE_HOUR = 17
+INPUT_DATE_FORMAT = "%d/%m/%y"
+DATE_FORMAT = "%H_%d/%m/%y"
+
 
 def generate(config_file, destination_dir, source_dir=None):
     """Generate a Tutorial set from the given configuration file.
@@ -60,10 +70,10 @@ def generate_text(tutorial_text, destination_dir, source_dir):
     tutorials, extra_files = parse_tutorial(tutorial_text)
 
     # Create index files
-    # TODO: change tut_admin.txt to tutorial_hashes, in correct format
-    admin_fid = open(os.path.join(parent_dir, 'tut_admin.txt'), 'w')
-    tut_fid = open(os.path.join(destination_dir, 'tutorials.txt'), 'w')
-    with admin_fid, tut_fid:
+    tutorials_file_path = os.path.join(destination_dir, 'tutorials.txt')
+    problem_set_due_dates = {}
+
+    with open(tutorials_file_path, 'w') as tut_fid:
         logging.info('Adding tutorials.txt')
         id_list = []
         url = ''
@@ -75,10 +85,17 @@ def generate_text(tutorial_text, destination_dir, source_dir):
                 id_list.append(id)
                 title, fname, *rest = map(str.strip, line.split(':'))
                 print(title + ':' + fname, file=tut_fid)
-                print(str(id) + ' ' + title, file=admin_fid)
             else:
+                if line.startswith('['):
+                    date_str, problem_set_name = line.strip('[]').split(' ', 1)
+
+                    date_obj = datetime.strptime(date_str, INPUT_DATE_FORMAT)
+                    date_obj = date_obj.replace(hour=DUE_DATE_HOUR)
+                    date_str = date_obj.strftime(DATE_FORMAT)
+
+                    problem_set_due_dates[problem_set_name] = date_str
+
                 print(line, file=tut_fid)
-                print(line, file=admin_fid)
 
     if url:
         with open(os.path.join(destination_dir, 'config.txt'), 'w') as fid:
@@ -138,6 +155,36 @@ def generate_text(tutorial_text, destination_dir, source_dir):
             dest_path = os.path.join(destination_tutorial_dir, file)
 
             shutil.copyfile(src_path, dest_path)
+
+    # at this point, we should have a valid tutorial package in destination_dir
+    # we still need to build the tutorial_hashes file, though
+    # this can be most easily achieved by loading a TutorialPackage object
+    # from the desintaion dir, and then using the Tutorial objects
+    options = Namespace(tut_dir=destination_dir, ans_dir='/tmp/notreal')
+    tutorial_package = TutorialPackage(destination_dir, options)
+
+    tutorial_hashes_path = os.path.join(parent_dir, 'tutorial_hashes')
+    with open(tutorial_hashes_path, 'w') as f:
+        tutorial_package_name = tutorial_package.name.replace(' ', '_')
+
+        for problem_set in tutorial_package.problem_sets:
+            assert problem_set.name in problem_set_due_dates
+            due_date_str = problem_set_due_dates[problem_set.name]
+
+            problem_set_name = problem_set.name.replace(' ', '_')
+
+            for tutorial in problem_set:
+                b32hash = base64.b32encode(tutorial.hash).decode('utf8')
+                tutorial_name = tutorial.name.replace(' ', '_')
+
+                data = [
+                    b32hash,
+                    due_date_str,
+                    tutorial_package_name,
+                    problem_set_name,
+                    tutorial_name,
+                ]
+                f.write(' '.join(data) + '\n')
 
     # Zip everything together
     cwd=os.getcwd()

@@ -7,6 +7,6 @@
 *.zip
 build/
 CSSE1001Tutorials/
-tut_admin.txt
+tutorial_hashes
 
 code/mypytutor.cfg
