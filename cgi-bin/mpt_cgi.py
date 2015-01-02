@@ -261,6 +261,33 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
 
 @action('answer_info')
 def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
+    """
+    Return information on the server copy of the student's answer for the
+    given tutorial.
+
+    Args:
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').  Note
+          that the student could theoretically change this on us, but as far
+          as uploading goes, the actual name is not significant (provided that
+          it remains consistent between calls).
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+
+    Returns:
+      A two-element tuple.
+
+      The first element of the tuple is a base64 encoding of the sha512 hash
+      of the server copy of the student's answer.
+
+      The second element is the last-modified time of the answer, as a unix
+      timestamp.
+
+    Raises:
+      ActionError: If no answer can be found to this problem.
+
+    """
     # authenticate the user
     user = uqauth.get_user()
 
