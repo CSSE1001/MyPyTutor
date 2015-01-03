@@ -508,16 +508,24 @@ class TutorialApp(TutorialMenuDelegate):
 
         if self.run_tests():
             try:
-                result = self.web_api.submit_answer(
+                response = self.web_api.submit_answer(
                     self.current_tutorial, self.editor.get_text()
                 )
             except WebAPIError as e:
                 self._display_web_api_error(e)
                 return
 
+            if response is None:
+                tkmessagebox.showinfo(
+                    'Code Not Submitted',
+                    'This tutorial problem has already been submitted.  ' \
+                    'There is no need to submit more than once.'
+                )
+                return
+
             tkmessagebox.showinfo(
                 'Submission Successful!',
-                'Code submitted {}'.format('on time' if result else 'late'),
+                'Code submitted {}'.format('on time' if response else 'late'),
             )
 
     def show_submissions(self):
