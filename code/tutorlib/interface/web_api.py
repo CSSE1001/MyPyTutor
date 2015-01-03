@@ -1,6 +1,5 @@
 import base64
 import json
-import sys
 import urllib.parse
 import urllib.request
 import webbrowser
