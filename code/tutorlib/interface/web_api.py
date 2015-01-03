@@ -5,7 +5,6 @@ import urllib.parse
 import urllib.request
 import webbrowser
 
-from tutorlib.interface.support import simple_hash
 from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
 
