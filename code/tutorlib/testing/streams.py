@@ -10,6 +10,12 @@ redirect_stdout = redirect_stdout  # make PEP happy
 
 
 class redirect_stdin():
+    """
+    Context manager which redirects stdin.
+
+    Based on the contextlib implementation of redirect_stdout.
+
+    """
     def __init__(self, input_stream):
         self._new_target = input_stream
         # Use list for re-entrancy
@@ -25,6 +31,12 @@ class redirect_stdin():
 
 
 class redirect_stderr():
+    """
+    Context manager which redirects stderr.
+
+    Based on the contextlib implementation of redirect_stdout.
+
+    """
     def __init__(self, new_target):
         self._new_target = new_target
         # Use list for re-entrancy

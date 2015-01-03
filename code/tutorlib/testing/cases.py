@@ -1,3 +1,14 @@
+"""
+Attributes:
+  STUDENT_LOCALS_NAME (constant): The name of the variable which contains the
+      locals dictionary, built from compiling and executing the student code.
+      This variable should be treated as being mutable, and so a copy should be
+      used if there is any danger of changing its value.
+  TEST_RESULT_IDENTIFIER (constant): The name to use for storing the test
+      result.  This must not conflict with any name likely to be used by a
+      student in their own code.
+
+"""
 import copy
 import inspect
 from io import StringIO
@@ -12,6 +23,19 @@ TEST_RESULT_IDENTIFIER = '__test_result'
 
 
 class StudentTestCase(unittest.TestCase):
+    """
+    A custom unittest.TestCase subclass for use in MyPyTutor tutorial packages.
+
+    This class provides methods for executing arbitrary code in the same
+    context as the student code.
+
+    Attributes:
+      standard_output (str): Contains stdout after running a test on the
+          student's code.
+      error_output (str): Contains stderr after running a test on the
+          sttudent's code.
+
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -19,7 +43,7 @@ class StudentTestCase(unittest.TestCase):
         self.error_output = ''
 
     def run_in_student_context(self, f, input_text=''):
-        '''
+        """
         Execute the given function in the context of the student's code, using
         the provided input_text (if any) as stdin.
 
@@ -28,7 +52,26 @@ class StudentTestCase(unittest.TestCase):
         wrong if you give it the same name as a builtin or as a function which
         the student may reasonably have defined).
 
-        '''
+        Because the source of the function will be run in the student context
+        (cf the function itself), the function will not operate as a closure.
+        It will therefore not have access to variables defined in any outer
+        scope as at the time it was defined.
+
+        This method will update .standard_output and .error_output to be the
+        contents of stdout and stderr respectively.
+
+        Args:
+          f (() -> object): The function to execute in the student context.
+              The source of this function will be compiled and executed in the
+              student context.  The function object iself will not be.  As a
+              result, it will not operate as a closure.
+          input_text (str, optional): The text to pass in as stdin.  Defaults
+              to an empty string (ie, no input).
+
+        Returns:
+          The result of running the given function in the student context.
+
+        """
         # create streams
         input_stream = StringIO(input_text or '')
         output_stream = StringIO()

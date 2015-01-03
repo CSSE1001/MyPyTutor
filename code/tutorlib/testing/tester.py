@@ -12,7 +12,30 @@ from tutorlib.testing.support \
 
 
 class TutorialTester():
+    """
+    A class for testing a student's solution to a tutorial problem.
+
+    Attributes:
+      test_classes ([StudentTestCase]): The test classes to use.  This is a
+          list of classes, not of instances.
+      test_gbls ({str:object}): The globals dict to use for testing.
+      test_lcls ({str:object}): The locals dict to use for testing.
+
+    """
     def __init__(self, test_classes, test_gbls, test_lcls):
+        """
+        Initialise a new TutorialTester object.
+
+        Results for each test case will be initialised to a result with a
+        status of TutorialTestResult.NOT_RUN, and a corresponding message.
+
+        Args:
+          test_classes ([StudentTestCase]): The test classes to use.  This is
+              a list of classes, not of instances.
+          test_gbls ({str:object}): The globals dict to use for testing.
+          test_lcls ({str:object}): The locals dict to use for testing.
+
+        """
         self.test_classes = test_classes
         self.test_gbls = test_gbls
         self.test_lcls = test_lcls
@@ -28,19 +51,40 @@ class TutorialTester():
 
     @property
     def results(self):
-        '''
-        Test results, in the same order as the test classes
-        '''
+        """
+        Return a list of test results, as TutorialTestResult objects.
+
+        These will be in the same order as the test_classes attribute.
+
+        """
         return [self._results[cls] for cls in self.test_classes]
 
     @property
     def passed(self):
+        """
+        Return True iff all tests passed.
+
+        """
         return all(
             result.status == TutorialTestResult.PASS for result in self.results
         )
 
     def run(self, code_text, wrap_student_code):
-        # if no function name is given, we need to wrap their code
+        """
+        Test the given code.
+
+        If necessary, the student's code will be wrapped.  This involves moving
+        any global definitions into a function, so that they do not run when
+        the module is first compiled and executed but can be called later.
+
+        The actual running of each test is deferred to the run_test method.
+
+        Args:
+          code_text (str): The code to test.
+          wrap_student_code (bool): If True, wrap the given code text in a
+              function before executing it.
+
+        """
         if wrap_student_code:
             # TODO: this should probably be a global
             student_function_name = '_function_under_test'
@@ -57,6 +101,28 @@ class TutorialTester():
             self._results[test_class] = result
 
     def run_test(self, test_class, code_text):
+        """
+        Test the given code using the given test case class.
+
+        As far as possible, this will not alter the test_gbls and test_lcls
+        attributes.  However, it is theoretically possible for the students
+        to alter them (eg, by directly messing with builtins in globals).
+
+        We take a deepcopy of test_lcls if possible, which should avoid this
+        problem in that respect, but unfortunately that's not possible with
+        test_gbls (certain builtin values can/will cause a copy to fail).
+
+        As a result, mild prayers and/or small sacrificies are recommended
+        when calling this method.
+
+        Args:
+          test_class (StudentTestCase): The test class (not instance) to use.
+          code_text (str): The code to test.
+
+        Returns:
+          The result of running the test, as a TutorialTestResult object.
+
+        """
         # grab a copy of our context to use
         # unfortunately, it's not robust to copy globals(), which means we
         # can't grab a nice deepcopy of test_gbls
@@ -108,6 +174,34 @@ class TutorialTester():
             remove_from_module(tutorlib.testing.cases, STUDENT_LOCALS_NAME)
 
     def _run_test(self, test_class):
+        """
+        Actually run a test using the given test class.
+
+        This method must be called from the run_tests method.  It relies on
+        the setup performed in that method, including the injecting of the
+        student locals dictionary into the test case module.
+
+        The test class will probably define more than one method.  If it does,
+        then the following rules are used to determine the status and other
+        contents of the result:
+          * if all tests pass
+              -- the result and output of MAIN_TEST are used
+          * if the main test passes, but others fail
+              -- the result of MAIN_TEST is changed to INDETERMINATE
+              -- the exception on MAIN_TEST is rewritten to reflect this
+              -- the output of MAIN_TEST is used (not that of the failed test)
+          * if the main test fails, but others fail
+              -- the result and output of MAIN_TEST are used
+          * if all tests fail
+              -- the result and output of MAIN_TEST are used
+
+        Args:
+          test_class (StudentTestCase): The test class (cf instance) to use.
+
+        Returns:
+          The result of running the test, as a TutorialTestResult object.
+
+        """
         # load up the tests to run from the class
         tests = [unittest.TestLoader().loadTestsFromTestCase(test_class)]
         suite = unittest.TestSuite(tests)
@@ -124,15 +218,6 @@ class TutorialTester():
             'Could not detect MAIN_TEST ({})'.format(test_class.MAIN_TEST)
 
         # collapse the results
-        # four possible situations
-        #   * all tests pass
-        #       -- keep MAIN_TEST
-        #   * main test passes, but others fail
-        #       -- adjust MAIN_TEST to reflect this
-        #   * main test fails, but others pass
-        #       -- keep failure
-        #   * all tests fail
-        #       -- keep failure
         if all(r.status == TutorialTestResult.PASS for r in result.results):
             overall_result = result.main_result
         elif result.main_result.status == TutorialTestResult.PASS:
