@@ -10,6 +10,7 @@ The cgi code should remain unaware of the underlying storage mechanisms.
 
 File structure:
   base_dir/
+    mpt_version                      <- MyPyTutor version file
     data/
       answers/
         <username>/
@@ -44,6 +45,9 @@ SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
 TUTORIAL_HASHES_FILE = os.path.join(SUBMISSIONS_DIR, "tutorial_hashes")
 SUBMISSION_LOG_NAME = "submission_log"
 DUE_DATE_FORMAT = "%H_%d/%m/%y"
+
+# MyPyTutor version file
+MPT_VERSION_FILE = os.path.join(BASE_DIR, 'mpt_version')
 
 
 def _get_answer_path(user, tutorial_package_name, problem_set_name,
@@ -396,3 +400,17 @@ def add_submission(user, tutorial_hash, code):
 
     # return the TutorialSubmission object
     return submission
+
+
+def get_mypytutor_version():
+    """
+    Return the current MyPyTutor version.
+
+    The MyPyTutor version file must exist on the filesystem.
+
+    Returns:
+      The MyPyTutor version, as a string.
+
+    """
+    with open(MPT_VERSION_FILE) as f:
+        return f.read().strip()

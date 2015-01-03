@@ -1,27 +1,14 @@
 #! /usr/bin/env python
 
-import base64
 import cgi
-from collections import namedtuple
-import datetime
-import hashlib
 import inspect
 import json
 import os
 import shutil
 import functools
-from werkzeug.utils import secure_filename
 
 import support
 import uqauth
-
-######## start config #################################
-
-# the file containing the timestamp for the tutorial problems
-#timestamp_file = os.path.join(base_dir, "config.txt")  # TODO: refactor
-
-# the file containing the version number of MyPyTutor
-#mpt_version_file = os.path.join(base_dir, "mpt_version.txt") # TODO: refactor
 
 # static files (eg zipfiles)
 TUTORIAL_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
@@ -487,8 +474,11 @@ def get_mpt34():
 
 @action('get_version')
 def get_version():
-    with open(mpt_version_file, 'rU') as f:
-        return f.read().strip()
+    """
+    Return the current MyPyTutor version, as a string.
+
+    """
+    return support.get_mypytutor_version()
 
 
 def main():
