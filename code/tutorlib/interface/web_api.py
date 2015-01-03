@@ -6,11 +6,17 @@ import urllib.request
 import webbrowser
 
 from tutorlib.interface.support import simple_hash
-from tutorlib.online.exceptions import AuthError, RequestError
+from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
 
 
 VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
+
+
+class WebAPIError(Exception):
+    def __init__(self, message, details=None):
+        self.message = message
+        self.details = details
 
 
 class WebAPI():
@@ -58,12 +64,24 @@ class WebAPI():
     def _request(self, f, values):
         # must be logged in to make a request
         if not self.login():
-            return None
+            raise WebAPIError(
+                message='Authentication Error',
+                details='You must be logged in to use this feature',
+            )
 
         try:
             return f(values)
-        except (AuthError, RequestError) as e:
-            print(e, file=sys.stderr)  # TODO: this print doesn't feel right
+        except AuthError as e:
+            raise WebAPIError(
+                message='Authentication Failure',
+                details=str(e),
+            ) from e
+        except RequestError as e:
+            raise WebAPIError(
+                message='Could Not Complete Request',
+                details=str(e),
+            ) from e
+        except NullResponse as e:
             return None
 
     def _get(self, values):
@@ -78,8 +96,11 @@ class WebAPI():
         try:
             filename, _ = urlobj.retrieve(url, filename=filename)
             return filename
-        except Exception:  # could be lots of things; what matters is it failed
-            return None
+        except Exception as e:
+            raise WebAPIError(
+                message='Could Not Download File',
+                details=str(e),
+            ) from e
 
     def get_tut_zipfile(self):
         values = {
@@ -87,9 +108,6 @@ class WebAPI():
         }
 
         result = self._get(values)
-        if result is None:
-            return None
-
         return self._download(result.strip(), 'tutzip.zip')
 
     def get_mpt34(self):
@@ -98,9 +116,6 @@ class WebAPI():
         }
 
         result = self._get(values)
-        if result is None:
-            return None
-
         return self._download(result.strip(), 'mpt34.zip')
 
     def get_version(self):
@@ -119,7 +134,7 @@ class WebAPI():
         }
 
         result = self._post(values)
-        return result is not None and result.startswith('OK')
+        return result.startswith('OK')
 
     def download_answer(self, tutorial, problem_set, tutorial_package):
         values = {
@@ -138,25 +153,22 @@ class WebAPI():
             'tutorial_name': tutorial.name,
         }
         response = self._get(values)
-
         if response is None:
             return None, None
 
         try:
             d = json.loads(response)
         except ValueError:
-            print(
-                "Could not decode response: {}".format(response),
-                file=sys.stderr,
-            )  # TODO: keep this?  I feel like it should raise WebAPIFuckup()
-            return None, None
+            raise WebAPIError(
+                message='Invalid Response',
+                details='Could not decode response: {}'.format(response),
+            )  # do not explicitly chain -- not independently useful to caller
 
         if 'hash' not in d or 'timestamp' not in d:
-            print(
-                'Missing keys on response dictionary: {}'.format(response),
-                file=sys.stderr,
-            )
-            return None, None
+            raise WebAPIError(
+                message='Invalid Response',
+                details='Missing keys on response: {}'.format(response),
+            )  # do not explicitly chain -- not independently useful to caller
 
         answer_hash = base64.b32decode(d['hash'])
         timestamp = d['timestamp']
@@ -176,9 +188,11 @@ class WebAPI():
             return None
 
         response = response.strip()
-
-        assert response in ('OK', 'LATE'), \
-                'Unknown response to submission: {}'.format(response)
+        if response not in ('OK', 'LATE'):
+            raise WebAPIError(
+                message='Invalid Response',
+                details='Unexpected response: {}'.format(response),
+            )
 
         return response == 'OK'
 
@@ -188,18 +202,14 @@ class WebAPI():
         }
         response = self._get(values)
 
-        if response is None:
-            return None
-
         # parse our response
         try:
             results = json.loads(response)
         except ValueError:
-            print(
-                "Could not decode response: {}".format(response),
-                file=sys.stderr,
-            )  # TODO: keep this?  I feel like it should raise WebAPIFuckup()
-            return None
+            raise WebAPIError(
+                message='Invalid Response',
+                details='Could not decode response: {}'.format(response),
+            )  # do not explicitly chain -- not independently useful to caller
 
         # convert from literal strings to builtins
         # TODO: alternative is to have, eg WebAPI.{OK,LATE,MISSING}

@@ -1,15 +1,18 @@
 import html.parser
 
-from tutorlib.online.exceptions import BadResponse, RequestError
+from tutorlib.online.exceptions import BadResponse, RequestError, NullResponse
 
 
 def strip_header(text):
     MPT_HEADER = 'mypytutor>>>'
     ERROR_HEADER = 'mypytutor_error>>>'
+    NULL_RESPONSE_HEEADER = 'mypytutor_nullresponse>>>'
     if text.startswith(MPT_HEADER):
         return text[len(MPT_HEADER):]
     elif text.startswith(ERROR_HEADER):
         raise RequestError(text[len(ERROR_HEADER):])
+    elif text.startswith(NULL_RESPONSE_HEEADER):
+        raise NullResponse(text[len(NULL_RESPONSE_HEEADER):])
     else:
         raise BadResponse("Invalid response from server: {!r}"
                           .format(text[:len(MPT_HEADER)] + '...'

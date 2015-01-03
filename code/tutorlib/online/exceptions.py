@@ -18,3 +18,16 @@ class RequestError(Exception):
     These errors occur when the request could not be satisfied for some reason.
     """
     pass
+
+
+class NullResponse(Exception):
+    """
+    An exception that represents a null response.
+
+    This is used for error-like conditions which are nevertheless possible in
+    the course of normal operation (ie, are not exceptional).
+    For example, an attempt to get information on an answer that doesn't exist
+    will raise a NullResponse.
+
+    """
+    pass

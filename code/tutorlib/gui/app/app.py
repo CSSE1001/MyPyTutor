@@ -16,7 +16,7 @@ from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
-from tutorlib.interface.web_api import WebAPI
+from tutorlib.interface.web_api import WebAPI, WebAPIError
 
 
 VERSION = '3.0.0'
@@ -317,6 +317,23 @@ class TutorialApp(TutorialMenuDelegate):
             tutorial, problem_set, self.tutorial_package
         )
 
+    def _display_web_api_error(self, ex):
+        """
+        Display the given WebAPIError to the user.
+
+        Args:
+          ex (WebAPIError): The error to display.
+
+        """
+        message = '{}\n\nDetailed error message:\n{}'.format(
+            ex.message, ex.details
+        )
+
+        tkmessagebox.showerror(
+            'Online Services Error',
+            message
+        )
+
     ## General callbacks
     def close(self, evt=None):
         """
@@ -490,14 +507,12 @@ class TutorialApp(TutorialMenuDelegate):
             return
 
         if self.run_tests():
-            result = self.web_api.submit_answer(
-                self.current_tutorial, self.editor.get_text()
-            )
-            if result is None:
-                tkmessagebox.showerror(
-                    'Submission Failed',
-                    'It was not possible to submit your answer.  Reason: ',
+            try:
+                result = self.web_api.submit_answer(
+                    self.current_tutorial, self.editor.get_text()
                 )
+            except WebAPIError as e:
+                self._display_web_api_error(e)
                 return
 
             tkmessagebox.showinfo(
@@ -519,8 +534,65 @@ class TutorialApp(TutorialMenuDelegate):
         if not self.login():
             return
 
-        submissions = self.web_api.get_submissions()
+        try:
+            submissions = self.web_api.get_submissions()
+        except WebAPIError as e:
+            self._display_web_api_error(e)
+            return
+
         # TODO: display submissions
+
+    def _synchronise(self, suppress_popups=False):
+        """
+        Synchronise the tutorial answers.
+
+        A tutorial will be downloaded from the server iff:
+          * there is no local answer, but there is one on the server; or
+          * the local and remote answers differ, but the remote one was
+            modified after the local one.
+
+        A tutorial will be uploaded to the server iff:
+          * there is no answer on the server, but there is a local one; or
+          * the local and remote answers differ, but the local one was modified
+            at the same time as or before the one on the server.
+
+        This method performs the actual synchronisation.  It does not handle
+        any exceptions which may be thrown by the underlying code (ie, it may
+        raise WebAPIError).
+
+        Args:
+          suppress_popups (bool, optional): If True, do not show any popup
+              messages.  This is intended to be used when the synchronisation
+              is taking place as part of the close handler.  Defaults to False.
+
+        """
+        for problem_set in self.tutorial_package.problem_sets:
+            for tutorial in problem_set:
+                remote_hash, remote_mtime = self._get_answer_info(tutorial)
+
+                if not tutorial.has_answer:
+                    if remote_hash is not None:  # there exists a remote copy
+                        self._download_answer(tutorial)
+                    continue
+
+                local_hash, local_mtime = tutorial.answer_info
+
+                if local_hash == remote_hash:  # no changes
+                    continue
+
+                if remote_hash is None or local_mtime >= remote_mtime:
+                    success = self._upload_answer(tutorial)
+                else:
+                    success = self._download_answer(tutorial)
+
+                if not success:
+                    if not suppress_popups:
+                        tkmessagebox.showerror(
+                            'Could Not Synchronise Answer Code',
+                            'Please check that you are correctly logged in, ' \
+                            'and that your internet connection is active.'
+                        )
+                    return  # no more we can do here
 
     def synchronise(self, suppress_popups=False, no_login=None):
         """
@@ -553,33 +625,14 @@ class TutorialApp(TutorialMenuDelegate):
             if no_login or not self.login():
                 return
 
-        for problem_set in self.tutorial_package.problem_sets:
-            for tutorial in problem_set:
-                remote_hash, remote_mtime = self._get_answer_info(tutorial)
-
-                if not tutorial.has_answer:
-                    if remote_hash is not None:  # there exists a remote copy
-                        self._download_answer(tutorial)
-                    continue
-
-                local_hash, local_mtime = tutorial.answer_info
-
-                if local_hash == remote_hash:  # no changes
-                    continue
-
-                if remote_hash is None or local_mtime >= remote_mtime:
-                    success = self._upload_answer(tutorial)
-                else:
-                    success = self._download_answer(tutorial)
-
-                if not success:
-                    if not suppress_popups:
-                        tkmessagebox.showerror(
-                            'Could Not Synchronise Answer Code',
-                            'Please check that you are correctly logged in, ' \
-                            'and that your internet connection is active.'
-                        )
-                    return  # no more we can do here
+        # certain methods used in the synchronisation process might throw
+        # WebAPIError, so we want to wrap everything in an exception handler
+        try:
+            self._synchronise(suppress_popups=suppress_popups)
+        except WebAPIError as e:
+            if not suppress_popups:
+                self._display_web_api_error(e)
+            return
 
         if not suppress_popups:
             tkmessagebox.showinfo(

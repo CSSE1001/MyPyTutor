@@ -55,6 +55,19 @@ class ActionError(Exception):
     pass
 
 
+class NullResponse(Exception):
+    """
+    An exception that represents a null response.
+
+    This is used for error-like conditions which are nevertheless possible in
+    the course of normal operation (ie, are not exceptional).
+    For example, an attempt to get information on an answer that doesn't exist
+    should raise a NullResponse.
+
+    """
+    pass
+
+
 def action(name, admin=False):
     """Decorator constructor to register different server actions.
 
@@ -156,7 +169,7 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
       The student code, as a string.
 
     Raises:
-      ActionError: If there is no code to download.
+      NullResponse: If there is no code to download.
 
     """
     # authenticate the user
@@ -167,7 +180,7 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
         user, tutorial_package_name, problem_set_name, tutorial_name
     )
     if code is None:
-        raise ActionError('No code to download')  # TODO: is this an error?
+        raise NullResponse('No code to download')
 
     return code
 
@@ -195,7 +208,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
       timestamp.
 
     Raises:
-      ActionError: If no answer can be found to this problem.
+      NullResponse: If no answer can be found to this problem.
 
     """
     # authenticate the user
@@ -209,7 +222,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
         user, tutorial_package_name, problem_set_name, tutorial_name
     )
     if answer_hash is None or timestamp is None:
-        raise ActionError('No code exists for this problem')
+        raise NullResponse('No code exists for this problem')
 
     # build our response
     response_dict = {
@@ -249,7 +262,8 @@ def submit_answer(tutorial_hash, code):
 
     Raises:
       ActionError: If tutorial hash does not match a known tutorial package,
-          or if the student has already submitted this tutorial.
+          or if attempting to add the submission fails.
+      NullResponse: If the student has already submitted this tutorial.
 
     """
     # authenticate the user
@@ -268,7 +282,7 @@ def submit_answer(tutorial_hash, code):
 
     try:
         next(si for si in submissions if si.hash == tutorial_hash)
-        raise ActionError(
+        raise NullResponse(
             'Tutorial already submitted: {}'.format(tutorial_hash)
         )
     except StopIteration:
@@ -496,6 +510,9 @@ def main():
     except ActionError as e:
         print "Content-Type: text/plain\n"
         print "mypytutor_error>>>" + str(e)
+    except NullResponse as e:
+        print "Content-Type: text/plain\n"
+        print "mypytutor_nullresponse>>>" + str(e)
     else:
         print "Content-Type: text/plain\n"
         print "mypytutor>>>" + result
