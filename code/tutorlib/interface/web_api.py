@@ -12,22 +12,78 @@ VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
 
 
 class WebAPIError(Exception):
+    """
+    A wrapper class for all exceptions which occur in web communication.
+
+    Attributes:
+      message (str): A high-level user-friendly description of the error which
+          was encountered.
+      details (str): The details of the error, built from the underlying
+          exception.
+
+    """
     def __init__(self, message, details=None):
+        """
+        Initialise a new WebAPIError object.
+
+        Attributes:
+          message (str): A high-level user-friendly description of the error
+              which was encountered.
+          details (str, optional): The details of the error, built from the
+              underlying exception.  Defaults to None, which indicates that
+              there was no (useful) underlying exception.
+
+        """
         self.message = message
         self.details = details
 
 
 class WebAPI():
+    """
+    Interface to the MyPyTutor website.  Encapsulates all online functionality
+    on the client side.
+
+    Class Attributes:
+      OK (constant): The server response was ok.
+      LATE (constant): The server indicated that the given action or request
+          was completed successfully, but that the provided data was late.
+          This is used in submission-related contexts.
+      MISSING (constant): The relevant submission is missing.
+
+    Attributes:
+      session_manager (SessionManager): The underlying session manager.
+
+    """
+    OK = 'OK'
+    LATE = 'LATE'
+    MISSING = 'MISSING'
+
     def __init__(self):
-        self.url = None
+        """
+        Initialise a new WebAPI object.
+
+        It is unlikely that an application would wish to construct more than
+        one WebAPI, but this is not prohibited.
+
+        """
         self.session_manager = SessionManager()
 
     @property
     def is_logged_in(self):
+        """
+        Return whether the user is currently logged in.
+
+        """
         return self.session_manager.is_logged_in()
 
     @property
     def user(self):
+        """
+        Return the current user.
+
+        If no user is logged in, return None.  Do not attempt to login.
+
+        """
         if not self.is_logged_in:
             return None
 
@@ -35,6 +91,16 @@ class WebAPI():
         return user_info['user']
 
     def login(self):
+        """
+        Prompt the user to login, if necessary.
+
+        If the user is already logged in, no action will be taken.
+
+        Returns:
+          Whether the user could be successfully logged in.
+          If the user was already logged in, return True.
+
+        """
         if self.is_logged_in:
             return True
 
@@ -46,11 +112,23 @@ class WebAPI():
             return False
 
     def logout(self):
+        """
+        Log out the current user.
+
+        If no user is logged in, do nothing.
+
+        """
         if self.is_logged_in:
             self.session_manager.logout()
 
     # visualiser
     def visualise(self, code_text):
+        """
+        Open the given code in the online visualiser.
+
+        This method will launch the default browser, with the code preloaded.
+
+        """
         # format is url (percent) encoded, except spaces are replaced by +
         encoded_text = urllib.parse.quote(code_text, ' ').replace(' ', '+')
         url = VISUALISER_URL.format(code=encoded_text)
@@ -60,6 +138,25 @@ class WebAPI():
 
     # general web communictions
     def _request(self, f, values):
+        """
+        Base method for making a web request.
+
+        If the user is not logged in, they will be prompted to do so.
+
+        Args:
+          f ((dict) -> object): The function to call to make the request.
+              Will usally be WebAPI._get or WebAPI._post.
+          values (dict): The dictionary to pass to the request method.
+              Must be in a format compatible with that method.
+
+        Returns:
+          The result of running the given request function, if successful.
+          If NullResponse is raised, return None.
+
+        Raises:
+          WebAPIError: If an AuthError or RequestError is encountered.
+
+        """
         # must be logged in to make a request
         if not self.login():
             raise WebAPIError(
@@ -83,12 +180,62 @@ class WebAPI():
             return None
 
     def _get(self, values):
+        """
+        Make a get request using the session manager.
+
+        If the user is not logged in, they will be prompted to do so.
+
+        Args:
+          values (dict): The data dictionary to pass to the session manager
+              get method.
+
+        Returns:
+          The result of calling the session manager get method.
+          If NullResponse is raised, return None.
+
+        Raises:
+          WebAPIError: If an AuthError or RequestError is encountered.
+
+        """
         return self._request(self.session_manager.get, values)
 
     def _post(self, values):
+        """
+        Make a post request using the session manager.
+
+        If the user is not logged in, they will be prompted to do so.
+
+        Args:
+          values (dict): The data dictionary to pass to the session manager
+              post method.
+
+        Returns:
+          The result of calling the session manager post method.
+          If NullResponse is raised, return None.
+
+        Raises:
+          WebAPIError: If an AuthError or RequestError is encountered.
+
+        """
         return self._request(self.session_manager.post, values)
 
-    def _download(self, url, filename):
+    def _download(self, url, filename=None):
+        """
+        Download the object at the given URL to the given filename.
+
+        Args:
+          url (str): The url to download.
+          filename (str, optional): The filename to download to.  Defaults to
+              None, which instructs the urlobj library to select a filename.
+
+        Returns:
+          The filename the file was downloaded to.
+          If the filename keyword argument was provied, this will be that arg.
+
+        Raises:
+          WebAPIError: If any exception is encountered in the download process.
+
+        """
         urlobj = urllib.request.URLopener({})
 
         try:
@@ -101,6 +248,16 @@ class WebAPI():
             ) from e
 
     def get_tut_zipfile(self):
+        """
+        Download the tutorials zip file from the server.
+
+        Returns:
+          The path to the zip file.
+
+        Raises:
+          WebAPIError: If any exception is encountered in the download process.
+
+        """
         values = {
             'action': 'get_tut_zip_file',
         }
@@ -109,6 +266,16 @@ class WebAPI():
         return self._download(result.strip(), 'tutzip.zip')
 
     def get_mpt34(self):
+        """
+        Download the MyPyTutor Python 3.4 zip file from the server.
+
+        Returns:
+          The path to the zip file.
+
+        Raises:
+          WebAPIError: If any exception is encountered in the download process.
+
+        """
         values = {
             'action': 'get_mpt34',
         }
@@ -117,12 +284,42 @@ class WebAPI():
         return self._download(result.strip(), 'mpt34.zip')
 
     def get_version(self):
+        """
+        Get the latest MyPyTutor version.
+
+        Returns:
+          The latest MyPyTutor version, as a string.
+
+          MyPyTutor versions use the standard three number format
+          (basically, major.minor.bugfix).
+
+        """
         values = {
             'action': 'get_version',
         }
         return self._get(values)
 
     def upload_answer(self, tutorial, problem_set, tutorial_package, code):
+        """
+        Upload the given code as the student's answer for the given tutorial
+        to the server.
+
+        Args:
+          tutorial (Tutorial): The tutorial problem to upload the answer for.
+          problem_set (ProblemSet): The problem set which contains the
+              tutorial to upload the answer for.
+          tutorial_package (TutorialPackage): The tutorial package which
+              contains the problem set to upload the answer for.
+          code (str): The code to upload as the answer.
+
+        Returns:
+          Whether the upload was successful (as a bool).
+
+        Raises:
+          WebAPIError: If the uploaded code was rejected (eg, because it was
+              too long for the server to accept).
+
+        """
         values = {
             'action': 'upload',
             'code': code,
@@ -132,9 +329,24 @@ class WebAPI():
         }
 
         result = self._post(values)
-        return result.startswith('OK')
+        return result.startswith(WebAPI.OK)
 
     def download_answer(self, tutorial, problem_set, tutorial_package):
+        """
+        Download the code on the server for the given tutorial.
+
+        Args:
+          tutorial (Tutorial): The tutorial problem to download the answer for.
+          problem_set (ProblemSet): The problem set which contains the
+              tutorial to download the answer for.
+          tutorial_package (TutorialPackage): The tutorial package which
+              contains the problem set to download the answer for.
+
+        Returns:
+          The student's code on the server for the given tutorial.
+          None if no code exists for the given tutorial.
+
+        """
         values = {
             'action': 'download',
             'tutorial_package_name': tutorial_package.name,
@@ -144,6 +356,34 @@ class WebAPI():
         return self._get(values)
 
     def answer_info(self, tutorial, problem_set, tutorial_package):
+        """
+        Return information on the server copy of the student's answer for the
+        given tutorial.
+
+        Args:
+          tutorial (Tutorial): The tutorial problem to get the info for.
+          problem_set (ProblemSet): The problem set which contains the
+              tutorial to get the info for.
+          tutorial_package (TutorialPackage): The tutorial package which
+              contains the problem set to get the info for.
+
+        Returns:
+          A two-element tuple.
+
+          The first element of the tuple is the sha512 hash of the server copy
+          of the student's answer (as a str, not bytes).
+
+          The second element of the tuple is the last-modified tiem of the
+          server copy of the student's answer, as a unix timestamp (float).
+
+          If there is no such answer on the server, None will be returned for
+          both elements of the tuple.
+
+        Raises:
+          WebAPIError: If the response is not valid JSON, or if the 'hash' or
+              'timestamp' keys are missing on the response dictionary.
+
+        """
         values = {
             'action': 'answer_info',
             'tutorial_package_name': tutorial_package.name,
@@ -174,6 +414,23 @@ class WebAPI():
         return answer_hash, timestamp
 
     def submit_answer(self, tutorial, code):
+        """
+        Submit the given code as the student's answer for the given tutorial.
+
+        Args:
+          tutorial (Tutorial): The tutorial to submit the answer for.
+          code (str): The code to submit as the student's answer.
+
+        Returns:
+          True if the answer was submitted on time.
+          False if the answer was submitted late.
+          None if the answer for this tutorial has already been submitted.
+
+        Raises:
+          WebAPIError: If the tutorial is not recognised by the server, or
+              if the server response is not one of 'OK' or 'LATE'.
+
+        """
         tutorial_hash = base64.b32encode(tutorial.hash)
 
         values = {
@@ -186,13 +443,13 @@ class WebAPI():
             return None
 
         response = response.strip()
-        if response not in ('OK', 'LATE'):
+        if response not in (WebAPI.OK, WebAPI.LATE):
             raise WebAPIError(
                 message='Invalid Response',
                 details='Unexpected response: {}'.format(response),
             )
 
-        return response == 'OK'
+        return response == WebAPI.OK
 
     def get_submissions(self):
         values = {
