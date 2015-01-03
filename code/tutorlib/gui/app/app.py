@@ -189,7 +189,7 @@ class TutorialApp(TutorialMenuDelegate):
         If there are no more hints to display, do nothing.
 
         """
-        hint = self.current_tutorial.next_hint
+        hint = self.current_tutorial.next_hint()
 
         if hint is not None:
             html = '<p>\n<b>Hint: </b>{}'.format(hint)

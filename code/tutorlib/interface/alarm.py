@@ -18,7 +18,7 @@ class Alarm(Thread):
         Initialise a new Alarm object.
 
         Args:
-          secs (float): The time, in seconds, to sleep (before firing the alarm).
+          secs (float): The time, in seconds, to sleep before firing the alarm.
 
         """
         self.secs = secs

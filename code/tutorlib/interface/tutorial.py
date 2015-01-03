@@ -173,11 +173,29 @@ class Tutorial():
         self._preload_code_text = None
 
     def _get_answer_hash(self):
+        """
+        Return the hash of the local answer file.
+
+        This assumes that the answer file exists.
+
+        Returns:
+          The sha512 hash of the contents of the answer file.
+
+        """
         with open(self.answer_path) as f:
             data = f.read().encode('utf8')
             return sha512(data).digest()
 
     def _get_answer_mtime(self):
+        """
+        Return the modification time of the local answer file.
+
+        This assumes that the answer file exists.
+
+        Returns:
+          The modification time of the answer file, as a unix timestamp.
+
+        """
         return os.path.getmtime(self.answer_path)
 
     @property
@@ -311,23 +329,46 @@ class Tutorial():
     def read_file(self, file_name):
         """
         Read and return the text of the given file.
-        :param file_name:
-        :return:
+
+        Args:
+          file_name (str): The name of the file to read.
+
+        Returns:
+          A string containing the full text of the file.
+
         """
-        assert file_name in self.FILES  # TODO: can't quite merge into the below call, because that's used from _assert_valid_module
+        # self._assert_valid_file is called from self._assert_valid_module,
+        # and so it cannot check in self.FILES
+        assert file_name in self.FILES
         self._assert_valid_file(file_name)
         path = os.path.join(self.tutorial_path, file_name)
 
         with open(path) as f:
             return f.read()
 
-    # TODO: it's debateable whether these should be properties, as their state
-    # TODO: will not persit across calls (due to the re-exec of the module)
     @property
     def test_classes(self):
-        # the test module requires access to StudentTestCase, as that's what
-        # it will have inherited from
-        # because we imported that here, we can just pass in our globals
+        """
+        Return the StudentTestCase subclasses that should be used to test the
+        student's code.
+
+        The result of this property is not cached, and new (distinct) class
+        objects will be returned on successive calls.
+
+        The subclasses are found by executing the TESTS_MODULE, and reading out
+        the appropriate variable from the resulting locals dictionary.
+
+        StudentTestCase must be accessible in the globals() dict of the current
+        module, as it is passed to the submodule during execution.
+
+        The submodule must define a variable called TESTS_VARIABLE_NAME.
+
+        Returns:
+          A list of StudentTestCase subclasses to test the student's code with.
+          Note that this is a list of the class objects, not of instances.
+
+        """
+        assert globals().get('StudentTestCase') is not None
         _, test_lcls = self.exec_submodule(Tutorial.TESTS_MODULE, globals())
 
         assert Tutorial.TESTS_VARIABLE_NAME in test_lcls, \
@@ -339,12 +380,31 @@ class Tutorial():
 
     @property
     def analyser(self):
-        # the analysis module requires access to CodeAnalyser, as that's what
-        # it must inherit from
-        # because we imported that class in this file, we can just pass in
-        # our globals() dict
-        _, analysis_lcls = self.exec_submodule(Tutorial.ANALYSIS_MODULE,
-                                               globals())
+        """
+        Return the CodeAnalyser subclass that should be used to analyse the
+        student's code.
+
+        The result of this property is not cached, and a new CodeAnalyser
+        instance will be returned on each successive call.
+
+        The analyser is found by executing the ANALYSIS_MODULE, and reading out
+        the appropraite variable from the resulting locals dictionary.
+
+        ast, CodeAnalyser, and TutorialNodeVisitor must all be accessible in
+        the globals() dict of the current module, as it is passed to the
+        submodule during execution.
+
+        The submodule must define a variable called ANALYSER_VARIABLE_NAME.
+
+        Returns:
+          The CodeAanalyser instance to analyse the student's code with.
+
+        """
+        for name in ['ast', 'CodeAnalyser', 'TutorialNodeVisitor']:
+            assert globals().get(name) is not None
+        _, analysis_lcls = self.exec_submodule(
+            Tutorial.ANALYSIS_MODULE, globals()
+        )
 
         assert Tutorial.ANALYSIS_VARIABLE_NAME in analysis_lcls, \
             'Invalid .tut package: {} has no member {}'.format(
@@ -355,6 +415,13 @@ class Tutorial():
 
     @property
     def preload_code_text(self):
+        """
+        Return the code text to display to the user when this tutorial is
+        first loaded.
+
+        This property is implemented lazily.
+
+        """
         if self._preload_code_text is None:
             self._preload_code_text = self.read_submodule(
                 Tutorial.PRELOAD_MODULE
@@ -362,8 +429,15 @@ class Tutorial():
 
         return self._preload_code_text
 
-    @property
     def next_hint(self):
+        """
+        Return the next hint to display to the student.
+
+        Returns:
+          The next hint to display, as a string.
+          If there are no (remaining) hints, return None.
+
+        """
         try:
             hint = self.hints[self._next_hint_index]
         except IndexError:
