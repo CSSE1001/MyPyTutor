@@ -14,6 +14,7 @@ from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
 from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
+from tutorlib.gui.dialogs.submissions import SubmissionsDialog
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError
@@ -543,12 +544,12 @@ class TutorialApp(TutorialMenuDelegate):
             return
 
         try:
-            submissions = self.web_api.get_submissions()
+            submissions = self.web_api.get_submissions(self.tutorial_package)
         except WebAPIError as e:
             self._display_web_api_error(e)
             return
 
-        # TODO: display submissions
+        SubmissionsDialog(self.master, submissions, self.tutorial_package)
 
     def _synchronise(self, suppress_popups=False):
         """

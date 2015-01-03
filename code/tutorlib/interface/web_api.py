@@ -451,7 +451,36 @@ class WebAPI():
 
         return response == WebAPI.OK
 
-    def get_submissions(self):
+    def get_submissions(self, tutorial_package):
+        """
+        Get information on the student's submissions.
+
+        Only submissions matching the given tutorial package will be returned.
+        This allows multiple concurrent tutorial packages to be supported for
+        the same student on the same server.
+
+        If the local tutorial package is not up to date, then it is possible
+        that actual submissions will not be returned (as the server will always
+        return the latest hash).
+
+        Args:
+          tutorial_package (TutorialPackage): The tutorial package to return
+              submissions for.
+
+        Returns:
+          A dictionary containing the submission status of each tutorial.
+
+          The keys of the dictionary will be Tutorial objects (from the given
+          tutorial package).
+
+          The corresponding values will be the submission status for that
+          tutorial: one of WebAPI.OK, WebAPI.LATE, or WebAPI.MISSING.
+
+        Raises:
+          WebAPIError: If the response is not valid JSON, or if one of the
+              elements of the response contains an unknown status.
+
+        """
         values = {
             'action': 'get_submissions',
         }
@@ -466,14 +495,21 @@ class WebAPI():
                 details='Could not decode response: {}'.format(response),
             )  # do not explicitly chain -- not independently useful to caller
 
-        # convert from literal strings to builtins
-        # TODO: alternative is to have, eg WebAPI.{OK,LATE,MISSING}
-        mappings = {
-            'OK': True,
-            'LATE': False,
-            'MISSING': None,
-        }
+        # check that our results are valid, while building our output dict
+        output = {}
 
-        # TODO: convert mappings
-        # TODO: convert hashes to tutorials
+        for b32_hash, status in results:
+            if status not in (WebAPI.OK, WebAPI.LATE, WebAPI.MISSING):
+                raise WebAPIError(
+                    message='Invalid Response',
+                    details='Unknown submission status: {}'.format(status),
+                )
 
+            tutorial_hash = base64.b32decode(b32_hash)
+            tutorial = tutorial_package.tutorial_with_hash(tutorial_hash)
+            if tutorial is None:
+                continue  # not on this package; ignore
+
+            output[tutorial] = status
+
+        return output

@@ -309,6 +309,28 @@ class TutorialPackage():
                     return tutorial
         return None
 
+    def tutorial_with_hash(self, tutorial_hash):
+        """
+        Return the tutorial with the given hash.
+
+        Args:
+          tutorial_hash (str): The hash of the tutorial to return.
+
+        Returns:
+          The tutorial with the given hash.
+
+          If no such tutorial exists, return None.
+
+          If multiple tutorials with the given hash exist, the first (with the
+          earliest appearance in the earliest problem set) will be returned.
+
+        """
+        for problem_set in self.problem_sets:
+            for tutorial in problem_set:
+                if tutorial.hash == tutorial_hash:
+                    return tutorial
+        return None
+
     def problem_set_containing(self, tutorial):
         """
         Return the problem set containing the given tutorial.
