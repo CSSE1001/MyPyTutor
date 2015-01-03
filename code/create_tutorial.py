@@ -24,19 +24,18 @@
 
 import base64
 from datetime import datetime
+import glob
+import logging
 import os
-import sys
 import shutil
+import sys
+import time
+import uuid
+import zipfile
+
 from tutorlib.config.namespaces import Namespace
 from tutorlib.interface.problems import TutorialPackage
 from tutorlib.interface.tutorial import Tutorial
-import problemlib.Configuration as Configuration
-import uuid
-import time
-import zipfile
-import glob
-import logging
-import py_compile
 
 
 DUE_DATE_HOUR = 17
@@ -147,9 +146,6 @@ def generate_text(tutorial_text, destination_dir, source_dir):
         # copy over the files, compiling as necessary
         for file in files:
             _, extension = os.path.splitext(file)
-
-            if extension == '.py':
-                pass  # TODO: compilation (including for different versions)
 
             src_path = os.path.join(directory, file)
             dest_path = os.path.join(destination_tutorial_dir, file)
