@@ -9,6 +9,7 @@ from tutorlib.config.configuration \
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output import AnalysisOutput, TestOutput
 from tutorlib.gui.app.tutorial import TutorialFrame
+from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
@@ -23,7 +24,7 @@ from tutorlib.interface.web_api import WebAPI, WebAPIError
 VERSION = '3.0.0'
 
 
-class TutorialApp(TutorialMenuDelegate):
+class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
     """
     The main MyPyTutor application.
 
@@ -141,8 +142,11 @@ class TutorialApp(TutorialMenuDelegate):
           The editor window (an instance of TutorEditor).
         """
         if self._editor is None:
-            self._editor = TutorEditor(self, root=self.master, online=False)
-            ## TODO: fix online
+            self._editor = TutorEditor(
+                menu_delegate=self,
+                editor_delegate=self,
+                root=self.master,
+            )
         return self._editor
 
     ## Private methods
@@ -861,3 +865,7 @@ class TutorialApp(TutorialMenuDelegate):
 
         """
         TutAboutDialog(self.master, 'About MyPyTutor')
+
+    ## TutorEditorDelegate
+    check_solution = run_tests
+    quit_editor = close

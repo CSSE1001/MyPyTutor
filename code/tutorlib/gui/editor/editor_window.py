@@ -25,9 +25,9 @@ import tkinter.filedialog as tkfiledialog
 import tkinter.messagebox as tkmessagebox
 
 from idlelib import EditorWindow, macosxSupport
-from tutorlib.gui.dialogs.about import TutAboutDialog
-from tutorlib.gui.dialogs.help import HelpDialog
-import tutorlib.gui.editor.bindings as Bindings  # consistent naming with idlelib
+from tutorlib.gui.app.menu import TutorialMenuDelegate
+import tutorlib.gui.editor.bindings as Bindings  # be consistent with idlelib
+from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.io_binding import TutorIOBinding
 
 
@@ -37,6 +37,7 @@ class TutorEditor(EditorWindow.EditorWindow):
         ("edit", "_Edit"),
         ("format", "F_ormat"),
         ("check", "_Check"),
+        ("online", "_Online"),
         ("options", "_Options"),
         ("windows", "_Windows"),
         ("help", "_Help"),
@@ -44,87 +45,73 @@ class TutorEditor(EditorWindow.EditorWindow):
 
     Bindings = Bindings
 
-    def __init__(self, parent, flist=None, root=None,
+    def __init__(self, menu_delegate, editor_delegate, flist=None, root=None,
                  filename=None, online=False):
 
         # Support for Python >= 2.7.7 (TODO find a better way)
         if hasattr(macosxSupport, "_initializeTkVariantTests") and macosxSupport._tk_type is None:
             macosxSupport._initializeTkVariantTests(root)
 
-        if online:
-            self.menu_specs.insert(4, ("online", "_Online"))
-
         super().__init__(root=root, filename=filename)
 
         self.io = TutorIOBinding(self)
         self.io.set_filename_change_hook(self.filename_change_hook)
 
-        self.parent = parent
+        assert isinstance(menu_delegate, TutorialMenuDelegate)
+        self.menu_delegate = menu_delegate
+
+        assert isinstance(editor_delegate, TutorEditorDelegate)
+        self.editor_delegate = editor_delegate
+
         self.root = root
 
-        # TODO: I have absolutely no idea why some of these events feel the
-        # TODO: need to break out of the tk event loop (by return 'break',
-        # TODO: naturally...stupid tk)
-        # TODO: Because I don't want to break anything, I've left them as is
-        # TODO: for now, but it's worth looking into this later
-        self.text.bind("<<load-from>>", self.load_from_event)
-        self.text.bind("<<revert>>", self.revert_event)
-        self.text.bind("<<check>>", self.check_event)
-        self.text.bind("<<about-tutor>>", self.about)
-        self.text.bind("<<help-tutor>>", self.help)
-        self.text.bind("<F5>", self.check_event)
-        self.text.bind("<F6>", self.submit_answer_event)
+        # TODO: previously, a number of these events broke out of the event
+        # TODO: loop, by returning 'break'
+        # TODO: this has been removed; if bugs appear, that's probably why
+        noevt = lambda f: lambda e=None: f()
 
-        if online:
-            self.text.bind("<<login>>", lambda e: self.parent.login())
-            self.text.bind("<<logout>>", lambda e: self.parent.logout())
-            self.text.bind(
-                "<<change_password>>", lambda e: self.parent.change_password()
-            )
-            self.text.bind(
-                "<<upload_answer>>", lambda e: self.parent.upload_answer()
-            )
-            self.text.bind(
-                "<<download_answer>>", lambda e: self.parent.download_answer()
-            )
-            self.text.bind("<<submit_answer>>", self.submit_answer_event)
-            self.text.bind(
-                "<<show_submit>>", lambda e: self.parent.show_submit()
-            )
+        self.text.bind("<<load-from>>", self.load_from)
+        self.text.bind("<<revert>>", self.revert)
+
+        self.text.bind("<<check>>", noevt(editor_delegate.check_solution))
+        self.text.bind("<F5>", noevt(editor_delegate.check_solution))
+
+        self.text.bind("<<login>>", noevt(menu_delegate.login))
+        self.text.bind("<<logout>>", noevt(menu_delegate.logout))
+        self.text.bind("<<submit_answer>>", noevt(menu_delegate.submit))
+        self.text.bind("<F6>", noevt(menu_delegate.submit))
+        self.text.bind("<<show_submit>>", noevt(menu_delegate.show_submissions))
+        self.text.bind("<<sync_solutions>>", noevt(menu_delegate.synchronise))
+
+        self.text.bind("<<about-tutor>>", noevt(menu_delegate.show_about_dialog))
+        self.text.bind("<<help-tutor>>", noevt(menu_delegate.show_help_dialog))
 
         self.text.tag_config("orange", background="orange")
 
-        self.filename = ''
-        self.dirname = ''
-        self.opendialog = None
-        self.menudict['file'].delete(0, 1)
+        self.tutorial = None
+        self.menudict['file'].delete(0, 1)  # TODO: huh?
 
     def update_font(self, font_size):
         self.text.config(
             font=('courier', str(int(font_size)+1), 'normal', 'roman')
         )
 
-    def revert_event(self, e):
-        reply = self.possiblysave("Save on Revert")
-        if str(reply) == "cancel":
-            return
-        self.preload(self.parent.get_preloaded())
-        self.text.edit_modified(0)
-
-    def load_from_event(self, e):
+    ## Menu Callbacks
+    # file
+    def load_from(self, e):
         file = tkfiledialog.askopenfile(title='Load From File')
         if file:
-            self.preload(file.read())
+            self.set_text(file.read())
             file.close()
             self.text.edit_modified(1)
 
-    def check_event(self, e):
-        self.parent.run_tests()
-        return "break"
+    def revert(self, e):
+        reply = self.possiblysave("Save on Revert")
+        if str(reply) == tkmessagebox.CANCEL:
+            return
 
-    def submit_answer_event(self, e):
-        self.parent.submit_answer()
-        return "break"
+        self.set_text(self.tutorial.preload_code_text)
+        self.text.edit_modified(0)
 
     def possiblysave(self, title):
         reply = tkmessagebox.NO
@@ -133,8 +120,9 @@ class TutorEditor(EditorWindow.EditorWindow):
                 if self.top.state() != 'normal':
                     self.top.deiconify()
                 self.top.lift()
-                message = ("Do you want to save %s?" %
-                           (self.filename or "this untitled document"))
+                message = "Do you want to save {}?".format(
+                    self.tutorial.answer_path
+                )
                 m = tkmessagebox.Message(
                     title=title,
                     message=message,
@@ -152,26 +140,23 @@ class TutorEditor(EditorWindow.EditorWindow):
     def close(self):
         #print 'closing'
         reply = self.maybesave()
-        if str(reply) != "cancel":
+        if str(reply) != tkmessagebox.CANCEL:
             self._close()
         return reply
 
-    def set_filename(self, filename):
-        self.filename = filename
-
     def reset(self, tutorial):
-        self.filename = tutorial.answer_path
-        if os.path.exists(self.filename):
-            self.io.open(editFile=self.filename)
-        else:
-            self.preload(tutorial.preload_code_text)
-            self.io.set_filename(self.filename)
+        self.tutorial = tutorial
 
-    def preload(self, text):
+        if os.path.exists(self.tutorial.answer_path):
+            self.io.open(editFile=self.tutorial.answer_path)
+        else:
+            # only preload if no answer exists
+            self.set_text(self.tutorial.preload_code_text)
+            self.io.set_filename(self.tutorial.answer_path)
+
+    def set_text(self, text):
         self.text.delete(1.0, tk.END)
-        if text:
-            self.text.insert(tk.END, text)
-        #self.set_saved(1)
+        self.text.insert(tk.END, text)
 
     def get_text(self):
         return self.text.get(1.0, tk.END)
@@ -184,11 +169,4 @@ class TutorEditor(EditorWindow.EditorWindow):
         text.tag_add("ERROR", start, end)
 
     def quit(self):
-        #self.root.destroy()
-        self.parent.quit_editor()
-
-    def about(self, e):
-        TutAboutDialog(self.root, "About Tutor")
-
-    def help(self, e):
-        HelpDialog(self.root, "Help")
+        self.editor_delegate.quit_editor()

@@ -73,13 +73,11 @@ menudefs = [
   ("online", [
             ("Login", '<<login>>'),
             ("Logout", '<<logout>>'),
-            ("Change Password", '<<change_password>>'),
-            None,
-            ("Upload Problem Answer", '<<upload_answer>>'),
-            ("Download Problem Answer", '<<download_answer>>'),
             None,
             ("Submit Answer              F6", '<<submit_answer>>'),
-            ("Show Submissions", '<<show_submit>>')
+            ("Show Submissions", '<<show_submit>>'),
+            None,
+            ("Synchronise Solutions", '<<sync_solutions>>'),
             ]),
 
   ('help', [
