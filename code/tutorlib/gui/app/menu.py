@@ -5,14 +5,14 @@ import tkinter as tk
 
 MENU_STRUCTURE = [
     ('Problems', [
-        ('Next Tutorial', 'N', 'next'),
-        ('Previous Tutorial', 'P', 'previous'),
+        ('Next Tutorial', ['N', 'n'], 'next'),
+        ('Previous Tutorial', ['P', 'p'], 'previous'),
     ]),
     ('Online', [
         ('Login', None, None),
         ('Logout', None, None),
         (None, None, None),
-        ('Submit Answer', 'F6', 'submit'),
+        ('Submit Answer', ['<F6>'], 'submit'),
         ('Show Submissions', None, 'submissions'),
         (None, None, None),
         ('Synchronise Solutions', None, 'sync'),
@@ -36,7 +36,7 @@ MENU_STRUCTURE = [
     ]),
     ('Help', [
         ('About MyPyTutor', None, 'about'),
-        ('Help', 'F1', 'help'),
+        ('Help', ['<F1>'], 'help'),
     ]),
 ]
 
@@ -151,17 +151,17 @@ class TutorialMenu(tk.Menu):
                 self._dynamic_tutorial_packages_menu = submenu
                 continue
 
-            for entry_name, entry_hotkey, entry_cb_name in submenu_entries:
+            for entry_name, entry_bindings, entry_cb_name in submenu_entries:
                 self._add_static_entry(
                     submenu,
                     submenu_name,
                     entry_name,
-                    entry_hotkey,
+                    entry_bindings,
                     entry_cb_name
                 )
 
     def _add_static_entry(self, submenu, submenu_name, entry_name,
-                entry_hotkey, entry_cb_name):
+                entry_bindings, entry_cb_name):
         if entry_name is None:
             submenu.add_separator()
             return
@@ -177,12 +177,18 @@ class TutorialMenu(tk.Menu):
 
         # remember that we need to put a closure around the callback
         # name to make python capture it by value (cf by reference)
-        callback = (lambda n=cb_name: lambda: self.callback(n))()
+        callback = (lambda n=cb_name: lambda evt=None: self.callback(n))()
 
-        submenu.add_command(label=entry_name, command=callback)
+        # add the callback to the menu
+        kwargs = {'accelerator': entry_bindings[0]} if entry_bindings else {}
+        submenu.add_command(label=entry_name, command=callback, **kwargs)
 
-        # TODO: entry_hotkey
-        # TODO: need to treat as both accellerator and binding (eg F6)
+        # if there are any bindings, set them on the root window
+        if entry_bindings:  # get_root_widget could take non-trivial time
+            root = get_root_widget(submenu)
+
+            for binding in entry_bindings:
+                root.bind(binding, callback)  # NOT bind_all - idlelib hates it
 
     def set_selected_tutorial_package(self, tutorial_package):
         self._selected_tutorial_package = tutorial_package
@@ -336,3 +342,24 @@ class TutorialMenu(tk.Menu):
 
     def menu_help_help(self):
         self.delegate.show_help_dialog()
+
+
+def get_root_widget(widget):
+    """
+    Get the root widget of the widget heirarchy containing the given widget.
+
+    Args:
+      widget (tk.Widget): The widget to get the root of.
+
+    Returns:
+      The root widget in the hierarchy (usually a tk.Tk instance).
+
+    """
+    child = widget
+    parent = child.winfo_parent()
+
+    while parent:
+        child = child.nametowidget(parent)
+        parent = child.winfo_parent()
+
+    return child

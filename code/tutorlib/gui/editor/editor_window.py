@@ -74,17 +74,26 @@ class TutorEditor(EditorWindow.EditorWindow):
         self.text.bind("<<revert>>", self.revert)
 
         self.text.bind("<<check>>", noevt(editor_delegate.check_solution))
-        self.text.bind("<F5>", noevt(editor_delegate.check_solution))
 
         self.text.bind("<<login>>", noevt(menu_delegate.login))
         self.text.bind("<<logout>>", noevt(menu_delegate.logout))
         self.text.bind("<<submit_answer>>", noevt(menu_delegate.submit))
-        self.text.bind("<F6>", noevt(menu_delegate.submit))
         self.text.bind("<<show_submit>>", noevt(menu_delegate.show_submissions))
         self.text.bind("<<sync_solutions>>", noevt(menu_delegate.synchronise))
 
         self.text.bind("<<about-tutor>>", noevt(menu_delegate.show_about_dialog))
         self.text.bind("<<help-tutor>>", noevt(menu_delegate.show_help_dialog))
+
+        # it's less than ideal to have to bind these here, but it's proved to
+        # be the safest approach in practice
+        # ideally, we'd just .bind_all on tk.Tk, and capture and 'break' all
+        # key bindings here, but that seems to interfere with idlelib; it
+        # doesn't grab all the bindings as it should
+        # my best guess (without wishing to delve too deeply) is that something
+        # other than self.text is doing some of the event handling
+        # anyway, we hard-code these bindings here :(
+        self.text.bind("<F5>", noevt(editor_delegate.check_solution))
+        self.text.bind("<F6>", noevt(menu_delegate.submit))
 
         self.text.tag_config("orange", background="orange")
 
@@ -138,7 +147,6 @@ class TutorEditor(EditorWindow.EditorWindow):
         return reply
 
     def close(self):
-        #print 'closing'
         reply = self.maybesave()
         if str(reply) != tkmessagebox.CANCEL:
             self._close()
