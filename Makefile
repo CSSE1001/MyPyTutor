@@ -9,7 +9,6 @@
 .PHONY: all clean cleantutorials tutorials build push
 
 BUILD = MyPyTutor34.zip \
-        tut_admin.txt \
         CSSE1001Tutorials/CSSE1001Tutorials.zip \
         CSSE1001Tutorials/config.txt \
         doc/MyPyTutor.html \
@@ -24,10 +23,11 @@ clean: cleantutorials
 	-rm -r build
 
 cleantutorials:
-	-rm -r tut_admin.txt CSSE1001Tutorials
+	-rm -r CSSE1001Tutorials
 
 tutorials: problem_db/* cleantutorials
-	-python3 code/create_tutorial.py problem_db/CSSE1001.txt CSSE1001Tutorials
+	-python3 code/create_tutorial.py problem_db/CSSE1001.txt \
+	CSSE1001Tutorials --ignore-invalid-tutorials
 
 build: tutorials $(BUILD)
 	mkdir -p build

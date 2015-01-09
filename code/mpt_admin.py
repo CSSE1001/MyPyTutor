@@ -32,7 +32,7 @@ import tkinter.filedialog
 
 import tutorlib.TutorialInterface as tut_interface
 import problemlib.Configuration as tut_config
-import tutorlib.passworddialogs as tut_password_dialogs
+from tutorlib.gui.passworddialogs import LoginDialog
 import smtplib
 from email.mime.text import MIMEText
 
@@ -562,7 +562,7 @@ class MPTAdmin():
 
     
     def admin_login(self):
-        tut_password_dialogs.LoginDialog(self, self.do_login)
+        LoginDialog(self.master, self.do_login)
 
     def close_event(self, _e = None):
         self.logout()
@@ -630,8 +630,11 @@ class MPTAdmin():
     def do_password(self):
         if self.key is None:
             tkinter.messagebox.showerror('Admin Error', 'Not logged in.')
-        tut_password_dialogs.LoginDialog(self, self.change_user_password,
-                                         title='Change User Password.')
+        LoginDialog(
+            self.master,
+            self.change_user_password,
+            title='Change User Password.',
+        )
 
     def change_user_password(self, the_user, passwd):
         values = {'action':'change_user_password',

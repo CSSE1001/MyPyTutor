@@ -22,18 +22,14 @@
 
 import tkinter as tk
 
-import os
+from tutorlib.gui.app.app import TutorialApp
 
-import tutorlib.TutorialApp as TutorialApp
 
 def main():
     """The main entry point for MyPyTutor."""
 
-    if os.path.dirname(__file__):
-        os.chdir(os.path.dirname(__file__))
-
     root = tk.Tk()
-    TutorialApp.TutorialApp(root)
+    TutorialApp(root)
     root.mainloop()
     
 if __name__ == '__main__': 

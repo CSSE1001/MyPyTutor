@@ -1,305 +1,328 @@
 #! /usr/bin/env python
 
-import cgi, sys, crypt, random, time, calendar, os, fcntl, shutil, datetime, hashlib
+import cgi
+import inspect
+import json
+import os
+import shutil
+import functools
 
-######## start config #################################
+import support
+import uqauth
 
-# where student data is to be put/found
-data_dir = "/opt/local/share/MyPyTutor/CSSE1001/data"
+# static files (eg zipfiles)
+TUTORIAL_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
+MPT34_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
 
-# the file containing the timestamp for the tutorial problems
-timestamp_file = "/opt/local/share/MyPyTutor/CSSE1001/config.txt"
 
-# the file containing the version number of MyPyTutor
-mpt_version_file = "/opt/local/share/MyPyTutor/CSSE1001/mpt_version.txt"
-
-# the file containing the tutorial information
-tut_info_file = "/opt/local/share/MyPyTutor/CSSE1001/tut_admin.txt"
-
-# the zip file containing the tutorial info
-tut_zipfile_url = "http://csse1001.uqcloud.net/mpt/CSSE1001Tutorials.zip"
-
-# the zip file containing MyPyTutor2.5
-#mpt25_url = "https://student.eait.uq.edu.au/mypytutor/MyPyTutor/CSSE1001/MyPyTutor25.zip"
-# the zip file containing MyPyTutor2.6
-#mpt26_url = "http://mypytutor.cloud.itee.uq.edu.au/MyPyTutor/CSSE1001/MyPyTutor26.zip"
-# the zip file containing MyPyTutor2.7
-mpt27_url = "http://csse1001.uqcloud.net/mpt/MyPyTutor27.zip"
-# the zip file containing MyPyTutor3.4
-mpt34_url = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
-
-# datetime format used in due dates
-date_format = "%d/%m/%y"
-
-# hour of day (24hr clock) for due time
-due_hour = 17
 
 ######## end config   #################################
 
-random.seed()
+HTML_ERROR = '''Content-Type: text/html
 
-#chars = [chr(x) for x in (range(48, 91) + range(97, 123))]
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MyPyTutor</title>
+    </head>
+    <body>
+        <p>{}</p>
+    </body>
+</html>'''
 
-chars = list("abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ")
+ADMINS = ['uqprobin']
 
-print 'Content-Type: text/html\n\n'
-
-
-def encrypt_password(passwd):
-    return hashlib.md5(passwd).hexdigest()
-
-
-def check_password(id, passwd, admin=False):
-    users_file = os.path.join(data_dir, 'users')
-    users = open(users_file, 'U')
-    user_lines = users.readlines()
-    users.close()
-    for user in user_lines:
-        if user.startswith('#'):
-            continue
-        data = user.split(',')
-        if len(data) == 6 and id == data[0]:
-            if admin and data[2] != 'admin':
-                return False
-            encrypted_pw = encrypt_password(passwd)
-            return encrypted_pw == data[1]
-    return False
+ACTIONS = {}
 
 
-def gen_password(passwd):
-    if passwd == '-':
-        random.shuffle(chars)
-        password = ''.join(chars[:8])
-    else:
-        password = passwd
-    encrypted_password = encrypt_password(password)
-    return password, encrypted_password
+class ActionError(Exception):
+    """An exception that represents some error in the request.
+    Text messages of this error will be displayed to the user in the client.
+    """
+    pass
 
 
-def create_session(user_name, admin=False):
-    t = calendar.timegm(time.localtime())
-    r = random.randint(0, 1000000)
-    session_key = '%d:%d' % (t, r)
-    if admin:
-        session_key += ':admin'
-    user_file = os.path.join(data_dir, user_name)
-    session_file = open(user_file, 'w')
-    session_file.write(session_key)
-    session_file.close()
-    return session_key
+class NullResponse(Exception):
+    """
+    An exception that represents a null response.
+
+    This is used for error-like conditions which are nevertheless possible in
+    the course of normal operation (ie, are not exceptional).
+    For example, an attempt to get information on an answer that doesn't exist
+    should raise a NullResponse.
+
+    """
+    pass
 
 
-def logout(user_name):
-    user_file = os.path.join(data_dir, user_name)
-    session_file = open(user_file, 'w')
-    session_file.close()
+def action(name, admin=False):
+    """Decorator constructor to register different server actions.
+
+    If the action requires administrator privileges
+
+    The decorated function could raise certain errors:
+    * a ActionError if the CGI form is missing a required parameter,
+    * a uqauth.Redirected if a login is required,
+    """
+    # Create the decorator
+    def wrapper(func):
+        # Get the list of argument details for the function
+        argspec = inspect.getargspec(func)
+        num_required = len(argspec.args)
+        if argspec.defaults is not None:
+            num_required -= len(argspec.defaults)
+
+        @functools.wraps(func)
+        def wrapped(form):
+            # Check privileges
+            if admin and uqauth.get_user() not in ADMINS:
+                raise ActionError("Forbidden: insufficient privileges")
+
+            # Get the arguments out of the form
+            args = {}
+            for i, arg in enumerate(argspec.args):
+                # If the arg doesn't have a default value and isn't given, fail
+                if arg in form:
+                    args[arg] = form[arg].value
+                elif i < num_required:
+                    raise ActionError("Required parameter {!r} not given.\n"
+                                      "Report to maintainer.".format(arg))
+
+            return func(**args)
+
+        # Store the action in the global index
+        ACTIONS[name] = wrapped
+        return wrapped
+    return wrapper
 
 
-def check_session_key(key, user_name):
-    user_file = os.path.join(data_dir, user_name)
+@action('userinfo')
+def userinfo():
+    user = uqauth.get_user_info()
+    result = {key: str(user[key]) for key in ('user', 'name')}
+    return json.dumps(result)
+
+
+@action('upload')
+def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
+    """
+    Store the given code on the server for the student's account.
+
+    Args:
+      code (str): The student's code.
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+
+    Returns:
+      'OK' if successful.
+
+    Raises:
+      ActionError: If the code is too large.
+
+    """
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # immediately fail if the student is trying to send us too much junk
+    # (so that we can't easily be DOSed)
+    if len(code) > 5*1024:
+        raise ActionError('Code exceeds maximum length')
+
+    # write the answer
+    support.write_answer(
+        user, tutorial_package_name, problem_set_name, tutorial_name, code
+    )
+
+    return "OK"
+
+
+@action('download')
+def download_code(tutorial_package_name, problem_set_name, tutorial_name):
+    """
+    Retrieve the given code on the server for the student's account.
+
+    Args:
+      code (str): The student's code.
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+
+    Returns:
+      The student code, as a string.
+
+    Raises:
+      NullResponse: If there is no code to download.
+
+    """
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # read the answer
+    code = support.read_answer(
+        user, tutorial_package_name, problem_set_name, tutorial_name
+    )
+    if code is None:
+        raise NullResponse('No code to download')
+
+    return code
+
+
+@action('answer_info')
+def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
+    """
+    Return information on the server copy of the student's answer for the
+    given tutorial.
+
+    Args:
+      tutorial_package_name (str): The name of the tutorial package (eg, for
+          UQ students, this will be something like 'CSSE1001Tutorials').
+      problem_set_name (str): The name of the problem set (eg, 'Introduction').
+      tutorial_name (str): The name of the tutorial problem (note that this
+          will be, eg, 'Using Functions', not 'fun1.tut').
+
+    Returns:
+      A two-element tuple.
+
+      The first element of the tuple is a base32 encoding of the sha512 hash
+      of the server copy of the student's answer.
+
+      The second element is the last-modified time of the answer, as a unix
+      timestamp.
+
+    Raises:
+      NullResponse: If no answer can be found to this problem.
+
+    """
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # grab our data
+    answer_hash = support.get_answer_hash(
+        user, tutorial_package_name, problem_set_name, tutorial_name
+    )
+    timestamp = support.get_answer_modification_time(
+        user, tutorial_package_name, problem_set_name, tutorial_name
+    )
+    if answer_hash is None or timestamp is None:
+        raise NullResponse('No code exists for this problem')
+
+    # build our response
+    response_dict = {
+        'hash': answer_hash,
+        'timestamp': timestamp,
+    }
+
+    return json.dumps(response_dict)
+
+
+@action('submit')
+def submit_answer(tutorial_hash, code):
+    """
+    Submit the student's answer for the given tutorial.
+
+    When we store the answer, we make use of the student's own local naming
+    scheme (eg, they could call the tutorial package 'Bob' if they wanted).
+    This obviously won't work for submissions; we need consistency.
+
+    Instead, what we do is we take a hash of the entire tutorial package and
+    use that to uniquely identify the package.  We ignore the possiblity of
+    hash collisions (come on, what are the odds...those totally aren't famous
+    last words).
+
+    First, we check that the given hash actually exists.  If it does, we can
+    go ahead and add the submission.  Implementation details are hidden in the
+    support file (so that we can switch backends if needed).
+
+    Args:
+      tutorial_hash (str): The sha512 hash of the tutorial folder, encoded as
+          a base32 string.
+      code (str): The student's code.
+
+    Returns:
+      'OK' if submitted on time.
+      'LATE' if submitted late.
+
+    Raises:
+      ActionError: If tutorial hash does not match a known tutorial package,
+          or if attempting to add the submission fails.
+      NullResponse: If the student has already submitted this tutorial.
+
+    """
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # check that the tutorial actually exists
+    hashes = support.parse_tutorial_hashes()
+
     try:
-        session_file = open(user_file, 'U')
-        data = session_file.read().rstrip()
-        session_file.close()
-        if data == '':
-            return False, 'Error 199'
-        if key == data:
-            return True, ''
-        key_time = int(key.split(':')[0])
-        data_time = int(data.split(':')[0])
-        if key_time < data_time:
-            return False, 'Another login for this user'
-        else:
-            return False, 'Error 199'
-    except:
-        return False, 'Error: Change password error'
+        tutorial_info = next(ti for ti in hashes if ti.hash == tutorial_hash)
+    except StopIteration:
+        raise ActionError('Invalid tutorial: {}'.format(tutorial_hash))
 
+    # check if the student has already submitted this tutorial
+    submissions = support.parse_submission_log(user)
 
-def set_password(user, password):
-    encrypted_pw = encrypt_password(password)
-    lock_file = os.path.join(data_dir, 'users.lock')
-    lockf = open(lock_file, 'a')
-    fcntl.flock(lockf, fcntl.LOCK_EX)
-    found = False
     try:
-        users_file = os.path.join(data_dir, 'users')
-        users_file_cp = os.path.join(data_dir, 'users_tmp')
-        users = open(users_file, 'U')
-        users_cp = open(users_file_cp, 'w')
-        for line in users:
-            if line.startswith('#'):
-                users_cp.write(line)
-                continue
-            items = line.split(',')
-            if len(items) == 6 and user == items[0]:
-                found = True
-                items[1] = encrypted_pw
-                new_line = ','.join(items)
-                users_cp.write(new_line+'\n')
-            elif line.rstrip() == []:
-                users_cp.write('\n')
-            else:
-                users_cp.write(line)
-        users_cp.close()
-        users.close()
-        if found:
-            shutil.move(users_file_cp, users_file)
-    except:
-        found = False
-    lockf.close()
-    if found:
-        return True, ''
-    else:
-        return False, "Can't find user"
+        next(si for si in submissions if si.hash == tutorial_hash)
+        raise NullResponse(
+            'Tutorial already submitted: {}'.format(tutorial_hash)
+        )
+    except StopIteration:
+        pass  # we want this -- no such tutorial has been submitted
+
+    # write out the submission
+    submission = support.add_submission(user, tutorial_hash, code)
+    if submission is None:
+        raise ActionError('Could not add submission: {}'.format(tutorial_hash))
+
+    # return either 'OK' or 'LATE'
+    return 'OK' if submission.date <= tutorial_info.due else 'LATE'
 
 
-def change_the_password(form):
-    p1 = form['password1'].value
-    orig = form['password'].value
-    user = form['username'].value
-    if not check_password(user, orig):
-        return False, 'Incorrect Password.'
-    return set_password(user, p1)
+@action('get_submissions')
+def show_submit():
+    """
+    Return the submissions for the current user.
+
+    Returns:
+      A list of two-element tuples.
+      Each tuple represents a single tutorial.
+
+      The first element in the tuple is the hash of the tutorial package (in
+      the same format as usual, ie base32 encoded sha512 hash).
+
+      The second element in the tuple is one of 'MISSING', 'OK', and 'LATE'.
+
+    """
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # get our data
+    hashes = support.parse_tutorial_hashes()
+    submissions = {sub.hash: sub for sub in support.parse_submission_log(user)}
+
+    # check if our submissions are late or not
+    results = []
+
+    for tutorial_info in hashes:
+        status = 'MISSING'
+
+        submission = submissions.get(tutorial_info.hash)
+        if submission is not None:
+            status = 'OK' if submission.date <= tutorial_info.due else 'LATE'
+
+        results.append((tutorial_info.hash, status))
+
+    return json.dumps(results)
 
 
-def upload_code(form):
-    user = form['username'].value
-    text = form['code'].value
-    problem_name = form['problem_name'].value
-    if len(text) > 2000:
-        return False, 'Error: Code exceeds maximum length'
-    code_file = os.path.join(data_dir, user+'.code')
-    header = '##$$%s$$##\n' % problem_name
-    if os.path.exists(code_file):
-        fd = open(code_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        pos = file_text.find(header)
-        if pos == -1:
-            fd = open(code_file, 'a')
-            fd.write(header + text)
-            fd.close()
-        else:
-            front = file_text[:pos]
-            end_pos = file_text.find('##$$', pos+4)
-            if end_pos == -1:
-                new_text = front + header + text
-            else:
-                new_text = front + header + text + file_text[end_pos:]
-            fd = open(code_file, 'w')
-            fd.write(new_text)
-            fd.close()
-        return True, "OK"
-    else:
-        fd = open(code_file, 'w')
-        fd.write(header + text)
-        fd.close()
-        return True, "OK"
-
-
-def download_code(form):
-    user = form['username'].value
-    problem_name = form['problem_name'].value
-    code_file = os.path.join(data_dir, user+'.code')
-    header = '##$$%s$$##\n' % problem_name
-    if os.path.exists(code_file):
-        fd = open(code_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        pos = file_text.find(header)
-        if pos == -1:
-            return False, "No code to download"
-        else:
-            front = file_text[:pos]
-            end_pos = file_text.find('##$$', pos+4)
-            text = file_text[pos+len(header):end_pos]
-            if text:
-                return text, ''
-            else:
-                return ' ', ''
-    else:
-        return False, "No code to download"
-
-
-def submit_answer(form):
-    user = form['username'].value
-    tut_id = form['tut_id'].value
-    tut_id_crypt = form['tut_id_crypt'].value
-    if tut_id_crypt != str(_sh(tut_id + user)):
-        return False, "Error 901 "
-    tut_check_num = form['tut_check_num'].value
-    code = form['code'].value
-    #admin_file = os.path.join(data_dir, 'tut_admin.txt')
-    admin_fid = open(tut_info_file, 'U')
-    admin_lines = admin_fid.readlines()
-    admin_fid.close()
-    found = False
-    section = ''
-    tut_name = ''
-    for line in admin_lines:
-        if line.startswith('['):
-            section = line.strip()[:-1]
-        elif line.startswith(tut_id):
-            found = True
-            tut_name = line.split(' ', 1)[1].strip()
-            break
-    if tut_name == '' or section == '':
-        return False, "Tutorial not found"
-    first_word = section.split(' ', 1)[0][1:]
-    try:
-        due_date = datetime.datetime.strptime(first_word, date_format)
-        due_time = due_date.replace(hour=due_hour)
-    except Exception as e:
-        #print e
-        due_time = None
-    today = datetime.datetime.today()
-    sub_file = os.path.join(data_dir, user+'.sub')
-    header = '\n##$$%s$$##\n' % tut_name
-    if due_time and today > due_time:
-        msg = "LATE"
-        sub_text = header + 'LATE\n' + tut_check_num + '\n' + code
-    else:
-        msg = "OK"
-        sub_text = header + 'OK\n' + tut_check_num + '\n' + code
-    if os.path.exists(sub_file):
-        fd = open(sub_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        if header in file_text:
-            return False, "Already submitted"
-        fd = open(sub_file, 'a')
-        fd.write(sub_text)
-        fd.close()
-        return True, msg
-    else:
-        fd = open(sub_file, 'w')
-        fd.write(sub_text)
-        fd.close()
-        return True, msg
-
-
-def show_submit(form):
-    user = form['username'].value
-    sub_file = os.path.join(data_dir, user+'.sub')
-    if os.path.exists(sub_file):
-        fd = open(sub_file, 'U')
-        file_text = fd.read()
-        fd.close()
-        return file_text
-    else:
-        return ''
-
-
-def admin_form(form):
-    return 'session_key' in form and 'admin' in form['session_key'].value
-
-
-def match_user(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if 'match' not in form:
-        return False, 'Error 111'
-    match = form['match'].value
+@action('match', admin=True)
+def match_user(match):
     users_file = os.path.join(data_dir, 'users')
     users = open(users_file, 'U')
     user_lines = users.readlines()
@@ -310,30 +333,11 @@ def match_user(form):
             continue
         if match in user:
             result += user
-    return True, result
+    return result
 
 
-def change_user_password(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if not ('the_user' in form and 'password' in form):
-        return False, 'Error 111'
-    user = form['username'].value
-    the_user = form['the_user'].value
-    password = form['password'].value
-    if user == the_user:
-        return False, 'Error 112'
-    return set_password(the_user, password)
-
-
-def unset_late(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if not ('the_user' in form and 'problem' in form):
-        return False, 'Error 112'
-    user = form['username'].value
-    the_user = form['the_user'].value
-    problem = form['problem'].value
+@action('unset_late', admin=True)
+def unset_late(the_user, problem):
     problem_tag = "##$$%s$$##" % problem
     #if user == the_user:
     #    return False, 'Error 112'
@@ -356,9 +360,9 @@ def unset_late(form):
                 updated_text.append('OK\n')
                 i += 1
             else:
-                return False, 'Error 113'
+                raise ActionError('Error 113')
     if not found:
-        return False, 'Error 114'
+        raise ActionError('Error 114')
     sub_file_cp = os.path.join(data_dir, 'sub_tmp')
     sub_file_cp_fd = open(sub_file_cp, 'w')
     sub_file_cp_fd.writelines(updated_text)
@@ -368,9 +372,9 @@ def unset_late(form):
     sub_fd.close()
     if sub_text == sub_text_new:
         shutil.move(sub_file_cp, sub_file)
-        return True, 'OK'
+        return 'OK'
     else:
-        return unset_late(form)
+        return unset_late(the_user, problem)
 
 
 def get_problem_list():
@@ -388,9 +392,8 @@ def get_problem_list():
     return problem_list
 
 
-def get_results(form):
-    if not admin_form(form):
-        return False, 'Error 666'
+@action('results', admin=True)
+def get_results():
     problem_list = get_problem_list()
     users_file = os.path.join(data_dir, 'users')
     users_fd = open(users_file, 'U')
@@ -428,19 +431,18 @@ def get_results(form):
             for prob in problem_list:
                 student_result.append(result_dict.get(prob, '-'))
             results_list.append(','.join(student_result))
-    return True, '\n'.join(results_list)
+    return '\n'.join(results_list)
 
 
-def get_user_subs(form):
-    if not admin_form(form):
-        return False, 'Error 666'
+@action('get_user_subs', admin=True)
+def get_user_subs(the_user):
     the_user = form['the_user'].value
     problem_list = get_problem_list()
     sub_file = os.path.join(data_dir, the_user+'.sub')
     try:
         sub_fd = open(sub_file, 'U')
     except:
-        return False, 'No user info.'
+        raise ActionError('No info for user {!r}.'.format(the_user))
     sub_lines = sub_fd.readlines()
     sub_fd.close()
     length = len(sub_lines)
@@ -457,208 +459,53 @@ def get_user_subs(form):
     user_list = []
     for prob in problem_list:
         user_list.append("%s:::%s" % (prob, result_dict.get(prob, '-')))
-    return True, '\n'.join(user_list)
+    return '\n'.join(user_list)
 
 
-def add_user(form):
-    if not admin_form(form):
-        return False, 'Error 666'
-    if not ('type' in form and
-            'the_user' in form and
-            'firstname' in form and
-            'lastname' in form and
-            'password' in form and
-            'email' in form):
-        return False, 'Error 120'
-    username = form['the_user'].value
-    type = form['type'].value
-    firstname = form['firstname'].value
-    lastname = form['lastname'].value
-    email = form['email'].value
-    passwd = form['password'].value
-    users_file = os.path.join(data_dir, 'users')
-    users_fd = open(users_file, 'U')
-    users_text = users_fd.read()
-    users_fd.close()
-    if username in users_text:
-        return False, 'Error: User is already registered.'
-    password, crypt_password = gen_password(passwd)
-    text = ','.join([username, crypt_password, type,
-                     firstname, lastname, email])+'\n'
-    lock_file = os.path.join(data_dir, 'users.lock')
-    lockf = open(lock_file, 'a')
-    fcntl.flock(lockf, fcntl.LOCK_EX)
-    if type == 'student':
-        users_fd = open(users_file, 'a')
-        users_fd.write(text)
-        users_fd.close()
-    else:
-        users_file_cp = os.path.join(data_dir, 'users_tmp')
-        users = open(users_file, 'U')
-        users_cp = open(users_file_cp, 'w')
-        for line in users:
-            if line.startswith('#') and type in line:
-                users_cp.write(line)
-                users_cp.write(text)
-            else:
-                users_cp.write(line)
-        users_cp.close()
-        users.close()
-        shutil.move(users_file_cp, users_file)
-    lockf.close()
-    return True, password
+@action('get_tut_zip_file')
+def get_tut_zip_file():
+    return TUTORIAL_ZIPFILE_URL
 
 
-def _sh(text):
-    hash_value = 5381
-    num = 0
-    for c in text:
-        if num > 40:
-            break
-        num += 1
-        hash_value = 0x00ffffff & ((hash_value << 5) + hash_value + ord(c))
-    return hash_value
+@action('get_mpt34')
+def get_mpt34():
+    return MPT34_ZIPFILE_URL
 
 
-def logged_in(form):
-    return 'session_key' in form and 'username' in form
+@action('get_version')
+def get_version():
+    """
+    Return the current MyPyTutor version, as a string.
 
+    """
+    return support.get_mypytutor_version()
 
-def mpt_print(msg):
-    print 'mypytutor>>>'+msg
-
-
-# Call main function.
 
 def main():
     form = cgi.FieldStorage()
-    if 'action' in form:
-        action = form['action'].value
-        is_admin = 'type' in form and form['type'].value == 'admin'
-        if action == 'get_tut_zip_file':
-            mpt_print(tut_zipfile_url)
-        elif action == 'get_mpt34':
-            mpt_print(mpt34_url)
-        elif action == 'get_mpt27':
-            mpt_print(mpt27_url)
-        elif action == 'get_mpt26':
-            mpt_print(mpt26_url)
-        elif action == 'get_version':
-            fp = open(mpt_version_file, 'U')
-            version_text = fp.read().strip()
-            fp.close()
-            mpt_print(version_text)
-        elif action == 'login':
-            if 'username' in form and 'password' in form:
-                result = check_password(form['username'].value,
-                                        form['password'].value, is_admin)
-                if result:
-                    session_key = create_session(form['username'].value,
-                                                 is_admin)
-                    try:
-                        fd = open(timestamp_file, 'U')
-                        text = fd.read()
-                        lines = text.split('\n')
-                        mpt_print(lines[0] + ' ' + session_key)
-                    except:
-                        mpt_print('Error: 133')
 
-                else:
-                    mpt_print('Error:Incorrect User or Password')
-            else:
-                mpt_print('Error:Invalid entry')
-        elif logged_in(form):
-            result, msg = check_session_key(form['session_key'].value, form['username'].value)
-            if not result:
-                mpt_print('Error: %s' % msg)
-                return
-            if action == 'logout':
-                logout(form['username'].value)
-                mpt_print('OK')
-            elif action == 'change_password':
-                if 'password' in form and 'password1' in form:
-                    result, msg = change_the_password(form)
-                    if result:
-                        mpt_print('OK')
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'upload':
-                if 'code' in form and 'problem_name' in form:
-                    result, msg = upload_code(form)
-                    if result:
-                        mpt_print('OK')
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'download':
-                if 'problem_name' in form:
-                    result, msg = download_code(form)
-                    if result:
-                        mpt_print(result)
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'submit':
-                if ('tut_id' in form and
-                        'tut_id_crypt' in form and
-                        'tut_check_num' in form and
-                        'code' in form):
-                    result, msg = submit_answer(form)
-                    if result:
-                        mpt_print(msg)
-                    else:
-                        mpt_print('Error: %s' % msg)
-            elif action == 'show':
-                result = show_submit(form)
-                mpt_print(result)
-            # admin queries
-            elif action == 'match':
-                result, msg = match_user(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'change_user_password':
-                result, msg = change_user_password(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'unset_late':
-                result, msg = unset_late(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'results':
-                result, msg = get_results(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'get_user_subs':
-                result, msg = get_user_subs(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            elif action == 'add_user':
-                result, msg = add_user(form)
-                if result:
-                    mpt_print(msg)
-                else:
-                    mpt_print('Error: %s' % msg)
-            else:
-                mpt_print('Error:Unknown 1')
+    if 'action' not in form:
+        print HTML_ERROR.format("You must use MyPyTutor directly to interact with the online data.")
+        return
 
-        else:
-            mpt_print('Error:Unknown 2')
+    action = form['action'].value
+    if action not in ACTIONS:
+        print HTML_ERROR.format("Unknown action: " + action)
+        return
+
+    try:
+        result = ACTIONS[action](form)
+    except uqauth.Redirected:
+        return
+    except ActionError as e:
+        print "Content-Type: text/plain\n"
+        print "mypytutor_error>>>" + str(e)
+    except NullResponse as e:
+        print "Content-Type: text/plain\n"
+        print "mypytutor_nullresponse>>>" + str(e)
     else:
-        print '<HTML>\n'
-        print '<HEAD>\n'
-        print '\t<TITLE>MyPyTutor</TITLE>\n'
-        print '</HEAD>\n'
-        print 'You must use MyPyTutor directly to interact with the online data.'
-        print '</BODY>\n'
-        print '</HTML>\n'
+        print "Content-Type: text/plain\n"
+        print "mypytutor>>>" + result
 
-
-main()
+if __name__ == '__main__':
+    main()

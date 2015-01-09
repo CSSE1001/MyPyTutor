@@ -22,178 +22,387 @@
 ## An application for creating tutorials by collecting together
 ## individual problems.
 
+import argparse
+import base64
+from collections import namedtuple
+from datetime import datetime
+import glob
+from itertools import chain
 import os
-import sys
 import shutil
-import tutorlib.TutorialInterface as tut_interface
-import problemlib.Configuration as Configuration
-import uuid
+import sys
 import time
 import zipfile
-import glob
-import logging
-import py_compile
 
-def generate(config_file, destination_dir, source_dir=None):
-    """Generate a Tutorial set from the given configuration file.
+from tutorlib.config.namespaces import Namespace
+from tutorlib.interface.problems import TutorialPackage
+from tutorlib.interface.tutorial import Tutorial
+
+
+DUE_DATE_HOUR = 17
+INPUT_DATE_FORMAT = "%d/%m/%y"
+DATE_FORMAT = "%H_%d/%m/%y"
+
+
+class TutorialCreationError(Exception):
+    """
+    An error encountered when creating a tutorial package.
+
+    """
+    pass
+
+
+def generate_tutorial_package(config_file, destination_dir, source_dir=None,
+        ignore_invalid_tutorials=False):
+    """
+    Generate a Tutorial set from the given configuration file.
+
     Example usage:
     generate('problem_db/CSSE1001.txt', 'CSSE1001Tutorials')
+
+    Args:
+      config_file (str): The path to the configuration file to use.
+      destination_dir (str): The path to a directory to output the tutorial
+          package to.
+      source_dir (str, optional): The path to the source directory for the
+          problem sets.  Defaults to the directory of the config file.
+      ignore_invalid_tutorials (bool, optional): Whether to ignore invalid
+          tutorials, and proceed anyway.  If True, exceptions encountered when
+          creating tutorials will be suppressed. Defaults to False.
+
     """
     if source_dir is None:
-        source_dir = os.path.split(config_file)[0]
+        source_dir, _ = os.path.split(config_file)
 
     with open(config_file, 'rU') as f:
-        tutorial_text = f.read()
+        url, problem_sets = parse_config_file(f)
 
-    return generate_text(tutorial_text, destination_dir, source_dir)
+    create_tutorial_package(
+        source_dir, destination_dir, url, problem_sets,
+        ignore_invalid_tutorials=ignore_invalid_tutorials,
+    )
 
 
-def generate_text(tutorial_text, destination_dir, source_dir):
-    # Fail if the destination already exists
-    if os.access(destination_dir, os.F_OK):
-        logging.error(destination_dir+' already exists')
-        return 1
-    else:
+ProblemSetInfo = namedtuple('ProblemSetInfo', ['name', 'due', 'tutorials'])
+TutorialInfo = namedtuple('TutorialInfo', ['name', 'directory', 'files'])
+
+
+def parse_config_file(f):
+    """
+    Parse the given config file.
+
+    Args:
+      f (file): The configuration file to parse.
+
+    Returns:
+      A two-element tuple.
+      The first element is the URL for the tutorial package, as a str.
+      The second element is a list of the problem sets in the tutorial package,
+      as ProblemSetInfo objects (NB: not as ProblemSet objects).
+
+    Raises:
+      TutorialCreationError: If the configuration file is invalid.
+
+    """
+    url = None
+    problem_sets = []
+    problem_set = None
+
+    for line in filter(None, map(str.strip, f)):
+        if line.startswith('[URL:'):
+            _, url = line.strip('[]').split('URL:', 1)
+        elif line.startswith('['):
+            try:
+                date, name = map(str.strip, line.strip('[]').split(' ', 1))
+            except ValueError as e:
+                raise TutorialCreationError(
+                    'Invalid problem set definition: {}'.format(line)
+                ) from e
+
+            problem_set = ProblemSetInfo(name, date, [])
+            problem_sets.append(problem_set)
+        else:
+            try:
+                name, directory, *files = map(str.strip, line.split(':'))
+            except ValueError as e:
+                raise TutorialCreationError(
+                    'Invalid tutorial definition: {}'.format(line)
+                ) from e
+
+            if problem_set is None:
+                raise TutorialCreationError(
+                    'Invalid configuration: tutorial definition encountered '
+                    'before the first problem set definition!'
+                )
+
+            problem_set.tutorials.append(TutorialInfo(name, directory, files))
+
+    if url is None:
+        raise TutorialCreationError('Invalid configuration: no url specified!')
+
+    if not problem_sets:
+        raise TutorialCreationError('Invalid configuration: no problem sets!')
+
+    for pset in problem_sets:
+        if not pset.tutorials:
+            raise TutorialCreationError(
+                'Invalid configuration: problem set with name {} does not '
+                'have any tutorials!'.format(pset.name)
+            )
+
+    return url, problem_sets
+
+
+def write_package_tutorials_config(f, problem_sets):
+    """
+    Write the package tutorials configuration data to the given file.
+
+    Args:
+      f (file): The file to write the configuration information to.
+      problem_sets ([ProblemSetInfo]): The problem sets to include.
+
+    """
+    lines = []
+    pset_line = '[{0.due} {0.name}]'
+    tutorial_line = '{0.name}:{0.directory}'
+
+    for problem_set in problem_sets:
+        lines.append(pset_line.format(problem_set))
+        lines.append('')  # just to make it easier to read
+
+        for tutorial in problem_set.tutorials:
+            lines.append(tutorial_line.format(tutorial))
+
+        lines.append('')  # just to make it easier to read
+
+    f.write('\n'.join(lines) + '\n')
+
+
+def write_package_config(f, url):
+    """
+    Write the package configuration data to the given file.
+
+    Args:
+      f (file): The file to write the configuration information to.
+      url (str): The online URL for the package.
+
+    """
+    f.write('{}'.format(time.time()) + '\n')
+    f.write(url + '\n')
+
+
+def write_tutorial(tutorial, source_dir, destination_dir):
+    """
+    Write the given tutorial to the given directory.
+
+    Args:
+      tutorial (TutorialInfo): The tutorial to write.
+      source_dir (str): The source dir of the problems database (in which the
+          tutorial's .tut directory may be found).
+      destination_dir (str): The destination directory for the resulting
+          tutorial package.
+
+    Raises:
+      TutorialCreationError: If there is an issue with creating the tutorial,
+          or if the tutorial itself is invalid.
+
+    """
+    src_dir = os.path.join(source_dir, tutorial.directory)
+
+    # check that the package is valid
+    if not os.path.exists(src_dir) or not os.path.isdir(src_dir):
+        raise TutorialCreationError(
+            'No valid tutorial package found at {}'.format(src_dir)
+        )
+
+    existing_files = os.listdir(src_dir)
+    required_files = Tutorial.SUBMODULES + Tutorial.FILES
+
+    for filename in required_files:
+        if filename not in existing_files:
+            raise TutorialCreationError(
+                'Tutorial with name {} is missing one or more required files, '
+                'including {}'.format(tutorial.name, filename)
+            )
+
+    for filename in tutorial.files:
+        if filename not in existing_files:
+            raise TutorialCreationError(
+                'The tutorial {} specified that it included the file {}, '
+                'but that file was not found'.format(tutorial.name, filename)
+            )
+
+    # create the output directory
+    dest_dir = os.path.join(destination_dir, tutorial.directory)
+    try:
+        os.mkdir(dest_dir)
+    except OSError as e:
+        raise TutorialCreationError(
+            'Could not create destination directory: {}'.format(dest_dir)
+        ) from e
+
+    # copy over the required tutorial files, along with any extra files
+    for filename in chain(required_files, tutorial.files):
+        src_path = os.path.join(src_dir, filename)
+        dest_path = os.path.join(dest_dir, filename)
+
+        shutil.copyfile(src_path, dest_path)
+
+
+def write_tutorial_hashes(f, path):
+    """
+    Create the tutorial hashes file for the tutorial package in the given
+    destination directory.
+
+    It is assumed that destination_dir contains a valid tutorial package.
+    As a result, this function must only be called after the package itself
+    has been created.
+
+    Args:
+      f (file): The file to write the tutorial hashes data to.
+      path (str): The path to the tutorial package.
+
+    """
+    options = Namespace(tut_dir=path, ans_dir='/tmp/notreal')
+    tutorial_package = TutorialPackage(path, options)
+
+    tutorial_package_name = tutorial_package.name.replace(' ', '_')
+
+    for problem_set in tutorial_package.problem_sets:
+        date_obj = datetime.strptime(problem_set.date, INPUT_DATE_FORMAT)
+        date_obj = date_obj.replace(hour=DUE_DATE_HOUR)
+        due_date_str = date_obj.strftime(DATE_FORMAT)
+
+        problem_set_name = problem_set.name.replace(' ', '_')
+
+        for tutorial in problem_set:
+            b32hash = base64.b32encode(tutorial.hash).decode('utf8')
+            tutorial_name = tutorial.name.replace(' ', '_')
+
+            data = [
+                b32hash,
+                due_date_str,
+                tutorial_package_name,
+                problem_set_name,
+                tutorial_name,
+            ]
+            f.write(' '.join(data) + '\n')
+
+
+def create_zipfile(path, name):
+    """
+    Create a zip file from the contents of the given path.
+
+    Args:
+      path (str): The path to zip.
+      name (str): The name of the resulting zip file (excluding the extension).
+
+    """
+    cwd = os.getcwd()
+    os.chdir(path)
+
+    all_files = glob.glob("*")
+
+    with zipfile.ZipFile('{}.zip'.format(name), 'w') as zfile:
+        for file in all_files:
+            zfile.write(file)
+
+    os.chdir(cwd)
+
+
+def create_tutorial_package(source_dir, destination_dir, url, problem_sets,
+        ignore_invalid_tutorials=False):
+    """
+    Create a tutorial package using the provided data.
+
+    Args:
+      source_dir (str): The location of the problems in the tutorial package.
+      destination_dir (str): The directory to output the tutorial package to.
+      url (str): The online URL for the tutorial package.
+      problem_sets ([ProblemSetInfo]): The problem sets which make up the
+          tutorial package.
+      ignore_invalid_tutorials (bool, optional): Whether to ignore invalid
+          tutorials, and proceed anyway.  If True, exceptions encountered when
+          creating tutorials will be suppressed. Defaults to False.
+
+    """
+    # try to create the destination dir, which will fail if it already exists
+    try:
         os.mkdir(destination_dir)
+    except OSError as e:
+        raise TutorialCreationError(
+            'Destination directory exists: {}'.format(destination_dir)
+        ) from e
 
     parent_dir, dir_name = os.path.split(destination_dir)
-    tutorials, extra_files = parse_tutorial(tutorial_text)
 
-    # Create index files
-    admin_fid = open(os.path.join(parent_dir, 'tut_admin.txt'), 'w')
-    tut_fid = open(os.path.join(destination_dir, 'tutorials.txt'), 'w')
-    with admin_fid, tut_fid:
-        logging.info('Adding tutorials.txt')
-        id_list = []
-        url = ''
-        for line in tutorial_text.strip('\n').split('\n'):
-            if line.startswith('[URL:'):
-                url = line[5:-1]
-            elif ':' in line:
-                id = uuid.uuid4().hex
-                id_list.append(id)
-                title, fname, *rest = map(str.strip, line.split(':'))
-                print(title + ':' + fname, file=tut_fid)
-                print(str(id) + ' ' + title, file=admin_fid)
-            else:
-                print(line, file=tut_fid)
-                print(line, file=admin_fid)
+    # create configuration files
+    package_tutorials_config = os.path.join(destination_dir, 'tutorials.txt')
+    package_generic_config = os.path.join(destination_dir, 'config.txt')
 
-    if url:
-        with open(os.path.join(destination_dir, 'config.txt'), 'w') as fid:
-            now = time.localtime()
-            print(time.mktime(now), file=fid)
-            print(url, file=fid)
+    with open(package_tutorials_config, 'w') as f:
+        write_package_tutorials_config(f, problem_sets)
 
-    # Add auxiliary files
-    for ofile in extra_files:
-        logging.info('Adding ' + ofile)
-        filename = os.path.join(source_dir, ofile)
-        newfilename = os.path.join(destination_dir, ofile)
-        shutil.copyfile(filename, newfilename)
+    with open(package_generic_config, 'w') as f:
+        write_package_config(f, url)
 
-    # Encode and add tutorial files
-    for tutorial_name in tutorials:
-        logging.info('Adding ' + tutorial_name)
-        directory = os.path.join(source_dir, tutorial_name)
+    # add the tutorial files
+    for problem_set in problem_sets:
+        for tutorial in problem_set.tutorials:
+            try:
+                write_tutorial(tutorial, source_dir, destination_dir)
+            except TutorialCreationError as e:
+                if not ignore_invalid_tutorials:
+                    raise
+                print(
+                    'Skipping {}'.format(tutorial.directory), file=sys.stderr
+                )
 
-        # check the directory exists
-        if not os.path.exists(directory):
-            logging.error('Failed - no such tutorial {}'.format(tutorial_name))
-            continue
-        if not os.path.isdir(directory):
-            logging.error('Failed - .tut should be a directory: {}'.format(
-                tutorial_name
-            ))
-            continue
+    # finally, write our tutorial hashes file
+    # TODO: calculate the diff from the old file, and write that out too
+    tutorial_hashes_path = os.path.join(parent_dir, 'tutorial_hashes')
+    with open(tutorial_hashes_path, 'w') as f:
+        write_tutorial_hashes(f, destination_dir)
 
-        # check that all tutorial files are present
-        files = os.listdir(directory)
-        tutorial_valid = True
-        required_files = tut_interface.Tutorial.SUBMODULES \
-                + tut_interface.Tutorial.FILES
-
-        for file in required_files:
-            if file not in files:
-                logging.error('Failed - {} is missing {}'.format(
-                    tutorial_name, file
-                ))
-                tutorial_valid = False
-
-        if not tutorial_valid:
-            continue
-
-        # create the directory
-        destination_tutorial_dir = os.path.join(destination_dir, tutorial_name)
-        os.mkdir(destination_tutorial_dir)
-
-        # copy over the files, compiling as necessary
-        for file in files:
-            _, extension = os.path.splitext(file)
-
-            if extension == '.py':
-                pass  # TODO: compilation (including for different versions)
-
-            src_path = os.path.join(directory, file)
-            dest_path = os.path.join(destination_tutorial_dir, file)
-
-            shutil.copyfile(src_path, dest_path)
-
-    # Zip everything together
-    cwd=os.getcwd()
-    os.chdir(destination_dir)
-    all_files = glob.glob("*")
-    zfile = zipfile.ZipFile(dir_name+'.zip', 'w')
-    for file in all_files:
-        zfile.write(file)
-    zfile.close()
-    os.chdir(cwd)
-    return 0
-
-def parse_tutorial(text):
-    logging.info('Checking syntax')
-    lines = [line.strip() for line in text.split('\n') if line.strip()]
-    files = []
-    extra_files = []
-    if not lines:
-        logging.error('No data')
-        return (files, extra_files)
-
-    if lines[0][0] != '[':
-        logging.error('First line should be [...]')
-        return (files, extra_files)
-
-    okay = True
-    for num, line in enumerate(lines):
-        if line[0] == '[':
-            if line[-1] != ']':
-                okay = False
-                logging.error('Unmatched [] on line '+str(num))
-        else:
-            parts = line.split(':')
-            if len(parts) < 2:
-                okay = False
-                logging.error('Invalid Syntax on line '+str(num))
-            else:
-                files.append(parts[1].strip())
-                for f in parts[2:]:
-                    f = f.strip()
-                    if f not in extra_files:
-                        extra_files.append(f)
-    if okay:
-        logging.info('Syntax OK')
-    return (files, extra_files)
+    # zip everything together
+    create_zipfile(destination_dir, dir_name)
 
 
 def main():
-    # TODO use argparse
-    args = sys.argv[1:]
-    if len(args) < 2:
-        print("Usage: {} config_file destination_dir".format(sys.argv[0]),
-              file=sys.stderr)
-        return 2
-    else:
-        return generate(*args)
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        'config_file',
+        type=str,
+        help='The path to the configuration file to use',
+    )
+    parser.add_argument(
+        'destination_dir',
+        type=str,
+        help='The directory to output the tutorial package to',
+    )
+    parser.add_argument(
+        'source_dir',
+        type=str,
+        help='The directory containing the tutorial problems',
+        default=None,
+        nargs='?',
+    )
+    parser.add_argument(
+        '--ignore-invalid-tutorials',
+        action='store_true',
+    )
+
+    args = parser.parse_args()
+
+    generate_tutorial_package(
+        args.config_file,
+        args.destination_dir,
+        source_dir=args.source_dir,
+        ignore_invalid_tutorials=args.ignore_invalid_tutorials,
+    )
+
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main())
