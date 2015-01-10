@@ -733,6 +733,10 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             self._select_tutorial_package(self.tutorial_package.name)
 
             # need to update reference to Tutorial in new (reloaded) package
+            # (but only if we actually have a tutorial open)
+            if self.current_tutorial is None:
+                return
+
             self.current_tutorial = self.tutorial_package.tutorial_with_name(
                 self.current_tutorial.name
             )
