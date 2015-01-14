@@ -1,0 +1,1 @@
+SHORT_DESCRIPTION = 'Create a Worker class with a get_manager method, and an Executive class with an overriden wage method'
