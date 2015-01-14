@@ -30,7 +30,7 @@ class FunctionDefinition():
               will be marked as undefined.
 
         """
-        assert isinstance(node, ast.FunctionDef)
+        assert node is None or isinstance(node, ast.FunctionDef)
 
         if node is None:
             self.is_defined = False
@@ -67,7 +67,7 @@ class ClassDefinition():
               be marked as undefined.
 
         """
-        assert isinstance(node, ast.ClassDef)
+        assert node is None or isinstance(node, ast.ClassDef)
 
         if node is None:
             self.is_defined = False
