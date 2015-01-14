@@ -61,6 +61,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         master.config(menu=self.menu)
 
         #### Set up local variables
+        ## Optionals / property bases
+        self.current_tutorial = None
+        self._editor = None
+        self._tutorial_package = None
+
         ## Important top-level vars
         self.master = master
         self.cfg = load_config()
@@ -72,10 +77,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Objects
         self.web_api = WebAPI()
         master.after(0, self.synchronise)  # post event immediately after init
-
-        ## Optionals / property bases
-        self.current_tutorial = None
-        self._editor = None
 
         #### Create GUI Widgets
         ## Top Frame
@@ -149,8 +150,22 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             )
         return self._editor
 
+    @property
+    def tutorial_package(self):
+        if self._tutorial_package is None:
+            self._select_tutorial_package('')
+
+            if self._tutorial_package is None:
+                raise AssertionError('Failed to select tutorial package')
+
+        return self._tutorial_package
+
+    @tutorial_package.setter
+    def tutorial_package(self, value):
+        self._tutorial_package = value
+
     ## Private methods
-    def _select_tutorial_package(self, package_name):
+    def _select_tutorial_package(self, package_name=''):
         """
         Select the tutorial package with the given name.
 
