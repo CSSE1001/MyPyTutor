@@ -82,10 +82,6 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def _current_function(self):
         return self._scopes.peek_function()
 
-    @property
-    def _current_class(self):
-        return self._scopes.peek_class()
-
     def generic_visit(self, node):
         """
         Do nothing.
