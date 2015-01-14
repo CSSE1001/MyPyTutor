@@ -214,7 +214,7 @@ def get_answer_modification_time(user, tutorial_package_name, problem_set_name,
         user, tutorial_package_name, problem_set_name, tutorial_name,
         create_dir=True,
     )
-    if path is None:
+    if path is None or not os.path.exists(path):
         return None
 
     return os.path.getmtime(path)
