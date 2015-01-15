@@ -1,0 +1,41 @@
+<h3>Using Inheritance</h3>
+
+<p>
+    Consider the following (base) class.
+</p>
+<pre>
+class Employee(object):
+   def __init__(self, name, salary):
+       self._name = name
+       self._salary = salary
+
+   def my_name(self):
+       return self._name
+
+   def wage(self):
+       return self._salary/26   # fortnight pay
+</pre>
+<p>
+    Define a new subclass of <tt>Employee</tt> called <tt>Worker</tt>.
+    A worker has a manager, who is another employee; their manager is given as an argument to the constructor.
+</p>
+<p>
+    You should define a method <tt>get_manager</tt> that returns the worker's manager.
+</p>
+<pre>
+    boss = Employee('Mr. Burns', 1000000)
+    worker = Worker('Waylon Smithers', 2500, boss)
+</pre>
+
+<p>
+    Define another subclass of <tt>Employee</tt> called <tt>Executive</tt>.
+    An executive has a yearly bonus in addition to a wage.
+</p>
+<p>
+    Override the <tt>Employee.wage</tt> method in order to take the bonus into account.
+    You must call <tt>Employee.wage</tt> from <tt>Executive.wage</tt> (using <tt>super</tt>).
+    Remember that the existing <tt>wage</tt> method calculates a fortnightly pay, but the bonus is annual.
+</p>
+<pre>
+    executive = Executive('Joseph Bloggs', 25000, 10000)
+</pre>

@@ -1,0 +1,51 @@
+<h3>Recursion - Nested Lists</h3>
+<p>
+    It would be handy to have a procedure that allows accessing lists that are nested to arbitrary depth.
+    It would take a nested list and some sort of an index, and return the part of the list at that index.
+    The item at that index could be a primitive type such as a number or a string, or it could be another list.
+</p>
+<p>
+    Consider this (very complicated) nested list:
+</p>
+<pre>
+    nested = \
+            [
+                [
+                    [1, 2],
+                    3,
+                ],
+                [4,
+                    [5, 6],
+                ],
+                7,
+                [8, 9, 10],
+            ]
+</pre>
+<p>
+    If we access the fourth index of the list, we get:
+</p>
+<pre>
+    nested[3] -> [8, 9, 10]
+</pre>
+<p>
+    If we then look up the second index in that list, we will get back a primitive value:
+</p>
+<pre>
+    nested[3][1] -> 9
+</pre>
+<p>
+    So we can say that if we look up the 'index path' of <tt>3 -> 1</tt> we get the value <tt>9</tt>.
+</p>
+<p>
+    The problem with what we wrote before (ie, <tt>nested[3][1]</tt>) is that the *level* of nesting shows up in the expression.
+    Say we wanted to extract <tt>5</tt> from the list above; we would write <tt>nested[1][1][0]</tt>, which not only uses different indices, but also a different *number* of index statements.
+</p>
+<p>
+    However, for both of the examples we can write an index path: <tt>3 -> 1</tt> for <tt>9</tt>, and <tt>1 -> 1 -> 0</tt> for <tt>5</tt>.
+    We can use this to write a more general function.
+</p>
+<p>
+    Write a function <tt>recursive_index(lst, index_path)</tt> which can look up a value in a nested list based on its index path.
+    The index path will be represented as a list (eg, <tt>[1, 1, 0]</tt>).
+    You may assume that <tt>index_path</tt> contains a valid index path for <tt>lst</tt>.
+</p>

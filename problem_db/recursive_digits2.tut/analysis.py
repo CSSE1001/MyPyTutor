@@ -17,7 +17,7 @@ class RecursiveDigits2Analyser(CodeAnalyser):
     def _analyse(self):
         if not self.visitor.functions['dec2base'].is_defined:
             self.add_error('dec2base is not defined')
-        if not self.visitor.calls['dec2base']:
+        if not self.visitor.functions['dec2base'].calls['dec2base']:
             self.add_error('dec2base does not appear to be recursive')
         if not self.visitor.checks_arg1_in_base_case:
             self.add_warning('Your base case should probably check {}'.format(self.visitor.functions['dec2base'].args[0]))

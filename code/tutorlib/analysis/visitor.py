@@ -82,9 +82,9 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     def _current_function(self):
         return self._scopes.peek_function()
 
-    @property
-    def _current_class(self):
-        return self._scopes.peek_class()
+    @property  # NB: intended to be *really* private ;)
+    def _current_function_def(self):
+        return self.functions[self._current_function]
 
     def generic_visit(self, node):
         """
@@ -257,3 +257,5 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
         call = Call(node)
         self.calls[function_name].append(call)
+
+        self._current_function_def.calls[function_name].append(call)

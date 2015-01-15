@@ -25,7 +25,7 @@ class Analyser(CodeAnalyser):
         elif len(self.visitor.functions['try_int'].args) != 1:
             self.add_error('try_int should accept exactly 1 arguments')
 
-        if not self.visitor.calls['int']:
+        if not self.visitor.functions['try_int'].calls['int']:
             self.add_error(
                 'Your code should make use of the built-in int function'
             )

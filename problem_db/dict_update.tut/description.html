@@ -1,0 +1,25 @@
+<h3>Updating a Dictionary</h3>
+<p>
+    When working with lists, you probably noticed that you can change the value at a given index with a simple assignment statement.
+    So, for example, the following code replaces the first element of <tt>lst</tt> with <tt>42</tt>:
+</p>
+<pre>
+    lst[0] = 42
+</pre>
+<p>
+    You can update the value for a given key in a dictionary in the same way.
+    The general syntax for this is:
+</p>
+<pre>
+    d[key] = value
+</pre>
+<p>
+    This is also how you insert new key/value pairs to a dictionary; if the key does not exist, it will be added.
+</p>
+<p>
+    Write a function <tt>add_to_dict(d, key_value_pairs)</tt> which adds each given key/value pair to the given dictionary.
+    The argument <tt>key_value_pairs</tt> will be a list of tuples in the form <tt>(key, value)</tt>.
+</p>
+<p>
+    The function should return a list of all of the key/value pairs which have changed (with their original values).
+</p>

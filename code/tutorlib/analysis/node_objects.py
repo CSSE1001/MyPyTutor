@@ -1,4 +1,5 @@
 import ast
+from collections import defaultdict
 
 from tutorlib.analysis.ast_tools import identifier, identifier_or_value
 from tutorlib.analysis.support import NonePaddedList
@@ -30,17 +31,21 @@ class FunctionDefinition():
               will be marked as undefined.
 
         """
-        assert isinstance(node, ast.FunctionDef)
+        assert node is None or isinstance(node, ast.FunctionDef)
 
         if node is None:
             self.is_defined = False
-            return
-        self.is_defined = True
 
-        arg_ids = list(map(identifier, node.args.args))
-        self.args = NonePaddedList(arg_ids)
+            self.args = NonePaddedList()
+        else:
+            self.is_defined = True
 
-        # TODO: kwargs, varargs etc
+            arg_ids = list(map(identifier, node.args.args))
+            self.args = NonePaddedList(arg_ids)
+
+            # TODO: kwargs, varargs etc
+
+        self.calls = defaultdict(list)  # str name : [Call]
 
 
 class ClassDefinition():
@@ -67,17 +72,19 @@ class ClassDefinition():
               be marked as undefined.
 
         """
-        assert isinstance(node, ast.ClassDef)
+        assert node is None or isinstance(node, ast.ClassDef)
 
         if node is None:
             self.is_defined = False
-            return
-        self.is_defined = True
 
-        base_ids = list(map(identifier, node.bases))
-        self.bases = base_ids
+            self.bases = []
+        else:
+            self.is_defined = True
 
-        # TODO: any other info from ClassDef which is relevant
+            base_ids = list(map(identifier, node.bases))
+            self.bases = base_ids
+
+            # TODO: any other info from ClassDef which is relevant
 
 
 class Call():
