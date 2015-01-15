@@ -33,7 +33,7 @@ FONTS_INFO = [('h1', 8, 'bold'),
               ('h4', 2, 'bold'),
               ('h5', 0, 'bold'),
               ('it', 0, 'normal'),
-              ('b',  0, 'bold'),
+              ('b', 0, 'bold'),
               ('tt', 1, 'normal')]
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
@@ -62,21 +62,27 @@ class TutorialFrame(ttk.Frame):
 
         font_name = fontinfo[0]
         font_size = int(fontinfo[1])
+
         self.text = tk.Text(self, height=textlen, wrap=tk.WORD)
-        #family = self.text.config('font')[3][0]
-        self.text.config(state=tk.DISABLED, font=(font_name,
-                                               str(font_size),
-                                               'normal', 'roman'))
+        self.text.config(
+            state=tk.DISABLED,
+            font=(font_name, str(font_size), 'normal', 'roman')
+        )
         self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
         scrollbar = ttk.Scrollbar(self)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
+
         self.update_fonts(font_name, font_size)
+
         for i, tag in enumerate(INDENT):
-            self.text.tag_config(tag, lmargin1=40*i, lmargin2=40*i+14)
+            self.text.tag_config(tag, lmargin1=40*i, lmargin2=40*i + 14)
+
         for tag in COLOURS:
             self.text.tag_config(tag, foreground=tag)
+
         self.parser = TutorialHTMLParser(self.text, self)
         self.tut_directory = None
 
@@ -93,24 +99,20 @@ class TutorialFrame(ttk.Frame):
 
     def update_fonts(self, font_name, font_size):
         for name, font_delta, weight in FONTS_INFO:
+            font = font_name
+            style = 'roman'
+            size = str(font_size + font_delta)
+
             if name == 'tt':
-                self.text.tag_config(name,
-                                     font=('courier',
-                                           str(font_size+font_delta),
-                                           'normal', 'roman'))
+                font = 'courier'
             elif name == 'it':
-                self.text.tag_config(name,
-                                     font=(font_name,
-                                           str(font_size+font_delta),
-                                           weight, 'italic'))
-            else:
-                self.text.tag_config(name,
-                                     font=(font_name,
-                                           str(font_size+font_delta),
-                                           weight, 'roman'))
-        self.text.config(font=(font_name,
-                               str(font_size),
-                               'normal', 'roman'))
+                style = 'italic'
+
+            self.text.tag_config(name, font=(font, size, 'normal', style))
+
+        self.text.config(
+            font=(font_name, str(font_size), 'normal', 'roman')
+        )
 
     def set_directory(self, directory):
         # TODO: I'm not currently calling this
@@ -120,16 +122,22 @@ class TutorialFrame(ttk.Frame):
         # TODO: this method name is bad - it doesn't add, it replaces
         self.text.config(state=tk.NORMAL)
         self.text.delete(1.0, tk.END)
+
         self.text.insert(tk.END, '\n')
+
         self.parser.reset()
         self.parser.feed(text)
+
         self.text.config(state=tk.DISABLED)
 
     def show_hint(self, text):
         self.text.config(state=tk.NORMAL)
+
         self.parser.reset()
         self.parser.feed(text)
+
         self.text.yview(tk.MOVETO, 1)
+
         self.text.config(state=tk.DISABLED)
 
 
