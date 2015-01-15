@@ -20,8 +20,7 @@ Slicing Strings:string2.tut
 Processing Strings Using a For Loop:string3.tut
 Filtering Characters from a String:string6.tut
 Intersecting String:string4.tut
-Tuple Assignment:tuple.tut
-Strings and Tuples:stringtuple.tut
+Using Tuples:tuple.tut
 
 [25/08/14 Classes and Objects]
 

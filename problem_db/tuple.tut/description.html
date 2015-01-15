@@ -1,0 +1,37 @@
+<h3>Tuple Assignment</h3>
+<p>
+    The components of a tuple can be assigned to individual variables.
+</p>
+<p>
+    So, for example, if we create a point in 3D space:
+</p>
+<pre>
+    pt = (1, 2, 3)
+</pre>
+<p>
+    then we can later assign its components to individual variables:
+</p>
+<pre>
+    x, y, z = pt
+</pre>
+<br>
+<p>
+    The <tt>str.partition</tt> method can be used to separate the components of a string:
+</p>
+<pre>
+    >>> help(str.partition)
+    Help on method_descriptor:
+
+    partition(...)
+        S.partition(sep) -> (head, sep, tail)
+
+        Search for the separator sep in S, and return the part before it,
+        the separator itself, and the part after it.  If the separator is not
+        found, return S and two empty strings.
+</pre>
+<p>
+    Write a function <tt>get_names()</tt> which prompts the user to enter their name, and then returns a tuple containing their first and last names.
+    You must use <tt>str.partition</tt> to separate the user's first and last names.
+    You must 'unpack' the result of <tt>str.partition</tt> into separate variables.
+    You may assume that the user only enters two names.
+</p>
