@@ -15,31 +15,31 @@ While Using Break:whilebreak.tut
 
 [18/08/14 Abstract Data Types]
 
-Accessing String Elements:string1.tut
-Slicing Strings:string2.tut
-Processing Strings Using a For Loop:string3.tut
-Filtering Characters from a String:string6.tut
-Intersecting String:string4.tut
+Accessing String Elements:string_indexing.tut
+Slicing Strings:string_slicing.tut
+Processing Strings Using a For Loop:string_iteration.tut
+Filtering Characters from a String:string_filter.tut
+Intersecting String:string_intersection.tut
 Using Tuples:tuple.tut
 
 [25/08/14 Classes and Objects]
 
 Using Range:range.tut
-Finding Digits in Strings:string5.tut
-Processing Lists Using a For Loop:list1.tut
-Constructing a List from Another List:list2.tut
-Transforming a List:list3.tut
-Suming Elements of a List:list4.tut
+Finding Digits in Strings:string_digits.tut
+Processing Lists Using a For Loop:list_has_gt.tut
+Constructing a List from Another List:list_all_gt.tut
+Transforming a List:list_append.tut
+Suming Elements of a List:list_sum.tut
 Finding the Mean:meanfun.tut
 
 [1/09/14 Classes, Error Handling and I/O]
 
-Accessing a Dictionary:dict1.tut
-Accessing a Dictionary Using Get:dict2.tut
-Iterating Over a Dictionary:dict4.tut
+Accessing a Dictionary:dict_subscript.tut
+Accessing a Dictionary Using Get:dict_get.tut
+Iterating Over a Dictionary:dict_iteration.tut
 Updating a Dictionary:dict_update.tut
-Exception Handling:except1.tut
-Raising an Exception:except2.tut
+Exception Handling:except_try.tut
+Raising an Exception:except_raise.tut
 
 [8/09/14 Class Design]
 Using Classes:class_use.tut
