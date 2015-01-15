@@ -258,4 +258,4 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         call = Call(node)
         self.calls[function_name].append(call)
 
-        self._current_function_def.calls.append(call)
+        self._current_function_def.calls[function_name].append(call)

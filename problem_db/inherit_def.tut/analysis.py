@@ -1,27 +1,5 @@
 class CodeVisitor(TutorialNodeVisitor):
-    def __init__(self):
-        super().__init__()
-
-        self.worker_init_calls_super = False
-        self.executive_init_calls_super = False
-
-        self.executive_wage_calls_super = False
-
-    def visit_Call(self, node):
-        super().visit_Call(node)
-
-        function_name = TutorialNodeVisitor.identifier(node.func)
-
-        if self._current_function == 'Worker.__init__' \
-                and function_name == '__init__':
-            self.worker_init_calls_super = True
-        if self._current_function == 'Executive.__init__' \
-                and function_name == '__init__':
-            self.executive_init_calls_super = True
-
-        if self._current_function == 'Executive.wage':
-            if function_name == 'wage':
-                self.executive_wage_calls_super = True
+    pass  # no special logic necessary
 
 
 class Analyser(CodeAnalyser):
@@ -66,16 +44,16 @@ class Analyser(CodeAnalyser):
                     )
                 )
 
-        if not self.visitor.worker_init_calls_super:
+        if not self.visitor.functions['Worker.__init__'].calls['__init__']:
             self.add_error(
                 'Worker.__init__ must call Employee.__init__ (use super)'
             )
-        if not self.visitor.executive_init_calls_super:
+        if not self.visitor.functions['Executive.__init__'].calls['__init__']:
             self.add_error(
                 'Executive.__init__ must call Employee.__init__ (use super)'
             )
 
-        if not self.visitor.executive_wage_calls_super:
+        if not self.visitor.functions['Executive.wage'].calls['wage']:
             self.add_error(
                 'Executive.wage must call Employee.wage (use super)'
             )

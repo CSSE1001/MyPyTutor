@@ -25,10 +25,10 @@ class Analyser(CodeAnalyser):
         elif len(self.visitor.functions['validate_input'].args) != 1:
             self.add_error('validate_input should accept exactly 1 argument')
 
-        if not self.visitor.calls['split']:
+        if not self.visitor.functions['validate_input'].calls['split']:
             self.add_warning('You will probably find str.split to be useful')
 
-        if not self.visitor.calls['float']:
+        if not self.visitor.functions['validate_input'].calls['float']:
             self.add_error('You will need to use the float function')
 
         if not self.visitor.has_try_except:
