@@ -27,7 +27,7 @@ cleantutorials:
 
 tutorials: problem_db/* cleantutorials
 	-python3 code/create_tutorial.py problem_db/CSSE1001.txt \
-	CSSE1001Tutorials --ignore-invalid-tutorials
+	CSSE1001Tutorials --ignore-invalid-tutorials --verbose
 
 build: tutorials $(BUILD)
 	mkdir -p build

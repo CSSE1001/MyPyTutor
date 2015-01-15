@@ -24,7 +24,7 @@
 
 import argparse
 import base64
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 from datetime import datetime
 import glob
 from itertools import chain
@@ -53,7 +53,7 @@ class TutorialCreationError(Exception):
 
 
 def generate_tutorial_package(config_file, destination_dir, source_dir=None,
-        ignore_invalid_tutorials=False):
+        ignore_invalid_tutorials=False, verbose=False):
     """
     Generate a Tutorial set from the given configuration file.
 
@@ -77,10 +77,20 @@ def generate_tutorial_package(config_file, destination_dir, source_dir=None,
     with open(config_file, 'rU') as f:
         url, problem_sets = parse_config_file(f)
 
-    create_tutorial_package(
+    could_parse = create_tutorial_package(
         source_dir, destination_dir, url, problem_sets,
         ignore_invalid_tutorials=ignore_invalid_tutorials,
     )
+
+    # output our results
+    if verbose:
+        for problem_set_name, tutorial_results in could_parse.items():
+            print(problem_set_name)
+
+            for tutorial_name, succeeded in tutorial_results.items():
+                print('  ', '[x]' if succeeded else '[ ]', tutorial_name)
+
+            print()
 
 
 ProblemSetInfo = namedtuple('ProblemSetInfo', ['name', 'due', 'tutorials'])
@@ -347,16 +357,22 @@ def create_tutorial_package(source_dir, destination_dir, url, problem_sets,
         write_package_config(f, url)
 
     # add the tutorial files
+    # keep track of which ones succeeded and which failed (although the latter
+    # will only be meaningful if we're ignoring invalid tutorials)
+    # problem_set.name : {tutorial.name : successful}
+    could_parse = OrderedDict()
+
     for problem_set in problem_sets:
+        could_parse[problem_set.name] = OrderedDict()
+
         for tutorial in problem_set.tutorials:
             try:
                 write_tutorial(tutorial, source_dir, destination_dir)
+                could_parse[problem_set.name][tutorial.name] = True
             except TutorialCreationError as e:
                 if not ignore_invalid_tutorials:
                     raise
-                print(
-                    'Skipping {}'.format(tutorial.directory), file=sys.stderr
-                )
+                could_parse[problem_set.name][tutorial.name] = False
 
     # finally, write our tutorial hashes file
     # TODO: calculate the diff from the old file, and write that out too
@@ -366,6 +382,8 @@ def create_tutorial_package(source_dir, destination_dir, url, problem_sets,
 
     # zip everything together
     create_zipfile(destination_dir, dir_name)
+
+    return could_parse
 
 
 def main():
@@ -392,6 +410,10 @@ def main():
         '--ignore-invalid-tutorials',
         action='store_true',
     )
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+    )
 
     args = parser.parse_args()
 
@@ -400,6 +422,7 @@ def main():
         args.destination_dir,
         source_dir=args.source_dir,
         ignore_invalid_tutorials=args.ignore_invalid_tutorials,
+        verbose=args.verbose,
     )
 
     return 0
