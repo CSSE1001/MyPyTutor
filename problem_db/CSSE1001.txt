@@ -36,8 +36,8 @@ Finding the Mean:meanfun.tut
 
 Accessing a Dictionary:dict1.tut
 Accessing a Dictionary Using Get:dict2.tut
-Updating a Dictionary:dict3.tut
 Iterating Over a Dictionary:dict4.tut
+Updating a Dictionary:dict_update.tut
 Exception Handling:except1.tut
 Raising an Exception:except2.tut
 
