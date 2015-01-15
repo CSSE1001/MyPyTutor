@@ -92,6 +92,11 @@ def generate_tutorial_package(config_file, destination_dir, source_dir=None,
 
             print()
 
+        successes = [succeeded for tutorial_results in could_parse.values()
+                for succeeded in tutorial_results.values()]
+        percent = int(sum(successes)/len(successes)*100)
+        print('{}% of tutorials parsed successfully'.format(percent))
+
 
 ProblemSetInfo = namedtuple('ProblemSetInfo', ['name', 'due', 'tutorials'])
 TutorialInfo = namedtuple('TutorialInfo', ['name', 'directory', 'files'])
