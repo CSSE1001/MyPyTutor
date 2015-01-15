@@ -165,6 +165,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self._tutorial_package = value
 
     ## Private methods
+    # TODO: should be .tutorial_package.setter property
     def _select_tutorial_package(self, package_name=''):
         """
         Select the tutorial package with the given name.
