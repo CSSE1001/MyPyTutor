@@ -40,6 +40,7 @@ FONTS_INFO = [('h1', 8, 'bold'),
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
 INDENT = ['indent0', 'indent1', 'indent2', 'indent3', 'indent4', 'indent5']
 COLOURS = ['red', 'green', 'blue']
+CODE = 'tt'
 
 INTRO_TEXT = """
 <p>
@@ -93,6 +94,8 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
         for tag in COLOURS:
             self.text.tag_config(tag, foreground=tag)
+
+        self.text.tag_config(CODE, foreground='grey')
 
         self.parser = TutorialHTMLParser(delegate=self)
         self.tut_directory = None
