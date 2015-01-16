@@ -252,6 +252,10 @@ class TutorialHTMLParser(HTMLParser):
         self.active_tags.pop(-1)
 
     def _compress_data(self, data):
+        # TODO: I'm not remotely happy with this method.
+        # TODO: It doesn't really do what it says on the tin, and when, eg, it
+        # TODO: is told not to strip indents, it does so anyway (replacing them
+        # TODO: with a single space).
         data = data.replace('\n', ' ')
         if len(data) > 1:
             first = data[0]
