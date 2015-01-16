@@ -22,10 +22,11 @@
 ## h1, h2, h3, h4, h5, it, tt, b, br, p, pre, ul, li, img
 ## and span as long as <span style='color:c'> where c is red, blue or green
 
-import tkinter as tk
-from tkinter import ttk
+from abc import ABCMeta, abstractmethod
 from html.parser import HTMLParser
 import os
+import tkinter as tk
+from tkinter import ttk
 
 FONTS_INFO = [('h1', 8, 'bold'),
               ('h2', 6, 'bold'),
@@ -56,7 +57,17 @@ Use the Online menu to interact with your online information.
 """
 
 
-class TutorialFrame(ttk.Frame):
+class TutorialHTMLParserDelegate(metaclass=ABCMeta):
+    @abstractmethod
+    def append_text(self, text, *args):
+        pass
+
+    @abstractmethod
+    def append_image(self, image_name):
+        pass
+
+
+class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
     def __init__(self, master, fontinfo, textlen):
         super().__init__(master)
 
@@ -83,9 +94,23 @@ class TutorialFrame(ttk.Frame):
         for tag in COLOURS:
             self.text.tag_config(tag, foreground=tag)
 
-        self.parser = TutorialHTMLParser(self.text, self)
+        self.parser = TutorialHTMLParser(delegate=self)
         self.tut_directory = None
 
+    # TutorialHTMLParserDelegate
+    def append_text(self, text, *args):
+        self.text.insert(tk.END, text, *args)
+
+    def append_image(self, image_name):
+        # TODO: img_obj used to be stored on self; check that changing that has
+        # TODO: not introduced GC problems
+        path = os.path.join(self.tutorial.tutorial_path, image_name)
+        img_obj = tk.PhotoImage(file=path)
+
+        img_label = ttk.Label(self.text, image=img_obj)
+        self.text.window_create(tk.END, window=img_label)
+
+    #
     def splash(self, online, version):
         text = INTRO_TEXT.format(version=version)
 
@@ -142,15 +167,16 @@ class TutorialFrame(ttk.Frame):
 
 
 class TutorialHTMLParser(HTMLParser):
-    def __init__(self, textobj, parent=None):
+    def __init__(self, delegate):
         super().__init__(self)
+
+        self.delegate = delegate
+
         self.header = ''
-        self.textobj = textobj
         self.indent = 0
         self.active_tags = []
         self.do_lstrip = False
         self.end_ul = False
-        self.parent = parent
 
     def reset(self):
         self.indent = 0
@@ -173,37 +199,32 @@ class TutorialHTMLParser(HTMLParser):
                 self.active_tags.append(tag)
         elif tag == 'br':
             self.do_lstrip = True
-            self.textobj.insert(tk.END, '\n')
+            self.delegate.append_text('\n')
         elif tag == 'p':
             self.do_lstrip = True
-            self.textobj.insert(tk.END, '\n\n')
+            self.delegate.append_text('\n\n')
         elif tag == 'img':
             img_file = attrs[0][1]
-            self.img_obj = \
-                tk.PhotoImage(
-                    file=os.path.join(self.parent.tut_directory, img_file)
-                )
-            img_label = ttk.Label(self.textobj, image=self.img_obj)
-            self.textobj.window_create(tk.END, window=img_label)
+            self.delegate.insert_image(img_file)
             self.active_tags.append(tag)
         else:
             if tag == 'ul':
-                self.textobj.insert(tk.END, '\n')
+                self.delegate.append_text('\n')
                 self.indent += 1
                 self.active_tags.append(tag)
             elif tag == 'li':
                 self.active_tags.append(INDENT[self.indent])
                 self.do_lstrip = True
                 if not self.end_ul:
-                    self.textobj.insert(tk.END, '\n')
-                self.textobj.insert(tk.END, '* ', tuple(self.active_tags))
+                    self.delegate.append_text('\n')
+                self.delegate.append_text('* ', tuple(self.active_tags))
             else:
                 self.active_tags.append(tag)
         self.end_ul = False
 
     def handle_endtag(self, tag):
         if tag == 'ul':
-            self.textobj.insert(tk.END, '\n\n')
+            self.delegate.append_text('\n\n')
             self.indent -= 1
             self.do_lstrip = True
             self.end_ul = True
@@ -213,7 +234,7 @@ class TutorialHTMLParser(HTMLParser):
             self.do_lstrip = True
             return
         elif tag in HEADERS:
-            self.textobj.insert(tk.END, '\n\n')
+            self.delegate.append_text('\n\n')
             self.do_lstrip = True
         self.active_tags.pop(-1)
 
@@ -246,13 +267,16 @@ class TutorialHTMLParser(HTMLParser):
             if tag == 'ul':
                 return
             if tag == 'pre':
-                self.textobj.insert(tk.END, data, ('tt',))
+                self.delegate.append_text(data, ('tt',))
                 return
             data = self._compress_data(data)
-            for tag in self.active_tags:
-                if 'indent' not in tag:
-                    self.textobj.tag_raise(tag)
-            self.textobj.insert(tk.END, data, tuple(self.active_tags))
+            # TODO: I'm not sure why it was necessary to give priority to
+            # TODO: all non-indent tags; this seems to also reverse the order
+            # TODO: of the active tags, which is a bit odd
+            #for tag in self.active_tags:
+            #    if 'indent' not in tag:
+            #        self.textobj.tag_raise(tag)
+            self.delegate.append_text(data, tuple(self.active_tags))
         else:
             data = self._compress_data(data)
-            self.textobj.insert(tk.END, data)
+            self.delegate.append_text(data)
