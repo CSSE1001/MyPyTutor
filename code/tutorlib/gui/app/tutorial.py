@@ -28,19 +28,45 @@ import os
 import tkinter as tk
 from tkinter import ttk
 
-FONTS_INFO = [('h1', 8, 'bold'),
-              ('h2', 6, 'bold'),
-              ('h3', 4, 'bold'),
-              ('h4', 2, 'bold'),
-              ('h5', 0, 'bold'),
-              ('it', 0, 'normal'),
-              ('b', 0, 'bold'),
-              ('tt', 1, 'normal')]
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
-INDENT = ['indent0', 'indent1', 'indent2', 'indent3', 'indent4', 'indent5']
-COLOURS = ['red', 'green', 'blue']
-CODE = 'tt'
+INDENT = 'indent{}'
+COLORS = ['red', 'green', 'blue']
+
+
+def get_configs(name, size, style='roman', max_indents=6):
+    tags = {
+        'it': {
+            'font': (name, size, 'italic'),
+        },
+        'b': {
+            'font': (name, size, 'bold'),
+        },
+        'tt': {
+            'font': ('courier', size, style),
+            'foreground': 'grey',
+        },
+    }
+
+    header_sizes = reversed(range(0, 2*len(HEADERS), 2))  # step in 2s from 0
+    for tag, sz in zip(HEADERS, header_sizes):
+        tags[tag] = {
+            'font': (name, size + sz, 'bold')
+        }
+
+    for n in range(max_indents):
+        tags[INDENT.format(n)] = {
+            'lmargin1': 40*n,
+            'lmargin2': 40*n + 14,
+        }
+
+    for color in COLORS:
+        tags[color] = {
+            'foreground': color,
+        }
+
+    return tags
+
 
 INTRO_TEXT = """
 <p>
@@ -89,14 +115,6 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
         self.update_fonts(font_name, font_size)
 
-        for i, tag in enumerate(INDENT):
-            self.text.tag_config(tag, lmargin1=40*i, lmargin2=40*i + 14)
-
-        for tag in COLOURS:
-            self.text.tag_config(tag, foreground=tag)
-
-        self.text.tag_config(CODE, foreground='grey')
-
         self.parser = TutorialHTMLParser(delegate=self)
         self.tut_directory = None
 
@@ -126,18 +144,10 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
         self.text.config(height=lines)
 
     def update_fonts(self, font_name, font_size):
-        for name, font_delta, weight in FONTS_INFO:
-            font = font_name
-            style = 'roman'
-            size = str(font_size + font_delta)
+        for tag, attrs in get_configs(font_name, font_size).items():
+            self.text.tag_config(tag, **attrs)
 
-            if name == 'tt':
-                font = 'courier'
-            elif name == 'it':
-                style = 'italic'
-
-            self.text.tag_config(name, font=(font, size, 'normal', style))
-
+        # reset default font (I think?)
         self.text.config(
             font=(font_name, str(font_size), 'normal', 'roman')
         )
@@ -216,7 +226,7 @@ class TutorialHTMLParser(HTMLParser):
                 self.indent += 1
                 self.active_tags.append(tag)
             elif tag == 'li':
-                self.active_tags.append(INDENT[self.indent])
+                self.active_tags.append(INDENT.format(self.indent))
                 self.do_lstrip = True
                 if not self.end_ul:
                     self.delegate.append_text('\n')
