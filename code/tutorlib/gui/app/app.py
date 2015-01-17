@@ -90,7 +90,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             self.cfg.window_sizes.problem
         )
         self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
-        self.tutorial_frame.splash(online=True, version=VERSION)
+        self.tutorial_frame.splash(version=VERSION)
 
         ## Short Problem Description
         self.short_description = ttk.Label(top_frame)  # TODO: sort out style
@@ -209,13 +209,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         If there are no more hints to display, do nothing.
 
         """
-        hint = self.current_tutorial.next_hint()
-
-        if hint is not None:
-            html = '<p>\n<b>Hint: </b>{}'.format(hint)
-            self.tutorial_frame.show_hint(html)
-
-            # TODO: show/hide hints button
+        if not self.tutorial_frame.show_next_hint():
+            # TODO: hide hints button
+            pass
 
     def _set_online_status(self, logged_in_user=None):
         """
@@ -458,7 +454,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.current_tutorial = problem
 
         # show the problem text and description
-        self.tutorial_frame.add_text(self.current_tutorial.description)
+        self.tutorial_frame.tutorial = self.current_tutorial
         self.short_description.config(
             text=self.current_tutorial.short_description
         )

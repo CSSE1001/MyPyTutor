@@ -116,7 +116,72 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
         self.update_fonts(font_name, font_size)
 
         self.parser = TutorialHTMLParser(delegate=self)
-        self.tut_directory = None
+        self._tutorial = None
+        self._next_hint_index = 0
+
+    # Properties
+    @property
+    def tutorial(self):
+        return self._tutorial
+
+    @tutorial.setter
+    def tutorial(self, tutorial):
+        # display the tutorial text
+        self._set_text(tutorial.description)
+        self._next_hint_index = 0
+
+        self._tutorial = tutorial
+
+    # Public methods
+    def splash(self, version):
+        text = INTRO_TEXT.format(version=version)
+
+        # this version of MPT is always online
+        text += ONLINE_TEXT
+
+        self._set_text(text)
+
+    def update_fonts(self, font_name, font_size):
+        for tag, attrs in get_configs(font_name, font_size).items():
+            self.text.tag_config(tag, **attrs)
+
+        # reset default font (I think?)
+        self.text.config(
+            font=(font_name, str(font_size), 'normal', 'roman')
+        )
+
+    def show_next_hint(self):
+        # actually get the hint
+        try:
+            hint = self.tutorial.hints[self._next_hint_index]
+            self._next_hint_index += 1
+        except IndexError:
+            return False
+
+        html = '<p>\n<b>Hint: </b>{}'.format(hint)
+
+        self.text.config(state=tk.NORMAL)
+
+        self.parser.reset()
+        self.parser.feed(html)
+
+        self.text.yview(tk.MOVETO, 1)
+
+        self.text.config(state=tk.DISABLED)
+
+        return True
+
+    # Private methods
+    def _set_text(self, text):
+        self.text.config(state=tk.NORMAL)
+        self.text.delete(1.0, tk.END)
+
+        self.text.insert(tk.END, '\n')
+
+        self.parser.reset()
+        self.parser.feed(text)
+
+        self.text.config(state=tk.DISABLED)
 
     # TutorialHTMLParserDelegate
     def append_text(self, text, *args):
@@ -130,53 +195,6 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
         img_label = ttk.Label(self.text, image=img_obj)
         self.text.window_create(tk.END, window=img_label)
-
-    #
-    def splash(self, online, version):
-        text = INTRO_TEXT.format(version=version)
-
-        if online:
-            text += ONLINE_TEXT
-
-        self.add_text(text)
-
-    def update_text_length(self, lines):
-        self.text.config(height=lines)
-
-    def update_fonts(self, font_name, font_size):
-        for tag, attrs in get_configs(font_name, font_size).items():
-            self.text.tag_config(tag, **attrs)
-
-        # reset default font (I think?)
-        self.text.config(
-            font=(font_name, str(font_size), 'normal', 'roman')
-        )
-
-    def set_directory(self, directory):
-        # TODO: I'm not currently calling this
-        self.tut_directory = directory
-
-    def add_text(self, text):
-        # TODO: this method name is bad - it doesn't add, it replaces
-        self.text.config(state=tk.NORMAL)
-        self.text.delete(1.0, tk.END)
-
-        self.text.insert(tk.END, '\n')
-
-        self.parser.reset()
-        self.parser.feed(text)
-
-        self.text.config(state=tk.DISABLED)
-
-    def show_hint(self, text):
-        self.text.config(state=tk.NORMAL)
-
-        self.parser.reset()
-        self.parser.feed(text)
-
-        self.text.yview(tk.MOVETO, 1)
-
-        self.text.config(state=tk.DISABLED)
 
 
 class TutorialHTMLParser(HTMLParser):
