@@ -8,6 +8,7 @@ from tutorlib.analysis.ast_tools \
 from tutorlib.analysis.node_objects \
         import Call, ClassDefinition, FunctionDefinition
 from tutorlib.analysis.scope_manager import NodeScopeManager
+from tutorlib.analysis.support import AutoHashingDefaultDict
 
 
 class DefinesAllPossibleVisits(type):
@@ -69,6 +70,9 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(ClassDefinition)
         self.calls = defaultdict(list)  # str name : [Call]
+
+        self.assignments_to = AutoHashingDefaultDict(list)  # ident : [object]
+        self.assignments_of = AutoHashingDefaultDict(list)  # object : [ident]
 
         self._scopes = NodeScopeManager()
 
@@ -244,6 +248,34 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
             'Leaving {}, but popped class was {}'.format(
                 class_name, popped_class_name
             )
+
+    def visit_Assign(self, node):
+        """
+        Default logic for visiting an Assign node.
+
+        Record information about the assignment in assignments_to (mapping the
+        target var to its assigned value) and in assignments_of (mapping the
+        assigned value to the target var).
+
+        Args:
+          node (ast.Assign): The node we are visiting.
+
+        """
+        for target_id in map(identifier, node.targets):
+            if target_id is None:
+                continue
+
+            if isinstance(node.value, ast.Call):
+                assignment_value = Call(node.value)
+            else:
+                assignment_value = identifier_or_value(node, prefer_value=True)
+
+            # always set assignments_to, but only set assignments_of if we
+            # have a known value (to avoid lots of None entries)
+            self.assignments_to[target_id].append(assignment_value)
+
+            if assignment_value is not None:
+                self.assignments_of[assignment_value].append(target_id)
 
     def visit_Call(self, node):
         """

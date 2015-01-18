@@ -27,7 +27,10 @@ class Analyser(CodeAnalyser):
             function_def = self.visitor.functions['create_layout']
             frame_name = function_def.args[0]
 
-            for n, btn in enumerate(function_def.calls['Button']):
+            btn_calls = function_def.calls['Button']
+            pack_calls = function_def.calls['pack']
+
+            for n, btn in enumerate(btn_calls):
                 if not btn.args:
                     self.add_error(
                         'The first argument to the constructor for a tk '
@@ -51,7 +54,7 @@ class Analyser(CodeAnalyser):
                         )
                     )
 
-            for pack in function_def.calls['pack']:
+            for pack in pack_calls:
                 if pack.args:
                     self.add_error(
                         'You should not give positional arguments to pack'
@@ -75,11 +78,7 @@ class Analyser(CodeAnalyser):
                         'pack (in {})'.format(pack.function_name)
                     )
 
-            # the order does matter with pack!
-            # for now, though, let's just make sure they're actually packing
-            # different objects
-            pack_calls = [p.function_name for p in function_def.calls['pack']]
-
+            # first, make sure that they're packing twice
             if len(pack_calls) != 2:
                 self.add_error(
                     'You should call pack exactly twice'
@@ -88,6 +87,21 @@ class Analyser(CodeAnalyser):
                 self.add_error(
                     'You need to pack both buttons (not just one)'
                 )
+
+            # now, check that they're packing both in the right order
+            for btn, pack in zip(btn_calls, pack_calls):
+                # (these are framework asserts, not student code asserts)
+                assert btn in self.visitor.assignments_of
+                assert len(self.visitor.assignments_of[btn]) > 0
+                btn_id = self.visitor.assignments_of[btn][0]
+
+                if not pack.function_name.startswith(btn_id):
+                    self.add_error(
+                        'Make sure you pack the buttons in the correct order; '
+                        'expected {}.pack but got {}'.format(
+                            btn_id, pack.function_name
+                        )
+                    )
 
 
 ANALYSER = Analyser(CodeVisitor)

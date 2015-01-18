@@ -133,6 +133,21 @@ class Call():
         kwds = ', '.join(
             '='.join(map(str, items)) for items in self.keywords.items()
         )
-        return 'Call: {}({!r}{})'.format(
+        return '{}({!r}{})'.format(
             self.function_name, self.args, ', {}'.format(kwds) if kwds else ''
         )
+
+    def __eq__(self, other):
+        if not isinstance(other, Call):
+            return False
+
+        return self.function_name == other.function_name \
+                and self.args == other.args \
+                and self.keywords == other.keywords
+
+    def __hash__(self):
+        return hash((
+            self.function_name,
+            tuple(self.args),
+            tuple(self.keywords.items()),
+        ))
