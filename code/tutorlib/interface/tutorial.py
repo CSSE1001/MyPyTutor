@@ -167,7 +167,6 @@ class Tutorial():
         self.timeout = config_lcls.get('TIMEOUT', 1)
 
         self.hints = config_lcls.get('HINTS', [])
-        self._next_hint_index = 0
 
         # initial values for lazy properties
         self._preload_code_text = None
@@ -428,20 +427,3 @@ class Tutorial():
             )
 
         return self._preload_code_text
-
-    def next_hint(self):
-        """
-        Return the next hint to display to the student.
-
-        Returns:
-          The next hint to display, as a string.
-          If there are no (remaining) hints, return None.
-
-        """
-        try:
-            hint = self.hints[self._next_hint_index]
-        except IndexError:
-            return None
-
-        self._next_hint_index += 1
-        return hint
