@@ -1,43 +1,52 @@
-# first, we need to make all of the necessary tk constants available to the
-# student; we do them all so that they can experiment, even with incorrect
-# configurations
-import tkinter as _tk
+def _get_window():
+    # something is going on with exec which is causing _get_window not to have
+    # a reference to _TestWindow (even if defined without an underscore) when
+    # it is defined at global scope
+    # I don't have time to track down the specific issue right now, so I'm
+    # going to take the lazy route out, and just nest it
+    import tkinter as tk
 
+    class _TestWindow(tk.Toplevel):
+        def __init__(self, master, title):
+            super().__init__(master)
 
-LEFT = _tk.LEFT
-RIGHT = _tk.RIGHT
-TOP = _tk.TOP
-BOTTOM = _tk.BOTTOM
+            self.configure(borderwidth=5)
+            self.geometry("400x200+30+30")
+            self.resizable(height=tk.FALSE, width=tk.FALSE)
+            self.protocol("WM_DELETE_WINDOW", self.ok)
+            self.title(title)
 
-TRUE = _tk.TRUE
-FALSE = _tk.FALSE
+            frame_main = tk.Frame(self)
+            frame_main.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
+            tk.Label(
+                frame_main,
+                text="Your layout should appear in the frame below",
+            ).pack()
 
-BOTH = _tk.BOTH
-X = _tk.X
-Y = _tk.Y
+            self.frame_problem = tk.Frame(
+                frame_main,
+                borderwidth=2,
+                relief=tk.SUNKEN,
+                bg="#ffffaa",
+            )
+            self.frame_problem.pack(fill=tk.BOTH, expand=tk.TRUE)
 
+            frame_buttons = tk.Frame(self)
+            frame_buttons.pack(fill=tk.X)
 
-class Button(_tk.Button):
-    """
-    Wrapper around tk.Button which logs widget creation.
+            self.btn_ok = tk.Button(
+                frame_buttons,
+                text='Close',
+                command=self.ok,
+            )
+            self.btn_ok.pack()
 
-    There's obviouisly more robust ways of achieving this in general, but for
-    a simple layout exercise, this actually isn't too bad.
+            self.btn_ok.focus_set()
+            self.bind('<Return>', self.ok)
+            self.bind('<Escape>', self.ok)
 
-    Class Attributes:
-      LOG (list): A list of arguments given to init and pack.  Argument order
-          is (init_args, init_kwargs, pack_args, pack__kwargs).
+        def ok(self, event=None):
+            self.destroy()
 
-    """
-    LOG = []
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self._init_args = args
-        self._init_kwargs = kwargs
-
-    def pack(self, *args, **kwargs):
-        super().pack(*args, **kwargs)
-
-        Button.LOG.append((self._init_args, self._init_kwargs, args, kwargs))
+    tw = _TestWindow(None, 'Layout')  # no master: root window
+    return tw, tw.frame_problem

@@ -3,10 +3,11 @@ class JustRunCodeAndDontTestAnything(StudentTestCase):
     MAIN_TEST = 'test_main'
 
     def test_main(self):
-        def _get_results():
-            pass
+        def _show_student_code():
+            window, frame = _get_window()
+            create_layout(frame)
 
-        _ = self.run_in_student_context(_get_results)
+        _ = self.run_in_student_context(_show_student_code)
 
 
 TEST_CLASSES = [
