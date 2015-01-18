@@ -3,8 +3,8 @@ from collections import defaultdict
 from functools import partial
 
 from tutorlib.analysis.ast_tools \
-    import fully_qualified_identifier, identifier, identifier_or_value, value
-from tutorlib.analysis.support import NonePaddedList
+    import fully_qualified_identifier, identifier, identifier_or_value
+from tutorlib.analysis.support import AutoHashingDefaultDict, NonePaddedList
 
 
 class FunctionDefinition():
@@ -48,6 +48,9 @@ class FunctionDefinition():
             # TODO: kwargs, varargs etc
 
         self.calls = defaultdict(list)  # str name : [Call]
+
+        self.assigns_to = AutoHashingDefaultDict(list)  # ident : [object]
+        self.assigned_values = AutoHashingDefaultDict(list)  # object : [ident]
 
 
 class ClassDefinition():

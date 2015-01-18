@@ -8,7 +8,6 @@ from tutorlib.analysis.ast_tools \
 from tutorlib.analysis.node_objects \
         import Call, ClassDefinition, FunctionDefinition
 from tutorlib.analysis.scope_manager import NodeScopeManager
-from tutorlib.analysis.support import AutoHashingDefaultDict
 
 
 class DefinesAllPossibleVisits(type):
@@ -70,9 +69,6 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(ClassDefinition)
         self.calls = defaultdict(list)  # str name : [Call]
-
-        self.assignments_to = AutoHashingDefaultDict(list)  # ident : [object]
-        self.assignments_of = AutoHashingDefaultDict(list)  # object : [ident]
 
         self._scopes = NodeScopeManager()
 
@@ -272,10 +268,11 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
             # always set assignments_to, but only set assignments_of if we
             # have a known value (to avoid lots of None entries)
-            self.assignments_to[target_id].append(assignment_value)
+            fn = self._current_function_def
+            fn.assigns_to[target_id].append(assignment_value)
 
             if assignment_value is not None:
-                self.assignments_of[assignment_value].append(target_id)
+                fn.assigned_values[assignment_value].append(target_id)
 
     def visit_Call(self, node):
         """
