@@ -1,5 +1,6 @@
 import ast
 from collections import defaultdict
+from functools import partial
 import inspect
 
 from tutorlib.analysis.ast_tools \
@@ -254,7 +255,8 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           node (ast.Assign): The node we are visiting.
 
         """
-        for target_id in map(identifier, node.targets):
+        identifier_or_none = partial(identifier, suppress_exceptions=True)
+        for target_id in map(identifier_or_none, node.targets):
             if target_id is None:
                 continue
 
