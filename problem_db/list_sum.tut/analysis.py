@@ -8,8 +8,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.has_for = False
         self.iteration_variable = None
 
-        self.has_return = False
-
     def visit_Assign(self, node):
         super().visit_Assign(node)
 
@@ -28,11 +26,6 @@ class CodeVisitor(TutorialNodeVisitor):
 
             self.iteration_variable = TutorialNodeVisitor.identifier(node.iter)
 
-    def visit_Return(self, node):
-        super().visit_Return(node)
-
-        self.has_return = True
-
 
 class Analyser(CodeAnalyser):
     def _analyse(self):
@@ -46,7 +39,7 @@ class Analyser(CodeAnalyser):
             self.add_error(
                 'Your function definition does not contain a for loop.'
             )
-        if not self.visitor.has_return:
+        if not self.visitor.functions['sum_elems'].returns:
             self.add_error('You need a return statement.')
 
         if not self.visitor.initialises_variable:

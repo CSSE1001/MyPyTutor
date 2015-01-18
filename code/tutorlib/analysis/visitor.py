@@ -285,3 +285,16 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
         call = Call(node)
         self._current_function_def.calls[function_name].append(call)
+
+    def visit_Return(self, node):
+        """
+        Default logic for visiting a Return node.
+
+        Record information about what (if anything) was returned.
+
+        Args:
+          node (ast.Return): The node we are visiting.
+
+        """
+        return_value = identifier_or_value(node.value, prefer_value=True)
+        self._current_function_def.returns.append(return_value)

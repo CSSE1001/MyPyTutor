@@ -16,10 +16,18 @@ class FunctionDefinition():
       is_defined (bool): Whether the function has been defined.
       args (NonePaddedList<str>): The identifiers of the arguments to the
           function.
+      assigns_to ({Identifier: [object]}): The identifiers which have been
+          assigned to in the function.  Identifiers are unordered, but the
+          successive assignments for each identifier are in the order
+          encountered.
+      assigned_values ({object: [Identifier]}): The identifiers which have had
+          the value in question assigned to them in the fuction.
       calls (defaultdict<str:[Call]>): All functions called in the code, as
           Call objects.  The list of calls is in the order encountered by the
           visitor (by default, depth first).  Quering the defaultdict for
           functions which were not called will return an empty list.
+      returns ([object]): Values returned from the function, in the order
+          encountered.
 
     """
     def __init__(self, node=None):
@@ -55,6 +63,8 @@ class FunctionDefinition():
 
         self.assigns_to = AutoHashingDefaultDict(list)  # ident : [object]
         self.assigned_values = AutoHashingDefaultDict(list)  # object : [ident]
+
+        self.returns = []
 
 
 class ClassDefinition():

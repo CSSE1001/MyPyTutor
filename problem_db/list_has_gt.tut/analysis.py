@@ -5,8 +5,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.has_for = False
         self.iterates_over_arg = False
 
-        self.return_count = 0
-
     def visit_For(self, node):
         super().visit_For(node)
 
@@ -18,11 +16,6 @@ class CodeVisitor(TutorialNodeVisitor):
             args = self.functions['has_gt'].args
             if args[0] is not None and iteration_id == args[0]:
                 self.iterates_over_arg = True
-
-    def visit_Return(self, node):
-        super().visit_Return(node)
-
-        self.return_count += 1
 
 
 class Analyser(CodeAnalyser):
@@ -39,9 +32,9 @@ class Analyser(CodeAnalyser):
         if not self.visitor.has_for:
             self.add_error('Your function definition does not contain a for loop.')
 
-        if not self.visitor.return_count:
+        if not self.visitor.functions['has_gt'].returns:
             self.add_error('You need a return statement.')
-        elif self.visitor.return_count == 1:
+        elif len(self.visitor.functions['has_gt'].returns) == 1:
             self.add_warning('You probably want to have two return statements')
 
 
