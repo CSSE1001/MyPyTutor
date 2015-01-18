@@ -22,23 +22,51 @@
 ## h1, h2, h3, h4, h5, it, tt, b, br, p, pre, ul, li, img
 ## and span as long as <span style='color:c'> where c is red, blue or green
 
-import tkinter as tk
-from tkinter import ttk
+from abc import ABCMeta, abstractmethod
 from html.parser import HTMLParser
 import os
+import tkinter as tk
+from tkinter import ttk
 
-FONTS_INFO = [('h1', 8, 'bold'),
-              ('h2', 6, 'bold'),
-              ('h3', 4, 'bold'),
-              ('h4', 2, 'bold'),
-              ('h5', 0, 'bold'),
-              ('it', 0, 'normal'),
-              ('b',  0, 'bold'),
-              ('tt', 1, 'normal')]
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
-INDENT = ['indent0', 'indent1', 'indent2', 'indent3', 'indent4', 'indent5']
-COLOURS = ['red', 'green', 'blue']
+INDENT = 'indent{}'
+COLORS = ['red', 'green', 'blue']
+
+
+def get_configs(name, size, style='roman', max_indents=6):
+    tags = {
+        'it': {
+            'font': (name, size, 'italic'),
+        },
+        'b': {
+            'font': (name, size, 'bold'),
+        },
+        'tt': {
+            'font': ('courier', size, style),
+            'foreground': 'grey',
+        },
+    }
+
+    header_sizes = reversed(range(0, 2*len(HEADERS), 2))  # step in 2s from 0
+    for tag, sz in zip(HEADERS, header_sizes):
+        tags[tag] = {
+            'font': (name, size + sz, 'bold')
+        }
+
+    for n in range(max_indents):
+        tags[INDENT.format(n)] = {
+            'lmargin1': 40*n,
+            'lmargin2': 40*n + 14,
+        }
+
+    for color in COLORS:
+        tags[color] = {
+            'foreground': color,
+        }
+
+    return tags
+
 
 INTRO_TEXT = """
 <p>
@@ -56,93 +84,131 @@ Use the Online menu to interact with your online information.
 """
 
 
-class TutorialFrame(ttk.Frame):
+class TutorialHTMLParserDelegate(metaclass=ABCMeta):
+    @abstractmethod
+    def append_text(self, text, *args):
+        pass
+
+    @abstractmethod
+    def append_image(self, image_name):
+        pass
+
+
+class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
     def __init__(self, master, fontinfo, textlen):
         super().__init__(master)
 
         font_name = fontinfo[0]
         font_size = int(fontinfo[1])
+
         self.text = tk.Text(self, height=textlen, wrap=tk.WORD)
-        #family = self.text.config('font')[3][0]
-        self.text.config(state=tk.DISABLED, font=(font_name,
-                                               str(font_size),
-                                               'normal', 'roman'))
+        self.text.config(
+            state=tk.DISABLED,
+            font=(font_name, str(font_size), 'normal', 'roman')
+        )
         self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
         scrollbar = ttk.Scrollbar(self)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
-        self.update_fonts(font_name, font_size)
-        for i, tag in enumerate(INDENT):
-            self.text.tag_config(tag, lmargin1=40*i, lmargin2=40*i+14)
-        for tag in COLOURS:
-            self.text.tag_config(tag, foreground=tag)
-        self.parser = TutorialHTMLParser(self.text, self)
-        self.tut_directory = None
 
-    def splash(self, online, version):
+        self.update_fonts(font_name, font_size)
+
+        self.parser = TutorialHTMLParser(delegate=self)
+        self._tutorial = None
+        self._next_hint_index = 0
+
+    # Properties
+    @property
+    def tutorial(self):
+        return self._tutorial
+
+    @tutorial.setter
+    def tutorial(self, tutorial):
+        # set the property
+        # do this FIRST, in case the later calls rely on it being present
+        self._tutorial = tutorial
+
+        # display the tutorial text
+        self._set_text(tutorial.description)
+        self._next_hint_index = 0
+
+    # Public methods
+    def splash(self, version):
         text = INTRO_TEXT.format(version=version)
 
-        if online:
-            text += ONLINE_TEXT
+        # this version of MPT is always online
+        text += ONLINE_TEXT
 
-        self.add_text(text)
-
-    def update_text_length(self, lines):
-        self.text.config(height=lines)
+        self._set_text(text)
 
     def update_fonts(self, font_name, font_size):
-        for name, font_delta, weight in FONTS_INFO:
-            if name == 'tt':
-                self.text.tag_config(name,
-                                     font=('courier',
-                                           str(font_size+font_delta),
-                                           'normal', 'roman'))
-            elif name == 'it':
-                self.text.tag_config(name,
-                                     font=(font_name,
-                                           str(font_size+font_delta),
-                                           weight, 'italic'))
-            else:
-                self.text.tag_config(name,
-                                     font=(font_name,
-                                           str(font_size+font_delta),
-                                           weight, 'roman'))
-        self.text.config(font=(font_name,
-                               str(font_size),
-                               'normal', 'roman'))
+        for tag, attrs in get_configs(font_name, font_size).items():
+            self.text.tag_config(tag, **attrs)
 
-    def set_directory(self, directory):
-        # TODO: I'm not currently calling this
-        self.tut_directory = directory
+        # reset default font (I think?)
+        self.text.config(
+            font=(font_name, str(font_size), 'normal', 'roman')
+        )
 
-    def add_text(self, text):
-        # TODO: this method name is bad - it doesn't add, it replaces
+    def show_next_hint(self):
+        # actually get the hint
+        try:
+            hint = self.tutorial.hints[self._next_hint_index]
+            self._next_hint_index += 1
+        except IndexError:
+            return False
+
+        html = '<p>\n<b>Hint: </b>{}'.format(hint)
+
+        self.text.config(state=tk.NORMAL)
+
+        self.parser.reset()
+        self.parser.feed(html)
+
+        self.text.yview(tk.MOVETO, 1)
+
+        self.text.config(state=tk.DISABLED)
+
+        return True
+
+    # Private methods
+    def _set_text(self, text):
         self.text.config(state=tk.NORMAL)
         self.text.delete(1.0, tk.END)
+
         self.text.insert(tk.END, '\n')
+
         self.parser.reset()
         self.parser.feed(text)
+
         self.text.config(state=tk.DISABLED)
 
-    def show_hint(self, text):
-        self.text.config(state=tk.NORMAL)
-        self.parser.reset()
-        self.parser.feed(text)
-        self.text.yview(tk.MOVETO, 1)
-        self.text.config(state=tk.DISABLED)
+    # TutorialHTMLParserDelegate
+    def append_text(self, text, *args):
+        self.text.insert(tk.END, text, *args)
+
+    def append_image(self, image_name):
+        # img_obj must be stored on self, or tk will garbage collect it
+        path = os.path.join(self.tutorial.tutorial_path, image_name)
+        self._img_obj = tk.PhotoImage(file=path)
+
+        img_label = ttk.Label(self.text, image=self._img_obj)
+        self.text.window_create(tk.END, window=img_label)
 
 
 class TutorialHTMLParser(HTMLParser):
-    def __init__(self, textobj, parent=None):
+    def __init__(self, delegate):
         super().__init__(self)
+
+        self.delegate = delegate
+
         self.header = ''
-        self.textobj = textobj
         self.indent = 0
         self.active_tags = []
         self.do_lstrip = False
         self.end_ul = False
-        self.parent = parent
 
     def reset(self):
         self.indent = 0
@@ -165,37 +231,32 @@ class TutorialHTMLParser(HTMLParser):
                 self.active_tags.append(tag)
         elif tag == 'br':
             self.do_lstrip = True
-            self.textobj.insert(tk.END, '\n')
+            self.delegate.append_text('\n')
         elif tag == 'p':
             self.do_lstrip = True
-            self.textobj.insert(tk.END, '\n\n')
+            self.delegate.append_text('\n\n')
         elif tag == 'img':
             img_file = attrs[0][1]
-            self.img_obj = \
-                tk.PhotoImage(
-                    file=os.path.join(self.parent.tut_directory, img_file)
-                )
-            img_label = ttk.Label(self.textobj, image=self.img_obj)
-            self.textobj.window_create(tk.END, window=img_label)
+            self.delegate.append_image(img_file)
             self.active_tags.append(tag)
         else:
             if tag == 'ul':
-                self.textobj.insert(tk.END, '\n')
+                self.delegate.append_text('\n')
                 self.indent += 1
                 self.active_tags.append(tag)
             elif tag == 'li':
-                self.active_tags.append(INDENT[self.indent])
+                self.active_tags.append(INDENT.format(self.indent))
                 self.do_lstrip = True
                 if not self.end_ul:
-                    self.textobj.insert(tk.END, '\n')
-                self.textobj.insert(tk.END, '* ', tuple(self.active_tags))
+                    self.delegate.append_text('\n')
+                self.delegate.append_text('* ', tuple(self.active_tags))
             else:
                 self.active_tags.append(tag)
         self.end_ul = False
 
     def handle_endtag(self, tag):
         if tag == 'ul':
-            self.textobj.insert(tk.END, '\n\n')
+            self.delegate.append_text('\n\n')
             self.indent -= 1
             self.do_lstrip = True
             self.end_ul = True
@@ -205,11 +266,15 @@ class TutorialHTMLParser(HTMLParser):
             self.do_lstrip = True
             return
         elif tag in HEADERS:
-            self.textobj.insert(tk.END, '\n\n')
+            self.delegate.append_text('\n\n')
             self.do_lstrip = True
         self.active_tags.pop(-1)
 
     def _compress_data(self, data):
+        # TODO: I'm not remotely happy with this method.
+        # TODO: It doesn't really do what it says on the tin, and when, eg, it
+        # TODO: is told not to strip indents, it does so anyway (replacing them
+        # TODO: with a single space).
         data = data.replace('\n', ' ')
         if len(data) > 1:
             first = data[0]
@@ -238,13 +303,16 @@ class TutorialHTMLParser(HTMLParser):
             if tag == 'ul':
                 return
             if tag == 'pre':
-                self.textobj.insert(tk.END, data, ('tt',))
+                self.delegate.append_text(data, ('tt',))
                 return
             data = self._compress_data(data)
-            for tag in self.active_tags:
-                if 'indent' not in tag:
-                    self.textobj.tag_raise(tag)
-            self.textobj.insert(tk.END, data, tuple(self.active_tags))
+            # TODO: I'm not sure why it was necessary to give priority to
+            # TODO: all non-indent tags; this seems to also reverse the order
+            # TODO: of the active tags, which is a bit odd
+            #for tag in self.active_tags:
+            #    if 'indent' not in tag:
+            #        self.textobj.tag_raise(tag)
+            self.delegate.append_text(data, tuple(self.active_tags))
         else:
             data = self._compress_data(data)
-            self.textobj.insert(tk.END, data)
+            self.delegate.append_text(data)

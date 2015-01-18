@@ -1,7 +1,9 @@
 import ast
 from collections import defaultdict
+from functools import partial
 
-from tutorlib.analysis.ast_tools import identifier, identifier_or_value
+from tutorlib.analysis.ast_tools \
+    import fully_qualified_identifier, identifier, identifier_or_value, value
 from tutorlib.analysis.support import NonePaddedList
 
 
@@ -109,11 +111,28 @@ class Call():
         """
         assert isinstance(node, ast.Call)
 
-        self.function_name = identifier(node.func)
+        self.function_name = fully_qualified_identifier(node.func)
 
-        # TODO: .keywords, .starargs, .kwargs
+        # TODO: .starargs, .kwargs
         args = list(map(identifier_or_value, node.args))
         self.args = args
 
+        silent_id = partial(identifier, suppress_exceptions=True)
+        silent_id_or_val = partial(
+            identifier_or_value,
+            prefer_value=True,
+            fully_qualified=True,
+        )
+
+        self.keywords = {
+            silent_id(kw.arg): silent_id_or_val(kw.value)
+                    for kw in node.keywords
+        }
+
     def __repr__(self):
-        return 'Call: {}({!r})'.format(self.function_name, self.args)
+        kwds = ', '.join(
+            '='.join(map(str, items)) for items in self.keywords.items()
+        )
+        return 'Call: {}({!r}{})'.format(
+            self.function_name, self.args, ', {}'.format(kwds) if kwds else ''
+        )

@@ -61,6 +61,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         master.config(menu=self.menu)
 
         #### Set up local variables
+        ## Optionals / property bases
+        self.current_tutorial = None
+        self._editor = None
+        self._tutorial_package = None
+
         ## Important top-level vars
         self.master = master
         self.cfg = load_config()
@@ -72,10 +77,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Objects
         self.web_api = WebAPI()
         master.after(0, self.synchronise)  # post event immediately after init
-
-        ## Optionals / property bases
-        self.current_tutorial = None
-        self._editor = None
 
         #### Create GUI Widgets
         ## Top Frame
@@ -89,7 +90,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             self.cfg.window_sizes.problem
         )
         self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
-        self.tutorial_frame.splash(online=True, version=VERSION)
+        self.tutorial_frame.splash(version=VERSION)
 
         ## Short Problem Description
         self.short_description = ttk.Label(top_frame)  # TODO: sort out style
@@ -149,8 +150,23 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             )
         return self._editor
 
+    @property
+    def tutorial_package(self):
+        if self._tutorial_package is None:
+            self._select_tutorial_package('')
+
+            if self._tutorial_package is None:
+                raise AssertionError('Failed to select tutorial package')
+
+        return self._tutorial_package
+
+    @tutorial_package.setter
+    def tutorial_package(self, value):
+        self._tutorial_package = value
+
     ## Private methods
-    def _select_tutorial_package(self, package_name):
+    # TODO: should be .tutorial_package.setter property
+    def _select_tutorial_package(self, package_name=''):
         """
         Select the tutorial package with the given name.
 
@@ -193,13 +209,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         If there are no more hints to display, do nothing.
 
         """
-        hint = self.current_tutorial.next_hint()
-
-        if hint is not None:
-            html = '<p>\n<b>Hint: </b>{}'.format(hint)
-            self.tutorial_frame.show_hint(html)
-
-            # TODO: show/hide hints button
+        if not self.tutorial_frame.show_next_hint():
+            # TODO: hide hints button
+            pass
 
     def _set_online_status(self, logged_in_user=None):
         """
@@ -442,7 +454,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.current_tutorial = problem
 
         # show the problem text and description
-        self.tutorial_frame.add_text(self.current_tutorial.description)
+        self.tutorial_frame.tutorial = self.current_tutorial
         self.short_description.config(
             text=self.current_tutorial.short_description
         )

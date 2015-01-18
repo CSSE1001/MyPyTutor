@@ -3,7 +3,8 @@ from collections import defaultdict
 import inspect
 
 from tutorlib.analysis.ast_tools \
-        import identifier, identifier_or_value, involved_identifiers, value
+        import fully_qualified_identifier, identifier, identifier_or_value, \
+               involved_identifiers, value
 from tutorlib.analysis.node_objects \
         import Call, ClassDefinition, FunctionDefinition
 from tutorlib.analysis.scope_manager import NodeScopeManager
@@ -73,6 +74,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
     # make support functions avaialble statically, so that it is only necessary
     # to inject this class into the analysis context
+    fully_qualified_identifier = fully_qualified_identifier
     identifier = identifier
     identifier_or_value = identifier_or_value
     involved_identifiers = involved_identifiers
