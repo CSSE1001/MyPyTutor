@@ -126,11 +126,13 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
     @tutorial.setter
     def tutorial(self, tutorial):
+        # set the property
+        # do this FIRST, in case the later calls rely on it being present
+        self._tutorial = tutorial
+
         # display the tutorial text
         self._set_text(tutorial.description)
         self._next_hint_index = 0
-
-        self._tutorial = tutorial
 
     # Public methods
     def splash(self, version):
@@ -188,12 +190,11 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
         self.text.insert(tk.END, text, *args)
 
     def append_image(self, image_name):
-        # TODO: img_obj used to be stored on self; check that changing that has
-        # TODO: not introduced GC problems
+        # img_obj must be stored on self, or tk will garbage collect it
         path = os.path.join(self.tutorial.tutorial_path, image_name)
-        img_obj = tk.PhotoImage(file=path)
+        self._img_obj = tk.PhotoImage(file=path)
 
-        img_label = ttk.Label(self.text, image=img_obj)
+        img_label = ttk.Label(self.text, image=self._img_obj)
         self.text.window_create(tk.END, window=img_label)
 
 
@@ -236,7 +237,7 @@ class TutorialHTMLParser(HTMLParser):
             self.delegate.append_text('\n\n')
         elif tag == 'img':
             img_file = attrs[0][1]
-            self.delegate.insert_image(img_file)
+            self.delegate.append_image(img_file)
             self.active_tags.append(tag)
         else:
             if tag == 'ul':

@@ -5,6 +5,10 @@ from operator import attrgetter
 from tutorlib.analysis.support import StaticAnalysisError
 
 
+class Identifier(str):
+    pass
+
+
 def identifier(node, suppress_exceptions=False):
     """
     Return the identifier of the given node.
@@ -33,13 +37,15 @@ def identifier(node, suppress_exceptions=False):
     this exception is raised, that's probably why.
 
     Args:
-      node (ast.Node): The node to return the identifier of.
+      node (ast.AST): The node to return the identifier of.  If this is a str,
+          assume (charitably) that it comes from an ast identifier property,
+          and return it.
       suppress_exceptions (bool, optional): Whether exceptions should be
           suppressed.  If True, then this method will return None if an
           identifier cannot be found.  Defaults to False.
 
     Returns:
-      The identifier of the node, as a str.
+      The identifier of the node, as an Identifier.
 
       If the node has no defined identifier (according to the rules used in
       this function), and suppress_exceptions is True, then None will be
@@ -50,6 +56,11 @@ def identifier(node, suppress_exceptions=False):
           the rules used in this function), and suppress_exceptions is False.
 
     """
+    # if we're given a str, assume it is from an ast identifier, and convert
+    # it appropriately
+    if isinstance(node, str):
+        return Identifier(node)
+
     mappings = {
         # stmt
         ast.FunctionDef: attrgetter('name'),
@@ -67,7 +78,7 @@ def identifier(node, suppress_exceptions=False):
     }
 
     if type(node) in mappings:
-        return mappings[type(node)](node)
+        return Identifier(mappings[type(node)](node))
 
     if suppress_exceptions:
         return None
@@ -75,6 +86,51 @@ def identifier(node, suppress_exceptions=False):
     raise StaticAnalysisError(
         'No known identifier exists for node {}'.format(node)
     )
+
+
+def fully_qualified_identifier(node, suppress_exceptions=False):
+    """
+    Return the fully-qualified identifier for the given node.
+
+    The fully-qualified identifier for a node is a standard dot-separated
+    string, as you would see in a function call, eg:
+      instance.method()
+      instance.property.method()
+
+    Args:
+      node (ast.AST): The node to return the identifier of.
+      suppress_exceptions (bool, optional): Whether exceptions should be
+          suppressed.  If True, then this method will return None if an
+          identifier cannot be found.  Defaults to False.
+
+    Returns:
+      The fully-qualified identifier of the given node, as an Identifier.
+
+    Raises:
+      StaticAnalysisError: If there is no identifier for the node, or for any
+          relevant child nodes, according to the rules used in identifier),
+          and suppress_exceptions is False.
+
+    """
+    recurse = {
+        ast.Attribute: ['value', 'attr'],
+    }
+
+    # we should only recurse if we don't already have a base node (which will
+    # be the case if the value in question is not an ast.AST subclass)
+    this = partial(
+        fully_qualified_identifier, suppress_exceptions=suppress_exceptions
+    )
+    this_id = lambda v: this(v) if isinstance(v, ast.AST) else v
+
+    if type(node) in recurse:
+        attrs = recurse[type(node)]
+        return Identifier(
+            '.'.join(map(this_id, map(partial(getattr, node), attrs)))
+        )
+
+    # default to identifier, inheriting its exception-raising behaviour
+    return identifier(node, suppress_exceptions=suppress_exceptions)
 
 
 def involved_identifiers(*nodes):
@@ -101,7 +157,7 @@ def involved_identifiers(*nodes):
           return identifiers for.
 
     Returns:
-      A list of all involved identifiers, as strings.
+      A list of all involved identifiers, as Identifiers.
 
       The order of this list is not defined.
 
@@ -241,7 +297,7 @@ def value(node, suppress_exceptions=False):
     call in the last position.
 
     Args:
-      node (ast.Node): The node to return the value of.
+      node (ast.AST): The node to return the value of.
       suppress_exceptions (bool, optional): Whether exceptions should be
           suppressed.  If True, then this method will return None if a
           value cannot be found.  Note that as mentioned above, many use cases
@@ -299,13 +355,17 @@ def value(node, suppress_exceptions=False):
     )
 
 
-def identifier_or_value(node):
-    nid = identifier(node, suppress_exceptions=True)
-    if nid is not None:
-        return nid
+def identifier_or_value(node, prefer_value=False, fully_qualified=False):
+    if fully_qualified:
+        nid = fully_qualified_identifier(
+            node, suppress_exceptions=True
+        )
+    else:
+        nid = identifier(node, suppress_exceptions=True)
 
     val = value(node, suppress_exceptions=True)
-    if val is not None:
-        return val
 
-    return None  # just default to returning None
+    if prefer_value:
+        return val if val is not None else nid
+    else:
+        return nid if nid is not None else val
