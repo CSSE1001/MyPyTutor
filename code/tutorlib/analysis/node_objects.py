@@ -147,11 +147,14 @@ class Call():
         }
 
     def __repr__(self):
+        args = ', '.join(map(str, self.args))
         kwds = ', '.join(
             '='.join(map(str, items)) for items in self.keywords.items()
         )
-        return '{}({!r}{})'.format(
-            self.function_name, self.args, ', {}'.format(kwds) if kwds else ''
+        return '{}({}{})'.format(
+            self.function_name,
+            args,
+            '{}{}'.format(', ' if args else '', kwds) if kwds else ''
         )
 
     def __eq__(self, other):
