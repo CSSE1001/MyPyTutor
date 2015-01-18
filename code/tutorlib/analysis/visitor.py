@@ -8,6 +8,7 @@ from tutorlib.analysis.ast_tools \
 from tutorlib.analysis.node_objects \
         import Call, ClassDefinition, FunctionDefinition
 from tutorlib.analysis.scope_manager import NodeScopeManager
+from tutorlib.testing.tester import STUDENT_FUNCTION_NAME  # urgh, messy
 
 
 class DefinesAllPossibleVisits(type):
@@ -59,16 +60,11 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           code, as ClassDefinition objects.  Quering the defaultdict for
           undefined classes will return a ClassDefinition object with
           .is_defined = False
-      calls (defaultdict<str:[Call]>): All functions called in the code, as
-          Call objects.  The list of calls is in the order encountered by the
-          visitor (by default, depth first).  Quering the defaultdict for
-          functions which were not called will return an empty list.
 
     """
     def __init__(self):
         self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(ClassDefinition)
-        self.calls = defaultdict(list)  # str name : [Call]
 
         self._scopes = NodeScopeManager()
 
@@ -82,7 +78,8 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
     @property
     def _current_function(self):
-        return self._scopes.peek_function()
+        name = self._scopes.peek_function()
+        return None if name == STUDENT_FUNCTION_NAME else name
 
     @property  # NB: intended to be *really* private ;)
     def _current_function_def(self):
@@ -287,6 +284,4 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         function_name = TutorialNodeVisitor.identifier(node.func)
 
         call = Call(node)
-        self.calls[function_name].append(call)
-
         self._current_function_def.calls[function_name].append(call)

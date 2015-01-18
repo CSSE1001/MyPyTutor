@@ -11,6 +11,9 @@ from tutorlib.testing.support \
                inject_to_module, remove_from_module
 
 
+STUDENT_FUNCTION_NAME = '_function_under_test'
+
+
 class TutorialTester():
     """
     A class for testing a student's solution to a tutorial problem.
@@ -86,13 +89,10 @@ class TutorialTester():
 
         """
         if wrap_student_code:
-            # TODO: this should probably be a global
-            student_function_name = '_function_under_test'
-
             # TODO: this will cause problems with line detection for errors
             # TODO: should probably intercept and modify exceptions
             code_text = 'def {}():\n{}'.format(
-                student_function_name, indent(code_text)
+                STUDENT_FUNCTION_NAME, indent(code_text)
             )
 
         for test_class in self.test_classes:

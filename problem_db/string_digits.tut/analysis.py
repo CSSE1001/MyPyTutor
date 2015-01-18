@@ -54,7 +54,7 @@ class Analyser(CodeAnalyser):
                 )
             )
 
-        if not self.visitor.calls['isdigit']:
+        if not self.visitor.functions['get_digits'].calls['isdigit']:
             self.add_error('You should use str.isdigit')
         elif not self.visitor.checks_correct_var:
             self.add_warning(

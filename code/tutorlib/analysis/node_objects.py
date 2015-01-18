@@ -16,6 +16,10 @@ class FunctionDefinition():
       is_defined (bool): Whether the function has been defined.
       args (NonePaddedList<str>): The identifiers of the arguments to the
           function.
+      calls (defaultdict<str:[Call]>): All functions called in the code, as
+          Call objects.  The list of calls is in the order encountered by the
+          visitor (by default, depth first).  Quering the defaultdict for
+          functions which were not called will return an empty list.
 
     """
     def __init__(self, node=None):

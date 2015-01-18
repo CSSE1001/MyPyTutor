@@ -39,7 +39,7 @@ class Analyser(CodeAnalyser):
         if not self.visitor.functions['sum_elems'].is_defined:
             self.add_error('There is no definition of sum_elems')
 
-        if self.visitor.calls['sum']:
+        if self.visitor.functions['sum_elems'].calls['sum']:
             self.add_error('Your solution must not use sum')
 
         if not self.visitor.has_for:
