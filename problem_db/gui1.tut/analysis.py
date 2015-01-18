@@ -98,9 +98,9 @@ class Analyser(CodeAnalyser):
             # now, check that they're packing both in the right order
             for btn, pack in zip(btn_calls, pack_calls):
                 # (these are framework asserts, not student code asserts)
-                assert btn in function_def.assigned_values
-                assert len(function_def.assigned_values[btn]) > 0
-                btn_id = function_def.assigned_values[btn][0]
+                assert btn in function_def.assigned_value_of
+                assert len(function_def.assigned_value_of[btn]) > 0
+                btn_id = function_def.assigned_value_of[btn][0]
 
                 if not pack.function_name.startswith(btn_id):
                     self.add_error(

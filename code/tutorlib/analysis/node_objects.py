@@ -20,8 +20,8 @@ class FunctionDefinition():
           assigned to in the function.  Identifiers are unordered, but the
           successive assignments for each identifier are in the order
           encountered.
-      assigned_values ({object: [Identifier]}): The identifiers which have had
-          the value in question assigned to them in the fuction.
+      assigned_value_of ({object: [Identifier]}): The identifiers which have
+          had the value in question assigned to them in the fuction.
       calls (defaultdict<str:[Call]>): All functions called in the code, as
           Call objects.  The list of calls is in the order encountered by the
           visitor (by default, depth first).  Quering the defaultdict for
@@ -62,7 +62,7 @@ class FunctionDefinition():
         self.calls = defaultdict(list)  # str name : [Call]
 
         self.assigns_to = AutoHashingDefaultDict(list)  # ident : [object]
-        self.assigned_values = AutoHashingDefaultDict(list)  # object : [ident]
+        self.assigned_value_of = AutoHashingDefaultDict(list)  # object:[ident]
 
         self.returns = []
 

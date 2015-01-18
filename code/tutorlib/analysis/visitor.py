@@ -271,7 +271,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
             fn.assigns_to[target_id].append(assignment_value)
 
             if assignment_value is not None:
-                fn.assigned_values[assignment_value].append(target_id)
+                fn.assigned_value_of[assignment_value].append(target_id)
 
     def visit_Call(self, node):
         """

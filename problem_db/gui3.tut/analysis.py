@@ -45,7 +45,7 @@ class Analyser(CodeAnalyser):
                     'your child frame'.format(frame_name)
                 )
 
-            child_frame_name = function_def.assigned_values[frame_call][0]
+            child_frame_name = function_def.assigned_value_of[frame_call][0]
 
             try:
                 child_frame_pack = next(
@@ -81,7 +81,7 @@ class Analyser(CodeAnalyser):
 
             btn_calls = function_def.calls['Button']
             btn_names = [
-                function_def.assigned_values[btn][0] for btn in btn_calls
+                function_def.assigned_value_of[btn][0] for btn in btn_calls
             ]
             btn_pack_calls = [
                 call for call in function_def.calls['pack']
@@ -170,9 +170,9 @@ class Analyser(CodeAnalyser):
                 # now, check that they're packing both in the right order
                 for btn, pack in zip(btn_calls, btn_pack_calls):
                     # (these are framework asserts, not student code asserts)
-                    assert btn in function_def.assigned_values
-                    assert len(function_def.assigned_values[btn]) > 0
-                    btn_id = function_def.assigned_values[btn][0]
+                    assert btn in function_def.assigned_value_of
+                    assert len(function_def.assigned_value_of[btn]) > 0
+                    btn_id = function_def.assigned_value_of[btn][0]
 
                     if not pack.function_name.startswith(btn_id):
                         self.add_error(
