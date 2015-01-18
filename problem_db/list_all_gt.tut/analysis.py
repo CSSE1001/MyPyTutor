@@ -11,8 +11,6 @@ class CodeVisitor(TutorialNodeVisitor):
         self.appends_in_loop = False
         self.appends_outside_loop = False
 
-        self.has_return = False
-
     def visit_Assign(self, node):
         super().visit_Assign(node)
 
@@ -40,11 +38,6 @@ class CodeVisitor(TutorialNodeVisitor):
             elif self._current_function == 'all_gt':
                 self.appends_outside_loop = True
 
-    def visit_Return(self, node):
-        super().visit_Return(node)
-
-        self.has_return = True
-
 
 class List2Analyser(CodeAnalyser):
     def _analyse(self):
@@ -55,7 +48,7 @@ class List2Analyser(CodeAnalyser):
             self.add_error(
                 'Your function definition does not contain a for loop.'
             )
-        if not self.visitor.has_return:
+        if not self.visitor.functions['all_gt'].returns:
             self.add_error('You need a return statement.')
 
         if not self.visitor.initialises_variable:

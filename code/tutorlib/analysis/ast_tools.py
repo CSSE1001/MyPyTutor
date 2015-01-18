@@ -344,6 +344,8 @@ def value(node, suppress_exceptions=False):
         ast.Dict: build_dict,
     }
 
+    # TODO: it is currently impossible to distinguish a NameConstant of None
+    # TODO: from the failure of this function to find a value mapping
     if type(node) in mappings:
         return mappings[type(node)](node)
 

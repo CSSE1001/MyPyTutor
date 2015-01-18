@@ -1,4 +1,5 @@
-from collections.abc import Sequence
+from collections import defaultdict
+from collections.abc import Hashable, Sequence, MutableMapping
 
 
 class StaticAnalysisError(Exception):
@@ -82,3 +83,68 @@ class NonePaddedList(Sequence):
         """
         for idx in range(len(self)):
             yield self[idx]
+
+
+class AutoHashingDefaultDict(MutableMapping):
+    """
+    A MutableMapping (ie, a dict) which will use repr(key) in place of key for
+    any unhashable type.
+
+    There are so many dragons with this class that it's insane; use with
+    *extreme* caution
+
+    In particular, note that certain keys may be indistinguishable due to
+    identical string representations.  (As the id of this class is prepended
+    to the converted keys, however, it should be unlikely for a bare string
+    to be identical to a string representation of a class.)
+
+    """
+    def __init__(self, missing_func=None, *args, **kwargs):
+        self._store = defaultdict(missing_func, *args, **kwargs)
+
+        self._key_mappings = {}
+
+    def _convert_key(self, key):
+        if not isinstance(key, Hashable):
+            # prepend the id of this class to the repr of the key
+            # this should reduce collisions with, eg, '()' or '[]'
+            key = '{}.{}'.format(id(self), repr(key))
+        return key
+
+    def __str__(self):
+        return str(self._store)
+
+    def __repr__(self):
+        return repr(self._store)
+
+    def __getitem__(self, key):
+        return self._store[self._convert_key(key)]
+
+    def __setitem__(self, key, value):
+        if not isinstance(key, Hashable):
+            skey = self._convert_key(key)
+            self._key_mappings[skey] = key
+            key = skey
+
+        self._store[key] = value
+
+    def __delitem__(self, key):
+        skey = self._convert_key(key)
+        del self._store[skey]
+
+        if skey in self._key_mappings:
+            del self._key_mappings[skey]
+
+    def __iter__(self):
+        return iter(self._store)
+
+    def __len__(self):
+        return len(self._store)
+
+    def keys(self):
+        # TODO: use KeysView?
+        return (self._key_mappings.get(k, k) for k in super().keys())
+
+    def items(self):
+        # TODO: use ItemsView?
+        return zip(self.keys(), self.values())

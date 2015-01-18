@@ -11,6 +11,9 @@ from tutorlib.testing.support \
                inject_to_module, remove_from_module
 
 
+STUDENT_FUNCTION_NAME = '_function_under_test'
+
+
 class TutorialTester():
     """
     A class for testing a student's solution to a tutorial problem.
@@ -22,7 +25,7 @@ class TutorialTester():
       test_lcls ({str:object}): The locals dict to use for testing.
 
     """
-    def __init__(self, test_classes, test_gbls, test_lcls):
+    def __init__(self, test_classes, test_lcls):
         """
         Initialise a new TutorialTester object.
 
@@ -32,12 +35,10 @@ class TutorialTester():
         Args:
           test_classes ([StudentTestCase]): The test classes to use.  This is
               a list of classes, not of instances.
-          test_gbls ({str:object}): The globals dict to use for testing.
           test_lcls ({str:object}): The locals dict to use for testing.
 
         """
         self.test_classes = test_classes
-        self.test_gbls = test_gbls
         self.test_lcls = test_lcls
 
         # initialise our results dict
@@ -86,13 +87,10 @@ class TutorialTester():
 
         """
         if wrap_student_code:
-            # TODO: this should probably be a global
-            student_function_name = '_function_under_test'
-
             # TODO: this will cause problems with line detection for errors
             # TODO: should probably intercept and modify exceptions
             code_text = 'def {}():\n{}'.format(
-                student_function_name, indent(code_text)
+                STUDENT_FUNCTION_NAME, indent(code_text)
             )
 
         for test_class in self.test_classes:
@@ -124,28 +122,10 @@ class TutorialTester():
 
         """
         # grab a copy of our context to use
-        # unfortunately, it's not robust to copy globals(), which means we
-        # can't grab a nice deepcopy of test_gbls
-        # in other words, if students mess with that, all future tests will be
-        # inconsistent :(
-        gbls = copy.copy(self.test_gbls)
         try:
             lcls = copy.deepcopy(self.test_lcls)
         except:
             lcls = copy.copy(self.test_lcls)
-
-        # NB: if we use exec with separate globals and locals dictionaries,
-        # recursive functions will not behave as expected
-        # this is due to issues with how exec treats top-level function
-        # definitions
-        # normally, a function defined at top-level will be placed into locals,
-        # *but locals will be globals() at that scope*
-        # recursive calls will always search in globals, meaning that if code
-        # is execed with separate globals and locals dicts, and top-level
-        # function definitions are bound to locals, those functions will not
-        # be able to find themselves in globals()
-        # see http://stackoverflow.com/a/872082/1103045
-        lcls = dict(gbls, **lcls)
 
         # execute the student's code, and grab a reference to the function
         try:

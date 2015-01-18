@@ -88,7 +88,14 @@ def _run_tests(tutorial, text):
     """
     # load the support file (giving students access to functions, variables
     # etc which they may need for their solution)
-    gbls, lcls = tutorial.exec_submodule(Tutorial.SUPPORT_MODULE)
+    _lcls = {}
+    gbls, lcls = tutorial.exec_submodule(Tutorial.SUPPORT_MODULE, _lcls, None)
+
+    # we rely on the implementation-specific behaviour of exec_submodule to
+    # pass only a single dict to exec if lcls is given as None
+    # if someone changes this behaviour, the submodule *will not* be parsed
+    # correctly, so we should fail (see the note in exec_module)
+    assert _lcls is gbls and _lcls is lcls
 
     # perform the static analysis
     # this should only take place if there are no errors in parsing the
@@ -98,7 +105,7 @@ def _run_tests(tutorial, text):
     # note that we may have an error with no line information (this will be
     # the case with a NameError, for example)
     analyser = tutorial.analyser
-    tester = TutorialTester(tutorial.test_classes, gbls, lcls)
+    tester = TutorialTester(tutorial.test_classes, lcls)
 
     error_line = analyser.check_for_errors(text)
     if error_line is not None:

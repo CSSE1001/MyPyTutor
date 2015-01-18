@@ -72,17 +72,21 @@ class Analyser(CodeAnalyser):
                         'You need to provide side as a keyword argument to '
                         'pack (in {})'.format(pack.function_name)
                     )
-                elif pack.keywords['side'] != 'tk.LEFT':
+                elif pack.keywords['side'] != 'tk.TOP':
                     self.add_error(
-                        'You should be packing to the LEFT (got {} instead '
-                        'in {})'.format(
-                            pack.keywords['side'], pack.function_name
-                        )
+                        'You appear to be using the wrong value for side '
+                        '(in {})'.format(pack.function_name)
                     )
-                elif len(pack.keywords) > 1:
+
+                if 'anchor' not in pack.keywords:
                     self.add_error(
-                        'You only need to provide side as an argument to '
-                        'pack (in {})'.format(pack.function_name)
+                        'You need to make sure that the buttons appear on top '
+                        'of each other on the left of the frame'
+                    )
+                elif pack.keywords['anchor'] != 'tk.W':
+                    self.add_error(
+                        'You appear to be using the wrong value for anchor '
+                        '(in {})'.format(pack.function_name)
                     )
 
             # first, make sure that they're packing twice
@@ -94,21 +98,68 @@ class Analyser(CodeAnalyser):
                 self.add_error(
                     'You need to pack both buttons (not just one)'
                 )
+            else:
+                # now, check that they're packing both in the right order
+                for btn, pack in zip(btn_calls, pack_calls):
+                    # (these are framework asserts, not student code asserts)
+                    assert btn in function_def.assigned_value_of
+                    assert len(function_def.assigned_value_of[btn]) > 0
+                    btn_id = function_def.assigned_value_of[btn][0]
 
-            # now, check that they're packing both in the right order
-            for btn, pack in zip(btn_calls, pack_calls):
-                # (these are framework asserts, not student code asserts)
-                assert btn in function_def.assigned_value_of
-                assert len(function_def.assigned_value_of[btn]) > 0
-                btn_id = function_def.assigned_value_of[btn][0]
+                    if not pack.function_name.startswith(btn_id):
+                        self.add_error(
+                            'Make sure you pack the buttons in the correct '
+                            'order: expected {}.pack but got {}'.format(
+                                btn_id, pack.function_name
+                            )
+                        )
 
-                if not pack.function_name.startswith(btn_id):
+                # now we can deal with the individual pack args that we needed
+                pack1, pack2 = pack_calls
+
+                if 'ipady' in pack1.keywords:
                     self.add_error(
-                        'Make sure you pack the buttons in the correct order; '
-                        'expected {}.pack but got {}'.format(
-                            btn_id, pack.function_name
+                        'You need to add external padding to the second '
+                        'button, not internal padding'
+                    )
+                if 'pady' not in pack1.keywords:
+                    self.add_error(
+                        'You need to add space above and below the first '
+                        'button (in {})'.format(pack1.function_name)
+                    )
+                elif pack1.keywords['pady'] != 20:
+                    self.add_error(
+                        'You must add exactly 20 pixels of space above and '
+                        'below the first button'
+                    )
+
+                if 'padx' in pack2.keywords:
+                    self.add_error(
+                        'You need to add internal padding to the second '
+                        'button, not external padding'
+                    )
+                if 'ipadx' not in pack2.keywords:
+                    self.add_error(
+                        'You need to add internal space to the left and the '
+                        'right of the second button (in {})'.format(
+                            pack2.function_name
                         )
                     )
+                elif pack2.keywords['ipadx'] != 20:
+                    self.add_error(
+                        'You must add exactly 20 pixels of internal space to '
+                        'the left and right of the second button'
+                    )
+
+                # because errors are displayed in order, we only want to deal
+                # with the number of keyword args here, after more specific
+                # error messages have been provided
+                for pack in pack_calls:
+                    if len(pack.keywords) > 3:
+                        self.add_error(
+                            "You don't need that many arguments to pack. "
+                            "You gave: {}".format(pack)
+                        )
 
 
 ANALYSER = Analyser(CodeVisitor)

@@ -45,11 +45,13 @@ def exec_module(path, gbls=None, lcls=None):
       path (str): The path of the module to execute.
       gbls (dict, optional): The globals dictionary to use.  Defaults to None.
       lcls (dict, optional): The locals dictionary to use.  Defaults to None.
-          If both gbls and lcls are None, then lcls will *not* be initialised
-          to be the same dictionary as gbls.
+          If both gbls and lcls are None, then lcls will not be initialised at
+          all; exec will be run with just a single argument.
 
     Returns:
       The globals and locals dictionaries, as updated by executing the module.
+
+      If lcls was None, then gbls will be returned twice.
 
       If gbls and/or lcls were provided as arguments, those same dictionaries
       will be returned here.
@@ -67,13 +69,36 @@ def exec_module(path, gbls=None, lcls=None):
             'dictionary. This behaviour is not sensibly supported by exec, ' \
             'and so is considered an error condition.'
 
+    # NB: if we use exec with separate globals and locals dictionaries,
+    # recursive functions will not behave as expected
+    # this is due to issues with how exec treats top-level function
+    # definitions
+    # normally, a function defined at top-level will be placed into locals,
+    # *but locals will be globals() at that scope*
+    # recursive calls will always search in globals, meaning that if code
+    # is execed with separate globals and locals dicts, and top-level
+    # function definitions are bound to locals, those functions will not
+    # be able to find themselves in globals()
+    # see http://stackoverflow.com/a/872082/1103045
+    # see http://bugs.python.org/issue991196
+    #
+    # NB: really importantly, we *cannot* attempt to merge gbls and lcls
+    # *after* exec has been run, as it's too late then; the binding has
+    # already happened
+    # as a result, we *must* have two cases here; either we are passing in
+    # both dictionaries, or we're only passing only one
+    # this is the same reason that we initialise lcls to gbls where possible
     if gbls is None:
         gbls = {}
-    if lcls is None:
-        lcls = {}
 
     with open(path) as f:
-        exec(compile(f.read(), path, 'exec'), gbls, lcls)
+        if lcls is None:
+            exec(compile(f.read(), path, 'exec'), gbls)
+        else:
+            exec(compile(f.read(), path, 'exec'), gbls, lcls)
+
+    if lcls is None:
+        lcls = gbls
 
     return gbls, lcls
 

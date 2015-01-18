@@ -1,5 +1,6 @@
 import ast
 from collections import defaultdict
+from functools import partial
 import inspect
 
 from tutorlib.analysis.ast_tools \
@@ -8,6 +9,7 @@ from tutorlib.analysis.ast_tools \
 from tutorlib.analysis.node_objects \
         import Call, ClassDefinition, FunctionDefinition
 from tutorlib.analysis.scope_manager import NodeScopeManager
+from tutorlib.testing.tester import STUDENT_FUNCTION_NAME  # urgh, messy
 
 
 class DefinesAllPossibleVisits(type):
@@ -59,16 +61,11 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           code, as ClassDefinition objects.  Quering the defaultdict for
           undefined classes will return a ClassDefinition object with
           .is_defined = False
-      calls (defaultdict<str:[Call]>): All functions called in the code, as
-          Call objects.  The list of calls is in the order encountered by the
-          visitor (by default, depth first).  Quering the defaultdict for
-          functions which were not called will return an empty list.
 
     """
     def __init__(self):
         self.functions = defaultdict(FunctionDefinition)
         self.classes = defaultdict(ClassDefinition)
-        self.calls = defaultdict(list)  # str name : [Call]
 
         self._scopes = NodeScopeManager()
 
@@ -82,7 +79,8 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
 
     @property
     def _current_function(self):
-        return self._scopes.peek_function()
+        name = self._scopes.peek_function()
+        return None if name == STUDENT_FUNCTION_NAME else name
 
     @property  # NB: intended to be *really* private ;)
     def _current_function_def(self):
@@ -245,6 +243,36 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
                 class_name, popped_class_name
             )
 
+    def visit_Assign(self, node):
+        """
+        Default logic for visiting an Assign node.
+
+        Record information about the assignment in assignments_to (mapping the
+        target var to its assigned value) and in assignments_of (mapping the
+        assigned value to the target var).
+
+        Args:
+          node (ast.Assign): The node we are visiting.
+
+        """
+        identifier_or_none = partial(identifier, suppress_exceptions=True)
+        for target_id in map(identifier_or_none, node.targets):
+            if target_id is None:
+                continue
+
+            if isinstance(node.value, ast.Call):
+                assignment_value = Call(node.value)
+            else:
+                assignment_value = identifier_or_value(node, prefer_value=True)
+
+            # always set assignments_to, but only set assignments_of if we
+            # have a known value (to avoid lots of None entries)
+            fn = self._current_function_def
+            fn.assigns_to[target_id].append(assignment_value)
+
+            if assignment_value is not None:
+                fn.assigned_value_of[assignment_value].append(target_id)
+
     def visit_Call(self, node):
         """
         Default logic for visiting a Call node.
@@ -258,6 +286,17 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
         function_name = TutorialNodeVisitor.identifier(node.func)
 
         call = Call(node)
-        self.calls[function_name].append(call)
-
         self._current_function_def.calls[function_name].append(call)
+
+    def visit_Return(self, node):
+        """
+        Default logic for visiting a Return node.
+
+        Record information about what (if anything) was returned.
+
+        Args:
+          node (ast.Return): The node we are visiting.
+
+        """
+        return_value = identifier_or_value(node.value, prefer_value=True)
+        self._current_function_def.returns.append(return_value)

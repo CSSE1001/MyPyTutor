@@ -3,8 +3,8 @@ from collections import defaultdict
 from functools import partial
 
 from tutorlib.analysis.ast_tools \
-    import fully_qualified_identifier, identifier, identifier_or_value, value
-from tutorlib.analysis.support import NonePaddedList
+    import fully_qualified_identifier, identifier, identifier_or_value
+from tutorlib.analysis.support import AutoHashingDefaultDict, NonePaddedList
 
 
 class FunctionDefinition():
@@ -16,6 +16,18 @@ class FunctionDefinition():
       is_defined (bool): Whether the function has been defined.
       args (NonePaddedList<str>): The identifiers of the arguments to the
           function.
+      assigns_to ({Identifier: [object]}): The identifiers which have been
+          assigned to in the function.  Identifiers are unordered, but the
+          successive assignments for each identifier are in the order
+          encountered.
+      assigned_value_of ({object: [Identifier]}): The identifiers which have
+          had the value in question assigned to them in the fuction.
+      calls (defaultdict<str:[Call]>): All functions called in the code, as
+          Call objects.  The list of calls is in the order encountered by the
+          visitor (by default, depth first).  Quering the defaultdict for
+          functions which were not called will return an empty list.
+      returns ([object]): Values returned from the function, in the order
+          encountered.
 
     """
     def __init__(self, node=None):
@@ -48,6 +60,11 @@ class FunctionDefinition():
             # TODO: kwargs, varargs etc
 
         self.calls = defaultdict(list)  # str name : [Call]
+
+        self.assigns_to = AutoHashingDefaultDict(list)  # ident : [object]
+        self.assigned_value_of = AutoHashingDefaultDict(list)  # object:[ident]
+
+        self.returns = []
 
 
 class ClassDefinition():
@@ -130,9 +147,27 @@ class Call():
         }
 
     def __repr__(self):
+        args = ', '.join(map(str, self.args))
         kwds = ', '.join(
             '='.join(map(str, items)) for items in self.keywords.items()
         )
-        return 'Call: {}({!r}{})'.format(
-            self.function_name, self.args, ', {}'.format(kwds) if kwds else ''
+        return '{}({}{})'.format(
+            self.function_name,
+            args,
+            '{}{}'.format(', ' if args else '', kwds) if kwds else ''
         )
+
+    def __eq__(self, other):
+        if not isinstance(other, Call):
+            return False
+
+        return self.function_name == other.function_name \
+                and self.args == other.args \
+                and self.keywords == other.keywords
+
+    def __hash__(self):
+        return hash((
+            self.function_name,
+            tuple(self.args),
+            tuple(self.keywords.items()),
+        ))
