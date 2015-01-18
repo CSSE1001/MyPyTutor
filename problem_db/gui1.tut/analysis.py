@@ -54,6 +54,13 @@ class Analyser(CodeAnalyser):
                         )
                     )
 
+                if 'command' not in btn.keywords:
+                    self.add_error(
+                        'You need to give a callback (command) to your buttons'
+                    )
+                elif btn.keywords['command'] != 'pressed':
+                    self.add_error('Your command must be pressed')
+
             for pack in pack_calls:
                 if pack.args:
                     self.add_error(
