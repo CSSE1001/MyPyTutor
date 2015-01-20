@@ -1,22 +1,31 @@
 from functools import partial
 import inspect
-import tkinter as tk
 import tkinter.messagebox as tkmessagebox
 
+from tutorlib.gui.utils.root import get_root_widget
 
-def show(title, message, f=tkmessagebox.showinfo):
-    result = f(title, message)
 
-    # we want to wait on it
-    # need a ref to the current Tk object
-    # assuming we're in a single-process environment, and thus there can be
-    # only one instance of Tk, we can use this hacky trick to get a reference
-    # to the root window enagaged in the main loop
-    # hopefully, this will be fast enough that the user won't see it
-    tl = tk.Toplevel()
-    root = tl.master
-    tl.destroy()
+def show(title, message, f=tkmessagebox.showinfo, *args, **kwargs):
+    """
+    Base method for showing a tkinter.messagebox popup.
 
+    This function will instruct the root widget to update itself prior to
+    returning.  It is necessary to do this explicitly on some versions of
+    OS X in order to ensure that the window does in fact disappear.
+
+    Args:
+      title (str): The title to display.
+      message (str): The message to display.
+      f (() -> object): The function to call to display the messagebox.  Should
+          be a tkinter.messagebox member.
+
+    Returns:
+      The result of executing f.
+
+    """
+    result = f(title, message, *args, **kwargs)
+
+    root = get_root_widget()
     root.update()
     root.update_idletasks()
 

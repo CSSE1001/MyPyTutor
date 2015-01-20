@@ -18,6 +18,7 @@ from tutorlib.gui.dialogs.submissions import SubmissionsDialog
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.editor_window import TutorEditor
 import tutorlib.gui.utils.messagebox as tkmessagebox
+from tutorlib.gui.utils.threading import exec_sync
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError
@@ -685,21 +686,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 popup.destroy()
 
         # do this on a background thread
-        th = Thread(target=_background_task)
-        th.start()
-
-        # we want to keep the UI responsive, but it's also important that, if
-        # this is being called as part of closing the window, we don't
-        # immediately terminate (and thus leave the thread hanging)
-        # we thus don't return until the background thread has terminated
-        # (this also means that the rest of the app need not be thread-aware)
-        while 1:
-            th.join(1e-2)
-            if not th.is_alive():
-                break
-
-            self.master.update()
-            self.master.update_idletasks()
+        exec_sync(_background_task)
 
     # tools
     def show_visualiser(self):
