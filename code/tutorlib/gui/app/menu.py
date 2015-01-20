@@ -2,6 +2,8 @@ from abc import ABCMeta, abstractmethod
 import string
 import tkinter as tk
 
+from tutorlib.gui.utils.root import get_root_widget
+
 
 MENU_STRUCTURE = [
     ('Problems', [
@@ -342,24 +344,3 @@ class TutorialMenu(tk.Menu):
 
     def menu_help_help(self):
         self.delegate.show_help_dialog()
-
-
-def get_root_widget(widget):
-    """
-    Get the root widget of the widget heirarchy containing the given widget.
-
-    Args:
-      widget (tk.Widget): The widget to get the root of.
-
-    Returns:
-      The root widget in the hierarchy (usually a tk.Tk instance).
-
-    """
-    child = widget
-    parent = child.winfo_parent()
-
-    while parent:
-        child = child.nametowidget(parent)
-        parent = child.winfo_parent()
-
-    return child

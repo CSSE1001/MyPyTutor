@@ -303,6 +303,9 @@ class TutorialHTMLParser(HTMLParser):
             if tag == 'ul':
                 return
             if tag == 'pre':
+                # TODO: it would be fairly straightforward (well, kinda) to
+                # TODO: automatically annotate this with, eg, colors for any
+                # TODO: keywords which are used
                 self.delegate.append_text(data, ('tt',))
                 return
             data = self._compress_data(data)

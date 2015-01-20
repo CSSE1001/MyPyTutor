@@ -2,7 +2,6 @@ import os
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
-import tkinter.messagebox as tkmessagebox
 
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
@@ -16,6 +15,7 @@ from tutorlib.gui.dialogs.feedback import FeedbackDialog
 from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
+import tutorlib.gui.utils.messagebox as tkmessagebox
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError

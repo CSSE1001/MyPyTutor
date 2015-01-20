@@ -15,9 +15,9 @@ from tutorlib.config.namespaces import Namespace
 from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
 
-# The config file is stored in the same directory as MyPyTutor.py
-_SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
-CONFIG_FILE = os.path.join(_SCRIPT_DIR, 'mypytutor.cfg')
+# The config file is stored in the user's home directory
+_SCRIPT_DIR = os.path.expanduser('~')
+CONFIG_FILE = os.path.join(_SCRIPT_DIR, '.mptrc')
 
 SPECIAL_FORMATS = {
     ('font', 'size'): int,

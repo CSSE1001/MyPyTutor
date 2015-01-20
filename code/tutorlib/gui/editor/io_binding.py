@@ -20,7 +20,7 @@
 ## It is a modification of idlelib/IOBinding.py
 
 from idlelib import IOBinding
-import tkinter.messagebox as tkmessagebox
+import tutorlib.gui.utils.messagebox as tkmessagebox
 
 
 class TutorIOBinding(IOBinding.IOBinding):
