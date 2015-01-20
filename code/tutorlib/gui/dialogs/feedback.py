@@ -21,12 +21,12 @@
 
 import tkinter as tk
 from tkinter import ttk
-import tkinter.messagebox
 import urllib.request
 import urllib.parse
 import urllib.error
 
 from tutorlib.gui.dialogs.dialog import Dialog
+import tutorlib.gui.utils.messagebox as tkmessagebox
 
 ## The URL for the feedback CGI script.
 URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
@@ -90,10 +90,10 @@ class FeedbackDialog(Dialog):
             response = urllib.request.urlopen(req)
             the_page = response.read()
             if 'Feedback not accepted' in the_page:
-                tkinter.messagebox.showerror('Feedback Error',
+                tkmessagebox.showerror('Feedback Error',
                                              'Feedback not accepted')
         except:
-            tkinter.messagebox.showerror('Feedback Error',
+            tkmessagebox.showerror('Feedback Error',
                                          'Cannot upload feedback')
 
         super().ok(event=event)

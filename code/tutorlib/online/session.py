@@ -30,11 +30,11 @@
 import http.cookiejar
 import http.client
 import json
-import tkinter.messagebox as tkmessagebox
 import urllib.parse
 import urllib.request
 
 from tutorlib.gui.dialogs.login import LoginDialog
+import tutorlib.gui.utils.messagebox as tkmessagebox
 from tutorlib.online.exceptions import AuthError, BadResponse, RequestError
 from tutorlib.online.parser import FormParser, strip_header
 

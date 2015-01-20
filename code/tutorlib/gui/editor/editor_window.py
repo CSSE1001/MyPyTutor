@@ -22,13 +22,13 @@
 import os
 import tkinter as tk
 import tkinter.filedialog as tkfiledialog
-import tkinter.messagebox as tkmessagebox
 
 from idlelib import EditorWindow, macosxSupport
 from tutorlib.gui.app.menu import TutorialMenuDelegate
 import tutorlib.gui.editor.bindings as Bindings  # be consistent with idlelib
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.io_binding import TutorIOBinding
+import tutorlib.gui.utils.messagebox as tkmessagebox
 
 
 class TutorEditor(EditorWindow.EditorWindow):

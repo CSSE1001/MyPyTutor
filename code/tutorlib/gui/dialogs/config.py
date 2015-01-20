@@ -21,10 +21,10 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
-import tkinter.messagebox
 import os
 
 from tutorlib.gui.dialogs.dialog import Dialog
+import tutorlib.gui.utils.messagebox as tkmessagebox
 
 LABEL_TEXT = """Before using MyPyTutor or when adding a new tutorial you need to set two folders.
 The tutorial folder contains the tutorial problems that you should have already installed.
@@ -99,10 +99,10 @@ class TutorialDirectoryPrompt(Dialog):
         if not (os.path.exists(tut_dir)
                 and os.path.exists(os.path.join(tut_dir, 'tutorials.txt'))
                 and os.path.exists(os.path.join(tut_dir, 'config.txt'))):
-            tkinter.messagebox.showerror('Tutorial Configuration Error',
+            tkmessagebox.showerror('Tutorial Configuration Error',
                                          'Invalid tutorial folder.')
         elif ans_dir == '':
-            tkinter.messagebox.showerror('Tutorial Configuration Error',
+            tkmessagebox.showerror('Tutorial Configuration Error',
                                          'Invalid answers folder.')
         else:
             self.result = tut_dir, self.ans_entry.get(), name
