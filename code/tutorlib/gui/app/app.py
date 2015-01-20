@@ -1,20 +1,22 @@
-import os
+from threading import Thread
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
+import os
 
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output import AnalysisOutput, TestOutput
 from tutorlib.gui.app.tutorial import TutorialFrame
-from tutorlib.gui.editor.delegate import TutorEditorDelegate
-from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
 from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
+from tutorlib.gui.dialogs.progress import ProgressPopup
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
+from tutorlib.gui.editor.delegate import TutorEditorDelegate
+from tutorlib.gui.editor.editor_window import TutorEditor
 import tutorlib.gui.utils.messagebox as tkmessagebox
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
@@ -611,13 +613,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                     success = self._download_answer(tutorial)
 
                 if not success:
-                    if not suppress_popups:
-                        tkmessagebox.showerror(
-                            'Could Not Synchronise Answer Code',
-                            'Please check that you are correctly logged in, ' \
-                            'and that your internet connection is active.'
-                        )
-                    return  # no more we can do here
+                    return False
+        return True
 
     def synchronise(self, suppress_popups=False, no_login=None):
         """
@@ -650,21 +647,59 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             if no_login or not self.login():
                 return
 
-        # certain methods used in the synchronisation process might throw
-        # WebAPIError, so we want to wrap everything in an exception handler
-        try:
-            self._synchronise(suppress_popups=suppress_popups)
-        except WebAPIError as e:
-            if not suppress_popups:
-                self._display_web_api_error(e)
-            return
+        # start showing the progress popup
+        popup = ProgressPopup()
 
-        if not suppress_popups:
+        def _show_failure_message():
+            tkmessagebox.showerror(
+                'Could Not Synchronise Answer Code',
+                'Please check that you are correctly logged in, ' \
+                'and that your internet connection is active.'
+            )
+
+        def _show_success_message():
             tkmessagebox.showinfo(
                 'Synchronisation Complete!',
                 'Your answers have been successfully synchronised with the ' \
                 'server.',
             )
+
+        def _background_task():
+            # certain methods used in the synchronisation process might throw
+            # WebAPIError, so we want to wrap everything in an exception
+            # handler
+            # note that as this is on a background thread, we must not make
+            # any UI calls
+            try:
+                success = self._synchronise(suppress_popups=suppress_popups)
+
+                if not suppress_popups:
+                    if success:
+                        self.master.after(0, _show_success_message)
+                    else:
+                        self.master.after(0, _show_failure_message)
+            except WebAPIError as e:
+                if not suppress_popups:
+                    self.master.after(0, self._display_web_api_error, e)
+            finally:
+                popup.destroy()
+
+        # do this on a background thread
+        th = Thread(target=_background_task)
+        th.start()
+
+        # we want to keep the UI responsive, but it's also important that, if
+        # this is being called as part of closing the window, we don't
+        # immediately terminate (and thus leave the thread hanging)
+        # we thus don't return until the background thread has terminated
+        # (this also means that the rest of the app need not be thread-aware)
+        while 1:
+            th.join(1e-2)
+            if not th.is_alive():
+                break
+
+            self.master.update()
+            self.master.update_idletasks()
 
     # tools
     def show_visualiser(self):
