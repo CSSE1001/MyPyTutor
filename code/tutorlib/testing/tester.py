@@ -87,8 +87,6 @@ class TutorialTester():
 
         """
         if wrap_student_code:
-            # TODO: this will cause problems with line detection for errors
-            # TODO: should probably intercept and modify exceptions
             code_text = 'def {}():\n{}'.format(
                 STUDENT_FUNCTION_NAME, indent(code_text)
             )
