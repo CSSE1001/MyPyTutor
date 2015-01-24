@@ -136,6 +136,12 @@ class TutorialTester():
                 TutorialTestResult.FAIL,
                 StudentTestError('No code to test'),
             )
+        except Exception as e:
+            return TutorialTestResult(
+                test_class.DESCRIPTION,
+                TutorialTestResult.FAIL,
+                StudentTestError('Could not parse code: {}'.format(e)),
+            )
 
         # inject necessary data into global scope
         inject_to_module(tutorlib.testing.cases, STUDENT_LOCALS_NAME, lcls)
