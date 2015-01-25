@@ -183,7 +183,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         if not package_name:
             # we can't change to a non-existent package, so we will need to
             # add a new one
-            self.add_tutorial_package()
+            self.master.after(0, self.add_tutorial_package)
             return
 
         assert hasattr(self.cfg, package_name), \
