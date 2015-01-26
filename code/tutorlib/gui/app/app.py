@@ -94,7 +94,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         ## Short Problem Description
         self.short_description = ttk.Label(top_frame)  # TODO: sort out style
-        self.short_description.pack(fill=tk.X)
+        self.short_description.pack()
 
         ## Toolbar (hints, login status etc)
         toolbar = ttk.Frame(top_frame)  # TODO: sort out style
