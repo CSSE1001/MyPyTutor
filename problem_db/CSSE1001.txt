@@ -3,7 +3,7 @@
 [11/08/14 Introduction]
 
 Introduction:intro.tut
-Variable Assignment:assignments.tut
+Input and Output:input.tut
 If Statements 1:if1.tut
 If Statements 2:if2.tut
 If Statements 3:if3.tut
