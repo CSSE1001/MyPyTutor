@@ -15,6 +15,7 @@ from tutorlib.gui.dialogs.feedback import FeedbackDialog
 from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
+from tutorlib.gui.utils.decorators import skip_if_attr_none
 import tutorlib.gui.utils.messagebox as tkmessagebox
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
@@ -71,7 +72,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.cfg = load_config()
 
         ## Vars with side effects
-        self._select_tutorial_package(self.cfg.tutorials.default)
+        self.tutorial_package = self.cfg.tutorials.default
         self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
         ## Objects
@@ -150,23 +151,13 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             )
         return self._editor
 
+    ## Private methods
     @property
     def tutorial_package(self):
-        if self._tutorial_package is None:
-            self._select_tutorial_package('')
-
-            if self._tutorial_package is None:
-                raise AssertionError('Failed to select tutorial package')
-
         return self._tutorial_package
 
     @tutorial_package.setter
-    def tutorial_package(self, value):
-        self._tutorial_package = value
-
-    ## Private methods
-    # TODO: should be .tutorial_package.setter property
-    def _select_tutorial_package(self, package_name=''):
+    def tutorial_package(self, package_name):
         """
         Select the tutorial package with the given name.
 
@@ -176,13 +167,37 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         error to the user but otherwise do nothing.
         This may leave the application in an inconsistent state.
 
+        Warning: if no name is provided, prompting the user to add a new
+        tutorial is performed *asynchronously*.  Because of this, if a value
+        given to this setter could be null, the calling code *cannot* rely on
+        tutorial_package having a valid value immediately after this function
+        returns.  For example, the following code is *not safe*:
+
+            self.tutorial_package = 'CSSE1001Tutorials' if rand() < 0.5 else ''
+            print(self.tutorial_package.name)  # UNSAFE
+
+        If the assigned value is '' in the above example, self.tutorial_package
+        will not have a value until, at the earliest, *after* the next run of
+        the GUI event loop (as that is when the user will be prompted to add
+        a tutorial).
+
+        In normal use, this should not pose a problem; the only time the
+        assigned value should even potentially be the empty string is the very
+        first time that MPT is run.
+
         Args:
           package_name (str): The name of the package to select.
 
         """
         if not package_name:
-            # we can't change to a non-existent package, so we will need to
-            # add a new one
+            # if no package is given, we want to try to add a new one
+            # this will be the case the very first time MyPyTutor is launched
+            # in that case, the Tk object (root) will not yet have entered
+            # the main loop
+            # attempting to display any tk widget before entering the main
+            # loop will cause the application to suffer display errors on OS X
+            # once it actually appears (see issue #49)
+            # by deferring the add action, we can avoid this issue
             self.master.after(0, self.add_tutorial_package)
             return
 
@@ -191,7 +206,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         options = getattr(self.cfg, package_name)
 
         try:
-            self.tutorial_package = TutorialPackage(package_name, options)
+            self._tutorial_package = TutorialPackage(package_name, options)
         except TutorialPackageError as e:
             tkmessagebox.showerror(
                 'Invalid Tutorial Package',
@@ -368,6 +383,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             self.master.destroy()
 
     ## Public-ish methods
+    @skip_if_attr_none('current_tutorial')
     def run_tests(self):
         """
         Test and analyse the student code.
@@ -406,6 +422,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
     ## TutorialMenuDelegate
     # problems
+    @skip_if_attr_none('tutorial_package')
     def change_problem(self, increment=None, problem=None):
         """
         Change the tutorial problem.
@@ -508,6 +525,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         self._set_online_status(logged_in_user=None)
 
+    @skip_if_attr_none('current_tutorial')
     def submit(self):
         """
         Submit the current tutorial problem.
@@ -544,6 +562,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 'Code submitted {}'.format('on time' if response else 'late'),
             )
 
+    @skip_if_attr_none('tutorial_package')
     def show_submissions(self):
         """
         Show the student their submission history.
@@ -618,6 +637,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                         )
                     return  # no more we can do here
 
+    @skip_if_attr_none('tutorial_package')
     def synchronise(self, suppress_popups=False, no_login=None):
         """
         Synchronise the tutorial answers.
@@ -691,10 +711,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         font_chooser = FontChooser(
             self.master, self, (self.cfg.font.name, self.cfg.font.size)
         )
+        if font_chooser.result is None:
+            return
+
         self.cfg.font.name, self.cfg.font.size = font_chooser.result
 
         self.update_fonts()
 
+    @skip_if_attr_none('tutorial_package')
     def change_tutorial_directory(self):
         """
         Prompt to change the current tutorial directory.
@@ -716,8 +740,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         if directory:
             # .current_tutorial.options is bound to cfg, so will change it
             self.tutorial_package.options.tut_dir = directory
-            self._select_tutorial_package(self.tutorial_package.name)
+            # force a reload of the tutorial package so that all tutorials
+            # with a reference to the old directory are replaced
+            self.tutorial_package = self.tutorial_package.name
 
+    @skip_if_attr_none('tutorial_package')
     def change_answers_directory(self):
         """
         Prompt to change the current answers directory.
@@ -741,7 +768,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         if directory:
             # .current_tutorial.options is bound to cfg, so will change it
             self.tutorial_package.options.ans_dir = directory
-            self._select_tutorial_package(self.tutorial_package.name)
+            # force a reload of the tutorial package so that all tutorials
+            # with a reference to the old directory are replaced
+            self.tutorial_package = self.tutorial_package.name
 
             # need to update reference to Tutorial in new (reloaded) package
             # (but only if we actually have a tutorial open)
@@ -754,6 +783,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             self.editor.set_filename(self.current_tutorial.answer_path)
             # TODO: relocate answers?
 
+    @skip_if_attr_none('tutorial_package')
     def set_as_default_package(self):
         """
         Set the current tutorial package as the default tutorial package.
@@ -786,10 +816,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             return
 
         if as_default:
-            self._select_tutorial_package(self.cfg.tutorials.default)
+            self.tutorial_package = self.cfg.tutorials.default
 
         self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
+    @skip_if_attr_none('tutorial_package')
     def remove_current_tutorial_package(self):
         """
         Remove the current tutorial package.
@@ -830,7 +861,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             del self.cfg[self.tutorial_package.name]
             self.cfg.tutorials.names.remove(self.tutorial_package.name)
 
-            self._select_tutorial_package(self.cfg.tutorials.default)
+            self.tutorial_package = self.cfg.tutorials.default
 
             self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
@@ -842,7 +873,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
           package_name (str): The name of the tutorial package to change to.
 
         """
-        self._select_tutorial_package(package_name)
+        self.tutorial_package = package_name
 
     # feedback
     def feedback(self, problem_feedback=False):
@@ -856,7 +887,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
               False.
 
         """
-        if problem_feedback:
+        if problem_feedback and self.current_tutorial is not None:
             FeedbackDialog(
                 self.master,
                 'Problem Feedback: {}'.format(self.current_tutorial.name),
