@@ -153,13 +153,14 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
         )
 
     def show_next_hint(self):
-        # actually get the hint
-        try:
-            hint = self.tutorial.hints[self._next_hint_index]
-            self._next_hint_index += 1
-        except IndexError:
-            return False
+        assert self._next_hint_index < len(self.tutorial.hints), \
+                'Requesting more hints than are available is an error'
 
+        # get the hint
+        hint = self.tutorial.hints[self._next_hint_index]
+        self._next_hint_index += 1
+
+        # format and display the hint
         html = '<p>\n<b>Hint: </b>{}'.format(hint)
 
         self.text.config(state=tk.NORMAL)
@@ -171,7 +172,8 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
         self.text.config(state=tk.DISABLED)
 
-        return True
+        # return whether this was the last hint
+        return self._next_hint_index < len(self.tutorial.hints)
 
     # Private methods
     def _set_text(self, text):

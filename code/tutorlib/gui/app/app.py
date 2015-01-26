@@ -210,8 +210,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         """
         if not self.tutorial_frame.show_next_hint():
-            # TODO: hide hints button
-            pass
+            self.hint_button.pack_forget()
 
     def _set_online_status(self, logged_in_user=None):
         """
