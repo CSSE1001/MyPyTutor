@@ -15,7 +15,8 @@ from io import StringIO
 import unittest
 
 from tutorlib.testing.streams \
-        import redirect_stdin, redirect_stdout, redirect_stderr
+        import redirect_stdin, redirect_stdout, redirect_stderr, \
+        redirect_input_prompt
 from tutorlib.testing.support import trim_indentation
 
 STUDENT_LOCALS_NAME = 'student_lcls'
@@ -76,6 +77,7 @@ class StudentTestCase(unittest.TestCase):
         input_stream = StringIO(input_text or '')
         output_stream = StringIO()
         error_stream = StringIO()
+        input_prompts_stream = StringIO()
 
         # we have a function object, f, that we want to execute in a specific
         # context (that of the student's code)
@@ -104,11 +106,13 @@ class StudentTestCase(unittest.TestCase):
 
         # finally, actually execute that test function, and extract the result
         with redirect_stdin(input_stream), redirect_stdout(output_stream), \
-                redirect_stderr(error_stream):
+                redirect_stderr(error_stream), \
+                redirect_input_prompt(lcls, input_prompts_stream):
             exec(compile(test_statement, '<test_run>', 'single'), lcls)
             result = lcls[TEST_RESULT_IDENTIFIER]
 
         self.standard_output = output_stream.getvalue()
         self.error_output = error_stream.getvalue()
+        self.input_prompts = input_prompts_stream.getvalue()
 
         return result
