@@ -68,7 +68,7 @@ def load_config():
     # place to *use* them anyway
     defaults = {
         'font': {
-            'name': 'helvetica',
+            'name': 'TkTextFont',
             'size': 10,
         },
         'tutorials': {

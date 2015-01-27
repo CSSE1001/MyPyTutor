@@ -34,7 +34,7 @@ INDENT = 'indent{}'
 COLORS = ['red', 'green', 'blue']
 
 
-def get_configs(name, size, style='roman', max_indents=6):
+def get_configs(name='TkDefaultFont', size=12, style='roman', max_indents=6):
     tags = {
         'it': {
             'font': (name, size, 'italic'),
@@ -43,7 +43,7 @@ def get_configs(name, size, style='roman', max_indents=6):
             'font': (name, size, 'bold'),
         },
         'tt': {
-            'font': ('courier', size, style),
+            'font': ('TkFixedFont', size, style),
             'foreground': 'grey',
         },
     }
