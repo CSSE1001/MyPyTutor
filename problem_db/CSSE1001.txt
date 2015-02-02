@@ -5,7 +5,7 @@
 Introduction:intro.tut
 Input and Output:input.tut
 Converting Input Strings:input_number.tut
-If Statements 1:if1.tut
+If Statements 1:if_abs.tut
 If Statements 2:if2.tut
 If Statements 3:if3.tut
 Using Functions:fun1.tut

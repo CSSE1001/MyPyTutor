@@ -1,0 +1,36 @@
+<h3>If Statements</h3>
+<p>
+    If statements allow you to run different code based on conditions that you set.
+    The simplest if statement looks something like this:
+</p>
+<pre>
+    if condition:
+        code
+        [code...]
+</pre>
+<p>
+    If <tt>condition</tt> evaluates to <tt>True</tt>, <tt>code</tt> (which could be many lines of statements) will be run.
+</p>
+<p>
+    If <tt>condition</tt> evaluates to <tt>False</tt>, then Python will skip to the next line of code <it>after</it> the if statement.
+</p>
+<p>
+    For example, this code will print <tt>'Monty'</tt>, but not <tt>'Python'</tt>:
+</p>
+<pre>
+    x = 2
+    y = 0
+
+    if x > 1:
+        print('Monty')
+
+    if y > 1:
+        print('Python')
+</pre>
+<p>
+    We want you to prompt the user to enter an integer, and then print the absolute value of that integer.
+</p>
+<p>
+    You'll need to convert the string you get from <tt>input</tt> into an integer, as in the previous question.
+    If the user enters a negative number, you need to make it positive (that's what the if statement is for!)
+</p>
