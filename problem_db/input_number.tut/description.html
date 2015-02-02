@@ -1,0 +1,29 @@
+<h3>Converting Input Strings</h3>
+<p>
+    When you get input from the user using <tt>input</tt>, it's in the form of a string.
+    Sometimes, this is what you want; in the last question, you just wanted to add the strings together.
+    However, often you want the user to input something else, like a number.
+</p>
+<p>
+    If we have a string which represents a number (say, <tt>'60'</tt>), we can convert it into an integer using the <tt>int</tt> function.
+    In other words, <tt>int('60')</tt> will give us the number <tt>60</tt>.
+</p>
+<p>
+    We can do the same thing if our string is stored in a variable.
+    For example, this code will print out the sum of the two numbers the user enters by first converting them to integers:
+</p>
+<pre>
+    number_one = input('Enter the first number: ')
+    number_two = input('Enter the second number: ')
+
+    sum_of_numbers = int(number_one) + int(number_two)
+
+    print(sum_of_numbers)
+</pre>
+<p>
+    The provided code will prompt the user to enter a number of hours.
+    Your task is to convert this input into an integer, and then print the number of minutes in the given number of hours.
+</p>
+<p>
+    You can assume that the user won't be silly and enter something which isn't an integer.
+</p>
