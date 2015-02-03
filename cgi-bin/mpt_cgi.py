@@ -238,6 +238,10 @@ def submit_answer(tutorial_hash, code):
     go ahead and add the submission.  Implementation details are hidden in the
     support file (so that we can switch backends if needed).
 
+    If the tutorial does exist on the server, but has since been updated (such
+    that the given hash is not the latest for the particular tutorial problem),
+    then submission is not possible.
+
     Args:
       tutorial_hash (str): The sha512 hash of the tutorial folder, encoded as
           a base32 string.
@@ -249,6 +253,7 @@ def submit_answer(tutorial_hash, code):
 
     Raises:
       ActionError: If tutorial hash does not match a known tutorial package,
+          or if the tutorial hash matches a package but is out of date,
           or if attempting to add the submission fails.
       NullResponse: If the student has already submitted this tutorial.
 
@@ -259,16 +264,26 @@ def submit_answer(tutorial_hash, code):
     # check that the tutorial actually exists
     hashes = support.parse_tutorial_hashes()
 
-    try:
-        tutorial_info = next(ti for ti in hashes if ti.hash == tutorial_hash)
-    except StopIteration:
+    if tutorial_hash not in hashes:
         raise ActionError('Invalid tutorial: {}'.format(tutorial_hash))
+    if hashes[tutorial_hash].hash != tutorial_hash:
+        raise ActionError(
+            'Invalid tutorial: {}\nThis hash is not the latest for the '
+            'tutorial in question.  Please update the local tutorials package '
+            'before submitting this tutorial.'.format(tutorial_hash)
+        )
+
+    tutorial_info = hashes[tutorial_hash]
 
     # check if the student has already submitted this tutorial
+    # we need to see if this has been submitted *at all*, which includes under
+    # any previous hash that the problem may have had
     submissions = support.parse_submission_log(user)
 
+    valid_hashes = [h for h, ti in hashes.items() if ti == tutorial_info]
+
     try:
-        next(si for si in submissions if si.hash == tutorial_hash)
+        next(si for si in submissions if si.hash in valid_hashes)
         raise NullResponse(
             'Tutorial already submitted: {}'.format(tutorial_hash)
         )
@@ -304,21 +319,21 @@ def show_submit():
 
     # get our data
     hashes = support.parse_tutorial_hashes()
-    submissions = {sub.hash: sub for sub in support.parse_submission_log(user)}
+    submissions = support.parse_submission_log(user)
+    tutorials = set(hashes.values())
 
     # check if our submissions are late or not
-    results = []
+    results = {ti.hash: 'MISSING' for ti in tutorials}
 
-    for tutorial_info in hashes:
-        status = 'MISSING'
+    for submission in submissions:
+        # lookup, not get, as this must exist: if not, then we have a
+        # submission with an unknown tutorial, which is a server error
+        tutorial_info = hashes[submission.hash]
+        status = 'OK' if submission.date <= tutorial_info.due else 'LATE'
 
-        submission = submissions.get(tutorial_info.hash)
-        if submission is not None:
-            status = 'OK' if submission.date <= tutorial_info.due else 'LATE'
+        results[tutorial_info.hash] = status
 
-        results.append((tutorial_info.hash, status))
-
-    return json.dumps(results)
+    return json.dumps(results.items())
 
 
 @action('match', admin=True)

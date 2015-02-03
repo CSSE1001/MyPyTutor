@@ -29,6 +29,7 @@ from collections import namedtuple
 from datetime import datetime
 import dateutil.parser
 import hashlib
+import json
 import os
 from werkzeug.utils import secure_filename
 
@@ -43,6 +44,9 @@ SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
 
 # submission specific constants
 TUTORIAL_HASHES_FILE = os.path.join(SUBMISSIONS_DIR, "tutorial_hashes")
+TUTORIAL_HASH_MAPPINGS_FILE = os.path.join(
+    SUBMISSIONS_DIR, "tutorial_hash_mappings",
+)
 SUBMISSION_LOG_NAME = "submission_log"
 DUE_DATE_FORMAT = "%H_%d/%m/%y"
 
@@ -243,12 +247,17 @@ def parse_tutorial_hashes():
     badly-formatted file.
 
     Returns:
-      A list of TutorialInfo objects, corresponding to the tutorials in
-      the tutorial_hashes file.
+      A dictionary mapping hashes to the corresponding TutorialInfo objects.
+
+      This makes use both of information both in the tututorial hashes file,
+      and of the tutorial hash mappings which reflect changes to tutorials.
+
+      Multiple hashes may therefore map to the same TutorialInfo object.
 
     """
-    data = []
+    hashes = {}
 
+    # get the current tutorial set
     with open(TUTORIAL_HASHES_FILE) as f:
         for line in filter(None, map(str.strip, f)):
             hash_str, due_date_str, pkg_name, pset_name, tut_name \
@@ -259,9 +268,33 @@ def parse_tutorial_hashes():
             tutorial_info = TutorialInfo(
                 hash_str, due_date, pkg_name, pset_name, tut_name
             )
-            data.append(tutorial_info)
+            hashes[tutorial_info.hash] = tutorial_info
 
-    return data
+    # get the changes
+    with open(TUTORIAL_HASH_MAPPINGS_FILE) as f:
+        hash_mappings = json.loads(f.read())
+
+    # resolve all mappings to the current TutorialInfo object (but only if
+    # that is possible -- ignore removed tutorials)
+    def resolve_hash(tutorial_hash):
+        if tutorial_hash in hashes:
+            return hashes[tutorial_hash]
+        if tutorial_hash in hash_mappings:
+            return resolve_hash(hash_mappings[tutorial_hash])
+        return None
+
+    resolved_hashes = {h: resolve_hash(h) for h in hash_mappings}
+    resolved_hashes = {
+        h: ti for h, ti in resolved_hashes.items() if ti is not None
+    }
+
+    # update our existing hashes
+    # don't check for hash collisions - that would be a server error
+    # checking for collisions is the responsibility of the hash file
+    # generation scripts
+    hashes.update(resolved_hashes)
+
+    return hashes
 
 
 def _get_or_create_user_submissions_dir(user):
