@@ -381,7 +381,7 @@ def add_submission(user, tutorial_hash, code):
     submission_log_path = _get_or_create_user_submissions_file(user)
 
     with open(submission_log_path, 'a') as f:
-        f.write(' '.join([tutorial_hash, submitted_date_str]))
+        f.write(' '.join([tutorial_hash, submitted_date_str]) + '\n')
 
     # a base32 hash should NEVER need to be sanitised, with the exception of
     # removing the padding characters
