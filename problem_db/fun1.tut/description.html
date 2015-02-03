@@ -1,12 +1,27 @@
 <h3>Using Functions</h3>
-This problem is about using functions that return values.
 <p>
-The supplied functions <tt>increment</tt> and <tt>double</tt> respectively
-return the increment (by one) and the double of its argument, for example
-<tt>increment(3)</tt> evaluates to <tt>4</tt> and <tt>double(5)</tt> evaluates to <tt>10</tt>.
-<br>
-Further assume
-the variable <tt>n</tt> contains an integer value (remember that this means MyPyTutor will choose a value for <tt>n</tt>).
+    You can think of a function as a block of code which takes in zero or more values (arguments) and returns a result.
+    For example, the <tt>double</tt> function which we provided looks like this:
+</p>
+<pre>
+    def double(x):
+        return x*2
+</pre>
 <p>
-Write a single assignment statement using both of these functions that assigns <tt>2*(n+1)</tt> to
-the variable <tt>m</tt>.
+    This function has one argument, <tt>x</tt>, and a single <tt>return</tt> statement.
+</p>
+<p>
+    To use this function, we provide a value for its argument.
+    We can store its return value in a variable, eg:
+</p>
+<pre>
+    four = double(2)
+</pre>
+<p>
+    Prompt the user to enter a number, say <tt>n</tt>.
+    Convert this number to an integer, and print <tt>2*(n + 1)</tt>
+</p>
+<p>
+    You must use <tt>double</tt> and <tt>increment</tt> rather than just writing out the math yourself.
+    You will need to convert the input into an integer, as before.
+</p>

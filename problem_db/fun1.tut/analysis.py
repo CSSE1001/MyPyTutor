@@ -20,19 +20,28 @@ class CodeVisitor(TutorialNodeVisitor):
 
 class Fun1Analyser(CodeAnalyser):
     def _analyse(self):
-        if not self.visitor.seen_double:
-            self.add_error("You need to use the double function in your single assignment statement")
-        if not self.visitor.seen_inc:
-            self.add_error("You need to use the increment function in your single assignment statement")
+        if not self.visitor.functions[None].calls['input']:
+            self.add_error('You need to prompt the user for input')
+        elif not self.visitor.functions[None].calls['print']:
+            self.add_error('You need to print something')
+        elif not self.visitor.functions[None].calls['int']:
+            self.add_warning('You probably want to use the int function')
 
-        if len(self.visitor.seen_double) > 1:
+        if not self.visitor.functions[None].calls['double']:
+            self.add_error('You need to call double')
+        elif not self.visitor.functions[None].calls['increment']:
+            self.add_error('You need to call increment')
+
+        if len(self.visitor.functions[None].calls['double']) > 1:
             self.add_error("You only need to use double once")
-        if len(self.visitor.seen_inc) > 1:
+        if len(self.visitor.functions[None].calls['increment']) > 1:
             self.add_error("You only need to use increment once")
 
         if self.visitor.seen_double and self.visitor.seen_inc \
                 and self.visitor.seen_double[0] > self.visitor.seen_inc[0]:
-            self.add_error("You should be using increment inside the use of double")
+            self.add_error(
+                'You should be using increment inside the use of double'
+            )
 
 
 ANALYSER = Fun1Analyser(CodeVisitor)
