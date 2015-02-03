@@ -1,0 +1,35 @@
+<h3>If Statements Using Else</h3>
+<p>
+    In the previous question, we used an if statement to run code when a condition was <tt>True</tt>.
+    Often, we want to do something if the condition is <tt>False</tt> as well.
+    We can achieve this using <tt>else</tt>:
+</p>
+<pre>
+    if condition:
+        code_if_true
+        [code_if_true...]
+    else:
+        code_if_false
+        [code_if_false...]
+</pre>
+<p>
+    Here, if <tt>condition</tt> evaluates to <tt>False</tt>, then Python will run the block of code under the <tt>else</tt> statement.
+</p>
+<p>
+    For example, this code will print <tt>'Python'<tt>:
+</p>
+<pre>
+    x = 0
+
+    if x > 1:
+        print('Monty')
+    else:
+        print('Python')
+</pre>
+<p>
+    Prompt the user to enter a character, and then print either <tt>'vowel'</tt> or <tt>'consonant'</tt> as appropriate.
+</p>
+<p>
+    You may use the <tt>is_vowel</tt> function we've included.
+    Remember that you can call this with <tt>is_vowel(argument)</tt>
+</p>
