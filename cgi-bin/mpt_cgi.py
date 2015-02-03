@@ -497,7 +497,7 @@ def get_version():
 
 
 def main():
-    form = cgi.FieldStorage()
+    form = cgi.FieldStorage(keep_blank_values=True)
 
     if 'action' not in form:
         print HTML_ERROR.format("You must use MyPyTutor directly to interact with the online data.")
