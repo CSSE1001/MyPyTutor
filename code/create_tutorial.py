@@ -23,9 +23,7 @@
 ## individual problems.
 
 import argparse
-import base64
 from collections import OrderedDict, namedtuple
-from datetime import datetime
 import glob
 from itertools import chain
 import os
@@ -34,14 +32,8 @@ import sys
 import time
 import zipfile
 
-from tutorlib.config.namespaces import Namespace
-from tutorlib.interface.problems import TutorialPackage
+from hashes import update_hashes
 from tutorlib.interface.tutorial import Tutorial
-
-
-DUE_DATE_HOUR = 17
-INPUT_DATE_FORMAT = "%d/%m/%y"
-DATE_FORMAT = "%H_%d/%m/%y"
 
 
 class TutorialCreationError(Exception):
@@ -264,44 +256,6 @@ def write_tutorial(tutorial, source_dir, destination_dir):
         shutil.copyfile(src_path, dest_path)
 
 
-def write_tutorial_hashes(f, path):
-    """
-    Create the tutorial hashes file for the tutorial package in the given
-    destination directory.
-
-    It is assumed that destination_dir contains a valid tutorial package.
-    As a result, this function must only be called after the package itself
-    has been created.
-
-    Args:
-      f (file): The file to write the tutorial hashes data to.
-      path (str): The path to the tutorial package.
-
-    """
-    options = Namespace(tut_dir=path, ans_dir='/tmp/notreal')
-    tutorial_package = TutorialPackage(path, options)
-
-    tutorial_package_name = tutorial_package.name.replace(' ', '_')
-
-    for problem_set in tutorial_package.problem_sets:
-        date_obj = datetime.strptime(problem_set.date, INPUT_DATE_FORMAT)
-        date_obj = date_obj.replace(hour=DUE_DATE_HOUR)
-        due_date_str = date_obj.strftime(DATE_FORMAT)
-
-        problem_set_name = problem_set.name.replace(' ', '_')
-
-        for tutorial in problem_set:
-            b32hash = base64.b32encode(tutorial.hash).decode('utf8')
-            tutorial_name = tutorial.name.replace(' ', '_')
-
-            data = [
-                b32hash,
-                due_date_str,
-                tutorial_package_name,
-                problem_set_name,
-                tutorial_name,
-            ]
-            f.write(' '.join(data) + '\n')
 
 
 def create_zipfile(path, name):
@@ -380,10 +334,7 @@ def create_tutorial_package(source_dir, destination_dir, url, problem_sets,
                 could_parse[problem_set.name][tutorial.name] = False
 
     # finally, write our tutorial hashes file
-    # TODO: calculate the diff from the old file, and write that out too
-    tutorial_hashes_path = os.path.join(parent_dir, 'tutorial_hashes')
-    with open(tutorial_hashes_path, 'w') as f:
-        write_tutorial_hashes(f, destination_dir)
+    update_hashes(parent_dir, destination_dir)
 
     # zip everything together
     create_zipfile(destination_dir, dir_name)
