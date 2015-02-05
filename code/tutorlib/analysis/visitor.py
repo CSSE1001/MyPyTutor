@@ -7,7 +7,7 @@ from tutorlib.analysis.ast_tools \
         import fully_qualified_identifier, identifier, identifier_or_value, \
                involved_identifiers, value
 from tutorlib.analysis.node_objects \
-        import Call, ClassDefinition, FunctionDefinition
+        import Call, ClassDefinition, FunctionDefinition, Lambda
 from tutorlib.analysis.scope_manager import NodeScopeManager
 from tutorlib.testing.tester import STUDENT_FUNCTION_NAME  # urgh, messy
 
@@ -85,6 +85,13 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
     @property  # NB: intended to be *really* private ;)
     def _current_function_def(self):
         return self.functions[self._current_function]
+
+    def _parse_value(self, node):
+        if isinstance(node, ast.Call):
+            return Call(node)
+        elif isinstance(node, ast.Lambda):
+            return Lambda(node)
+        return identifier_or_value(node, prefer_value=True)
 
     def generic_visit(self, node):
         """
@@ -260,10 +267,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
             if target_id is None:
                 continue
 
-            if isinstance(node.value, ast.Call):
-                assignment_value = Call(node.value)
-            else:
-                assignment_value = identifier_or_value(node, prefer_value=True)
+            assignment_value = self._parse_value(node.value)
 
             # always set assignments_to, but only set assignments_of if we
             # have a known value (to avoid lots of None entries)
@@ -298,5 +302,5 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           node (ast.Return): The node we are visiting.
 
         """
-        return_value = identifier_or_value(node.value, prefer_value=True)
+        return_value = self._parse_value(node.value)
         self._current_function_def.returns.append(return_value)

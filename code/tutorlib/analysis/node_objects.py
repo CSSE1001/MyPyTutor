@@ -171,3 +171,25 @@ class Call():
             tuple(self.args),
             tuple(self.keywords.items()),
         ))
+
+
+class Lambda():
+    """
+    A description of a lambda declaration in the Python grammar, built from
+    an ast.Lambda object.
+
+    """
+    def __init__(self, node):
+        """
+        Create a new Lambda object.
+
+        Args:
+          node (ast.Lambda): The node to create the Lambda object for.
+
+        """
+        assert isinstance(node, ast.Lambda)
+
+        arg_ids = list(map(identifier, node.args.args))
+        self.args = NonePaddedList(arg_ids)
+
+        # TODO: body?
