@@ -61,7 +61,7 @@ Adding Numbers:recursion_add.tut
 Extracting Digits:recursive_digits.tut
 Nested Lists:recursion_list.tut
 Extracting Digits Using a Base:recursive_digits2.tut
-Converting List of Digits to Number:recursive_digits3.tut
+Converting List of Digits to Number:recursive_base2dec.tut
 
 [27/10/14 Functional Programming]
 Writing Lambda Functions:lambda.tut
