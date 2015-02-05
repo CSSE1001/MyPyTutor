@@ -48,6 +48,16 @@ class List2Analyser(CodeAnalyser):
             self.add_error(
                 'Your function definition does not contain a for loop.'
             )
+        else:
+            if self.visitor.functions['all_gt'].is_defined \
+               and (self.visitor.functions['all_gt'].args[0] \
+                    != self.visitor.iteration_variable):
+                self.add_warning(
+                    'Your for loop should iterate over {}'.format(
+                        self.visitor.functions['all_gt'].args[0]
+                    )
+                )
+
         if not self.visitor.functions['all_gt'].returns:
             self.add_error('You need a return statement.')
 
@@ -65,14 +75,6 @@ class List2Analyser(CodeAnalyser):
         if not self.visitor.appends_in_loop:
             self.add_error("You need to append inside the for loop.")
 
-        if self.visitor.functions['all_gt'].is_defined \
-                and (self.visitor.functions['all_gt'].args[0] \
-                     != self.visitor.iteration_variable):
-            self.add_warning(
-                'Your for loop should iterate over {}'.format(
-                    self.visitor.functions['all_gt'].args[0]
-                )
-            )
 
 
 ANALYSER = List2Analyser(CodeVisitor)
