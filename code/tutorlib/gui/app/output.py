@@ -74,7 +74,11 @@ class TestsListbox(tk.Listbox):
 
     def get_selected_result(self):
         # on OS X, this is inexplicibly a str, so we need a conversion.  sigh.
-        idx = int(self.curselection()[0])
+        try:
+            idx = int(self.curselection()[0])
+        except IndexError:
+            return None
+
         return self.results[idx]  # assume valid
 
     def select_result(self, result):
@@ -103,6 +107,9 @@ class TestOutput(ttk.Frame):
 
     def selected_test_result(self, evt):
         result = self.test_results.get_selected_result()
+        if result is None:
+            return
+
         self.display_result(result)
 
     def set_test_results(self, results):
@@ -116,6 +123,8 @@ class TestOutput(ttk.Frame):
             result = next(result for result in results
                           if result.status != TutorialTestResult.PASS)
         except StopIteration:
+            if not results:
+                return
             result = results[0]
 
         self.test_results.select_result(result)

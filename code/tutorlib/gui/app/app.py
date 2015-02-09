@@ -6,6 +6,7 @@ import os
 
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
+from tutorlib.config.namespaces import Namespace
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output import AnalysisOutput, TestOutput
 from tutorlib.gui.app.tutorial import TutorialFrame
@@ -414,6 +415,12 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             tester, analyser = run_tests(self.current_tutorial, code_text)
         except StudentCodeError as e:
             self.editor.error_line(e.linenum)
+
+            self.test_output.set_test_results([])
+            self.analysis_output.set_analyser(
+                Namespace(warnings=[], errors=[])
+            )
+
             return False
 
         # show the results on the UI
