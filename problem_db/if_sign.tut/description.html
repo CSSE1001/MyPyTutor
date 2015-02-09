@@ -1,0 +1,38 @@
+<h3>If Statements Using Elif and Else</h3>
+<p>
+    In the previous question, we used an if statement that contained an else 
+    branch.
+    Sometimes, however, we have more than one condition we wish to test. 
+    This could be done using multiple if statements but can often also be 
+    accomplished using the if-elif-else form:
+</p>
+<pre>
+    if condition1:
+        code_if_condition1_true
+        [code_if_condition1_true...]
+    elif condition2:
+        code_if_condition2_true
+        [code_if_condition2_true...]
+    else:
+        code_if_neither_condition_true
+        [code_if_neither_condition_true...]
+</pre>
+<p>
+    Here, if <tt>condition1</tt> evaluates to <tt>False</tt>, then Python will test <tt>condition2</tt>. There can be more than one <tt>elif</tt> and the else branch is optional.
+</p>
+<p>
+    For example, this code will print <tt>'Monty'</tt> if <tt>x</tt> is <tt>1</tt>, <tt>'Python'</tt> if <tt>x</tt> is <tt>2</tt>, <tt>'Flying'</tt> if <tt>x</tt> is <tt>3</tt>, and <tt>'Circus'</tt> otherwise:
+</p>
+<pre>
+    if x == 1:
+        print('Monty')
+    elif x == 2:
+        print('Python')
+    elif x == 3:
+        print('Flying')
+    else:
+        print('Circus')
+</pre>
+<p>
+    Prompt the user to enter an integer, and then print <tt>'negative'</tt> if the entered number is negative, <tt>'zero'</tt> if it is <tt>0</tt> and <tt>'positive'</tt> if it is positive. You should use the if-elif-else form.
+</p>
