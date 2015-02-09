@@ -9,7 +9,7 @@ Using Functions:fun1.tut
 If Statements 1:if_abs.tut
 If Statements 2:if_vowel.tut
 If Statements 3:if_sign.tut
-Writing a Function:sqfun.tut
+Writing a Function:fun_square.tut
 While Statements:while.tut
 While Using If:whileif.tut
 While Using Break:whilebreak.tut
