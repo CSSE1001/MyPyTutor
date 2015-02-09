@@ -8,7 +8,7 @@ Converting Input Strings:input_number.tut
 Using Functions:fun1.tut
 If Statements 1:if_abs.tut
 If Statements 2:if_vowel.tut
-If Statements 3:if3.tut
+If Statements 3:if_sign.tut
 Writing a Function:sqfun.tut
 While Statements:while.tut
 While Using If:whileif.tut
