@@ -31,7 +31,7 @@ def get_code_font(fontsize):
 
 
 class TestsListbox(tk.Listbox):
-    COLOR_NOT_RUN = 'black'
+    COLOR_NOT_RUN = 'yellow'
     COLOR_PASS = 'green'
     COLOR_FAIL = 'red'
     COLOR_ERROR = 'red'

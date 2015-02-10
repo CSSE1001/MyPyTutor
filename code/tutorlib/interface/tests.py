@@ -22,48 +22,11 @@ def run_tests(tutorial, text):
     """
     Run the tests for the given tutorial.
 
-    This function uses an Alarm object to prevent infinite loops from causing
-    MyPyTutor to hand.
-
-    Args:
-      tutorial (Tutorial): The tutorial to run the tests for.
-      text (str): The student's code.
-
-    Returns:
-      A two-element tuple.
-
-      The first element in the tuple will be the TutorialTester object which
-      was run on the student's code.
-
-      The second element in the tuple will be the CodeAnalyser object which was
-      run on the student's code.
-
-      If execution of the student's code times out, None will be returned for
-      both elements.
-
-    Raises:
-      StudentCodeError: If an error is encountered when compiling the
-          student's code.
-
-    """
-    alarm = Alarm(tutorial.timeout)
-    alarm.setDaemon(True)
-    alarm.start()
-
-    try:
-        return _run_tests(tutorial, text)
-    except KeyboardInterrupt as e:
-        return None, None
-    finally:
-        alarm.stop_interrupt()
-
-
-def _run_tests(tutorial, text):
-    """
-    Run the tests for the given tutorial.
-
     Testing and analysis will only be performed if no compilation errors were
     encountered when executing the student's code.
+
+    This function uses an Alarm object to prevent infinite loops from causing
+    MyPyTutor to hang.
 
     Args:
       tutorial (Tutorial): The tutorial to run the tests for.
@@ -115,7 +78,17 @@ def _run_tests(tutorial, text):
         # there were no errors, so it's safe to perform the analysis
         analyser.analyse(text)
 
+    # set up our timeout alarm
+    alarm = Alarm(tutorial.timeout)
+    alarm.setDaemon(True)
+    alarm.start()
+
     # we can always run the tests no matter what
-    tester.run(text, tutorial.wrap_student_code)
+    try:
+        tester.run(text, tutorial.wrap_student_code)
+    except KeyboardInterrupt:
+        pass  # we're going to ignore this for now
+    finally:
+        alarm.stop_interrupt()
 
     return tester, analyser
