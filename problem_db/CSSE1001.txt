@@ -12,7 +12,7 @@ If Statements 3:if_sign.tut
 Writing a Function:fun_square.tut
 While Statements:while_average.tut
 While Using Break:while_break_average.tut
-
+Writing a Function Using While:while_function.tut
 [18/08/14 Abstract Data Types]
 
 Accessing String Elements:string_indexing.tut
