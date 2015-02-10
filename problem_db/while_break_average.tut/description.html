@@ -1,0 +1,35 @@
+<h3>While Using Break</h3>
+
+Sometimes it is convenient to be able to break out of a while loop from within
+the body of the while loop using the <tt>break</tt> command. 
+This is often the case when it is more sensible to 
+test a condition in the body that is different from the while loop condition.
+<p>
+A typical case is
+</p>
+<p>
+<pre>
+while condition1:
+    some_code
+    if condition2:
+       break
+    more_code
+</pre>
+</p>
+<p>
+If the execution gets to the <tt>if</tt> statement and <tt>condition2</tt> is 
+true then the while loop is exited.
+
+</p>
+<p>
+This problem is a variant of the while loop problem but instead of specifying
+the number of numbers to be entered, the loop is terminated when the user enters
+the empty string (blank line).
+</p>
+<p>
+Write a program that uses a while loop to repeatedly prompt the user for
+numbers and adds the numbers to a running total. When a blank line is entered, 
+the program should print the average of all the numbers entered. 
+You need to use a break statement to exit the while loop.
+</p>
+

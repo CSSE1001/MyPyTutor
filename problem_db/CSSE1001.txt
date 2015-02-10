@@ -11,8 +11,7 @@ If Statements 2:if_vowel.tut
 If Statements 3:if_sign.tut
 Writing a Function:fun_square.tut
 While Statements:while_average.tut
-While Using If:whileif.tut
-While Using Break:whilebreak.tut
+While Using Break:while_break_average.tut
 
 [18/08/14 Abstract Data Types]
 
