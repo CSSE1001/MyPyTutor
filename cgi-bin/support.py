@@ -230,6 +230,30 @@ TutorialInfo = namedtuple(
 )
 
 
+# TODO: refactor the two functions below maybe?
+# (look at how each of them is used and maybe there'll be a smarter way)
+def get_tutorials():
+    """
+    Get a list of all tutorials, as TutorialInfo objects.
+
+    Returns:
+      An ordered list of TutorialInfo objects.
+    """
+    tutorials = []
+    with open(TUTORIAL_HASHES_FILE) as f:
+        for line in filter(None, map(str.strip, f)):
+            hash_str, due_date_str, pkg_name, pset_name, tut_name \
+                = line.split()
+
+            due_date = datetime.strptime(due_date_str, DUE_DATE_FORMAT)
+
+            tutorial_info = TutorialInfo(
+                hash_str, due_date, pkg_name, pset_name, tut_name
+            )
+            tutorials.append(tutorial_info)
+    return tutorials
+
+
 def parse_tutorial_hashes():
     """
     Get all valid tutorial hashes, as TutorialInfo objects.
