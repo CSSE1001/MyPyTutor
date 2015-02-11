@@ -50,12 +50,27 @@ def main():
 
     print "Content-Type: text/html\n"
     print "<!DOCTYPE html><html><head><title></title></head><body>"
+
+    # Count the number of on-time or accepted-late submissions the student has made.
+    marks = 0
+    late = 0
     problem_set = None
+
     for tutorial, submit_time in submissions:
         if tutorial.problem_set_name != problem_set:
             problem_set = tutorial.problem_set_name
             print "<h3>{}</h3>".format(problem_set.replace('_', ' '))
         print render(tutorial, submit_time)
+
+        # TODO: also check if is-submitted and override-late flag is set
+        if None is not submit_time <= tutorial.due:
+            marks += 1
+        elif submit_time is not None:
+            late += 1
+
+    total = len(submissions)
+    percent = 100. * marks / total
+    print "<h2>Summary</h2><p>Total mark: {} / {} = {:.1f}% ({} late)</p>".format(marks, total, percent, late)
     print "</body></html>"
 
 if __name__ == '__main__':
