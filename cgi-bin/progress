@@ -3,9 +3,10 @@
 import uqauth
 import support
 
-import pprint
+import datetime
 
 DATE_FORMAT = '%d/%m/%Y %I:%M%p'
+TZ_DELTA = datetime.timedelta(hours=10)
 
 
 def get_submissions():
@@ -21,7 +22,7 @@ def get_submissions():
     submit_times = []
     for tut in tutorials:
         sub = [s for s in submissions if s.hash == tut.hash]
-        submit_times.append(sub[0].date if sub else None)
+        submit_times.append(sub[0].date + TZ_DELTA if sub else None)
 
     return zip(tutorials, submit_times)
 
