@@ -54,12 +54,12 @@ def process_tutorial(tutorial, submit_time):
 
 
 def main():
-    print "Content-Type: text/html\n"
-
     try:
         submissions = get_submissions()
     except uqauth.Redirected:
         return
+
+    print "Content-Type: text/html\n"
 
     data = {
         'name': 'Change Me',
