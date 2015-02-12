@@ -47,7 +47,10 @@ def render(tutorial, submit_time):
 
 
 def main():
-    submissions = get_submissions()
+    try:
+        submissions = get_submissions()
+    except uqauth.Redirected:
+        return
 
     print "Content-Type: text/html\n"
     print "<!DOCTYPE html><html><head><title></title></head><body>"
