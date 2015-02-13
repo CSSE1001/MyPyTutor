@@ -21,6 +21,7 @@ File structure:
         tutorial_hashes              <- tutorial hashes / info file
         <username>/
           submission_log             <- student submission log
+          admin_log                  <- log of admin actions taken on the user
           <tutorial_problem_hash>    <- the student's answer, as submitted
 
 """
@@ -48,6 +49,7 @@ TUTORIAL_HASH_MAPPINGS_FILE = os.path.join(
     SUBMISSIONS_DIR, "tutorial_hash_mappings",
 )
 SUBMISSION_LOG_NAME = "submission_log"
+ADMIN_LOG_NAME = "admin_log"
 DUE_DATE_FORMAT = "%H_%d/%m/%y"
 
 # MyPyTutor version file
@@ -372,7 +374,22 @@ def _get_or_create_user_submissions_file(user):
     return submission_log_path
 
 
-TutorialSubmission = namedtuple('TutorialSubmission', ['hash', 'date'])
+def _get_or_create_admin_log_file(user):
+    user_submissions_dir = _get_or_create_user_submissions_dir(user)
+    admin_log_path = os.path.join(
+        user_submissions_dir, ADMIN_LOG_NAME
+    )
+
+    # create the file if it does not exist
+    if not os.path.exists(admin_log_path):
+        with open(admin_log_path, 'w') as f:
+            pass
+
+    return admin_log_path
+
+
+TutorialSubmission = namedtuple('TutorialSubmission',
+                                ['hash', 'date', 'allow_late'])
 
 
 def parse_submission_log(user):
@@ -381,6 +398,12 @@ def parse_submission_log(user):
 
     Format of submission_log file:
       hash submitted_dd_mm_yy
+
+    Format of the admin_log file:
+      action_type [data ...]
+    Valid action types:
+      - 'allow_late', with data being the hash of the problem the student is
+        allowed to submit late without penalty.
 
     Hashes are sha512, encoded as base32 strings.
 
@@ -397,15 +420,24 @@ def parse_submission_log(user):
     data = []
 
     submission_log_path = _get_or_create_user_submissions_file(user)
+    admin_log_path = _get_or_create_admin_log_file(user)
 
-    # parse the file itself
+    with open(admin_log_file) as f:
+        allow_lates = [line[1]
+                       for line in filter(None, map(str.split, f))
+                       if line[0] == 'allow_late']
+
+    # parse the submission log file
     with open(submission_log_path) as f:
         for line in filter(None, map(str.strip, f)):
             hash_str, submitted_date_str = line.split()
 
             submitted_date = dateutil.parser.parse(submitted_date_str)
+            allow_late = hash_str in allow_lates
 
-            submission_info = TutorialSubmission(hash_str, submitted_date)
+            submission_info = TutorialSubmission(hash_str,
+                                                 submitted_date,
+                                                 allow_late)
             data.append(submission_info)
 
     return data
@@ -457,6 +489,36 @@ def add_submission(user, tutorial_hash, code):
 
     # return the TutorialSubmission object
     return submission
+
+
+def set_allow_late(user, tutorial_hash):
+    """
+    Allow a user to submit a tutorial late without incurring a mark penalty.
+    If the user has not yet submitted, they will be allowed to submit late.
+
+    This function assumes that the invoker has sufficient privilege to take
+    this action.
+
+    Args:
+      user (str): The username to set the late allowance on.
+      tutorial_hash (str): The tutorial hash, as a base32 string.
+    """
+    admin_log_path = _get_or_create_admin_log_file(user)
+
+    with open(admin_log_path, 'a') as f:
+        f.write('allow_late {}\n'.format(tutorial_hash))
+
+
+def has_allow_late(user, tutorial_hash):
+    """
+    Return True if the user has the 'allow_late' flag set on the given
+    tutorial.
+    """
+    admin_log_path = _get_or_create_admin_log_file(user)
+
+    with open(admin_log_path, 'a') as f:
+        return any(line[0] == 'allow_late' and line[1] == tutorial_hash
+                   for line in map(str.split, f))
 
 
 def get_mypytutor_version():

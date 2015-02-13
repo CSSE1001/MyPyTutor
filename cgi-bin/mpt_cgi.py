@@ -250,6 +250,7 @@ def submit_answer(tutorial_hash, code):
     Returns:
       'OK' if submitted on time.
       'LATE' if submitted late.
+      'LATE_OK' if submitted late without penalty.
 
     Raises:
       ActionError: If tutorial hash does not match a known tutorial package,
@@ -296,7 +297,12 @@ def submit_answer(tutorial_hash, code):
         raise ActionError('Could not add submission: {}'.format(tutorial_hash))
 
     # return either 'OK' or 'LATE'
-    return 'OK' if submission.date <= tutorial_info.due else 'LATE'
+    if submission.date <= tutorial_info.due:
+        return 'OK'
+    elif support.has_allow_late(user, tutorial_hash):
+        return 'LATE_OK'
+    else:
+        return 'LATE'
 
 
 @action('get_submissions')
@@ -311,7 +317,8 @@ def show_submit():
       The first element in the tuple is the hash of the tutorial package (in
       the same format as usual, ie base32 encoded sha512 hash).
 
-      The second element in the tuple is one of 'MISSING', 'OK', and 'LATE'.
+      The second element in the tuple is one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
 
     """
     # authenticate the user
@@ -329,7 +336,13 @@ def show_submit():
         # lookup, not get, as this must exist: if not, then we have a
         # submission with an unknown tutorial, which is a server error
         tutorial_info = hashes[submission.hash]
-        status = 'OK' if submission.date <= tutorial_info.due else 'LATE'
+
+        if submission.date <= tutorial_info.due:
+            status = 'OK'
+        elif submission.allow_late:
+            status = 'LATE_OK'
+        else:
+            status = 'LATE'
 
         results[tutorial_info.hash] = status
 
