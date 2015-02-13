@@ -422,7 +422,7 @@ def parse_submission_log(user):
     submission_log_path = _get_or_create_user_submissions_file(user)
     admin_log_path = _get_or_create_admin_log_file(user)
 
-    with open(admin_log_file) as f:
+    with open(admin_log_path) as f:
         allow_lates = [line[1]
                        for line in filter(None, map(str.split, f))
                        if line[0] == 'allow_late']

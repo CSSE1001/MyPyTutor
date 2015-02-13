@@ -77,11 +77,13 @@
                         </thead>
                         <tbody>
                         % for problem in group['problems']:
-                        <tr class="${'success' if problem.get('status') == 'submitted' else ('danger' if problem.get('status') == 'late' else 'warning')}">
+                        <tr class="${'success' if problem.get('status') == ('submitted', 'late_ok') else ('danger' if problem.get('status') == 'late' else 'warning')}">
                             <td class="problem">${problem['title']}</td>
                             <td class="status">
                                 %if problem.get('status') == 'submitted':
                                 <i class="glyphicon glyphicon-ok"></i> <em>Submitted</em>
+                                % elif problem.get('status') == 'late_ok':
+                                <i class="glyphicon glyphicon-ok"></i> <em>Submitted late without penalty</em>
                                 % elif problem.get('status') == 'late':
                                 <i class="glyphicon glyphicon-remove"></i> <em>Late</em>
                                 % else:
@@ -90,7 +92,7 @@
                             </td>
                             <td class="submit_time">
                                 % if problem.get('status') != 'unsubmitted':
-                                    ${problem.get('submitted_time')}
+                                    ${problem.get('submit_time')}
                                 % endif
                             </td>
                         </tr>
