@@ -454,7 +454,7 @@ class WebAPI():
                 details='Unexpected response: {}'.format(response),
             )
 
-        return response == WebAPI.OK
+        return response
 
     def get_submissions(self, tutorial_package):
         """
