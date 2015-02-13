@@ -77,7 +77,7 @@
                         </thead>
                         <tbody>
                         % for problem in group['problems']:
-                        <tr class="${'success' if problem.get('status') == ('submitted', 'late_ok') else ('danger' if problem.get('status') == 'late' else 'warning')}">
+                        <tr class="${'success' if problem.get('status') in ('submitted', 'late_ok') else ('danger' if problem.get('status') == 'late' else 'warning')}">
                             <td class="problem">${problem['title']}</td>
                             <td class="status">
                                 %if problem.get('status') == 'submitted':
