@@ -461,6 +461,7 @@ def add_submission(user, tutorial_hash, code):
 
     """
     # build our data
+    # TODO: check for possible timezone issues (if submissions are made within 10 hours of the deadline)
     submitted_date = datetime.now()
     submitted_date_str = submitted_date.isoformat()
 
