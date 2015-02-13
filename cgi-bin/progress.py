@@ -48,8 +48,7 @@ def process_tutorial(tutorial, submit_time):
         'title': tutorial.tutorial_name.replace('_', ' '),
         'due': due,
         'status': status,
-        'submit_time': submit_time,
-        'submit': submit
+        'submit_time': submit,
     }
 
 
