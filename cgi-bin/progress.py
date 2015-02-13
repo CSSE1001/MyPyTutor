@@ -5,6 +5,10 @@ import support
 
 import datetime
 
+
+from mako.template import Template
+from mako import exceptions
+
 DATE_FORMAT = '%d/%m/%Y %I:%M%p'
 TZ_DELTA = datetime.timedelta(hours=10)
 
@@ -27,23 +31,26 @@ def get_submissions():
     return zip(tutorials, submit_times)
 
 
-def render(tutorial, submit_time):
+def process_tutorial(tutorial, submit_time):
     if submit_time is None:
-        status = 'Not Submitted'
+        status = 'unsubmitted'
     # TODO: also check for override-late flag
     elif submit_time <= tutorial.due:
-        status = 'Submitted on time'
+        status = 'submitted'
     else:
-        status = 'Submitted late'
+        status = 'late'
 
-    name = tutorial.tutorial_name.replace('_', ' ')
     due = tutorial.due.strftime(DATE_FORMAT)
     submit = submit_time and submit_time.strftime(DATE_FORMAT)
 
-    if submit_time is not None:
-        return "{}: {} (due {}, submitted {})<br />".format(name, status, due, submit)
-    else:
-        return "{}: {} (due {})<br />".format(name, status, due)
+    return {
+        'slug': tutorial.tutorial_name,
+        'title': tutorial.tutorial_name.replace('_', ' '),
+        'due': due,
+        'status': status,
+        'submit_time': submit_time,
+        'submit': submit
+    }
 
 
 def main():
@@ -53,29 +60,46 @@ def main():
         return
 
     print "Content-Type: text/html\n"
-    print "<!DOCTYPE html><html><head><title></title></head><body>"
+
+    data = {
+        'name': 'Change Me',
+        'id': 'changeme',
+        'user': uqauth.get_user_info(),
+        'openIndex': 0
+    };
 
     # Count the number of on-time or accepted-late submissions the student has made.
-    marks = 0
-    late = 0
-    problem_set = None
+    data['mark'] = 0
+    data['late'] = 0
+
+    data['groups'] = []
+    group = None
 
     for tutorial, submit_time in submissions:
-        if tutorial.problem_set_name != problem_set:
-            problem_set = tutorial.problem_set_name
-            print "<h3>{}</h3>".format(problem_set.replace('_', ' '))
-        print render(tutorial, submit_time)
+        if not group or tutorial.problem_set_name != group['slug']:
+            group = {
+                'slug': tutorial.problem_set_name,
+                'title': tutorial.problem_set_name.replace('_', ' '),
+                'due': tutorial.due.strftime(DATE_FORMAT),
+                'problems': []
+            }
+
+            data['groups'].append(group)
+
+        group['problems'].append(process_tutorial(tutorial, submit_time))
 
         # TODO: also check if is-submitted and override-late flag is set
         if None is not submit_time <= tutorial.due:
-            marks += 1
+            data['mark'] += 1
         elif submit_time is not None:
-            late += 1
+            data['late'] += 1
 
-    total = len(submissions)
-    percent = 100. * marks / total
-    print "<h2>Summary</h2><p>Total mark: {} / {} = {:.1f}% ({} late)</p>".format(marks, total, percent, late)
-    print "</body></html>"
+    data['total'] = len(submissions)
+
+    try:
+        print(Template(filename="./templates/progress.html").render(**data))
+    except:
+        print(exceptions.html_error_template().render())
 
 if __name__ == '__main__':
     main()

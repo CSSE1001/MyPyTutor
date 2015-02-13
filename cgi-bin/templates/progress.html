@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyPyTutor Progress :: ${user.get("name")}</title>
+</head>
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+    th.problem,
+    td.problem {
+        width: 34%;
+    }
+
+    th.status,
+    td.status {
+        width: 33%;
+    }
+
+    th.submit_time,
+    td.submit_time {
+        width: 33%;
+    }
+
+    .panel-heading i.down,
+    .panel-heading.collapsed i.up {
+        display: none;
+    }
+
+    .panel-heading i.up,
+    .panel-heading.collapsed i.down {
+        display: inline-block;
+    }
+
+    .panel-heading {
+        cursor: pointer;
+    }
+</style>
+<body>
+
+<div class="container">
+    <div class="row-fluid">
+        <header>
+            <h1>MyPyTutor Progress for ${user.get("name")}
+                <small>(${user.get("user")})</small>
+            </h1>
+            <p class="lead">Total mark: ${mark} / ${total} = ${round(mark/total, 2)}% (${late} late)</p>
+        </header>
+    </div>
+
+    <div class="panel-group" id="problemSets" role="tablist" aria-multiselectable="true">
+        % for group in groups:
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading${loop.index}" data-toggle="collapse"
+                 data-parent="#problemSets" href="#collapse${loop.index}" aria-expanded="true"
+                 aria-controls="collapseOne">
+                <div class="panel-title clearfix">
+                    <h4 class="pull-left">
+                        ${group.get('title')}
+                        <small>(${len(group['problems'])})</small>
+                        <!--<small>(Week ${group.get('week')})</small>-->
+                    </h4>
+                    <h4 class="pull-right">Due ${group.get('due')}
+                    <i class="glyphicon glyphicon-circle-arrow-down down"></i>
+                    <i class="glyphicon glyphicon-circle-arrow-up up"></i>
+                    </h4>
+                </div>
+            </div>
+            <div id="collapse${loop.index}" class="panel-collapse collapse ${'in' if loop.index == openIndex else ''}"
+                 role="tabpanel" aria-labelledby="heading${loop.index}">
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="problem">Problem</th>
+                            <th class="status">Status</th>
+                            <th class="submit_time">Submit Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        % for problem in group['problems']:
+                        <tr class="${'success' if problem.get('status') == 'submitted' else ('danger' if problem.get('status') == 'late' else 'warning')}">
+                            <td class="problem">${problem['title']}</td>
+                            <td class="status">
+                                %if problem.get('status') == 'submitted':
+                                <i class="glyphicon glyphicon-ok"></i> <em>Submitted</em>
+                                % elif problem.get('status') == 'late':
+                                <i class="glyphicon glyphicon-remove"></i> <em>Late</em>
+                                % else:
+                                <i class="glyphicon glyphicon-minus"></i> <em>Unsubmitted</em>
+                                % endif
+                            </td>
+                            <td class="submit_time">
+                                % if problem.get('status') != 'unsubmitted':
+                                    ${problem.get('submitted_time')}
+                                % endif
+                            </td>
+                        </tr>
+                        % endfor
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        % endfor
+
+
+        <!--<div class="panel panel-default">-->
+        <!--<div class="panel-heading" role="tab" id="headingTwo">-->
+        <!--<h4 class="panel-title">-->
+        <!--<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"-->
+        <!--aria-expanded="false" aria-controls="collapseTwo">-->
+        <!--Collapsible Group Item #2-->
+        <!--</a>-->
+        <!--</h4>-->
+        <!--</div>-->
+        <!--<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">-->
+        <!--<div class="panel-body">-->
+        <!--Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3-->
+        <!--wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum-->
+        <!--eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla-->
+        <!--assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt-->
+        <!--sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer-->
+        <!--farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus-->
+        <!--labore sustainable VHS.-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
