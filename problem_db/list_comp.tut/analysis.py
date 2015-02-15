@@ -15,7 +15,7 @@ class CodeVisitor(TutorialNodeVisitor):
 class Analyser(CodeAnalyser):
     def _analyse(self):
         if not self.visitor.functions['square_odds'].is_defined:
-            self.add_error('You need to square_odds')
+            self.add_error('You need to define square_odds')
         elif len(self.visitor.functions['square_odds'].args) != 1:
             self.add_error('square_odds should accept exactly one arg')
         else:

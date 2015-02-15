@@ -1,0 +1,17 @@
+<h3>Repeated Function Application</h3>
+
+Write a recursive function <tt>repeatedlyApply</tt> that takes as arguments a function
+<tt>f</tt> of one argument and a positive integer <tt>n</tt>. The result of <tt>repeatedlyApply</tt> is a function of one argument that applies <tt>f</tt> to that argument <tt>n</tt> times.
+<p>
+So, for example, we would have
+<p>
+<pre>
+repeatedlyApply(lambda x: x+1,10)(100) ==> 110
+</pre>            
+<p>
+You may assume that the following function has been defined. You don't have to use it, but it can contribute to a pretty solution.
+<p>
+<pre>
+def compose(f,g):
+    return lambda x: f(g(x))
+</pre>       
