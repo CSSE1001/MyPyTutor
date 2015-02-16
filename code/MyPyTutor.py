@@ -39,8 +39,6 @@ def bootstrap():
     server_version = create_tuple(version)
     local_version = create_tuple(VERSION)
 
-    print(local_version, server_version)
-
     if server_version > local_version:
         # grab our new zip file
         mpt_zip_path = web_api.get_mpt_zipfile()
@@ -52,9 +50,7 @@ def bootstrap():
         safely_extract_zipfile(mpt_zip_path, script_dir)
 
         # re-exec with the new version
-        print('Updated')
         os.execl(sys.executable, sys.executable, *sys.argv)
-    print('No update needed')
 
 
 def main():
