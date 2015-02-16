@@ -23,13 +23,3 @@ _FIXED_DEFAULT = 'Courier'
 FIXED_NAME = _FIXED.get(_SYSTEM, _FIXED_DEFAULT)
 
 FIXED_FONT = (FIXED_NAME, SIZE, 'roman')
-
-
-def update_fonts(widget, font_info):
-    try:
-        widget.config(font=font_info)
-    except tk.TclError:
-        pass  # probably has no font config option
-
-    for child in widget.winfo_children():
-        update_fonts(child, font_info)

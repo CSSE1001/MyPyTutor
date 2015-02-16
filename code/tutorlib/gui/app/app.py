@@ -14,7 +14,6 @@ from tutorlib.gui.app.support \
 from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
-from tutorlib.gui.dialogs.font_chooser import FontChooser
 from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.gui.dialogs.progress import ProgressPopup
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
@@ -101,7 +100,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Tutorial (html display of tutorial problem)
         self.tutorial_frame = TutorialFrame(
             top_frame,
-            (self.cfg.font.name, self.cfg.font.size),
             self.cfg.window_sizes.problem
         )
         self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
@@ -130,7 +128,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Test Output
         self.test_output = TestOutput(
             top_frame,
-            self.cfg.font.size,
             self.cfg.window_sizes.output,
         )
         self.test_output.pack(fill=tk.BOTH, expand=0)
@@ -138,7 +135,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Analysis Output
         self.analysis_output = AnalysisOutput(
             top_frame,
-            self.cfg.font.size,
             self.cfg.window_sizes.analysis,
         )
         self.analysis_output.pack(fill=tk.BOTH, expand=0)
@@ -861,17 +857,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         raise NotImplementedError('Interpeter not yet implemented')
 
     # preferences
-    def configure_fonts(self):
-        font_chooser = FontChooser(
-            self.master, self, (self.cfg.font.name, self.cfg.font.size)
-        )
-        if font_chooser.result is None:
-            return
-
-        self.cfg.font.name, self.cfg.font.size = font_chooser.result
-
-        self.update_fonts()
-
     @skip_if_attr_none('tutorial_package')
     def change_tutorial_directory(self):
         """

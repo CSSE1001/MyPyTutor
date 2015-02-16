@@ -25,7 +25,6 @@ MENU_STRUCTURE = [
         ('Open Interpreter', None, 'interpreter'),
     ]),
     ('Preferences', [
-        ('Configure Tutor Fonts', None, 'fonts'),
         ('Configure Tutorial Folder', None, 'tutorial_directory'),
         ('Configure Answers Folder', None, 'answers_directory'),
         (None, None, None),
@@ -81,10 +80,6 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
         pass
 
     # preferences
-    @abstractmethod
-    def configure_fonts(self):
-        pass
-
     @abstractmethod
     def change_tutorial_directory(self):
         pass
@@ -334,9 +329,6 @@ class TutorialMenu(tk.Menu):
 
     def menu_tools_interpreter(self):
         self.delegate.reload_interpreter()
-
-    def menu_preferences_fonts(self):
-        self.delegate.configure_fonts()
 
     def menu_preferences_tutorial_directory(self):
         self.delegate.change_tutorial_directory()
