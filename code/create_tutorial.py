@@ -256,8 +256,6 @@ def write_tutorial(tutorial, source_dir, destination_dir):
         shutil.copyfile(src_path, dest_path)
 
 
-
-
 def create_zipfile(path, name):
     """
     Create a zip file from the contents of the given path.
@@ -273,8 +271,15 @@ def create_zipfile(path, name):
     all_files = glob.glob("*")
 
     with zipfile.ZipFile('{}.zip'.format(name), 'w') as zfile:
+        def add_path(path):
+            if os.path.isdir(path):
+                for fn in os.listdir(path):
+                    add_path(os.path.join(path, fn))
+            else:
+                zfile.write(path)
+
         for file in all_files:
-            zfile.write(file)
+            add_path(file)
 
     os.chdir(cwd)
 
