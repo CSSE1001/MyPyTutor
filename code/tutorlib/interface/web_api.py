@@ -289,7 +289,7 @@ class WebAPI():
         result = self._get(values, require_login=False)
         return self._download(result.strip(), 'tutzip.zip')
 
-    def get_mpt34(self):
+    def get_mpt_zipfile(self):
         """
         Download the MyPyTutor Python 3.4 zip file from the server.
 
@@ -301,11 +301,11 @@ class WebAPI():
 
         """
         values = {
-            'action': 'get_mpt34',
+            'action': 'get_mpt',
         }
 
-        result = self._get(values)
-        return self._download(result.strip(), 'mpt34.zip')
+        result = self._get(values, require_login=False)
+        return self._download(result.strip(), 'mpt.zip')
 
     def get_version(self):
         """
@@ -321,7 +321,7 @@ class WebAPI():
         values = {
             'action': 'get_version',
         }
-        return self._get(values)
+        return self._get(values, require_login=False)
 
     def upload_answer(self, tutorial, problem_set, tutorial_package, code):
         """

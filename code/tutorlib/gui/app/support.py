@@ -1,37 +1,14 @@
 from functools import partial
 import os
 import shutil
-import zipfile
+from zipfile import ZipFile
 
 
 def safely_extract_zipfile(zip_path, extraction_path):
-    """
-    Safely extract a zipfile, with defence against path traversal attacks.
-
-    Code is from http://stackoverflow.com/a/12886818/1103045
-
-    Args:
-      zip_path (str): The path of the zip file to extract.
-      extraction_path (str): The directory to extract to.  This must exist.
-
-    """
-    with zipfile.ZipFile(zip_path) as zf:
-        for member in zf.infolist():
-            # Path traversal defense copied from
-            # http://hg.python.org/cpython/file/tip/Lib/http/server.py#l789
-            words = member.filename.split('/')
-            path = extraction_path
-
-            for word in words[:-1]:
-                drive, word = os.path.splitdrive(word)
-                head, word = os.path.split(word)
-
-                if word in (os.curdir, os.pardir, ''):
-                    continue
-
-                path = os.path.join(path, word)
-
-            zf.extract(member, path)
+    # in Py3, it looks like ZipFile does safe-ish extraction
+    # we have a trusted source anyway, so this will do
+    with ZipFile(zip_path) as zf:
+        return zf.extractall(extraction_path)
 
 
 def remove_directory_contents(path):

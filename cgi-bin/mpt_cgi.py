@@ -482,8 +482,8 @@ def get_tut_zip_file():
     return TUTORIAL_ZIPFILE_URL
 
 
-@action('get_mpt34')
-def get_mpt34():
+@action('get_mpt')
+def get_mpt():
     return MPT34_ZIPFILE_URL
 
 

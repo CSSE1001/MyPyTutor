@@ -20,13 +20,46 @@
 
 """The MyPyTutor application."""
 
+import os
+import sys
 import tkinter as tk
 
-from tutorlib.gui.app.app import TutorialApp
+from tutorlib.gui.app.app import TutorialApp, VERSION
+from tutorlib.gui.app.support import safely_extract_zipfile
+from tutorlib.interface.web_api import WebAPI
+
+
+def bootstrap():
+    web_api = WebAPI()
+
+    # grab the server version
+    version = web_api.get_version()
+
+    create_tuple = lambda v: tuple(map(int, v.split('.')))
+    server_version = create_tuple(version)
+    local_version = create_tuple(VERSION)
+
+    print(local_version, server_version)
+
+    if server_version > local_version:
+        # grab our new zip file
+        mpt_zip_path = web_api.get_mpt_zipfile()
+
+        # extract over the script path
+        # do NOT delete things; the user could have other stuff here
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+
+        safely_extract_zipfile(mpt_zip_path, script_dir)
+
+        # re-exec with the new version
+        print('Updated')
+        os.execl(sys.executable, sys.executable, *sys.argv)
+    print('No update needed')
 
 
 def main():
     """The main entry point for MyPyTutor."""
+    bootstrap()
 
     root = tk.Tk()
     TutorialApp(root)
