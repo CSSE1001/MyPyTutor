@@ -72,6 +72,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.current_tutorial = None
         self._editor = None
         self._tutorial_package = None
+        self._submissions = {}
 
         ## Important top-level vars
         self.master = master
@@ -486,19 +487,25 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         if success and try_to_submit:
             if self.web_api.is_logged_in:
                 try:
-                    _ = self.web_api.submit_answer(
+                    response = self.web_api.submit_answer(
                         self.current_tutorial, self.editor.get_text()
                     )
+                    if response is not None:
+                        self.master.after(0, self.update_submissions)
                 except WebAPIError:
                     pass  # ignore: silently trying to submit
             else:
-                def _show_info_box():
-                    tkmessagebox.showinfo(
-                        'Correct!',
-                        'Remember that you must log in and submit your ' \
-                        'answer in order to receive any marks.'
-                    )
-                self.master.after(0, _show_info_box)
+                status = self._submissions.get(
+                    self.current_tutorial, WebAPI.MISSING
+                )
+                if status == WebAPI.MISSING:
+                    def _show_info_box():
+                        tkmessagebox.showinfo(
+                            'Correct!',
+                            'Remember that you must log in and submit your ' \
+                            'answer in order to receive any marks.'
+                        )
+                    self.master.after(0, _show_info_box)
 
         return success
 
@@ -644,6 +651,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 'Code submitted {}'.format('on time' if response else 'late'),
             )
 
+            self.master.after(0, self.update_submissions)
+
     def update_submissions(self):
         """
         Get the latest submissions information for the user.
@@ -670,6 +679,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         # update the menu with the new submissions as well
         self.menu.set_submissions(submissions)
+
+        self._submissions = submissions
 
         return submissions
 
