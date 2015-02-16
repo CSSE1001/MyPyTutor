@@ -25,33 +25,18 @@
 from abc import ABCMeta, abstractmethod
 from html.parser import HTMLParser
 import os
-import platform
 import tkinter as tk
 from tkinter import ttk
+
+from tutorlib.gui.utils.fonts import NORMAL_NAME, FIXED_NAME
 
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
 INDENT = 'indent{}'
 COLORS = ['red', 'green', 'blue']
 
-_SYSTEM = platform.system()
 
-_NORMAL = {
-    'Windows': 'Calibri',
-    'Darwin': 'Helvetica',
-}
-_NORMAL_DEFAULT = 'Arial'
-NORMAL_NAME = _NORMAL.get(_SYSTEM, _NORMAL_DEFAULT)
-
-_FIXED = {
-    'Windows': 'Consolas',
-    'Darwin': 'Menlo Regular',
-}
-_FIXED_DEFAULT = 'Courier'
-FIXED_NAME = _FIXED.get(_SYSTEM, _FIXED_DEFAULT)
-
-
-def get_configs(name=NORMAL_NAME, size=12, style='roman', max_indents=6):
+def get_configs(name=NORMAL_NAME, size=12, max_indents=6):
     tags = {
         'it': {
             'font': (name, size, 'italic'),
@@ -60,7 +45,7 @@ def get_configs(name=NORMAL_NAME, size=12, style='roman', max_indents=6):
             'font': (name, size, 'bold'),
         },
         'tt': {
-            'font': (FIXED_NAME, size, style),
+            'font': (FIXED_NAME, size, 'roman'),
             'foreground': 'grey',
         },
     }
