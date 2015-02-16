@@ -202,13 +202,9 @@ class TutorialPackage():
                 try:
                     tutorial = Tutorial(name, tutorial_path, answer_path)
                 except AssertionError as e:
-                    # TODO: in testing, ignore this
-                    # TODO: in production, remove the continue
-                    continue
-                    ex = TutorialPackageError(
-                        'Could not load tutorial at path: {}'.format(path)
-                    )
-                    raise ex from e
+                    raise TutorialPackageError(
+                        'Could not load tutorial with name: {}'.format(name)
+                    ) from e
 
                 problem_set.add_problem(tutorial)
 

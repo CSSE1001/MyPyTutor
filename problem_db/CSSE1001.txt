@@ -48,7 +48,6 @@ Defining a Class:class_rect.tut
 A Point Class Definition:class_point.tut
 
 [01/05/15 Inheritance]
-Inheritance - Method Calls:inherit_calls.tut
 Using Inheritance:inherit_def.tut
 
 [15/05/15 GUI]
