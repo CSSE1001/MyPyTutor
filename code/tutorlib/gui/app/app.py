@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
@@ -660,19 +661,19 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
               is taking place as part of the close handler.  Defaults to False.
 
         """
-        for problem_set in self.tutorial_package.problem_sets:
-            for tutorial in problem_set:
+        def _do_sync(tutorial):
+            def f():
                 remote_hash, remote_mtime = self._get_answer_info(tutorial)
 
                 if not tutorial.has_answer:
                     if remote_hash is not None:  # there exists a remote copy
                         self._download_answer(tutorial)
-                    continue
+                    return True
 
                 local_hash, local_mtime = tutorial.answer_info
 
                 if local_hash == remote_hash:  # no changes
-                    continue
+                    return True
 
                 if remote_hash is None or local_mtime >= remote_mtime:
                     success = self._upload_answer(tutorial)
@@ -681,7 +682,24 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
                 if not success:
                     return False
-        return True
+            return f
+
+        max_workers = sum(
+            1 for pset in self.tutorial_package.problem_sets for _ in pset
+        )
+        with ThreadPoolExecutor(max_workers) as executor:
+            futures = {
+                executor.submit(_do_sync(tutorial))
+                    for problem_set in self.tutorial_package.problem_sets
+                    for tutorial in problem_set
+            }
+
+            success = True
+            for future in as_completed(futures):
+                if not future.result():
+                    success = False
+
+            return success
 
     @skip_if_attr_none('tutorial_package')
     def synchronise(self, suppress_popups=False, no_login=None):
