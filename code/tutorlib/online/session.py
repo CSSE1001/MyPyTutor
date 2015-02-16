@@ -128,7 +128,7 @@ class SessionManager:
 
             # If there is a login form in the response, the user's credentials are invalid.
             if any(f[0].get('name') == 'f' for f in FormParser.forms(text2)):
-                return False
+                raise AuthError('Login attempt failed')
 
             # There is one more form to automatically submit.
             action, form_data = FormParser.get_consume_form(text2)
@@ -141,11 +141,13 @@ class SessionManager:
             set_details(text3)
 
             # The login was successful
-            return True
+            return
 
         LoginDialog(None, submit_login)
-        if not self.is_logged_in():
-            raise AuthError("Not logged in.")
+
+        # if we got here, there was no AuthError
+        # the user therefore either cancelled, or the login was successful
+        return self.is_logged_in()
 
     def logout(self):
         """Log out of the system."""

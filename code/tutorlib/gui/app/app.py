@@ -591,7 +591,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
           Whether the login attempt succeeded.
 
         """
-        if not self.web_api.login():
+        try:
+            logged_in = self.web_api.login()
+        except WebAPIError:
             tkmessagebox.showerror(
                 'Login failed',
                 'Please check your credentials and try again.  ' \
@@ -599,10 +601,12 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 'Some functionality (such as submitting answers) will be ' \
                 'unavailable until you log in successfully.'
             )
-            return False
+            logged_in = False
 
-        self._set_online_status(logged_in_user=self.web_api.user)
-        return True
+        self._set_online_status(
+            logged_in_user=self.web_api.user if logged_in else None
+        )
+        return logged_in
 
     def logout(self):
         """
