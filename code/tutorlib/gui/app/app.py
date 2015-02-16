@@ -430,7 +430,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
     ## Public-ish methods
     @skip_if_attr_none('current_tutorial')
-    def run_tests(self):
+    def run_tests(self, try_to_submit=True):
         """
         Test and analyse the student code.
 
@@ -439,6 +439,10 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         Otherwise, update `.test_output` and `.analysis_output` with the
         results of the testing and analysis respectively.
+
+        Args:
+          try_to_submit (bool, optional): If True, attempt to submit the
+            tutorial if the student's answer is correct.
 
         Returns:
           Whether the code passes the tests and the analysis.
@@ -470,7 +474,17 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.analysis_output.set_analyser(analyser)
 
         # return whether the code passed
-        return tester.passed and not analyser.errors
+        success = tester.passed and not analyser.errors
+
+        if success and try_to_submit and self.web_api.is_logged_in:
+            try:
+                _ = self.web_api.submit_answer(
+                    self.current_tutorial, self.editor.get_text()
+                )
+            except WebAPIError:
+                pass  # ignore: silently trying to submit
+
+        return success
 
     ## TutorialMenuDelegate
     # problems
@@ -592,7 +606,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         if not self.login():
             return
 
-        if self.run_tests():
+        if self.run_tests(try_to_submit=False):
             try:
                 response = self.web_api.submit_answer(
                     self.current_tutorial, self.editor.get_text()
