@@ -496,6 +496,15 @@ def get_version():
     return support.get_mypytutor_version()
 
 
+@action('get_tutorials_timestamp')
+def get_tutorials_timestamp():
+    """
+    Return the timestamp of the current tutorial package, as a string.
+
+    """
+    return support.get_tutorials_timestamp()
+
+
 def main():
     form = cgi.FieldStorage(keep_blank_values=True)
 

@@ -1,4 +1,3 @@
-from threading import Thread
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
@@ -9,6 +8,8 @@ from tutorlib.config.configuration \
 from tutorlib.config.namespaces import Namespace
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output import AnalysisOutput, TestOutput
+from tutorlib.gui.app.support \
+        import remove_directory_contents, safely_extract_zipfile
 from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
@@ -220,6 +221,41 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         # update menu
         self.menu.set_selected_tutorial_package(self.tutorial_package)
+
+        # start update process
+        self.master.after(0, self._update_tutorial_package)
+
+    def _update_tutorial_package(self):
+        """
+        Update the current tutorial package.
+
+        This will only perform the update if the current package is out of date
+        according to the server.
+
+        This process is NOT performed in the background, as we can't proceed
+        with setup (including with synchronisation) until and unless we know
+        that our local tutorials are up to date.
+
+        """
+        timestamp = self.web_api.get_tutorials_timestamp()
+
+        # NB: this is intentionally equality, not greater than, because we
+        # NB: want to be able to revert to an earlier package if necessary
+        if timestamp == self.tutorial_package.timestamp:
+            return
+
+        # grab the zipfile
+        zip_path = self.web_api.get_tutorials_zipfile()
+
+        # extract the zipfile into our empty tutorial directory
+        remove_directory_contents(self.tutorial_package.options.tut_dir)
+        safely_extract_zipfile(zip_path, self.tutorial_package.options.tut_dir)
+
+        # reload our tutorial package
+        # this will call this function recursively, but will exit if the
+        # timestamps match correctly (as they must if there has not been an
+        # update in the interim)
+        self.tutorial_package = self.tutorial_package.name
 
     def _next_hint(self):
         """
@@ -709,7 +745,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 if not suppress_popups:
                     self.master.after(0, self._display_web_api_error, e)
             finally:
-                popup.destroy()
+                self.master.after(0, popup.destroy)
 
         # do this on a background thread
         exec_sync(_background_task)
