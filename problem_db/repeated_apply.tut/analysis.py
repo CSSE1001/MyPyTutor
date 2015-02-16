@@ -7,7 +7,7 @@ class Analyser(CodeAnalyser):
     def _analyse(self):
         if not self.visitor.functions['repeatedly_apply'].is_defined:
             self.add_error('You need to define repeatedly_apply')
-        elif len(self.visitor.functions['repeatedlyApply'].args) != 2:
+        elif len(self.visitor.functions['repeatedly_apply'].args) != 2:
             self.add_error('repeatedly_apply should accept exactly two args')
         else:
             if not self.visitor.functions['repeatedly_apply'].calls['repeatedly_apply']:
