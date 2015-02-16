@@ -249,9 +249,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         server_timestamp = create_tuple(timestamp)
         local_timestamp = create_tuple(self.tutorial_package.timestamp)
 
-        # NB: this is intentionally equality, not greater than, because we
-        # NB: want to be able to revert to an earlier package if necessary
-        if server_timestamp == local_timestamp:
+        # we only want to update if the server's version is more recent
+        # a more recent local version should only arise in development, anyway
+        if server_timestamp <= local_timestamp:
             return
 
         # grab the zipfile
