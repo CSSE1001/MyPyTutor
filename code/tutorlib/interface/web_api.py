@@ -8,7 +8,8 @@ from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
 
 
-VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
+VISUALISER_URL \
+    = 'http://csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
 
 
 class WebAPIError(Exception):
