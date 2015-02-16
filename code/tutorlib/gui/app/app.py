@@ -239,9 +239,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         """
         timestamp = self.web_api.get_tutorials_timestamp()
 
+        # we need to be comparing as ints
+        create_tuple = lambda t: tuple(map(int, t.split('.')))
+        server_timestamp = create_tuple(timestamp)
+        local_timestamp = create_tuple(self.tutorial_package.timestamp)
+
         # NB: this is intentionally equality, not greater than, because we
         # NB: want to be able to revert to an earlier package if necessary
-        if timestamp == self.tutorial_package.timestamp:
+        if server_timestamp == local_timestamp:
             return
 
         # grab the zipfile
