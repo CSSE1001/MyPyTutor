@@ -35,7 +35,7 @@ class Analyser(CodeAnalyser):
                     self.visitor.functions['filter_string'].args[0]
                 )
             )
-        if not self.visitor.functions['sum_elems'].returns:
+        if not self.visitor.functions['filter_string'].returns:
             self.add_error('You need a return statement.')
 
 
