@@ -476,13 +476,22 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         # return whether the code passed
         success = tester.passed and not analyser.errors
 
-        if success and try_to_submit and self.web_api.is_logged_in:
-            try:
-                _ = self.web_api.submit_answer(
-                    self.current_tutorial, self.editor.get_text()
-                )
-            except WebAPIError:
-                pass  # ignore: silently trying to submit
+        if success and try_to_submit:
+            if self.web_api.is_logged_in:
+                try:
+                    _ = self.web_api.submit_answer(
+                        self.current_tutorial, self.editor.get_text()
+                    )
+                except WebAPIError:
+                    pass  # ignore: silently trying to submit
+            else:
+                def _show_info_box():
+                    tkmessagebox.showinfo(
+                        'Correct!',
+                        'Remember that you must log in and submit your ' \
+                        'answer in order to receive any marks.'
+                    )
+                self.master.after(0, _show_info_box)
 
         return success
 
