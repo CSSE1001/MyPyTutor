@@ -83,7 +83,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         ## Objects
         self.web_api = WebAPI()
-        master.after(0, self.synchronise)  # post event immediately after init
+
+        def _try_sync():
+            if not self.synchronise():
+                return
+            if not self.update_submissions():
+                return
+
+        master.after(0, _try_sync)  # post event immediately after init
 
         #### Create GUI Widgets
         ## Top Frame
@@ -637,6 +644,35 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 'Code submitted {}'.format('on time' if response else 'late'),
             )
 
+    def update_submissions(self):
+        """
+        Get the latest submissions information for the user.
+
+        The student must be logged on to show their submissions.  This method
+        will prompt the student to login if necessary.
+
+        If successful, this will update the menu with the submissions
+        information.
+
+        Returns:
+          A dictionary mapping tutorials to the submission status if
+          successful; None otherwise.
+
+        """
+        if not self.login():
+            return None
+
+        try:
+            submissions = self.web_api.get_submissions(self.tutorial_package)
+        except WebAPIError as e:
+            self._display_web_api_error(e)
+            return None
+
+        # update the menu with the new submissions as well
+        self.menu.set_submissions(submissions)
+
+        return submissions
+
     @skip_if_attr_none('tutorial_package')
     def show_submissions(self):
         """
@@ -645,17 +681,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         This will indicate which problems have been completed, and which
         still need to be done.
 
-        The student must be logged on to show their submissions.  This method
-        will prompt the student to login if necessary.
-
         """
-        if not self.login():
-            return
-
-        try:
-            submissions = self.web_api.get_submissions(self.tutorial_package)
-        except WebAPIError as e:
-            self._display_web_api_error(e)
+        submissions = self.update_submissions()
+        if submissions is None:
             return
 
         SubmissionsDialog(self.master, submissions, self.tutorial_package)
