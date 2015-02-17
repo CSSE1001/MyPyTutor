@@ -22,6 +22,7 @@ from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.gui.utils.decorators import skip_if_attr_none
 import tutorlib.gui.utils.messagebox as tkmessagebox
 from tutorlib.gui.utils.threading import exec_sync
+from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError
@@ -37,6 +38,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
     Attributes:
       cfg (Namespace): The MyPyTutor configuration options.
       current_tutorial (Tutorial): The currently selected tutorial problem.
+      interpreter (Interpreter): The interpreter used by MyPyTutor.
       tutorial_package (TutorialPackage): The selected tutorial package.
       web_api (WebAPI): The web API for the app.
 
@@ -82,6 +84,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
         ## Objects
+        self.interpreter = Interpreter()
         self.web_api = WebAPI()
 
         def _try_sync():
@@ -854,7 +857,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         If the interpreter is not visible, it should be opened.
 
         """
-        raise NotImplementedError('Interpeter not yet implemented')
+        self.interpreter.reload(self.editor.get_text())
 
     # preferences
     @skip_if_attr_none('tutorial_package')
