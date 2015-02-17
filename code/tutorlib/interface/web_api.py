@@ -105,11 +105,8 @@ class WebAPI():
         if self.is_logged_in:
             return True
 
-        # LoginManager raises on failure
-        try:
-            return self.session_manager.login()
-        except AuthError as e:
-            raise WebAPIError('Authentication Error On Login') from e
+        # the SessionManager will keep trying until it is successful
+        return self.session_manager.login()
 
     def logout(self):
         """

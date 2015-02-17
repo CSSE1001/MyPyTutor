@@ -128,7 +128,7 @@ class SessionManager:
 
             # If there is a login form in the response, the user's credentials are invalid.
             if any(f[0].get('name') == 'f' for f in FormParser.forms(text2)):
-                raise AuthError('Login attempt failed')
+                return False
 
             # There is one more form to automatically submit.
             action, form_data = FormParser.get_consume_form(text2)
@@ -140,13 +140,12 @@ class SessionManager:
             text3 = response3.read().decode('utf8')
             set_details(text3)
 
-            # The login was successful
-            return
+            return self.is_logged_in()
 
         LoginDialog(None, submit_login)
 
-        # if we got here, there was no AuthError
-        # the user therefore either cancelled, or the login was successful
+        # regardless of whether the user cancelled or was successful, what we
+        # want to return is whether they are logged in right now
         return self.is_logged_in()
 
     def logout(self):
