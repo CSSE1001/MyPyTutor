@@ -18,7 +18,7 @@ class TestAverage(StudentTestCase):
 
 
 class TestSingle(StudentTestCase):
-    DESCRIPTION = "'3.3', '' > '0.0'"
+    DESCRIPTION = "'3.3', '' > '3.3'"
     MAIN_TEST = 'test_main'
 
     def test_main(self):
