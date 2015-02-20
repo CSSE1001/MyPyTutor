@@ -85,15 +85,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         ## Objects
         self.interpreter = Interpreter()
-        self.web_api = WebAPI()
-
-        def _try_sync():
-            if not self.synchronise():
-                return
-            if not self.update_submissions():
-                return
-
-        master.after(0, _try_sync)  # post event immediately after init
+        self.web_api = WebAPI(self._login_status_change)
+        self.master.after(0, self.login)
 
         #### Create GUI Widgets
         ## Top Frame
@@ -582,6 +575,13 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         # run the tests
         # this will fill out the results and static analysis sections
         self.run_tests()
+
+    def _login_status_change(self, logged_in):
+        # sync no matter what
+        self.master.after(0, self.synchronise)
+
+        if logged_in:
+            self.master.after(0, self.update_submissions)
 
     # online
     def login(self):

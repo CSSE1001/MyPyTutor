@@ -59,7 +59,7 @@ class WebAPI():
     LATE = 'LATE'
     MISSING = 'MISSING'
 
-    def __init__(self):
+    def __init__(self, listener=None):
         """
         Initialise a new WebAPI object.
 
@@ -68,6 +68,7 @@ class WebAPI():
 
         """
         self.session_manager = SessionManager()
+        self.listener = listener if listener is not None else lambda _: None
 
     @property
     def is_logged_in(self):
@@ -106,7 +107,10 @@ class WebAPI():
             return True
 
         # the SessionManager will keep trying until it is successful
-        return self.session_manager.login()
+        success = self.session_manager.login()
+        self.listener(success)
+
+        return success
 
     def logout(self):
         """
@@ -117,6 +121,7 @@ class WebAPI():
         """
         if self.is_logged_in:
             self.session_manager.logout()
+            self.listener(False)
 
     # visualiser
     def visualise(self, code_text):
