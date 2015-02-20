@@ -8,8 +8,7 @@
 
 .PHONY: all clean cleantutorials tutorials build push
 
-BUILD = MyPyTutor34.zip \
-        CSSE1001Tutorials/CSSE1001Tutorials.zip \
+BUILD = CSSE1001Tutorials/CSSE1001Tutorials.zip \
         CSSE1001Tutorials/config.txt \
         doc/MyPyTutor.html \
         code/mpt_installer.py \
@@ -26,17 +25,12 @@ cleantutorials:
 	-rm -r CSSE1001Tutorials
 
 tutorials: problem_db/* cleantutorials
-	-python3 code/create_tutorial.py problem_db/CSSE1001.txt \
+	python3 code/create_tutorial.py problem_db/CSSE1001.txt \
 	CSSE1001Tutorials --ignore-invalid-tutorials --verbose
 
 build: tutorials $(BUILD)
 	mkdir -p build
 	cp $(BUILD) build
 
-push: build
-	scp build/* uqprobin@csse1001.zones.eait.uq.edu.au:
-
-MyPyTutor34.zip: code/*.py code/*/*.py
-	cp code/MyPyTutor.py code/MyPyTutor.pyw
-	cd code && zip ../MyPyTutor34.zip MyPyTutor.py code/MyPyTutor.pyw tutorlib/*.pyc
-
+push:
+	./sync

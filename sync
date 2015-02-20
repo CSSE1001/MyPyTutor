@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+
+MPT_ZIP="MyPyTutor34.zip"
+
+printf "Downloading hash files..."
+sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+get /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hashes
+get /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hash_mappings
+EOF
+printf "done\n"
+
+printf "Building tutorial package..."
+make > /dev/null
+printf "done\n"
+
+# there's rate limiting on the server logins, so we need sleeps
+printf "Uploading new hash files..."
+sleep 2
+sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+put tutorial_hashes /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hashes
+put tutorial_hash_mappings /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hash_mappings
+EOF
+printf "done\n"
+
+printf "Uploading tutorials zip..."
+sleep 2
+sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+put $1/$1.zip /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/$1.zip
+EOF
+printf "done\n"
+
+printf "Creating MyPyTutor zip..."
+rm $MPT_ZIP
+cd code && find tutorlib -name "*.py" | xargs zip ../$MPT_ZIP MyPyTutor.py{,w} >/dev/null && cd ..
+printf "done\n"
+
+printf "Uploading MyPyTutor zip..."
+sleep 2
+sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+put $MPT_ZIP /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/$MPT_ZIP
+EOF
+printf "done\n"
+
+printf "Updating version info..."
+VERSION_FILE=.tmp_mpt_version
+code/mpt_version.py > $VERSION_FILE
+sleep 2
+sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+put $VERSION_FILE /opt/local/share/MyPyTutor/MPT3_CSSE1001/mpt_version
+EOF
+rm $VERSION_FILE
+printf "done\n"
