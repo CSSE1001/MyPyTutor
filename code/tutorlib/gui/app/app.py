@@ -122,6 +122,13 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         )
         self._set_online_status(logged_in_user=None)
 
+        self.problem_status = ttk.Label(
+            toolbar, relief=tk.SUNKEN
+        )
+        self.problem_status.pack(
+            side=tk.RIGHT, pady=3, ipady=2, padx=2, ipadx=2
+        )
+
         ## Test Output
         self.test_output = TestOutput(
             top_frame,
@@ -273,6 +280,19 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         """
         if not self.tutorial_frame.show_next_hint():
             self.hint_button.pack_forget()
+
+    def _set_problem_status(self):
+        status = self._submissions.get(
+            self.current_tutorial,
+        )
+        strings = {
+            WebAPI.OK: 'Yes',
+            WebAPI.LATE: 'Late',
+            WebAPI.MISSING: 'No',
+            None: 'Unknown',
+        }
+        text = 'Submitted: {}'.format(strings[status])
+        self.problem_status.config(text=text)
 
     def _set_online_status(self, logged_in_user=None):
         """
@@ -573,6 +593,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         else:
             self.hint_button.pack_forget()
 
+        # update the ui
+        self._set_problem_status()
+
         # run the tests
         # this will fill out the results and static analysis sections
         self.run_tests()
@@ -692,6 +715,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.menu.set_submissions(submissions)
 
         self._submissions = submissions
+
+        # update the problem status
+        self._set_problem_status()
 
         return submissions
 
