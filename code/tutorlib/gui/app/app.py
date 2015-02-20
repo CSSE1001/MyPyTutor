@@ -447,6 +447,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         Otherwise, update `.test_output` and `.analysis_output` with the
         results of the testing and analysis respectively.
 
+        This method will also reload the interpreter with the tested code, so
+        that students can play with it themselves.
+
         Args:
           try_to_submit (bool, optional): If True, attempt to submit the
             tutorial if the student's answer is correct.
@@ -505,6 +508,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                             'answer in order to receive any marks.'
                         )
                     self.master.after(0, _show_info_box)
+
+        # reload the interpreter with the tested code
+        self.interpreter.reload(self.editor.get_text())
 
         return success
 
@@ -848,16 +854,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         """
         self.web_api.visualise(self.editor.get_text())
-
-    def reload_interpreter(self):
-        """
-        Reload the interpeter window with the latest version of the
-        student's code.
-
-        If the interpreter is not visible, it should be opened.
-
-        """
-        self.interpreter.reload(self.editor.get_text())
 
     # preferences
     @skip_if_attr_none('tutorial_package')

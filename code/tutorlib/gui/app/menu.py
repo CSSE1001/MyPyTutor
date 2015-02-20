@@ -22,7 +22,6 @@ MENU_STRUCTURE = [
     ]),
     ('Tools', [
         ('Visualise Code', None, 'visualise'),
-        ('Open Interpreter', None, 'interpreter'),
     ]),
     ('Preferences', [
         ('Configure Tutorial Folder', None, 'tutorial_directory'),
@@ -73,10 +72,6 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
     # tools
     @abstractmethod
     def show_visualiser(self):
-        pass
-
-    @abstractmethod
-    def reload_interpreter(self):
         pass
 
     # preferences
@@ -326,9 +321,6 @@ class TutorialMenu(tk.Menu):
 
     def menu_tools_visualise(self):
         self.delegate.show_visualiser()
-
-    def menu_tools_interpreter(self):
-        self.delegate.reload_interpreter()
 
     def menu_preferences_tutorial_directory(self):
         self.delegate.change_tutorial_directory()
