@@ -578,7 +578,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
     def _login_status_change(self, logged_in):
         # sync no matter what
-        self.master.after(0, self.synchronise)
+        self.master.after(0, self.synchronise, no_login=not logged_in)
 
         if logged_in:
             self.master.after(0, self.update_submissions)
