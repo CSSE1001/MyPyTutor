@@ -39,9 +39,6 @@ from io import StringIO
 
 # Configuration information
 DEFAULT_CONFIG = StringIO("""
-[FONT]
-name=helvetica
-size=10
 [WINDOW_SIZES]
 problem=20
 output=5
@@ -159,7 +156,7 @@ class Installer():
     def python_version(self):
         """Check if the version is Python is suitable - set self.version.""" 
         self.version = sys.version_info[:2]
-        if self.version not in [(2,7)]:
+        if self.version not in [(3, 4)]:
             self.add_text("\nYou are running Python version %d.%d. You need to install Python 2.7\n" % self.version) 
             return None
         else:
@@ -235,7 +232,7 @@ class Installer():
         self.add_text('Downloading MyPyTutor...\n')
         self.master.update_idletasks()
         urlobj = urllib.request.URLopener({})
-        urlobj.retrieve('http://csse1001.uqcloud.net/mpt/MyPyTutor%d%d.zip' % self.version, 'mpt.zip')
+        urlobj.retrieve('http://csse1001.uqcloud.net/mpt3/MyPyTutor%d%d.zip' % self.version, 'mpt.zip')
         unzipfile('mpt.zip', mpt_folder)
         os.remove('mpt.zip')
         self.add_text('MyPyTutor.py is located in %s\n' % mpt_folder)
