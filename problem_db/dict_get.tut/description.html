@@ -1,17 +1,17 @@
-<h3>Accessing a Dictionary</h3>
-Dictionaries are iterable objects that store associations between 'keys' and values.
+<h3>Accessing a Dictionary Using Get</h3>
+Using square brackets to look up information in a dictionary using a key is fine as long as the key is in the dictionary. If it is not then an exception occurs.
 <p>
-    Here is a dictionary that associates weekday names with a 'day number'.
-</p>
+    The dictionary method <tt>get</tt> avoids this problem by returning a value instead of raising an exception. The first argument of <tt>get</tt> is the dictionary
+    key for the value desired. If this key does not exist within the dictionary, <tt>get</tt> returns <tt>None</tt> or, if a second argument to <tt>get</tt> is provided,
+    this is returned instead. If the key does exist within the dictionary, <tt>get</tt> behaves just as though the dictionary were indexed with square brackets.
 <p>
+    Here is a dictionary that associates weekday names with a 'day number'.<p>
     <pre>
     {'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3,
-     'Thursday':4, 'Friday':5, 'Saturday':6}
+        'Thursday':4, 'Friday':5, 'Saturday':6}
     </pre>
-</p>
 <p>
-    Values can be retrieved from dictionaries using square brackets, in the same way that elements of a string or a list can be selected.
-    The difference here is that the key goes within the square brackets.
-</p>
-<p>
-    Write a function <tt>get_value(dictionary, key)</tt> which returns the value for the given key in the given dictionary.
+Write a function <tt>get_value(dictionary, key)</tt> which returns the value for the given key in the given dictionary, using the <tt>get</tt> method. If the key is
+    not valid, your function should return <tt>-1</tt>.
+<p>For example, if <tt>day</tt> is <tt>'Wednesday'</tt> then <tt>day_num</tt>
+should be  <tt>3</tt> and if <tt>day</tt> is <tt>'Talk Like a Pirate Day'</tt> then <tt>day_num</tt> should be  <tt>-1</tt>.
