@@ -52,6 +52,10 @@ class Interpreter():
             _, self._path = mkstemp()
         return self._path
 
+    def kill(self):
+        self.subprocess.kill()
+        os.remove(self.path)
+
     def reload(self, code):
         """
         Reload the interepreter with the given code.
