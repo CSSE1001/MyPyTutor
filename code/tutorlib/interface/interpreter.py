@@ -53,7 +53,9 @@ class Interpreter():
         return self._path
 
     def kill(self):
-        self.subprocess.kill()
+        if self.subprocess is not None:
+            self.subprocess.kill()
+
         os.remove(self.path)
 
     def reload(self, code):
