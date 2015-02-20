@@ -15,6 +15,7 @@ class SubmissionsDialog(TextDialog):
         status_texts = {
             WebAPI.OK: 'Ok',
             WebAPI.LATE: 'Late',
+            WebAPI.LATE_OK: 'Late without penalty',
             WebAPI.MISSING: 'Not Submitted',
         }
         text = ''

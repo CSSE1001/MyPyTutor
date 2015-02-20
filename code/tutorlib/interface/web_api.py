@@ -49,6 +49,8 @@ class WebAPI():
       LATE (constant): The server indicated that the given action or request
           was completed successfully, but that the provided data was late.
           This is used in submission-related contexts.
+      LATE_OK (constant): The server indicated that the action or request was
+          late, but the user has been permitted to complete this action late.
       MISSING (constant): The relevant submission is missing.
 
     Attributes:
@@ -57,7 +59,10 @@ class WebAPI():
     """
     OK = 'OK'
     LATE = 'LATE'
+    LATE_OK = 'LATE_OK'
     MISSING = 'MISSING'
+
+    RESPONSES = {OK, LATE, LATE_OK, MISSING}
 
     def __init__(self, listener=None):
         """
@@ -469,13 +474,13 @@ class WebAPI():
             return None
 
         response = response.strip()
-        if response not in (WebAPI.OK, WebAPI.LATE):
+        if response not in (WebAPI.OK, WebAPI.LATE, WebAPI.LATE_OK):
             raise WebAPIError(
                 message='Invalid Response',
                 details='Unexpected response: {}'.format(response),
             )
 
-        return response == WebAPI.OK
+        return response
 
     def get_submissions(self, tutorial_package):
         """
@@ -500,7 +505,7 @@ class WebAPI():
           tutorial package).
 
           The corresponding values will be the submission status for that
-          tutorial: one of WebAPI.OK, WebAPI.LATE, or WebAPI.MISSING.
+          tutorial: one of the elements of WebAPI.RESPONSES.
 
         Raises:
           WebAPIError: If the response is not valid JSON, or if one of the
@@ -525,7 +530,7 @@ class WebAPI():
         output = {}
 
         for b32_hash, status in results:
-            if status not in (WebAPI.OK, WebAPI.LATE, WebAPI.MISSING):
+            if status not in WebAPI.RESPONSES:
                 raise WebAPIError(
                     message='Invalid Response',
                     details='Unknown submission status: {}'.format(status),

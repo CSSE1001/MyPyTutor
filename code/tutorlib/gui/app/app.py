@@ -682,9 +682,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                 )
                 return
 
+            messages = {self.web_api.OK: 'Code submitted on time',
+                        self.web_api.LATE: 'Code submitted late',
+                        self.web_api.LATE_OK: 'Code submitted. You will not '
+                            'receive a penalty for late submission.'}
+
             tkmessagebox.showinfo(
                 'Submission Successful!',
-                'Code submitted {}'.format('on time' if response else 'late'),
+                messages[response],
             )
 
             self.master.after(0, self.update_submissions)
