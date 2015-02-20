@@ -492,11 +492,23 @@ def get_user_subs(the_user):
 
 @action('get_tut_zip_file')
 def get_tut_zip_file():
+    """
+    Return the URL of a zip file containing up-to-date tutorial problems.
+
+    This assumes that the client is requesting CSSE1001Tutorials. Other
+    implementations of MyPyTutor could support additional tutorial packages
+    through additional calls, or through adding arguments to this call.
+
+    """
     return TUTORIAL_ZIPFILE_URL
 
 
 @action('get_mpt')
 def get_mpt():
+    """
+    Return the URL of a zip file containing the latest version of MyPyTutor.
+
+    """
     return MPT34_ZIPFILE_URL
 
 
