@@ -442,6 +442,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         """
         if self.editor.close() == tkmessagebox.YES:
+            self.interpreter.kill()
+
             self.synchronise(suppress_popups=True)
             self.logout()
 
