@@ -8,11 +8,15 @@ from tutorlib.gui.utils.fonts import FIXED_FONT
 
 
 CODE_FILE_FORMAT = """
-{code}
-
 from base64 import b64decode
 __student_code = b64decode({data}).decode('utf-16')
 print(__student_code)
+
+print()
+print('--------------------')
+print()
+
+{code}
 """
 
 
