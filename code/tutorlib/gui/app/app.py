@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import partial
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
@@ -578,7 +579,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
     def _login_status_change(self, logged_in):
         # sync no matter what
-        self.master.after(0, self.synchronise, no_login=not logged_in)
+        callback = partial(self.synchronise, no_login=not logged_in)
+        self.master.after(0, callback)
 
         if logged_in:
             self.master.after(0, self.update_submissions)
