@@ -1,5 +1,4 @@
 import platform
-import tkinter as tk
 
 
 _SYSTEM = platform.system()
