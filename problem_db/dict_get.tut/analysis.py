@@ -2,17 +2,12 @@ class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
         super().__init__()
 
-        self.subscripts_with_value = False
+        self.has_if_statement = False
 
-    def visit_Subscript(self, node):
-        super().visit_Subscript(node)
+    def visit_If(self, node):
+        super().visit_If(node)
 
-        if len(self.functions['get_value'].args) == 2:
-            d, k = self.functions['get_value'].args
-
-            if k in TutorialNodeVisitor.involved_identifiers(node.slice) \
-                    and d == TutorialNodeVisitor.identifier(node.value):
-                self.subscripts_with_value = True
+        self.has_if_statement = True
 
 
 class DictAnalyser(CodeAnalyser):
@@ -22,8 +17,11 @@ class DictAnalyser(CodeAnalyser):
         elif len(self.visitor.functions['get_value'].args) != 2:
             self.add_error('get_value must accept exactly two args')
 
-        if not self.visitor.subscripts_with_value:
-            self.add_error('You need to subscript the dictionary, eg d[k]')
+        if not self.visitor.functions['get_value'].calls['get']:
+            self.add_error('You need to use the "get" method of your dictionary')
+
+        if self.visitor.has_if_statement:
+            self.add_error('You do not need to use an if statement')
 
 
 ANALYSER = DictAnalyser(CodeVisitor)
