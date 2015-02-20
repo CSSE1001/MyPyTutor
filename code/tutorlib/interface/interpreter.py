@@ -1,9 +1,19 @@
+from base64 import b64encode
 from contextlib import contextmanager
 import os
 from subprocess import Popen
 from tempfile import mkstemp
 
 from tutorlib.gui.utils.fonts import FIXED_FONT
+
+
+CODE_FILE_FORMAT = """
+{code}
+
+from base64 import b64decode
+__student_code = b64decode({data}).decode('utf-16')
+print(__student_code)
+"""
 
 
 class Interpreter():
@@ -49,9 +59,16 @@ class Interpreter():
           code (str): The code to run.
 
         """
+        # write the startup file
+        data = b64encode(code.strip().encode('utf-16'))
+        code_file_string = CODE_FILE_FORMAT.format(
+            code=code,
+            data=data,
+        )
+
         # write the student's code to a file
         with open(self.path, 'w') as f:
-            f.write(code)
+            f.write(code_file_string)
 
         # terminate existing subprocess if necessary
         if self.subprocess is not None:
