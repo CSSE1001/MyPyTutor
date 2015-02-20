@@ -43,7 +43,9 @@ class TutorialTester():
 
         # initialise our results dict
         status = TutorialTestResult.NOT_RUN
-        message = construct_header_message('Error in code: test not run')
+        message = construct_header_message(
+            'Error in code: test not run (possible infinite loop)'
+        )
 
         self._results = {
             cls: TutorialTestResult(cls.DESCRIPTION, status, message)

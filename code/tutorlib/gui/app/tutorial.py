@@ -28,13 +28,15 @@ import os
 import tkinter as tk
 from tkinter import ttk
 
+from tutorlib.gui.utils.fonts import NORMAL_NAME, FIXED_NAME
+
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
 INDENT = 'indent{}'
 COLORS = ['red', 'green', 'blue']
 
 
-def get_configs(name='TkDefaultFont', size=12, style='roman', max_indents=6):
+def get_configs(name=NORMAL_NAME, size=12, max_indents=6):
     tags = {
         'it': {
             'font': (name, size, 'italic'),
@@ -43,7 +45,7 @@ def get_configs(name='TkDefaultFont', size=12, style='roman', max_indents=6):
             'font': (name, size, 'bold'),
         },
         'tt': {
-            'font': ('TkFixedFont', size, style),
+            'font': (FIXED_NAME, size, 'roman'),
             'foreground': 'grey',
         },
     }
@@ -95,17 +97,11 @@ class TutorialHTMLParserDelegate(metaclass=ABCMeta):
 
 
 class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
-    def __init__(self, master, fontinfo, textlen):
+    def __init__(self, master, textlen):
         super().__init__(master)
 
-        font_name = fontinfo[0]
-        font_size = int(fontinfo[1])
-
         self.text = tk.Text(self, height=textlen, wrap=tk.WORD)
-        self.text.config(
-            state=tk.DISABLED,
-            font=(font_name, str(font_size), 'normal', 'roman')
-        )
+        self.text.config(state=tk.DISABLED)
         self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
         scrollbar = ttk.Scrollbar(self)
@@ -113,7 +109,7 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
 
-        self.update_fonts(font_name, font_size)
+        self.update_fonts()
 
         self.parser = TutorialHTMLParser(delegate=self)
         self._tutorial = None
@@ -143,8 +139,8 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
         self._set_text(text)
 
-    def update_fonts(self, font_name, font_size):
-        for tag, attrs in get_configs(font_name, font_size).items():
+    def update_fonts(self, font_name=None, font_size=12):
+        for tag, attrs in get_configs(name=font_name, size=font_size).items():
             self.text.tag_config(tag, **attrs)
 
         # reset default font (I think?)

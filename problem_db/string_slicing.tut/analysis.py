@@ -16,13 +16,13 @@ class CodeVisitor(TutorialNodeVisitor):
 
 class Analyser(CodeAnalyser):
     def _analyse(self):
-        num_expected_args = {
-            'slice_from': 3,
-            'reverse_string': 1,
-        }
+        num_expected_args = [
+            ('slice_from', 3),
+            ('reverse_string', 1),
+        ]
 
         # check functions are defined and accept the right number of args
-        for function_name, argc in num_expected_args.items():
+        for function_name, argc in num_expected_args:
             function = self.visitor.functions[function_name]
 
             if not function.is_defined:

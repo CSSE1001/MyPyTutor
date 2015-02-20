@@ -3,6 +3,7 @@ import string
 import tkinter as tk
 
 from tutorlib.gui.utils.root import get_root_widget
+from tutorlib.interface.web_api import WebAPI
 
 
 MENU_STRUCTURE = [
@@ -21,10 +22,8 @@ MENU_STRUCTURE = [
     ]),
     ('Tools', [
         ('Visualise Code', None, 'visualise'),
-        ('Open Interpreter', None, 'interpreter'),
     ]),
     ('Preferences', [
-        ('Configure Tutor Fonts', None, 'fonts'),
         ('Configure Tutorial Folder', None, 'tutorial_directory'),
         ('Configure Answers Folder', None, 'answers_directory'),
         (None, None, None),
@@ -75,15 +74,7 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
     def show_visualiser(self):
         pass
 
-    @abstractmethod
-    def reload_interpreter(self):
-        pass
-
     # preferences
-    @abstractmethod
-    def configure_fonts(self):
-        pass
-
     @abstractmethod
     def change_tutorial_directory(self):
         pass
@@ -137,6 +128,7 @@ class TutorialMenu(tk.Menu):
         self._selected_tutorial_package = None
         self._tutorial_package_names = None
         self._selected_tutorial_package_name_var = tk.StringVar()
+        self._submissions = {}
 
         for submenu_name, submenu_entries in self._structure:
             submenu = tk.Menu(self, tearoff=tk.FALSE)
@@ -199,6 +191,9 @@ class TutorialMenu(tk.Menu):
     def set_tutorial_packages(self, package_names):
         self._tutorial_package_names = package_names
 
+    def set_submissions(self, submissions):
+        self._submissions = submissions
+
     def callback(self, name):
         if self.delegate is None:
             return
@@ -249,10 +244,25 @@ class TutorialMenu(tk.Menu):
                 menu=submenu,
             )
 
-            for tutorial in problem_set:
+            for i, tutorial in enumerate(problem_set):
+                # work out whether this tutorial has been submitted
+                status = self._submissions.get(tutorial, WebAPI.MISSING)
+                color = {
+                    WebAPI.OK: 'blue',
+                    WebAPI.LATE: 'orange',
+                    # WebAPI.MISSING is *intentionally* absent - see below
+                }.get(status)
+
                 # again, close over cb var
                 cb = (lambda t=tutorial: lambda: self.problem_callback(t))()
                 submenu.add_command(label=tutorial.name, command=cb)
+
+                # we can't use 'black' as the default on OS X, as the correct
+                # default color depends on the user's color scheme
+                # a similar problem exists on windows and linux
+                # our solution is to only config the color for other statuses
+                if color is not None:
+                    submenu.entryconfig(i, foreground=color)
 
     def build_dynamic_tutorial_packages_menu(self):
         self._prepare_dynamic_menu(
@@ -311,12 +321,6 @@ class TutorialMenu(tk.Menu):
 
     def menu_tools_visualise(self):
         self.delegate.show_visualiser()
-
-    def menu_tools_interpreter(self):
-        self.delegate.reload_interpreter()
-
-    def menu_preferences_fonts(self):
-        self.delegate.configure_fonts()
 
     def menu_preferences_tutorial_directory(self):
         self.delegate.change_tutorial_directory()

@@ -126,6 +126,9 @@ class TutorialPackage():
         The first contains a timestamp.
         The second contains a url.
 
+        The timestamp should not be converted to a float, as that could lose
+        precision on the timestamp.
+
         Args:
           f (file): The tutorial package configuration file.
 
@@ -139,13 +142,11 @@ class TutorialPackage():
         # url
 
         try:
-            timestamp, self.url = filter(None, map(str.strip, f))
+            self.timestamp, self.url = filter(None, map(str.strip, f))
         except ValueError:
             raise TutorialPackageError(
                 'Invalid configuration file (need timestamp and url)'
             )
-
-        self.timestamp = float(timestamp)
 
     def _parse_tutorials_file(self, f):
         """
@@ -201,13 +202,9 @@ class TutorialPackage():
                 try:
                     tutorial = Tutorial(name, tutorial_path, answer_path)
                 except AssertionError as e:
-                    # TODO: in testing, ignore this
-                    # TODO: in production, remove the continue
-                    continue
-                    ex = TutorialPackageError(
-                        'Could not load tutorial at path: {}'.format(path)
-                    )
-                    raise ex from e
+                    raise TutorialPackageError(
+                        'Could not load tutorial with name: {}'.format(name)
+                    ) from e
 
                 problem_set.add_problem(tutorial)
 

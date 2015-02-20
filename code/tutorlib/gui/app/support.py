@@ -1,23 +1,21 @@
+from functools import partial
 import os
-import zipfile
+import shutil
+from zipfile import ZipFile
 
 
-def unzipit(zf, path):
-    z = zipfile.ZipFile(zf)
-    info = z.namelist()
-    if not os.path.exists(path):
-        os.mkdir(path)
-    for item in info:
-        if item.endswith('/') or item.endswith('\\'):
-            fulldir = os.path.join(path, item)
-            if not os.path.exists(fulldir):
-                os.mkdir(fulldir)
+def safely_extract_zipfile(zip_path, extraction_path):
+    # in Py3, it looks like ZipFile does safe-ish extraction
+    # we have a trusted source anyway, so this will do
+    with ZipFile(zip_path) as zf:
+        return zf.extractall(extraction_path)
+
+
+def remove_directory_contents(path):
+    for p in map(partial(os.path.join, path), os.listdir(path)):
+        if os.path.isfile(p):
+            os.remove(p)
+        elif os.path.isdir(p):
+            shutil.rmtree(p)
         else:
-            flags = (z.getinfo(item).external_attr >> 16) & 0o777
-            text = z.read(item)
-            fullpath = os.path.join(path, item)
-            fd = open(fullpath, 'wb')
-            fd.write(text)
-            fd.close()
-            os.chmod(fullpath, flags)
-    z.close()
+            raise ValueError('Unexpected directory entry: {}'.format(p))

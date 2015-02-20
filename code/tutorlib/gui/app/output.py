@@ -23,11 +23,13 @@
 import tkinter as tk
 from tkinter import ttk
 
+from tutorlib.gui.utils.fonts import FIXED_FONT
 from tutorlib.testing.results import TutorialTestResult
 
 
 def get_code_font(fontsize):
-    return ('courier', str(fontsize + 1), 'normal', 'roman')
+    name, size, style = FIXED_FONT
+    return name, fontsize, style
 
 
 class TestsListbox(tk.Listbox):
@@ -51,9 +53,6 @@ class TestsListbox(tk.Listbox):
         }
 
         self.results = None
-
-    def update_font(self, fontsize):
-        self.config(font=get_code_font(fontsize))
 
     def set_test_results(self, results):
         # remove existing entries
@@ -88,19 +87,15 @@ class TestsListbox(tk.Listbox):
 
 
 class TestOutput(ttk.Frame):
-    def __init__(self, master, fontsize, textlen):
+    def __init__(self, master, textlen, fontsize=12):
         super().__init__(master)
 
         self.test_results = TestsListbox(self, fontsize=fontsize)
         self.test_results.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
         self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
 
-        self.output = Output(self, fontsize, textlen)
+        self.output = Output(self, textlen, fontsize=fontsize)
         self.output.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
-
-    def update_font(self, fontsize):
-        self.test_results.update_font(fontsize)
-        self.output.update_font(fontsize)
 
     def update_text_length(self, lines):
         pass  # TODO: I don't think this belongs (anywhere)?
@@ -147,7 +142,7 @@ class Output(ttk.Frame):
     COLOR_ERROR = 'red'
     COLOR_WARNING = 'orange'
 
-    def __init__(self, master, fontsize, textlen):
+    def __init__(self, master, textlen, fontsize=12):
         super().__init__(master)
 
         self.text = tk.Text(self, height=textlen)
@@ -161,9 +156,6 @@ class Output(ttk.Frame):
 
         self.text.tag_config("red", foreground="red")
         self.text.tag_config("blue", foreground="blue")
-        self.text.config(font=get_code_font(fontsize))
-
-    def update_font(self, fontsize):
         self.text.config(font=get_code_font(fontsize))
 
     def clear_text(self):
@@ -190,8 +182,8 @@ class Output(ttk.Frame):
 
 
 class AnalysisOutput(Output):
-    def __init__(self, master, fontsize, textlen):
-        super().__init__(master, fontsize, textlen)
+    def __init__(self, master, textlen, fontsize=12):
+        super().__init__(master, textlen, fontsize=fontsize)
 
     def set_analyser(self, analyser):
         self.clear_text()

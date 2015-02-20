@@ -33,12 +33,14 @@ import hashlib
 import json
 import os
 from werkzeug.utils import secure_filename
+from zipfile import ZipFile
 
 
 # base directory for server file storage
 BASE_DIR = "/opt/local/share/MyPyTutor/MPT3_CSSE1001"
 
 # where student data is to be put/found
+PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 ANSWERS_DIR = os.path.join(DATA_DIR, "answers")
 SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
@@ -54,6 +56,9 @@ DUE_DATE_FORMAT = "%H_%d/%m/%y"
 
 # MyPyTutor version file
 MPT_VERSION_FILE = os.path.join(BASE_DIR, 'mpt_version')
+
+# Tutorial zipfile
+TUTORIALS_ZIP_PATH = os.path.join(PUBLIC_DIR, 'CSSE1001Tutorials.zip')
 
 
 def _get_answer_path(user, tutorial_package_name, problem_set_name,
@@ -534,3 +539,19 @@ def get_mypytutor_version():
     """
     with open(MPT_VERSION_FILE) as f:
         return f.read().strip()
+
+
+def get_tutorials_timestamp():
+    """
+    Return the timestamp of the current tutorial package for CSSE1001.
+
+    The package must exist.
+
+    Returns:
+      The tutorial package creation time, as a Unix time string.
+
+    """
+    with ZipFile(TUTORIALS_ZIP_PATH) as zf:
+        with zf.open('config.txt') as f:
+            return f.readline().strip()  # we just need the first line
+

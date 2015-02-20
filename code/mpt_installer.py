@@ -39,9 +39,6 @@ from io import StringIO
 
 # Configuration information
 DEFAULT_CONFIG = StringIO("""
-[FONT]
-name=helvetica
-size=10
 [WINDOW_SIZES]
 problem=20
 output=5
@@ -56,26 +53,10 @@ ans_dir =
 
 def unzipfile(zf, path):
     """Unzip the zip file zf in the folder path."""
+    with zipfile.ZipFile(zf) as zf:
+        return zf.extractall(path)
 
-    z = zipfile.ZipFile(zf)
-    info = z.namelist()
-    if not os.path.exists(path):
-        os.mkdir(path)
-    for item in info:
-        if item.endswith('/') or item.endswith('\\'):
-            fulldir = os.path.join(path,item)
-            if not os.path.exists(fulldir):
-                os.mkdir(fulldir)
-        else:
-            flags = (z.getinfo(item).external_attr >> 16) & 0o777
-            text = z.read(item)
-            fullpath = os.path.join(path,item)
-            fd = open(fullpath, 'wb')
-            fd.write(text)
-            fd.close()
-            os.chmod(fullpath, flags)
-    z.close()
-   
+
 class InstallDirDialog(Toplevel):
     """Dialog for choosing installation folder."""
 
@@ -159,7 +140,7 @@ class Installer():
     def python_version(self):
         """Check if the version is Python is suitable - set self.version.""" 
         self.version = sys.version_info[:2]
-        if self.version not in [(2,7)]:
+        if self.version not in [(3, 4)]:
             self.add_text("\nYou are running Python version %d.%d. You need to install Python 2.7\n" % self.version) 
             return None
         else:
@@ -235,7 +216,7 @@ class Installer():
         self.add_text('Downloading MyPyTutor...\n')
         self.master.update_idletasks()
         urlobj = urllib.request.URLopener({})
-        urlobj.retrieve('http://csse1001.uqcloud.net/mpt/MyPyTutor%d%d.zip' % self.version, 'mpt.zip')
+        urlobj.retrieve('http://csse1001.uqcloud.net/mpt3/MyPyTutor%d%d.zip' % self.version, 'mpt.zip')
         unzipfile('mpt.zip', mpt_folder)
         os.remove('mpt.zip')
         self.add_text('MyPyTutor.py is located in %s\n' % mpt_folder)

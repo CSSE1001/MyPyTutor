@@ -28,6 +28,7 @@ from tutorlib.gui.app.menu import TutorialMenuDelegate
 import tutorlib.gui.editor.bindings as Bindings  # be consistent with idlelib
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.io_binding import TutorIOBinding
+from tutorlib.gui.utils.fonts import FIXED_FONT
 import tutorlib.gui.utils.messagebox as tkmessagebox
 
 
@@ -95,15 +96,11 @@ class TutorEditor(EditorWindow.EditorWindow):
         self.text.bind("<F5>", noevt(editor_delegate.check_solution))
         self.text.bind("<F6>", noevt(menu_delegate.submit))
 
+        self.text.config(font=FIXED_FONT)
         self.text.tag_config("orange", background="orange")
 
         self.tutorial = None
         self.menudict['file'].delete(0, 1)  # TODO: huh?
-
-    def update_font(self, font_size):
-        self.text.config(
-            font=('courier', str(int(font_size)+1), 'normal', 'roman')
-        )
 
     ## Menu Callbacks
     # file

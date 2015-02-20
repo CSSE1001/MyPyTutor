@@ -262,7 +262,7 @@ class TutorialNodeVisitor(ast.NodeVisitor, metaclass=DefinesAllPossibleVisits):
           node (ast.Assign): The node we are visiting.
 
         """
-        identifier_or_none = partial(identifier, suppress_exceptions=True)
+        identifier_or_none = partial(identifier)
         for target_id in map(identifier_or_none, node.targets):
             if target_id is None:
                 continue

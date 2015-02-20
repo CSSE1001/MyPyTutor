@@ -199,8 +199,14 @@ def update_hashes(parent_dir, tutorial_package_path):
         old_mappings = parse_hash_mappings(f)
 
     # check that we don't have any unexpected collisions
-    assert all(thi.hash not in old_mappings for thi in new_hashes), \
-            '''Tutorial hash  collision!
+    for thi in new_hashes:
+        if thi.hash in old_mappings:
+            raise AssertionError('''Tutorial hash collision!
+{} is the hash of a current tutorial, but this hash already has a forward
+mapping.  If a new tutorial was added with this hash, no submissions could be
+recorded for this tutorial, as they would map forward using the existing
+mapping.  This error is unrecoverable.
+
 Note that reverting to a previous version of a tutorial is not supported.
 
 If you have not pushed your changes to the server, replace the local
@@ -208,7 +214,8 @@ tutorial_hash_mappings file with a fresh copy from the server, and remake.
 
 If you have pushed your changes to the server, you will need to make some
 change to the local file so as to alter its hash.
-'''
+'''.format(thi.hash)
+            )
 
     # generate the new mappings
     new_mappings = generate_hash_mappings(old_hashes, new_hashes)

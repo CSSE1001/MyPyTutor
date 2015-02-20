@@ -20,7 +20,6 @@ _SCRIPT_DIR = os.path.expanduser('~')
 CONFIG_FILE = os.path.join(_SCRIPT_DIR, '.mptrc')
 
 SPECIAL_FORMATS = {
-    ('font', 'size'): int,
     ('tutorials', 'names'): list,
     ('window_sizes', 'analysis'): int,
     ('window_sizes', 'output'): int,
@@ -67,10 +66,6 @@ def load_config():
     # this involves hard-coding the keys, but that would have to happen in some
     # place to *use* them anyway
     defaults = {
-        'font': {
-            'name': 'TkTextFont',
-            'size': 10,
-        },
         'tutorials': {
             'names': '',
             'default': '',

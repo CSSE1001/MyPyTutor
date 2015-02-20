@@ -495,8 +495,8 @@ def get_tut_zip_file():
     return TUTORIAL_ZIPFILE_URL
 
 
-@action('get_mpt34')
-def get_mpt34():
+@action('get_mpt')
+def get_mpt():
     return MPT34_ZIPFILE_URL
 
 
@@ -507,6 +507,15 @@ def get_version():
 
     """
     return support.get_mypytutor_version()
+
+
+@action('get_tutorials_timestamp')
+def get_tutorials_timestamp():
+    """
+    Return the timestamp of the current tutorial package, as a string.
+
+    """
+    return support.get_tutorials_timestamp()
 
 
 def main():

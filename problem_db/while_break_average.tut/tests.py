@@ -17,7 +17,19 @@ class TestAverage(StudentTestCase):
         self.assertEqual(self.standard_output, '2.5\n')
 
 
+class TestSingle(StudentTestCase):
+    DESCRIPTION = "'3.3', '' > '3.3'"
+    MAIN_TEST = 'test_main'
+
+    def test_main(self):
+        def _get_results():
+            _function_under_test()
+
+        self.run_in_student_context(_get_results, input_text='3.3\n\n')
+        self.assertEqual(self.standard_output, '3.3\n')
+
 
 TEST_CLASSES = [
-    TestAverage
+    TestAverage,
+    TestSingle,
 ]

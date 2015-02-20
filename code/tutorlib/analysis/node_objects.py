@@ -134,16 +134,14 @@ class Call():
         args = list(map(identifier_or_value, node.args))
         self.args = args
 
-        silent_id = partial(identifier, suppress_exceptions=True)
-        silent_id_or_val = partial(
+        id_or_val = partial(
             identifier_or_value,
             prefer_value=True,
             fully_qualified=True,
         )
 
         self.keywords = {
-            silent_id(kw.arg): silent_id_or_val(kw.value)
-                    for kw in node.keywords
+            identifier(kw.arg): id_or_val(kw.value) for kw in node.keywords
         }
 
     def __repr__(self):

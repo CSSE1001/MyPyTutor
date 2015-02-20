@@ -8,7 +8,8 @@ from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
 
 
-VISUALISER_URL = 'http://csse1001.uqcloud.net/opt/visualize.html#code={code}'
+VISUALISER_URL \
+    = 'http://csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
 
 
 class WebAPIError(Exception):
@@ -63,7 +64,7 @@ class WebAPI():
 
     RESPONSES = {OK, LATE, LATE_OK, MISSING}
 
-    def __init__(self):
+    def __init__(self, listener=None):
         """
         Initialise a new WebAPI object.
 
@@ -72,6 +73,7 @@ class WebAPI():
 
         """
         self.session_manager = SessionManager()
+        self.listener = listener if listener is not None else lambda _: None
 
     @property
     def is_logged_in(self):
@@ -109,12 +111,11 @@ class WebAPI():
         if self.is_logged_in:
             return True
 
-        # LoginManager raises on failure
-        try:
-            self.session_manager.login()
-            return True
-        except AuthError:
-            return False
+        # the SessionManager will keep trying until it is successful
+        success = self.session_manager.login()
+        self.listener(success)
+
+        return success
 
     def logout(self):
         """
@@ -125,6 +126,7 @@ class WebAPI():
         """
         if self.is_logged_in:
             self.session_manager.logout()
+            self.listener(False)
 
     # visualiser
     def visualise(self, code_text):
@@ -142,7 +144,7 @@ class WebAPI():
         webbrowser.open(url)
 
     # general web communictions
-    def _request(self, f, values):
+    def _request(self, f, values, require_login=True):
         """
         Base method for making a web request.
 
@@ -153,6 +155,8 @@ class WebAPI():
               Will usally be WebAPI._get or WebAPI._post.
           values (dict): The dictionary to pass to the request method.
               Must be in a format compatible with that method.
+          require_login (bool, optional): Whether to require the user to log in
+              before proceeding with the request.
 
         Returns:
           The result of running the given request function, if successful.
@@ -162,8 +166,7 @@ class WebAPI():
           WebAPIError: If an AuthError or RequestError is encountered.
 
         """
-        # must be logged in to make a request
-        if not self.login():
+        if require_login and not self.login():
             raise WebAPIError(
                 message='Authentication Error',
                 details='You must be logged in to use this feature',
@@ -184,7 +187,7 @@ class WebAPI():
         except NullResponse as e:
             return None
 
-    def _get(self, values):
+    def _get(self, values, require_login=True):
         """
         Make a get request using the session manager.
 
@@ -193,6 +196,8 @@ class WebAPI():
         Args:
           values (dict): The data dictionary to pass to the session manager
               get method.
+          require_login (bool, optional): Whether to require the user to log in
+              before proceeding with the request.
 
         Returns:
           The result of calling the session manager get method.
@@ -202,9 +207,11 @@ class WebAPI():
           WebAPIError: If an AuthError or RequestError is encountered.
 
         """
-        return self._request(self.session_manager.get, values)
+        return self._request(
+            self.session_manager.get, values, require_login=require_login
+        )
 
-    def _post(self, values):
+    def _post(self, values, require_login=True):
         """
         Make a post request using the session manager.
 
@@ -213,6 +220,8 @@ class WebAPI():
         Args:
           values (dict): The data dictionary to pass to the session manager
               post method.
+          require_login (bool, optional): Whether to require the user to log in
+              before proceeding with the request.
 
         Returns:
           The result of calling the session manager post method.
@@ -222,7 +231,9 @@ class WebAPI():
           WebAPIError: If an AuthError or RequestError is encountered.
 
         """
-        return self._request(self.session_manager.post, values)
+        return self._request(
+            self.session_manager.post, values, require_login=require_login
+        )
 
     def _download(self, url, filename=None):
         """
@@ -252,7 +263,22 @@ class WebAPI():
                 details=str(e),
             ) from e
 
-    def get_tut_zipfile(self):
+    def get_tutorials_timestamp(self):
+        """
+        Get the last-modified time of the version of the tutorial package on
+        the server.
+
+        Returns:
+          The timestamp, as a Unix time.
+        """
+        values = {
+            'action': 'get_tutorials_timestamp'
+        }
+
+        result = self._get(values, require_login=False)
+        return result.strip()
+
+    def get_tutorials_zipfile(self):
         """
         Download the tutorials zip file from the server.
 
@@ -267,10 +293,10 @@ class WebAPI():
             'action': 'get_tut_zip_file',
         }
 
-        result = self._get(values)
+        result = self._get(values, require_login=False)
         return self._download(result.strip(), 'tutzip.zip')
 
-    def get_mpt34(self):
+    def get_mpt_zipfile(self):
         """
         Download the MyPyTutor Python 3.4 zip file from the server.
 
@@ -282,11 +308,11 @@ class WebAPI():
 
         """
         values = {
-            'action': 'get_mpt34',
+            'action': 'get_mpt',
         }
 
-        result = self._get(values)
-        return self._download(result.strip(), 'mpt34.zip')
+        result = self._get(values, require_login=False)
+        return self._download(result.strip(), 'mpt.zip')
 
     def get_version(self):
         """
@@ -302,7 +328,7 @@ class WebAPI():
         values = {
             'action': 'get_version',
         }
-        return self._get(values)
+        return self._get(values, require_login=False)
 
     def upload_answer(self, tutorial, problem_set, tutorial_package, code):
         """

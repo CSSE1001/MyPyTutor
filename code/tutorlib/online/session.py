@@ -140,12 +140,13 @@ class SessionManager:
             text3 = response3.read().decode('utf8')
             set_details(text3)
 
-            # The login was successful
-            return True
+            return self.is_logged_in()
 
         LoginDialog(None, submit_login)
-        if not self.is_logged_in():
-            raise AuthError("Not logged in.")
+
+        # regardless of whether the user cancelled or was successful, what we
+        # want to return is whether they are logged in right now
+        return self.is_logged_in()
 
     def logout(self):
         """Log out of the system."""

@@ -17,5 +17,8 @@ class Analyser(CodeAnalyser):
         elif not self.visitor.functions[None].calls['int']:
             self.add_warning('You probably want to use the int function')
 
+        if len(self.visitor.functions[None].calls['print']) > 1:
+            self.add_error('You should only call print once')
+
 
 ANALYSER = Analyser(CodeVisitor)

@@ -1,68 +1,53 @@
-class TestGetValue(StudentTestCase):
-    DESCRIPTION = "get_value({'k': 3}, 'k') -> 3"
-    MAIN_TEST = 'test_get_value'
+class TestBigs(StudentTestCase):
+    DESCRIPTION = "big_keys({'a':24, 'e':30, 't':12, 'n':10}, 15) -> ['a', 'e']"
+    MAIN_TEST = 'test_bigs'
 
-    def test_get_value(self):
+    def test_bigs(self):
         def _get_results():
-            value = get_value({'k': 3}, 'k')
+            value = big_keys({'a':24, 'e':30, 't':12, 'n':10}, 15)
             return value
 
         value = self.run_in_student_context(_get_results)
-        self.assertEqual(value, 3)
+        self.assertEqual(sorted(value), ['a', 'e'])
 
     def test_alternate(self):
         def _get_results():
-            value = get_value({'j': 7}, 'j')
+            value = big_keys({'a':24, 'e':30, 't':12, 'n':10}, 0)
             return value
 
         value = self.run_in_student_context(_get_results)
-        self.assertEqual(value, 7)
+        self.assertEqual(sorted(value), ['a', 'e', 'n', 't'])
 
+class TestEmptyResult(StudentTestCase):
+    DESCRIPTION = "big_keys({'a':24, 'e':30, 't':12, 'n':10}, 99) -> []"
+    MAIN_TEST = 'test_empty_result'
 
-class TestGetADifferentValue(StudentTestCase):
-    DESCRIPTION = "get_value({'a': 1, 'b': 2, 'c': 3}, 'b') -> 2"
-    MAIN_TEST = 'test_get_value'
-
-    def test_get_value(self):
+    def test_empty_result(self):
         def _get_results():
-            value = get_value({'a': 1, 'b': 2, 'c': 3}, 'b')
+            value = big_keys({'a':24, 'e':30, 't':12, 'n':10}, 99)
             return value
 
         value = self.run_in_student_context(_get_results)
-        self.assertEqual(value, 2)
+        self.assertEqual(value, [])
 
-    def test_alternate(self):
+class TestEmptyDict(StudentTestCase):
+    DESCRIPTION = "big_keys({}, 0) -> []"
+    MAIN_TEST = 'test_empty_dict'
+
+    def test_empty_dict(self):
         def _get_results():
-            value = get_value({'d': 5, 'e': 21, 'f': 56}, 'e')
+            value = big_keys({}, 0)
             return value
 
         value = self.run_in_student_context(_get_results)
-        self.assertEqual(value, 21)
+        self.assertEqual(value, [])
 
 
-class TestGetInvalidKey(StudentTestCase):
-    DESCRIPTION = "get_value({'a': 1, 'b': 2, 'c': 3}, 'Not a key') -> -1"
-    MAIN_TEST = 'test_get_value'
 
-    def test_get_value(self):
-        def _get_results():
-            value = get_value({'a': 1, 'b': 2, 'c': 3}, 'Not a key')
-            return value
-
-        value = self.run_in_student_context(_get_results)
-        self.assertEqual(value, -1)
-
-    def test_alternate(self):
-        def _get_results():
-            value = get_value({'Not a key': 'test12'}, 'Not a key')
-            return value
-
-        value = self.run_in_student_context(_get_results)
-        self.assertEqual(value, 'test12')
 
 
 TEST_CLASSES = [
-    TestGetValue,
-    TestGetADifferentValue,
-    TestGetInvalidKey,
+    TestBigs,
+    TestEmptyResult,
+    TestEmptyDict,
 ]
