@@ -51,11 +51,9 @@ def main():
         print "Content-Type: text/html\n"
 
     form = cgi.FieldStorage(keep_blank_values=True)
-    query = form['query'].value if 'query' in form else ''
-    enrol_filter = (form['enrol_filter'].value
-                    if 'enrol_filter' in form else
-                    support.ALL)  # TODO: change to support.ENROLLED later
-    sort = form['sort'].value if 'sort' in form else 'id'
+    query = form.getvalue('query', '')
+    enrol_filter = form.getvalue('enrol_filter', support.ALL)  # TODO: change to support.ENROLLED later
+    sort = form.getvalue('sort', 'id')
     reverse = sort.endswith('_reverse')
     users = support.get_users(query, enrol_filter, get_sort_key(sort), reverse)
 

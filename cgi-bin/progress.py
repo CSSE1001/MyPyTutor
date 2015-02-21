@@ -63,23 +63,20 @@ def main():
     form = cgi.FieldStorage(keep_blank_values=True)
     is_admin = (this_user in ADMINS)
 
-    if 'user' in form:
-        user = form['user'].value
-        if user != this_user and not is_admin:
-            print UNAUTHORISED.format(this_user)
-            return
-    else:
-        user = this_user
+    user = form.getvalue('user', this_user)
+    if user != this_user and not is_admin:
+        print UNAUTHORISED.format(this_user)
+        return
 
     message = None
     if (is_admin and 'allow_late' in form and 'hash' in form and
             os.environ['REQUEST_METHOD'] == 'POST'):
-        if form['allow_late'].value == 'on':
-            support.set_allow_late(user, form['hash'].value, this_user, True)
+        if form.getvalue('allow_late') == 'on':
+            support.set_allow_late(user, form.getvalue('hash'), this_user, True)
             message = ('alert-info', 'Student will gain credit for late '
                        'submissions to that problem.')
-        elif form['allow_late'].value == 'off':
-            support.set_allow_late(user, form['hash'].value, this_user, False)
+        elif form.getvalue('allow_late') == 'off':
+            support.set_allow_late(user, form.getvalue('hash'), this_user, False)
             message = ('alert-info', 'Student will be penalised for late '
                        'submissions to that problem.')
         else:
