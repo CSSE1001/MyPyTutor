@@ -31,7 +31,7 @@ def get_submissions(user):
 
 
 def process_tutorial(tutorial, submission):
-    if submission is None:
+    if submission is None or submission.date is None:
         status = 'unsubmitted'
     elif submission.date <= tutorial.due:
         status = 'submitted'
@@ -40,7 +40,8 @@ def process_tutorial(tutorial, submission):
     else:
         status = 'late'
 
-    submit = submission and (submission.date + TZ_DELTA).strftime(DATE_FORMAT)
+    submit = (submission and submission.date and
+              (submission.date + TZ_DELTA).strftime(DATE_FORMAT))
 
     return {
         'slug': tutorial.tutorial_name,
@@ -97,10 +98,10 @@ def main():
 
         group['problems'].append(process_tutorial(tutorial, submission))
 
-        if (submission is not None and
+        if (submission is not None and submission.date is not None and
                 (submission.date <= tutorial.due or submission.allow_late)):
             data['mark'] += 1
-        elif submission is not None:
+        elif submission is not None and submission.date is not None:
             data['late'] += 1
 
     data['total'] = len(submissions)

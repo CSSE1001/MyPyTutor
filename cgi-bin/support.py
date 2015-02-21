@@ -403,8 +403,11 @@ TutorialSubmission = namedtuple('TutorialSubmission',
 
 
 def parse_submission_log(user):
-    """
-    Get the submission log for the given user.
+    """Get the submission log for the given user.
+
+    If a problem has not been submitted yet, then either it will not be
+    present in the list, or the date field on the TutorialSubmisison object
+    will be None.
 
     Format of submission_log file:
       hash submitted_dd_mm_yy
@@ -432,10 +435,13 @@ def parse_submission_log(user):
     submission_log_path = _get_or_create_user_submissions_file(user)
     admin_log_path = _get_or_create_admin_log_file(user)
 
+    allow_lates = set()
     with open(admin_log_path) as f:
-        allow_lates = [line[1]
-                       for line in filter(None, map(str.split, f))
-                       if line[0] == 'allow_late']
+        for line in map(str.split, f):
+            if line[0] == 'allow_late':
+                allow_lates.add(line[1])
+            elif line[0] == 'disallow_late':
+                allow_lates.discard(line[1])
 
     # parse the submission log file
     with open(submission_log_path) as f:
@@ -444,11 +450,16 @@ def parse_submission_log(user):
 
             submitted_date = dateutil.parser.parse(submitted_date_str)
             allow_late = hash_str in allow_lates
+            allow_lates.discard(hash_str)
 
             submission_info = TutorialSubmission(hash_str,
                                                  submitted_date,
                                                  allow_late)
             data.append(submission_info)
+
+    # get data for problems which aren't submitted but have allow_late set
+    for hash_str in allow_lates:
+        data.append(TutorialSubmission(hash_str, None, True))
 
     return data
 
@@ -535,11 +546,13 @@ def get_submissions_for_user(user):
         # submission with an unknown tutorial, which is a server error
         tutorial_info = hashes[submission.hash]
 
-        if submission.date <= tutorial_info.due:
+        if submission.date is None:
+            pass
+        elif submission.date <= tutorial_info.due:
             status = 'OK'
         elif submission.allow_late:
             status = 'LATE_OK'
-        else:
+        elif submission.date is not None:
             status = 'LATE'
 
         results[tutorial_info.hash] = status
@@ -547,7 +560,7 @@ def get_submissions_for_user(user):
     return results
 
 
-def set_allow_late(user, tutorial_hash):
+def set_allow_late(user, tutorial_hash, authorised_by):
     """
     Allow a user to submit a tutorial late without incurring a mark penalty.
     If the user has not yet submitted, they will be allowed to submit late.
@@ -558,11 +571,24 @@ def set_allow_late(user, tutorial_hash):
     Args:
       user (str): The username to set the late allowance on.
       tutorial_hash (str): The tutorial hash, as a base32 string.
+      authorised_by (str): The username of the person who called this method
     """
     admin_log_path = _get_or_create_admin_log_file(user)
+    time = datetime.now().isoformat()
 
     with open(admin_log_path, 'a') as f:
-        f.write('allow_late {}\n'.format(tutorial_hash))
+        f.write('allow_late {} {} {}\n'
+                .format(tutorial_hash, authorised_by, time))
+
+
+def unset_allow_late(user, tutorial_hash, authorised_by):
+    """Remove the allow_late flag from a user/problem."""
+    admin_log_path = _get_or_create_admin_log_file(user)
+    time = datetime.now().isoformat()
+
+    with open(admin_log_path, 'a') as f:
+        f.write('disallow_late {} {} {}\n'
+                .format(tutorial_hash, authorised_by, time))
 
 
 def has_allow_late(user, tutorial_hash):
@@ -571,11 +597,14 @@ def has_allow_late(user, tutorial_hash):
     tutorial.
     """
     admin_log_path = _get_or_create_admin_log_file(user)
-
-    with open(admin_log_path, 'a') as f:
-        return any(line[0] == 'allow_late' and line[1] == tutorial_hash
-                   for line in map(str.split, f))
-
+    allowed = False
+    with open(admin_log_path, 'rU') as f:
+        for line in map(str.split, f):
+            if line[0] == 'allow_late' and line[1] == tutorial_hash:
+                allowed = True
+            elif line[0] == 'disallow_late' and line[1] == tutorial_hash:
+                allowed = False
+    return allowed
 
 User = namedtuple('User', ['id', 'name', 'email', 'enrolled'])
 

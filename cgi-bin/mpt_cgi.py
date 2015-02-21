@@ -295,7 +295,8 @@ def submit_answer(tutorial_hash, code):
     valid_hashes = [h for h, ti in hashes.items() if ti == tutorial_info]
 
     try:
-        next(si for si in submissions if si.hash in valid_hashes)
+        next(si for si in submissions if si.hash in valid_hashes
+             and si.date is not None)
         raise NullResponse(
             'Tutorial already submitted: {}'.format(tutorial_hash)
         )
