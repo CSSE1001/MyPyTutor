@@ -688,18 +688,26 @@ def set_user_enrolment(user, is_enrolled):
     Args:
       user (str): The user's login ID
       is_enrolled (bool): True if the user should now be enrolled
+
+    Return:
+      True if the user's enrolment was changed, False if it stayed the same.
     """
     with open(USER_INFO_FILE) as f:
         users = list(f)
 
+    new_status = (NOT_ENROLLED, ENROLLED)[is_enrolled]
+    is_changed = False
     for i, u in enumerate(users):
         fields = u.strip('\n').split(',')
         if fields[0] == user:
-            fields[3] = (NOT_ENROLLED, ENROLLED)[is_enrolled]
+            is_changed |= (fields[3] != new_status)
+            fields[3] = new_status
             users[i] = ','.join(fields) + '\n'
 
     with open(USER_INFO_FILE, 'w') as f:
         f.write(''.join(users))
+
+    return is_changed
 
 
 def get_mypytutor_version():

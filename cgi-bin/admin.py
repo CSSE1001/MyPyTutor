@@ -2,6 +2,7 @@
 # A CGI script to run the administrator interface
 
 import cgi
+import os
 
 from mako.template import Template
 from mako import exceptions
@@ -27,6 +28,13 @@ Content-Type: text/html
 the staff and/or MyPyTutor developers.</p>
 </body>"""
 
+# Each action should take a username as input and return one of {0, 1} or
+# {False, True} depending on whether the action was successful.
+ACTIONS = {
+           'enrol': lambda username: support.set_user_enrolment(username, True),
+           'unenrol': lambda username: support.set_user_enrolment(username, False),
+          }
+
 
 def get_sort_key(sort):
     if sort in ('id', 'id_reverse'):
@@ -51,6 +59,27 @@ def main():
         print "Content-Type: text/html\n"
 
     form = cgi.FieldStorage(keep_blank_values=True)
+
+    message = None
+    if os.environ.get('REQUEST_METHOD') == 'POST':
+        action = form.getvalue('action')
+        selected_users = form.getlist('selected_user')
+        if action not in ACTIONS:
+            message = ('alert-danger', 'Action unknown or not specified.')
+        elif selected_users:
+            count = sum(ACTIONS[action](u) for u in selected_users)
+            if count == 0:
+                message = ('alert-warning', '0 users modified.')
+            elif count < len(selected_users):
+                message = ('alert-success', '{} users modified, {} unchanged.'
+                           .format(count, len(selected_users) - count))
+            else:
+                message = ('alert-success', '{} users modified.'
+                           .format(count, len(selected_users) - count))
+        else:
+            message = ('alert-warning', 'No users selected.')
+
+
     query = form.getvalue('query', '')
     enrol_filter = form.getvalue('enrol_filter', support.ALL)  # TODO: change to support.ENROLLED later
     sort = form.getvalue('sort', 'id')
@@ -62,6 +91,7 @@ def main():
             'query': query,
             'enrol_filter': enrol_filter,
             'sort': sort,
+            'message': message,
            }
 
     try:
