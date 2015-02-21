@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import partial
 import tkinter as tk
 from tkinter import ttk
@@ -27,6 +26,7 @@ from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import StudentCodeError, run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError
+from tutorlib.online.sync import SyncClient
 
 
 VERSION = '3.0.0'
@@ -55,6 +55,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
           logged in (ie, authenticated).
       short_description (Label): The label containing the short description
           of the current tutorial problem.
+      sync_client (SyncClient): The tutorial synchronisation client.
       test_output (TestOutput): The frame displaying the current test results.
       tutorial_frame (TutorialFrame): The frame which displays the tutorial
           problem and associated data, such as hints.
@@ -86,8 +87,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         ## Objects
         self.interpreter = Interpreter()
+
         self.web_api = WebAPI(self._login_status_change)
         self.master.after(0, self.login)
+
+        self.sync_client = SyncClient(self.web_api)
 
         #### Create GUI Widgets
         ## Top Frame
@@ -330,90 +334,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             initial_dir = os.path.expanduser('~')
 
         return tkfiledialog.askdirectory(title=prompt, initialdir=initial_dir)
-
-    def _upload_answer(self, tutorial):
-        """
-        Upload the answer for the given tutorial to the server.
-
-        The tutorial must be part of the current tutorial package.
-
-        Args:
-          tutorial (Tutorial): The tutorial to upload the answer for.
-
-        Returns:
-          Whether the upload was successful.
-
-        """
-        if not os.path.exists(tutorial.answer_path):
-            return False
-
-        with open(tutorial.answer_path) as f:
-            code = f.read()
-
-        problem_set = self.tutorial_package.problem_set_containing(tutorial)
-        assert problem_set is not None,\
-                'Tutorial {} not found in current package'.format(tutorial)
-
-        return self.web_api.upload_answer(
-            tutorial, problem_set, self.tutorial_package, code
-        )
-
-    def _download_answer(self, tutorial):
-        """
-        Download the answer for the given tutorial from the server.
-
-        The tutorial must be part of the current tutorial package.
-
-        Args:
-          tutorial (Tutorial): The tutorial to download the answer for.
-
-        Returns:
-          Whether the download was successful.
-
-        """
-        problem_set = self.tutorial_package.problem_set_containing(tutorial)
-        assert problem_set is not None, \
-                'Tutorial {} not found in current package'.format(tutorial)
-
-        response = self.web_api.download_answer(
-            tutorial, problem_set, self.tutorial_package
-        )
-        if response is None:
-            return False  # no tutorial to download, or download error
-
-        # write it to disk
-        with open(tutorial.answer_path, 'w') as f:
-            f.write(response)
-
-        return True
-
-    def _get_answer_info(self, tutorial):
-        """
-        Get the hash and modification time of the student's answer to the
-        given tutorial on the server.
-
-        This information can be compared to local data in order to determine
-        whether the latest version of the tutorial is on the server or is
-        available locally.
-
-        The tutorial must be part of the current tutorial package.
-
-        Args:
-          tutorial (Tutorial): The tutorial to query the server about.
-
-        Returns:
-          A tuple of the answer information.
-          The first element of the tuple is the hash of the answer file.
-          The second element of the tuple is the file's modification time.
-
-        """
-        problem_set = self.tutorial_package.problem_set_containing(tutorial)
-        assert problem_set is not None, \
-            'Tutorial {} not found in current package'.format(tutorial)
-
-        return self.web_api.answer_info(
-            tutorial, problem_set, self.tutorial_package
-        )
 
     def _display_web_api_error(self, ex):
         """
@@ -744,70 +664,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         SubmissionsDialog(self.master, submissions, self.tutorial_package)
 
-    def _synchronise(self, suppress_popups=False):
-        """
-        Synchronise the tutorial answers.
-
-        A tutorial will be downloaded from the server iff:
-          * there is no local answer, but there is one on the server; or
-          * the local and remote answers differ, but the remote one was
-            modified after the local one.
-
-        A tutorial will be uploaded to the server iff:
-          * there is no answer on the server, but there is a local one; or
-          * the local and remote answers differ, but the local one was modified
-            at the same time as or before the one on the server.
-
-        This method performs the actual synchronisation.  It does not handle
-        any exceptions which may be thrown by the underlying code (ie, it may
-        raise WebAPIError).
-
-        Args:
-          suppress_popups (bool, optional): If True, do not show any popup
-              messages.  This is intended to be used when the synchronisation
-              is taking place as part of the close handler.  Defaults to False.
-
-        """
-        def _do_sync(tutorial):
-            def f():
-                remote_hash, remote_mtime = self._get_answer_info(tutorial)
-
-                if not tutorial.has_answer:
-                    if remote_hash is not None:  # there exists a remote copy
-                        self._download_answer(tutorial)
-                    return True
-
-                local_hash, local_mtime = tutorial.answer_info
-
-                if local_hash == remote_hash:  # no changes
-                    return True
-
-                if remote_hash is None or local_mtime >= remote_mtime:
-                    success = self._upload_answer(tutorial)
-                else:
-                    success = self._download_answer(tutorial)
-
-                if not success:
-                    return False
-            return f
-
-        max_workers = sum(
-            1 for pset in self.tutorial_package.problem_sets for _ in pset
-        )
-        with ThreadPoolExecutor(max_workers) as executor:
-            futures = {
-                executor.submit(_do_sync, tutorial)
-                    for problem_set in self.tutorial_package.problem_sets
-                    for tutorial in problem_set
-            }
-
-            success = True
-            for future in as_completed(futures):
-                if not future.result():
-                    success = False
-
-            return success
-
     @skip_if_attr_none('tutorial_package')
     def synchronise(self, suppress_popups=False, no_login=None):
         """
@@ -864,7 +720,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
             # note that as this is on a background thread, we must not make
             # any UI calls
             try:
-                success = self._synchronise(suppress_popups=suppress_popups)
+                success = self.sync_client.synchronise(self.tutorial_package)
 
                 if not suppress_popups:
                     if success:
