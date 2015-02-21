@@ -337,6 +337,33 @@ def show_submit():
     return json.dumps(support.get_submissions_for_user(user).items())
 
 
+@action('provide_feedback')
+def provide_feedback(subject, feedback, code=''):
+    """
+    Register the given feedback for the given user.
+
+    """
+    # authenticate the user
+    user = uqauth.get_user()
+
+    # delegate adding the feedback to the support file
+    support.add_feedback(user, subject, feedback, code)
+
+    return 'OK'  # this can't fail
+
+
+@action('get_feedback', admin=True)
+def get_feedback():
+    """
+    Return a JSON list of feedback, with each item of feedback represented
+    as a JSON dictionary.
+
+    """
+    feedback = support.get_all_feedback()
+
+    return json.dumps(feedback)
+
+
 @action('match', admin=True)
 def match_user(match):
     users_file = os.path.join(data_dir, 'users')

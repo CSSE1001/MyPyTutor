@@ -52,6 +52,9 @@ class ProblemSet():
         """
         return iter(self.problems)
 
+    def __len__(self):
+        return len(self.problems)
+
     def add_problem(self, tutorial):
         """
         Add a new tutorial problem to the problem set.

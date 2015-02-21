@@ -33,21 +33,21 @@ URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
 
 
 class FeedbackDialog(Dialog):
-    def __init__(self, parent, title, name='', code=''):
+    def __init__(self, parent, title, name='', callback=None):
         # set up vars needed to create widgets
         self.name = name
         self.subject_var = tk.StringVar()
         self.subject_var.set(name)
 
-        self.code = code
+        if callback is None:
+            callback = lambda subject, feedback: None
+        self.callback = callback
 
         # defer remaining setup to parent
         super().__init__(parent, title, allow_cancel=True)
 
     def create_widgets(self):
         if self.name == '':
-            self.feedback_type = 'General'
-
             frame_general = ttk.Frame(self.frame_top)
             frame_general.pack(fill=tk.X)
 
@@ -60,8 +60,6 @@ class FeedbackDialog(Dialog):
                 textvariable=self.subject_var,
                 width=60
             ).pack(side=tk.LEFT)
-        else:
-            self.feedback_type = 'Problem'
 
         # main feedback UI
         ttk.Label(self.frame_top, text='Feedback: ').pack(anchor=tk.W)
@@ -80,20 +78,6 @@ class FeedbackDialog(Dialog):
         self.text = text
 
     def ok(self, event=None):
-        values = {'problem_name': self.subject_var.get(),
-                  'type': self.feedback_type,
-                  'code_text': self.code,
-                  'feedback': self.text.get(1.0, tk.END)}
-        try:
-            data = urllib.parse.urlencode(values)
-            req = urllib.request.Request(URL, data)
-            response = urllib.request.urlopen(req)
-            the_page = response.read()
-            if 'Feedback not accepted' in the_page:
-                tkmessagebox.showerror('Feedback Error',
-                                             'Feedback not accepted')
-        except:
-            tkmessagebox.showerror('Feedback Error',
-                                         'Cannot upload feedback')
+        self.callback(self.subject_var.get(), self.text.get(1.0, tk.END))
 
         super().ok(event=event)
