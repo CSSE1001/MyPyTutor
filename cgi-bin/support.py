@@ -12,6 +12,7 @@ File structure:
   base_dir/
     mpt_version                      <- MyPyTutor version file
     data/
+      user_info                      <- Names/email/etc storage for all users
       answers/
         <username>/
           <tutorial_package_name>/
@@ -584,6 +585,8 @@ NOT_ENROLLED = 'not_enrolled'
 
 def get_users(query='', enrol_filter=ALL, sort_key=None):
     """Return a list of users, optionally filtered/sorted.
+
+    User information is stored in a file in CSV format.
 
     Args:
       query (str, optional): A string to filter results on. If given, return
