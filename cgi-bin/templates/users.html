@@ -6,6 +6,11 @@
 </head>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
+    th.check,
+    td.check {
+        width: 1%;
+    }
+
     th.userid,
     td.userid {
         width: 10%;
@@ -62,8 +67,8 @@
     </div>
     </header>
     <div class="row-fluid">
-        <form action="" method="get" class="form-inline" role="search">
-            <div class="col-lg-4">
+        <form action="" method="get" role="search">
+            <div class="col-lg-3 col-lg-push-6">
                 <div class="input-group" style="width: 100%;"> <!-- Sorry for using inline styling :) -->
                     <input type="text" class="form-control" name="query" placeholder="Filter" value="${query}">
                     <div class="input-group-btn">
@@ -74,20 +79,29 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-3 col-lg-push-6">
                 <select class="form-control" name="enrol_filter" onchange="this.form.submit()">
                   <option value="all" ${'selected' if enrol_filter=='all' else ''}>Show all users</option>
-                  <option value="enrolled" ${'selected' if enrol_filter=='enrolled' else ''}>Show users enrolled in the course</option>
-                  <option value="not_enrolled" ${'selected' if enrol_filter=='not_enrolled' else ''}>Show users not enrolled in the course</option>
+                  <option value="enrolled" ${'selected' if enrol_filter=='enrolled' else ''}>Show only enrolled users</option>
+                  <option value="not_enrolled" ${'selected' if enrol_filter=='not_enrolled' else ''}>Show only not-enrolled users</option>
                 </select>
             </div>
         </form>
     </div>
 
     <div>
+        <form action="" method="POST">
+        <div class="col-lg-2 col-lg-pull-6">
+            <select class="form-control" name="action" onchange="this.form.submit()">
+                <option selected>Action:</option>
+                <option value="enrol">Enrol</option>
+                <option value="unenrol">Unenrol</option>
+            </select>
+        </div>
         <table class="table">
             <thead>
             <tr>
+                <th class="check"></th>
                 ## TODO: find a more scalable way to do this:
                 % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email')]:
                 <th class="userid">${name}
@@ -113,6 +127,7 @@
             <tbody>
             % for user in users:
             <tr>
+                <th class="check"><input type="checkbox" name="selected_user" value="${user.id}"></th>
                 <td class="userid">${user.id}</td>
                 <td class="name">${user.name}</td>
                 <td class="email">${user.email}</td>
@@ -122,6 +137,7 @@
             % endfor
             </tbody>
         </table>
+        </form>
     </div>
 
 </div>
