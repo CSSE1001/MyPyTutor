@@ -598,7 +598,7 @@ def get_users(query='', enrol_filter=None, sort_key=None):
             if not line.startswith('#'):
                 id, name, email, enrolled = line.strip().split(',')
                 # check if the query string is contained in id or name or email
-                # and either
+                # and the enrol_filter matches the given enrol state, if given.
                 if (any(query.lower() in x.lower() for x in (id, name, email))
                         and (enrol_filter is None or enrol_filter == enrolled)):
                     users.append(User(id, name, email, enrolled))
@@ -607,6 +607,17 @@ def get_users(query='', enrol_filter=None, sort_key=None):
     users.sort(key=sort_key)
     return users
 
+
+def get_user(userid):
+    """Return known metadata about a single user (or None, if unknown)."""
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            info = line.strip().split(',')
+            if userid == info[0]:
+                return User(*info)
+    return None
 
 def get_mypytutor_version():
     """

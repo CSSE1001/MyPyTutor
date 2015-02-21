@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- TODO: improve the markup of the admin interface. -->
 <html>
 <head>
     <title>MyPyTutor Admin Panel</title>
@@ -18,6 +19,16 @@
     th.email,
     td.email {
         width: 20%;
+    }
+
+    th.enrolled,
+    td.enrolled {
+        width: 10%;
+    }
+
+    td.actions,
+    td.actions {
+        width: 10%;
     }
 
     .panel-heading i.down,
@@ -43,7 +54,12 @@
         </header>
     </div>
 
-    <!-- TODO: fancier markup -->
+    <div class="row-fluid" id="options">
+        <form action="." method="get">
+
+        </form>
+    </div>
+
     <div>
         <table class="table">
             <thead>
@@ -51,6 +67,8 @@
                 <th class="userid">User ID</th>
                 <th class="name">Name</th>
                 <th class="email">Email</th>
+                <th class="enrolled">Enrolled?</th>
+                <th class="actions">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -59,6 +77,8 @@
                 <td class="userid">${user.id}</td>
                 <td class="name">${user.name}</td>
                 <td class="email">${user.email}</td>
+                <td class="enrolled">${'Yes' if user.enrolled == 'enrolled' else 'No' if user.enrolled == 'not_enrolled' else '{Bad Data}'}</td>
+                <td class="actions"><a href="progress.py?user=${user.id}">View Progress</a></td>
             </tr>
             % endfor
             </tbody>

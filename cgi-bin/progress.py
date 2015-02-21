@@ -1,23 +1,22 @@
 #!/usr/bin/env python
 
-import uqauth
-import support
-
+import cgi
 import datetime
-
 
 from mako.template import Template
 from mako import exceptions
+
+from admin import ADMINS, UNAUTHORISED
+import uqauth
+import support
+
 
 DATE_FORMAT = '%d/%m/%Y %I:%M%p'
 TZ_DELTA = datetime.timedelta(hours=10)
 
 
-def get_submissions():
+def get_submissions(user):
     """Return a list of submission statistics for the given user."""
-    # authenticate the user
-    user = uqauth.get_user()
-
     # get the raw data
     tutorials = support.get_tutorials()
     all_submissions = support.parse_submission_log(user)
@@ -55,16 +54,28 @@ def process_tutorial(tutorial, submission):
 
 def main():
     try:
-        submissions = get_submissions()
+        this_user = uqauth.get_user()
     except uqauth.Redirected:
         return
+
+    form = cgi.FieldStorage(keep_blank_values=True)
+
+    if 'user' in form:
+        user = form['user'].value
+        if user != this_user and this_user not in ADMINS:
+            print UNAUTHORISED.format(this_user)
+            return
+
+    user_info = (support.get_user(user) or
+                 support.User(user, 'UNKNOWN', 'UNKNOWN', 'not_enrolled'))
+    submissions = get_submissions(user)
 
     print "Content-Type: text/html\n"
 
     data = {
         'name': 'Change Me',
         'id': 'changeme',
-        'user': uqauth.get_user_info(),
+        'user': user_info,
         'openIndex': 0
     };
 

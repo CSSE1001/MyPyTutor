@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MyPyTutor Progress :: ${user.get("name")}</title>
+    <title>MyPyTutor Progress :: ${user.name}</title>
 </head>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
@@ -39,8 +39,8 @@
 <div class="container">
     <div class="row-fluid">
         <header>
-            <h1>MyPyTutor Progress for ${user.get("name")}
-                <small>(${user.get("user")})</small>
+            <h1>MyPyTutor Progress for ${user.name}
+                <small>(${user.id})</small>
             </h1>
             <p class="lead">Total mark: ${mark} / ${total} = ${round(1.*mark/total, 2)}% (${late} late)</p>
         </header>
