@@ -44,6 +44,7 @@ PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 ANSWERS_DIR = os.path.join(DATA_DIR, "answers")
 SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
+USER_INFO_FILE = os.path.join(DATA_DIR, "user_info")
 
 # submission specific constants
 TUTORIAL_HASHES_FILE = os.path.join(SUBMISSIONS_DIR, "tutorial_hashes")
@@ -570,6 +571,41 @@ def has_allow_late(user, tutorial_hash):
     with open(admin_log_path, 'a') as f:
         return any(line[0] == 'allow_late' and line[1] == tutorial_hash
                    for line in map(str.split, f))
+
+
+User = namedtuple('User', ['id', 'name', 'email', 'enrolled'])
+
+ENROLLED = 'enrolled'
+NOT_ENROLLED = 'not_enrolled'
+
+def get_users(query='', enrol_filter=None, sort_key=None):
+    """Return a list of users, optionally filtered/sorted.
+
+    Args:
+      query (str, optional): A string to filter results on. If given, return
+          only those users whose id/name/email contains the given string.
+      enrol_filter (str, optional): One of ENROLLED/NOT_ENROLLED. If given,
+          return only those users whose enrolment status matches the parameter.
+      sort_key (function, optional): A key-function to sort the users on.
+          Defaults to sorting on user's id.
+
+    Returns:
+        A list of User objects, filtered/sorted accordingly.
+    """
+    with open(USER_INFO_FILE, 'rU') as f:
+        users = []
+        for line in f:
+            if not line.startswith('#'):
+                id, name, email, enrolled = line.strip().split(',')
+                # check if the query string is contained in id or name or email
+                # and either
+                if (any(query.lower() in x.lower() for x in (id, name, email))
+                        and (enrol_filter is None or enrol_filter == enrolled)):
+                    users.append(User(id, name, email, enrolled))
+    if sort_key is None:
+        sort_key = lambda u: u.id
+    users.sort(key=sort_key)
+    return users
 
 
 def get_mypytutor_version():
