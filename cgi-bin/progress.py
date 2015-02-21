@@ -44,10 +44,12 @@ def process_tutorial(tutorial, submission):
               (submission.date + TZ_DELTA).strftime(DATE_FORMAT))
 
     return {
+        'hash': tutorial.hash,
         'slug': tutorial.tutorial_name,
         'title': tutorial.tutorial_name.replace('_', ' '),
         'status': status,
         'submit_time': submit,
+        'has_allow_late': submission is not None and submission.allow_late,
     }
 
 
@@ -58,11 +60,30 @@ def main():
         return
 
     form = cgi.FieldStorage(keep_blank_values=True)
+    is_admin = (this_user in ADMINS)
 
     if 'user' in form:
         user = form['user'].value
-        if user != this_user and this_user not in ADMINS:
+        if user != this_user and not is_admin:
             print UNAUTHORISED.format(this_user)
+            return
+    else:
+        user = this_user
+
+    message = None
+    if (is_admin and 'allow_late' in form and 'hash' in form and
+            os.environ['REQUEST_METHOD'] == 'POST'):
+        if form['allow_late'].value == 'on':
+            support.set_allow_late(user, form['hash'].value, this_user)
+            message = ('alert-success', 'Student will gain credit for late '
+                       'submissions to that problem.')
+        elif form['allow_late'].value == 'off':
+            support.unset_allow_late(user, form['hash'].value, this_user)
+            message = ('alert-success', 'Student will be penalised for late '
+                       'submissions to that problem.')
+        else:
+            print ("Status: 400 Bad Request\nContent-Type: text/plain\n\n"
+                   "Bad Request: allow_late not in ('on', 'off')")
             return
 
     user_info = (support.get_user(user) or
@@ -75,7 +96,9 @@ def main():
         'name': 'Change Me',
         'id': 'changeme',
         'user': user_info,
-        'openIndex': 0
+        'openIndex': 0,
+        'is_admin': is_admin,
+        'message': message,
     };
 
     # Count the number of on-time or accepted-late submissions the student has made.

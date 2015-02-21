@@ -7,19 +7,26 @@
 <style>
     th.problem,
     td.problem {
-        width: 34%;
+        width: 25%;
     }
 
     th.status,
     td.status {
-        width: 33%;
+        width: 20%;
     }
 
     th.submit_time,
     td.submit_time {
-        width: 33%;
+        width: 20%;
     }
 
+    % if is_admin:
+    th.allow_late,
+    td.allow_late {
+        width: 25%;
+    }
+
+    % endif
     .panel-heading i.down,
     .panel-heading.collapsed i.up {
         display: none;
@@ -46,6 +53,13 @@
         </header>
     </div>
 
+    % if message:
+    <div class="alert alert-dismissible ${message[0]}">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    ${message[1]}
+    </div>
+
+    % endif
     <div class="panel-group" id="problemSets" role="tablist" aria-multiselectable="true">
         % for group in groups:
         <div class="panel panel-default">
@@ -73,6 +87,9 @@
                             <th class="problem">Problem</th>
                             <th class="status">Status</th>
                             <th class="submit_time">Submit Time</th>
+                            % if is_admin:
+                            <th class="allow_late">Admin Actions</th>
+                            % endif
                         </tr>
                         </thead>
                         <tbody>
@@ -95,6 +112,25 @@
                                     ${problem.get('submit_time')}
                                 % endif
                             </td>
+                            % if is_admin:
+                            <td class="allow_late">
+                                <form action="" method="POST">
+                                <input name="hash" type="hidden" value="${problem['hash']}"></input>
+                                % if problem['has_allow_late']:
+                                    <input name="allow_late" type="hidden" value="off"></input>
+                                    % if problem['status'] == 'unsubmitted':
+                                    <span class="btn-xs">Late submission is allowed.</span>
+                                    <button class="btn btn-link btn-xs" type="submit">Disallow</button>
+                                    % elif problem['status'] == 'late_ok':
+                                    <button class="btn btn-link btn-xs" type="submit">Disallow Late Submission</button>
+                                    % endif
+                                % elif problem['status'] != 'submitted':
+                                    <input name="allow_late" type="hidden" value="on"></input>
+                                    <button class="btn btn-link btn-xs" type="submit">Allow Late Submission</button>
+                                % endif
+                                </form>
+                            </td>
+                            % endif
                         </tr>
                         % endfor
                         </tbody>
