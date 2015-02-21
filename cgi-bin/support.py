@@ -620,6 +620,38 @@ def get_user(userid):
                 return User(*info)
     return None
 
+
+def add_user(user):
+    """Adds a user to the user_info file, if they don't already exist.
+    This function should get called whenever a new user interacts with the
+    system, or when an administrator imports a list of users.
+
+    If the user's ID already exists in the records, no action is taken (even if
+    the rest of the information is different).
+
+    Args:
+      user (support.User): The user to add information about.
+
+    Returns:
+      True if the user was added, False if the user already existed.
+    """
+    # TODO: This implementation might cause a race condition if the user is
+    # added by another process while this process is reading the file.
+    # TODO: This is also possibly too slow (imagine ~600 users, this function
+    # probably gets called any time any of them attempts an action)
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            info = line.strip().split(',')
+            if user.id == info[0]:
+                return False
+
+    with open(USER_INFO_FILE, 'a') as f:
+        f.write('{0.id},{0.name},{0.email},{0.enrolled}\n'.format(user))
+        return True
+
+
 def get_mypytutor_version():
     """
     Return the current MyPyTutor version.

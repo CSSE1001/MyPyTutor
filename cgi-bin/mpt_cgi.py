@@ -35,6 +35,17 @@ ADMINS = ['uqprobin', 'uqspurdo']
 ACTIONS = {}
 
 
+# A wrapper for the uqauth.get_user() interface
+def get_user_and_add():
+    """Returns the result of uqauth.get_user(), and also permanently records
+       the user's information (name, email) for administration purposes."""
+    info = uqauth.get_user_info()
+    userid, name, email = map(str, [info['user'], info.get('name', 'NO_NAME'),
+                                    info.get('email', 'NO_EMAIL')])
+    support.add_user(support.User(userid, name, email, support.NOT_ENROLLED))
+    return str(info['user'])
+
+
 class ActionError(Exception):
     """An exception that represents some error in the request.
     Text messages of this error will be displayed to the user in the client.
@@ -124,7 +135,7 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # immediately fail if the student is trying to send us too much junk
     # (so that we can't easily be DOSed)
@@ -160,7 +171,7 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # read the answer
     code = support.read_answer(
@@ -199,7 +210,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # grab our data
     answer_hash = support.get_answer_hash(
@@ -260,7 +271,7 @@ def submit_answer(tutorial_hash, code):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # check that the tutorial actually exists
     hashes = support.parse_tutorial_hashes()
@@ -322,7 +333,7 @@ def show_submit():
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
     return json.dumps(support.get_submissions_for_user(user).items())
 
 
