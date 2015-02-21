@@ -58,6 +58,34 @@
         text-decoration: inherit;
     }
 </style>
+<script type="text/javascript">
+function toggle_all(source) {
+    var checkboxes = document.getElementsByName('selected_user');
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+
+function checkbox_click() {
+    var all_on = true;
+    var all_off = true;
+    var checkboxes = document.getElementsByName('selected_user');
+    for (var i = 0; i < checkboxes.length; i++) {
+        all_on &= checkboxes[i].checked;
+        all_off &= !checkboxes[i].checked;
+    }
+    var master = document.getElementById('select_all');
+    if (all_off) {
+        master.checked = false;
+        master.indeterminate = false;
+    } else if (all_on) {
+        master.checked = true;
+        master.indeterminate = false;
+    } else {
+        master.indeterminate = true;
+    }
+}
+</script>
 <body>
 
 <div class="container">
@@ -108,8 +136,7 @@
         <table class="table">
             <thead>
             <tr>
-                <th class="check"></th>
-                ## TODO: find a more scalable way to do this:
+                <th class="check"><input type="checkbox" id="select_all" onClick="toggle_all(this)"></th>
                 % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email')]:
                 <th class="userid">${name}
                 % if sort == key:
@@ -134,7 +161,7 @@
             <tbody>
             % for user in users:
             <tr>
-                <th class="check"><input type="checkbox" name="selected_user" value="${user.id}"></th>
+                <th class="check"><input type="checkbox" name="selected_user" value="${user.id}" onClick="checkbox_click()"></th>
                 <td class="userid">${user.id}</td>
                 <td class="name">${user.name}</td>
                 <td class="email">${user.email}</td>
