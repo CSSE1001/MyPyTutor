@@ -2,6 +2,7 @@
 
 import cgi
 import datetime
+import os
 
 from mako.template import Template
 from mako import exceptions
@@ -74,12 +75,12 @@ def main():
     if (is_admin and 'allow_late' in form and 'hash' in form and
             os.environ['REQUEST_METHOD'] == 'POST'):
         if form['allow_late'].value == 'on':
-            support.set_allow_late(user, form['hash'].value, this_user)
-            message = ('alert-success', 'Student will gain credit for late '
+            support.set_allow_late(user, form['hash'].value, this_user, True)
+            message = ('alert-info', 'Student will gain credit for late '
                        'submissions to that problem.')
         elif form['allow_late'].value == 'off':
-            support.unset_allow_late(user, form['hash'].value, this_user)
-            message = ('alert-success', 'Student will be penalised for late '
+            support.set_allow_late(user, form['hash'].value, this_user, False)
+            message = ('alert-info', 'Student will be penalised for late '
                        'submissions to that problem.')
         else:
             print ("Status: 400 Bad Request\nContent-Type: text/plain\n\n"

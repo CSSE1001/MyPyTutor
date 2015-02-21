@@ -560,7 +560,7 @@ def get_submissions_for_user(user):
     return results
 
 
-def set_allow_late(user, tutorial_hash, authorised_by):
+def set_allow_late(user, tutorial_hash, authorised_by, on):
     """
     Allow a user to submit a tutorial late without incurring a mark penalty.
     If the user has not yet submitted, they will be allowed to submit late.
@@ -572,23 +572,15 @@ def set_allow_late(user, tutorial_hash, authorised_by):
       user (str): The username to set the late allowance on.
       tutorial_hash (str): The tutorial hash, as a base32 string.
       authorised_by (str): The username of the person who called this method
+      on (boolean): True if the flag should be set, False if it should be unset
     """
+    msg = ('disallow_late', 'allow_late')[on]
     admin_log_path = _get_or_create_admin_log_file(user)
     time = datetime.now().isoformat()
 
     with open(admin_log_path, 'a') as f:
-        f.write('allow_late {} {} {}\n'
-                .format(tutorial_hash, authorised_by, time))
-
-
-def unset_allow_late(user, tutorial_hash, authorised_by):
-    """Remove the allow_late flag from a user/problem."""
-    admin_log_path = _get_or_create_admin_log_file(user)
-    time = datetime.now().isoformat()
-
-    with open(admin_log_path, 'a') as f:
-        f.write('disallow_late {} {} {}\n'
-                .format(tutorial_hash, authorised_by, time))
+        f.write('{} {} {} {}\n'
+                .format(msg, tutorial_hash, authorised_by, time))
 
 
 def has_allow_late(user, tutorial_hash):
