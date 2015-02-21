@@ -572,7 +572,7 @@ def set_allow_late(user, tutorial_hash, authorised_by, on):
       user (str): The username to set the late allowance on.
       tutorial_hash (str): The tutorial hash, as a base32 string.
       authorised_by (str): The username of the person who called this method
-      on (boolean): True if the flag should be set, False if it should be unset
+      on (bool): True if the flag should be set, False if it should be unset
     """
     msg = ('disallow_late', 'allow_late')[on]
     admin_log_path = _get_or_create_admin_log_file(user)
@@ -617,7 +617,7 @@ def get_users(query='', enrol_filter=ALL, sort_key=None, reverse=False):
           all users, if ALL).
       sort_key (function, optional): A key-function to sort the users on.
           Defaults to sorting on user's id.
-      reverse (boolean, optional): Whether or not to reverse the sort.
+      reverse (bool, optional): Whether or not to reverse the sort.
 
     Returns:
         A list of User objects, filtered/sorted accordingly.
@@ -680,6 +680,26 @@ def add_user(user):
     with open(USER_INFO_FILE, 'a') as f:
         f.write('{0.id},{0.name},{0.email},{0.enrolled}\n'.format(user))
         return True
+
+
+def set_user_enrolment(user, is_enrolled):
+    """Sets a user to be enrolled/unenrolled.
+
+    Args:
+      user (str): The user's login ID
+      is_enrolled (bool): True if the user should now be enrolled
+    """
+    with open(USER_INFO_FILE) as f:
+        users = list(f)
+
+    for i, u in enumerate(users):
+        fields = u.strip('\n').split(',')
+        if fields[0] == user:
+            fields[3] = (NOT_ENROLLED, ENROLLED)[is_enrolled]
+            users[i] = ','.join(fields) + '\n'
+
+    with open(USER_INFO_FILE, 'w') as f:
+        f.write(''.join(users))
 
 
 def get_mypytutor_version():
