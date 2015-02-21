@@ -612,7 +612,7 @@ ALL = 'all'
 ENROLLED = 'enrolled'
 NOT_ENROLLED = 'not_enrolled'
 
-def get_users(query='', enrol_filter=ALL, sort_key=None):
+def get_users(query='', enrol_filter=ALL, sort_key=None, reverse=False):
     """Return a list of users, optionally filtered/sorted.
 
     User information is stored in a file in CSV format.
@@ -625,6 +625,7 @@ def get_users(query='', enrol_filter=ALL, sort_key=None):
           all users, if ALL).
       sort_key (function, optional): A key-function to sort the users on.
           Defaults to sorting on user's id.
+      reverse (boolean, optional): Whether or not to reverse the sort.
 
     Returns:
         A list of User objects, filtered/sorted accordingly.
@@ -642,7 +643,7 @@ def get_users(query='', enrol_filter=ALL, sort_key=None):
                 users.append(User(id, name, email, enrolled))
     if sort_key is None:
         sort_key = lambda u: u.id
-    users.sort(key=sort_key)
+    users.sort(key=sort_key, reverse=reverse)
     return users
 
 

@@ -29,11 +29,11 @@ the staff and/or MyPyTutor developers.</p>
 
 
 def get_sort_key(sort):
-    if sort == 'id':
+    if sort in ('id', 'id_reverse'):
         return lambda user: user.id
-    if sort == 'name':
-        return lambda user: user.name
-    if sort == 'email':
+    if sort in ('name', 'name_reverse'):
+        return lambda user: (user.name, user.id)
+    if sort in ('email', 'email_reverse'):
         return lambda user: user.email
     return None
 
@@ -55,8 +55,9 @@ def main():
     enrol_filter = (form['enrol_filter'].value
                     if 'enrol_filter' in form else
                     support.ALL)  # TODO: change to support.ENROLLED later
-    sort = form['sort'].value if 'sort' in form else ''
-    users = support.get_users(query, enrol_filter, get_sort_key(sort))
+    sort = form['sort'].value if 'sort' in form else 'id'
+    reverse = sort.endswith('_reverse')
+    users = support.get_users(query, enrol_filter, get_sort_key(sort), reverse)
 
     data = {
             'users': users,
