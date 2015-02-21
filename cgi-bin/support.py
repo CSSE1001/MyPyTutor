@@ -23,6 +23,8 @@ File structure:
           submission_log             <- student submission log
           admin_log                  <- log of admin actions taken on the user
           <tutorial_problem_hash>    <- the student's answer, as submitted
+      feedback/
+        <username>.<feedback_id>     <- an individual item of feedback
 
 """
 import base64
@@ -43,6 +45,7 @@ BASE_DIR = "/opt/local/share/MyPyTutor/MPT3_CSSE1001"
 PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 ANSWERS_DIR = os.path.join(DATA_DIR, "answers")
+FEEDBACK_DIR = os.path.join(DATA_DIR, "feedback")
 SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
 
 # submission specific constants
@@ -555,3 +558,59 @@ def get_tutorials_timestamp():
         with zf.open('config.txt') as f:
             return f.readline().strip()  # we just need the first line
 
+
+def add_feedback(user, subject, feedback, code=''):
+    """
+    Add the given feedback for the given user.
+
+    Feedback is stored as JSON.
+
+    Args:
+      user (str): The user who provided the feedback.
+      subject (str): The subject of the feedback.
+      feedback (str): The feedback message itself.
+      code (str, optional): The code the user was working on.
+
+    """
+    # work out what filename to use
+    existing_feedback = (fn.split('.') for fn in os.listdir(FEEDBACK_DIR))
+    existing_feedback = sorted(
+        int(n) for u, n in existing_feedback if u == user
+    )
+    feedback_id = max(existing_feedback) + 1 if existing_feedback else 0
+    feedback_filename = '{user}.{id}'.format(user=user, id=feedback_id)
+    feedback_path = os.path.join(FEEDBACK_DIR, feedback_filename)
+
+    # build the json dict
+    d = {
+        'subject': subject,
+        'feedback': feedback,
+        'code': code,
+    }
+
+    # actually write it to file
+    with open(feedback_path, 'w') as f:
+        f.write(json.dumps(d))
+
+
+def get_all_feedback():
+    """
+    Get all feedback.
+
+    Returns:
+      A list containing a dictionary for each item of feedback recieved.
+
+    """
+    feedback = []
+
+    # assumes everything in the dir is valid
+    for fn in os.listdir(FEEDBACK_DIR):
+        user, _, _ = fn.partition('.')
+
+        with open(os.path.join(FEEDBACK_DIR, fn)) as f:
+            d = json.loads(f.read())
+
+        d['user'] = user
+        feedback.append(d)
+
+    return feedback

@@ -1070,15 +1070,26 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
               False.
 
         """
+        def callback(subject, feedback):
+            self.web_api.provide_feedback(
+                subject,
+                feedback,
+                code=self.editor.get_text() if problem_feedback else ''
+            )
+
         if problem_feedback and self.current_tutorial is not None:
             FeedbackDialog(
                 self.master,
                 'Problem Feedback: {}'.format(self.current_tutorial.name),
                 self.current_tutorial.name,
-                self.editor.get_text()
+                callback=callback,
             )
         else:
-            FeedbackDialog(self.master, 'General Feedback')
+            FeedbackDialog(
+                self.master,
+                'General Feedback',
+                callback=callback,
+            )
 
     # help
     def show_help_dialog(self):

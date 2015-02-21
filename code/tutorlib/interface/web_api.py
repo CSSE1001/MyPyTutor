@@ -503,6 +503,29 @@ class WebAPI():
               submissions for.
 
         Returns:
+          As for _parse_submissions.
+
+        Raises:
+          As for _parse_submissions.
+
+        """
+        values = {
+            'action': 'get_submissions',
+        }
+        response = self._get(values)
+
+        return self._parse_submissions(response, tutorial_package)
+
+    def _parse_submissions(self, response, tutorial_package):
+        """
+        Parse a user's submissions from the given response.
+
+        Args:
+          response (str): The JSON response to parse the submissions from.
+          tutorial_package (TutorialPackage): The tutorial package to return
+              submissions for.
+
+        Returns:
           A dictionary containing the submission status of each tutorial.
 
           The keys of the dictionary will be Tutorial objects (from the given
@@ -516,14 +539,6 @@ class WebAPI():
               elements of the response contains an unknown status.
 
         """
-        values = {
-            'action': 'get_submissions',
-        }
-        response = self._get(values)
-
-        return self._parse_submissions(response, tutorial_package)
-
-    def _parse_submissions(self, response, tutorial_package):
         # parse our response
         try:
             results = json.loads(response)
@@ -552,7 +567,43 @@ class WebAPI():
 
         return output
 
+    def provide_feedback(self, subject, feedback, code=''):
+        """
+        Provide feedback on MyPyTutor.
+
+        Args:
+          subject (str): The subject of the feedback.
+          feedback (str): The feedback message itself.
+          code (str, optional): The code the user was working on.
+
+        """
+        values = {
+            'action': 'provide_feedback',
+            'subject': subject,
+            'feedback': feedback,
+            'code': code,
+        }
+        _ = self._get(values)
+
+    # the following calls require admin access
     def get_student_results(self, user, tutorial_package):
+        """
+        Get the results for the given student.
+
+        The logged-in user must be a MyPyTutor admin.
+
+        Args:
+          user (str): The user to get the results for.
+          tutorial_package (TutorialPackage): The tutorial package to get the
+              student's results for.
+
+        Returns:
+          As for _parse_submissions.
+
+        Raises:
+          As for _parse_submissions.
+
+        """
         values = {
             'action': 'get_student_results',
             'user': user,
