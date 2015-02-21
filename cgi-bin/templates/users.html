@@ -89,51 +89,23 @@
             <thead>
             <tr>
                 ## TODO: find a more scalable way to do this:
-                <th class="userid">User ID
-                % if sort == 'id':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=id_reverse">
+                % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email')]:
+                <th class="userid">${name}
+                % if sort == key:
+                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=${key}_reverse">
                     <i class="glyphicon glyphicon-sort-by-alphabet"></i>
                 </a>
-                % elif sort == 'id_reverse':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=id">
+                % elif sort == key + '_reverse':
+                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=${key}">
                     <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
                 </a>
                 % else:
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=id">
+                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=${key}">
                     <i class="glyphicon glyphicon-sort"></i>
                 </a>
                 % endif
                 </th>
-                <th class="name">Name
-                % if sort == 'name':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=name_reverse">
-                    <i class="glyphicon glyphicon-sort-by-alphabet"></i>
-                </a>
-                % elif sort == 'name_reverse':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=name">
-                    <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
-                </a>
-                % else:
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=name">
-                    <i class="glyphicon glyphicon-sort"></i>
-                </a>
-                % endif
-                </th>
-                <th class="email">Email
-                % if sort == 'email':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=email_reverse">
-                    <i class="glyphicon glyphicon-sort-by-alphabet"></i>
-                </a>
-                % elif sort == 'email_reverse':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=email">
-                    <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
-                </a>
-                % else:
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=email">
-                    <i class="glyphicon glyphicon-sort"></i>
-                </a>
-                % endif
-                </th>
+                % endfor
                 <th class="enrolled">Enrolled?</th>
                 <th class="actions">Actions</th>
             </tr>
