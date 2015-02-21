@@ -60,17 +60,17 @@
                     <input type="text" class="form-control" name="query" placeholder="Filter" value="${query}">
                     <div class="input-group-btn">
                         <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                    % if query != '':
-                    <a href="?" type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a>
-                    % endif
+                        % if query != '':
+                        <a href="?query=&enrol_filter=${enrol_filter}&sort=${sort}" type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+                        % endif
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
-                <select class="form-control" readonly>
-                  <option>Show all users (TODO: changing options unimplemented)</option>
-                  <option>Show users enrolled in the course</option>
-                  <option>Show users not enrolled in the course</option>
+                <select class="form-control" name="enrol_filter" onchange="this.form.submit()">
+                  <option value="all" ${'selected' if enrol_filter=='all' else ''}>Show all users</option>
+                  <option value="enrolled" ${'selected' if enrol_filter=='enrolled' else ''}>Show users enrolled in the course</option>
+                  <option value="not_enrolled" ${'selected' if enrol_filter=='not_enrolled' else ''}>Show users not enrolled in the course</option>
                 </select>
             </div>
         </form>

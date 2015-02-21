@@ -28,21 +28,14 @@ the staff and/or MyPyTutor developers.</p>
 </body>"""
 
 
-def get_users(form):
-    query = form['query'].value if 'query' in form else ''
-    enrol_filter = (form['enrol_filter'].value
-                    if 'enrol_filter' in form else None)
-    sort_key = None
-    if 'sort' in form:
-        sort = form['sort'].value
-        if sort == 'id':
-            sort_key = lambda u: u.id
-        elif sort == 'name':
-            sort_key = lambda u: u.name
-        elif sort == 'email':
-            sort_key = lambda u: u.email
-
-    return support.get_users(query, enrol_filter, sort_key)
+def get_sort_key(sort):
+    if sort == 'id':
+        return lambda user: user.id
+    if sort == 'name':
+        return lambda user: user.name
+    if sort == 'email':
+        return lambda user: user.email
+    return None
 
 
 def main():
@@ -58,11 +51,17 @@ def main():
         print "Content-Type: text/html\n"
 
     form = cgi.FieldStorage(keep_blank_values=True)
-    users = get_users(form)
+    query = form['query'].value if 'query' in form else ''
+    enrol_filter = (form['enrol_filter'].value
+                    if 'enrol_filter' in form else support.ENROLLED)
+    sort = form['sort'].value if 'sort' in form else ''
+    users = support.get_users(query, enrol_filter, get_sort_key(sort))
 
     data = {
             'users': users,
-            'query': form['query'].value if 'query' in form else '',
+            'query': query,
+            'enrol_filter': enrol_filter,
+            'sort': sort,
            }
 
     try:

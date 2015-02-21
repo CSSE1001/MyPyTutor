@@ -575,17 +575,19 @@ def has_allow_late(user, tutorial_hash):
 
 User = namedtuple('User', ['id', 'name', 'email', 'enrolled'])
 
+ALL = 'all'
 ENROLLED = 'enrolled'
 NOT_ENROLLED = 'not_enrolled'
 
-def get_users(query='', enrol_filter=None, sort_key=None):
+def get_users(query='', enrol_filter=ALL, sort_key=None):
     """Return a list of users, optionally filtered/sorted.
 
     Args:
       query (str, optional): A string to filter results on. If given, return
           only those users whose id/name/email contains the given string.
-      enrol_filter (str, optional): One of ENROLLED/NOT_ENROLLED. If given,
-          return only those users whose enrolment status matches the parameter.
+      enrol_filter (str, optional): One of ENROLLED/NOT_ENROLLED/ALL. Return
+          only those users whose enrolment status matches the parameter (or
+          all users, if ALL).
       sort_key (function, optional): A key-function to sort the users on.
           Defaults to sorting on user's id.
 
@@ -601,7 +603,7 @@ def get_users(query='', enrol_filter=None, sort_key=None):
             # check if the query string is contained in id or name or email and
             # the enrol_filter matches the given enrol state, if given.
             if (any(query.lower() in x.lower() for x in (id, name, email))
-                    and (enrol_filter is None or enrol_filter == enrolled)):
+                    and enrol_filter in (ALL, enrolled)):
                 users.append(User(id, name, email, enrolled))
     if sort_key is None:
         sort_key = lambda u: u.id
