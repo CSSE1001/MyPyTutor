@@ -60,7 +60,10 @@ def main():
     form = cgi.FieldStorage(keep_blank_values=True)
     users = get_users(form)
 
-    data = {'users': users,}
+    data = {
+            'users': users,
+            'query': form['query'].value if 'query' in form else '',
+           }
 
     try:
         print(Template(filename="./templates/users.html").render(**data))
