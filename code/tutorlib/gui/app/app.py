@@ -526,7 +526,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
                     self.master.after(0, _show_info_box)
 
         # reload the interpreter with the tested code
-        self.interpreter.reload(self.editor.get_text())
+        if self.interpreter.is_alive:
+            self.interpreter.reload(self.editor.get_text())
 
         return success
 
@@ -880,6 +881,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         exec_sync(_background_task)
 
     # tools
+    @skip_if_attr_none('editor')
     def show_visualiser(self):
         """
         Open a web browser with the student's current code pre-loaded into the
@@ -889,6 +891,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         """
         self.web_api.visualise(self.editor.get_text())
+
+    @skip_if_attr_none('editor')
+    def show_interpreter(self):
+        """
+        Open the interpreter.
+
+        """
+        self.interpreter.reload(self.editor.get_text())
 
     # preferences
     @skip_if_attr_none('tutorial_package')

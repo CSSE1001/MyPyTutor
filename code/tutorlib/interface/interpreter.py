@@ -37,6 +37,11 @@ class Interpreter():
         os.remove(self.path)  # will gen before removing, but meh
 
     @property
+    def is_alive(self):
+        return self.subprocess is not None \
+               and self.subprocess.poll() is not None
+
+    @property
     def args(self):
         # we hope that idle3 is correctly defined
         # (idle could be idle2, though it might be worth falling back to it)
