@@ -496,6 +496,51 @@ def add_submission(user, tutorial_hash, code):
     # return the TutorialSubmission object
     return submission
 
+def get_submissions_for_user(user):
+    """
+    Return the submissions for the given user.
+
+    No attempt is made to check that the logged in user has permission to view
+    these submissions.  That is the responsibility of the caller.
+
+    Args:
+      user (str): The user to return the submissions for.
+
+    Returns:
+      A list of two-element tuples.
+      Each tuple represents a single tutorial.
+
+      The first element in the tuple is the hash of the tutorial package (in
+      the same format as usual, ie base32 encoded sha512 hash).
+
+      The second element in the tuple is one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
+
+    """
+    # get our data
+    hashes = support.parse_tutorial_hashes()
+    submissions = support.parse_submission_log(user)
+    tutorials = set(hashes.values())
+
+    # check if our submissions are late or not
+    results = {ti.hash: 'MISSING' for ti in tutorials}
+
+    for submission in submissions:
+        # lookup, not get, as this must exist: if not, then we have a
+        # submission with an unknown tutorial, which is a server error
+        tutorial_info = hashes[submission.hash]
+
+        if submission.date <= tutorial_info.due:
+            status = 'OK'
+        elif submission.allow_late:
+            status = 'LATE_OK'
+        else:
+            status = 'LATE'
+
+        results[tutorial_info.hash] = status
+
+    return results
+
 
 def set_allow_late(user, tutorial_hash):
     """
