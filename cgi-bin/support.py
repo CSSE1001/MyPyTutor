@@ -519,8 +519,8 @@ def get_submissions_for_user(user):
 
     """
     # get our data
-    hashes = support.parse_tutorial_hashes()
-    submissions = support.parse_submission_log(user)
+    hashes = parse_tutorial_hashes()
+    submissions = parse_submission_log(user)
     tutorials = set(hashes.values())
 
     # check if our submissions are late or not
@@ -595,13 +595,14 @@ def get_users(query='', enrol_filter=None, sort_key=None):
     with open(USER_INFO_FILE, 'rU') as f:
         users = []
         for line in f:
-            if not line.startswith('#'):
-                id, name, email, enrolled = line.strip().split(',')
-                # check if the query string is contained in id or name or email
-                # and the enrol_filter matches the given enrol state, if given.
-                if (any(query.lower() in x.lower() for x in (id, name, email))
-                        and (enrol_filter is None or enrol_filter == enrolled)):
-                    users.append(User(id, name, email, enrolled))
+            if line.startswith('#'):
+                continue
+            id, name, email, enrolled = line.strip().split(',')
+            # check if the query string is contained in id or name or email and
+            # the enrol_filter matches the given enrol state, if given.
+            if (any(query.lower() in x.lower() for x in (id, name, email))
+                    and (enrol_filter is None or enrol_filter == enrolled)):
+                users.append(User(id, name, email, enrolled))
     if sort_key is None:
         sort_key = lambda u: u.id
     users.sort(key=sort_key)
