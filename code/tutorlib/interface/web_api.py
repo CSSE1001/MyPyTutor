@@ -97,11 +97,15 @@ class WebAPI():
         user_info = self.session_manager.user_info()
         return user_info['user']
 
-    def login(self):
+    def login(self, username=None, password=None):
         """
         Prompt the user to login, if necessary.
 
         If the user is already logged in, no action will be taken.
+
+        Args:
+          username (str, optional): The username to login with.
+          password (str, optional): The password to login with.
 
         Returns:
           Whether the user could be successfully logged in.
@@ -112,7 +116,7 @@ class WebAPI():
             return True
 
         # the SessionManager will keep trying until it is successful
-        success = self.session_manager.login()
+        success = self.session_manager.login(username, password)
         self.listener(success)
 
         return success
