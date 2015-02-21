@@ -77,15 +77,20 @@ class SessionManager:
     def is_logged_in(self):
         return self._user is not None
 
-    def login(self):
+    def login(self, username=None, password=None):
         """Log in to the MyPyTutor server.
 
         If the credentials are valid, a cookie will be set automatically.
         If the credentials are invalid, prompt the user to retry.
         If the user cancels the login attempt, raise an AuthError.
 
+        Optionally, a username and password may be provided to this method.
+        In this case, no GUI elements will be displayed.
+
         Precondition: the form is the standard auth.uq.edu.au login form.
         """
+        assert (username is None) + (password is None) in (0, 2)
+
         # Ask for the user's information.
         data = {'action': 'userinfo'}
         url = self._url + '?' + urllib.parse.urlencode(data)
@@ -100,11 +105,15 @@ class SessionManager:
         # If we didn't get redirected to the login form, we're already in.
         if urllib.parse.urlsplit(response.geturl()).netloc != LOGIN_DOMAIN:
             set_details(text)
-            tkmessagebox.showerror(
-                'Login Error',
-                "You are already logged in as {}.".format(self._user['user'])
-            )
-            return
+
+            if username is None:
+                tkmessagebox.showerror(
+                    'Login Error',
+                    "You are already logged in as {}.".format(
+                        self._user['user']
+                    )
+                )
+            return True
 
         # Construct a callback for the login dialog box.
         def submit_login(username, password):
@@ -142,7 +151,10 @@ class SessionManager:
 
             return self.is_logged_in()
 
-        LoginDialog(None, submit_login)
+        if username is None:
+            LoginDialog(None, submit_login)
+        else:
+            submit_login(username, password)
 
         # regardless of whether the user cancelled or was successful, what we
         # want to return is whether they are logged in right now

@@ -795,7 +795,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         )
         with ThreadPoolExecutor(max_workers) as executor:
             futures = {
-                executor.submit(_do_sync(tutorial))
+                executor.submit(_do_sync, tutorial)
                     for problem_set in self.tutorial_package.problem_sets
                     for tutorial in problem_set
             }
