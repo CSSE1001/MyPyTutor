@@ -470,7 +470,7 @@ def add_submission(user, tutorial_hash, code):
     submitted_date = datetime.now()
     submitted_date_str = submitted_date.isoformat()
 
-    submission = TutorialSubmission(tutorial_hash, submitted_date)
+    submission = TutorialSubmission(tutorial_hash, submitted_date, False)
 
     # write to the log
     submission_log_path = _get_or_create_user_submissions_file(user)
