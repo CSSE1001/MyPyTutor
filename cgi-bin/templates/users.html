@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyPyTutor Admin Panel</title>
+</head>
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+    th.userid,
+    td.userid {
+        width: 10%;
+    }
+
+    th.name,
+    td.name {
+        width: 30%;
+    }
+
+    th.email,
+    td.email {
+        width: 20%;
+    }
+
+    .panel-heading i.down,
+    .panel-heading.collapsed i.up {
+        display: none;
+    }
+
+    .panel-heading i.up,
+    .panel-heading.collapsed i.down {
+        display: inline-block;
+    }
+
+    .panel-heading {
+        cursor: pointer;
+    }
+</style>
+<body>
+
+<div class="container">
+    <div class="row-fluid">
+        <header>
+            <h1>MyPyTutor Admin Panel</h1>
+        </header>
+    </div>
+
+    <!-- TODO: fancier markup -->
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="userid">User ID</th>
+                <th class="name">Name</th>
+                <th class="email">Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            % for user in users:
+            <tr>
+                <td class="userid">${user.id}</td>
+                <td class="name">${user.name}</td>
+                <td class="email">${user.email}</td>
+            </tr>
+            % endfor
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
