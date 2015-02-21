@@ -40,13 +40,11 @@ def process_tutorial(tutorial, submission):
     else:
         status = 'late'
 
-    due = tutorial.due.strftime(DATE_FORMAT)
-    submit = submission and submission.date.strftime(DATE_FORMAT)
+    submit = submission and (submission.date + TZ_DELTA).strftime(DATE_FORMAT)
 
     return {
         'slug': tutorial.tutorial_name,
         'title': tutorial.tutorial_name.replace('_', ' '),
-        'due': due,
         'status': status,
         'submit_time': submit,
     }
@@ -91,7 +89,7 @@ def main():
             group = {
                 'slug': tutorial.problem_set_name,
                 'title': tutorial.problem_set_name.replace('_', ' '),
-                'due': tutorial.due.strftime(DATE_FORMAT),
+                'due': (tutorial.due + TZ_DELTA).strftime(DATE_FORMAT),
                 'problems': []
             }
 
