@@ -40,18 +40,31 @@
     .panel-heading {
         cursor: pointer;
     }
+
+    header h1 a,
+    header h1 a:hover,
+    header h1 a:focus {
+        color: inherit;
+        text-decoration: inherit;
+    }
 </style>
 <body>
 
 <div class="container">
-    <div class="row-fluid">
-        <header>
-            <h1>MyPyTutor Progress for ${user.name}
+    <header>
+        <div class="page-header">
+            <h1><a href="">MyPyTutor Progress for ${user.name}</a>
                 <small>(${user.id})</small>
             </h1>
             <p class="lead">Total mark: ${mark} / ${total} = ${round(100.*mark/total, 2)}% (${late} late)</p>
-        </header>
-    </div>
+            % if is_admin:
+            <ol class="breadcrumb">
+              <li><a href="admin.py">Admin Dashboard</a></li>
+              <li class="active">${user.name}</li>
+            </ol>
+            % endif
+        </div>
+    </header>
 
     % if message:
     <div class="alert alert-dismissible ${message[0]}">

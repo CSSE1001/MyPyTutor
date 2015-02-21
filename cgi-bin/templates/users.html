@@ -2,7 +2,7 @@
 <!-- TODO: improve the markup of the admin interface. -->
 <html>
 <head>
-    <title>MyPyTutor Admin Panel</title>
+    <title>MyPyTutor Admin Dashboard</title>
 </head>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
@@ -44,15 +44,22 @@
     .panel-heading {
         cursor: pointer;
     }
+
+    header h1 a,
+    header h1 a:hover,
+    header h1 a:focus {
+        color: inherit;
+        text-decoration: inherit;
+    }
 </style>
 <body>
 
 <div class="container">
-    <div class="row-fluid">
-        <header>
-            <h1>MyPyTutor Admin Panel</h1>
-        </header>
+    <header>
+    <div class="page-header">
+            <h1><a href="?">MyPyTutor Admin Dashboard</a></h1>
     </div>
+    </header>
     <div class="row-fluid">
         <form action="" method="get" class="form-inline" role="search">
             <div class="col-lg-4">
