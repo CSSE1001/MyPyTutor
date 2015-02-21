@@ -1,6 +1,6 @@
 import base64
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 
@@ -12,6 +12,7 @@ from tutorlib.interface.problems import TutorialPackage
 DUE_DATE_HOUR = 17
 INPUT_DATE_FORMAT = "%d/%m/%y"
 DATE_FORMAT = "%H_%d/%m/%y"
+TIMEZONE_OFFSET = timedelta(hours=10)  # UTC+10
 
 
 # NB: A lot of this is a direct copy of code from cgi-bin/support.py
@@ -45,6 +46,9 @@ def write_tutorial_hashes(f, path):
     for problem_set in tutorial_package.problem_sets:
         date_obj = datetime.strptime(problem_set.date, INPUT_DATE_FORMAT)
         date_obj = date_obj.replace(hour=DUE_DATE_HOUR)
+
+        date_obj -= TIMEZONE_OFFSET  # reverse timezone offset
+
         due_date_str = date_obj.strftime(DATE_FORMAT)
 
         problem_set_name = problem_set.name.replace(' ', '_')
