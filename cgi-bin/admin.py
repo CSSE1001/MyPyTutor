@@ -32,7 +32,7 @@ def get_sort_key(sort):
     if sort in ('id', 'id_reverse'):
         return lambda user: user.id
     if sort in ('name', 'name_reverse'):
-        return lambda user: (user.name, user.id)
+        return lambda user: (user.name.lower(), user.id)
     if sort in ('email', 'email_reverse'):
         return lambda user: user.email
     return None
