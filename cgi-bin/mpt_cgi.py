@@ -324,6 +324,30 @@ def show_submit():
     # authenticate the user
     user = uqauth.get_user()
 
+    return _get_submissions_for_user(user)
+
+
+def _get_submissions_for_user(user):
+    """
+    Return the submissions for the given user.
+
+    No attempt is made to check that the logged in user has permission to view
+    these submissions.  That is the responsibility of the caller.
+
+    Args:
+      user (str): The user to return the submissions for.
+
+    Returns:
+      A list of two-element tuples.
+      Each tuple represents a single tutorial.
+
+      The first element in the tuple is the hash of the tutorial package (in
+      the same format as usual, ie base32 encoded sha512 hash).
+
+      The second element in the tuple is one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
+
+    """
     # get our data
     hashes = support.parse_tutorial_hashes()
     submissions = support.parse_submission_log(user)
@@ -420,46 +444,26 @@ def get_problem_list():
     return problem_list
 
 
-@action('results', admin=True)
-def get_results():
-    problem_list = get_problem_list()
-    users_file = os.path.join(data_dir, 'users')
-    users_fd = open(users_file, 'U')
-    user_lines = users_fd.readlines()
-    users_fd.close()
-    results_list = list(problem_list)
-    results_list.append('######')
-    for user in user_lines:
-        if user.startswith('#'):
-            continue
-        data = user.split(',')
-        if len(data) == 6 and data[2] == 'student':
-            student = data[0]
-            sub_file = os.path.join(data_dir, student+'.sub')
-            try:
-                sub_fd = open(sub_file, 'U')
-            except:
-                continue
-            sub_lines = sub_fd.readlines()
-            sub_fd.close()
-            length = len(sub_lines)
-            i = 0
-            result_dict = {}
-            while i < length:
-                line = sub_lines[i].strip()
-                i += 1
-                if line.startswith('##$$'):
-                    problem = line[4:-4]
-                    result = sub_lines[i].strip()
-                    i += 1
-                    tries = sub_lines[i].strip()
-                    i += 1
-                    result_dict[problem] = "%s/%s" % (result, tries)
-            student_result = [student]
-            for prob in problem_list:
-                student_result.append(result_dict.get(prob, '-'))
-            results_list.append(','.join(student_result))
-    return '\n'.join(results_list)
+@action('get_student_results', admin=True)
+def get_results(user):
+    """
+    Return results for the given student.
+
+    Args:
+      user (str): The user to return the submissions for.
+
+    Returns:
+      A list of two-element tuples.
+      Each tuple represents a single tutorial.
+
+      The first element in the tuple is the hash of the tutorial package (in
+      the same format as usual, ie base32 encoded sha512 hash).
+
+      The second element in the tuple is one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
+
+    """
+    return _get_submissions_for_user(user)
 
 
 @action('get_user_subs', admin=True)

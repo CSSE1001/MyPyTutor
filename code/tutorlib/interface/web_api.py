@@ -521,6 +521,9 @@ class WebAPI():
         }
         response = self._get(values)
 
+        return self._parse_submissions(response, tutorial_package)
+
+    def _parse_submissions(self, response, tutorial_package):
         # parse our response
         try:
             results = json.loads(response)
@@ -548,3 +551,12 @@ class WebAPI():
             output[tutorial] = status
 
         return output
+
+    def get_student_results(self, user, tutorial_package):
+        values = {
+            'action': 'get_student_results',
+            'user': user,
+        }
+        response = self._get(values)
+
+        return self._parse_submissions(response, tutorial_package)
