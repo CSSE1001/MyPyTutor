@@ -526,6 +526,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
     def _login_status_change(self, logged_in):
         # sync no matter what
         callback = partial(self.synchronise, no_login=not logged_in)
+        callback.__name__ = 'callback'
         self.master.after(0, callback)
 
         if logged_in:
@@ -605,7 +606,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
             messages = {self.web_api.OK: 'Code submitted on time',
                         self.web_api.LATE: 'Code submitted late',
-                        self.web_api.LATE_OK: 'Code submitted. You will not '
+                        self.web_api.LATE_OK: 'Code submitted. You will not ' \
                             'receive a penalty for late submission.'}
 
             tkmessagebox.showinfo(
