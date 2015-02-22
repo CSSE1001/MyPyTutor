@@ -573,7 +573,13 @@ def set_allow_late(user, tutorial_hash, authorised_by, on):
       tutorial_hash (str): The tutorial hash, as a base32 string.
       authorised_by (str): The username of the person who called this method
       on (bool): True if the flag should be set, False if it should be unset
+
+    Returns:
+      False if the allow_late flag was already the same as the `on` parameter.
     """
+    if on == has_allow_late(user, tutorial_hash):
+        return False
+
     msg = ('disallow_late', 'allow_late')[on]
     admin_log_path = _get_or_create_admin_log_file(user)
     time = datetime.now().isoformat()
@@ -581,6 +587,7 @@ def set_allow_late(user, tutorial_hash, authorised_by, on):
     with open(admin_log_path, 'a') as f:
         f.write('{} {} {} {}\n'
                 .format(msg, tutorial_hash, authorised_by, time))
+    return True
 
 
 def has_allow_late(user, tutorial_hash):

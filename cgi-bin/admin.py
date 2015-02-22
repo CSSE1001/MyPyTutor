@@ -75,7 +75,7 @@ def main():
                            .format(count, len(selected_users) - count))
             else:
                 message = ('alert-success', '{} users modified.'
-                           .format(count, len(selected_users) - count))
+                           .format(count))
         else:
             message = ('alert-warning', 'No users selected.')
 

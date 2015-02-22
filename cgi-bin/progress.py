@@ -53,6 +53,11 @@ def process_tutorial(tutorial, submission):
         'has_allow_late': submission is not None and submission.allow_late,
     }
 
+def is_submitted_on_time(tutorial, submissions):
+    "Return True if the given tutorial was submitted on time"
+    return any(s and s.hash==tutorial and s.date and s.date <= t.due
+               for t,s in submissions)
+
 
 def main():
     try:
@@ -71,26 +76,30 @@ def main():
     message = None
     if (is_admin and os.environ.get('REQUEST_METHOD') == 'POST' and
             'action' in form):
+        before_submissions = get_submissions(user)
         if form.getvalue('action') == 'allow_late':
-            action = (lambda tutorial:
-                      support.set_allow_late(user, tutorial, this_user, True))
-            message = ('alert-info', 'Student will now gain credit for late '
-                       'submissions to the selected problems.')
+            action = (lambda tutorial: not is_submitted_on_time(tutorial, before_submissions)
+                      and support.set_allow_late(user, tutorial, this_user, True))
         elif form.getvalue('action') == 'disallow_late':
-            action = (lambda tutorial:
-                      support.set_allow_late(user, tutorial, this_user, False))
-            message = ('alert-info', 'Student will now be penalised for late '
-                       'submissions to the selected problems.')
+            action = (lambda tutorial: not is_submitted_on_time(tutorial, before_submissions)
+                      and support.set_allow_late(user, tutorial, this_user, False))
         else:
             action = None
             message = ('alert-danger', 'Action unknown or not specified.')
 
         problems = form.getlist('problem')
         if action and problems:
-            map(action, problems)
+            count = sum(map(action, problems))
+            if count == 0:
+                message = ('alert-warning', '0 entries modified.')
+            elif count < len(problems):
+                message = ('alert-success', '{} entries modified, {} unchanged.'
+                           .format(count, len(problems)-count))
+            else:
+                message = ('alert-success', '{} entries modified.'
+                           .format(count))
         elif action and not problems:
             message = ('alert-warning', 'No problems specified.')
-
 
     user_info = (support.get_user(user) or
                  support.User(user, 'UNKNOWN', 'UNKNOWN', 'not_enrolled'))
