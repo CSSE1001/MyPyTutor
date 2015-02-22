@@ -3,7 +3,6 @@
 <html>
 <head>
     <title>MyPyTutor Admin Dashboard</title>
-</head>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
     th.check,
@@ -87,6 +86,7 @@ function checkbox_click() {
     }
 }
 </script>
+</head>
 <body>
 
 <div class="container">
@@ -103,14 +103,14 @@ function checkbox_click() {
 
     % endif
     <div class="row-fluid">
-        <form action="" method="get" role="search">
+        <form action="#" method="get" role="search">
             <div class="col-md-3 col-md-push-6 col-sm-4 col-sm-push-4">
                 <div class="input-group" style="width: 100%;"> <!-- Sorry for using inline styling :) -->
                     <input type="text" class="form-control" name="query" placeholder="Filter" value="${query}">
                     <div class="input-group-btn">
                         <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                         % if query != '':
-                        <a href="?query=&enrol_filter=${enrol_filter}&sort=${sort}" type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+                        <a href="?query=&amp;enrol_filter=${enrol_filter}&amp;sort=${sort}" type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a>
                         % endif
                     </div>
                 </div>
@@ -126,7 +126,7 @@ function checkbox_click() {
     </div>
 
     <div>
-        <form action="" method="POST">
+        <form action="#" method="POST">
         <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
             <select class="form-control" name="action" onchange="this.form.submit()">
                 <option selected>Action:</option>
@@ -141,15 +141,15 @@ function checkbox_click() {
                 % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email')]:
                 <th class="userid">${name}
                 % if sort == key:
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=${key}_reverse">
+                <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}_reverse">
                     <i class="glyphicon glyphicon-sort-by-alphabet"></i>
                 </a>
                 % elif sort == key + '_reverse':
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=${key}">
+                <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}">
                     <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
                 </a>
                 % else:
-                <a href="?query=${query}&enrol_filter=${enrol_filter}&sort=${key}">
+                <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}">
                     <i class="glyphicon glyphicon-sort"></i>
                 </a>
                 % endif
