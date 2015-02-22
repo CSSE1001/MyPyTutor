@@ -102,7 +102,7 @@ function checkbox_click() {
     </div>
 
     % endif
-    <div class="row-fluid">
+    <div class="row row-fluid">
         <form action="#" method="get" role="search">
             <div class="col-md-3 col-md-push-6 col-sm-4 col-sm-push-4">
                 <div class="input-group" style="width: 100%;"> <!-- Sorry for using inline styling :) -->
@@ -123,17 +123,17 @@ function checkbox_click() {
                 </select>
             </div>
         </form>
-    </div>
-
-    <div>
-        <form action="#" method="POST">
         <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
-            <select class="form-control" name="action" onchange="this.form.submit()">
+            <select class="form-control" form="edit_form" name="action" onchange="this.form.submit()">
                 <option selected>Action:</option>
                 <option value="enrol">Enrol</option>
                 <option value="unenrol">Unenrol</option>
             </select>
         </div>
+    </div>
+
+    <div>
+        <form action="#" method="POST" id="edit_form">
         <table class="table">
             <thead>
             <tr>
