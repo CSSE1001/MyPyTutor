@@ -102,24 +102,24 @@ function checkbox_click(name) {
                 <small>(${user.id})</small>
             </h1>
             <p class="lead">Total mark: ${mark} / ${total} = ${round(100.*mark/total, 2)}% (${late} late)</p>
-            % if is_admin:
-            <div class="row">
-            <div class="col-lg-10">
-            <ol class="breadcrumb">
-              <li><a href="admin.py">Admin Dashboard</a></li>
-              <li class="active">${user.name}</li>
-            </ol>
+        </div>
+        % if is_admin:
+        <div class="row">
+            <div class="col-lg-10 col-lg-push-2">
+                <ol class="breadcrumb">
+                    <li><a href="admin.py">Admin Dashboard</a></li>
+                    <li class="active">${user.name}</li>
+                </ol>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-2 col-lg-pull-10">
                 <select class="form-control" name="action" onchange="this.form.submit()">
                     <option selected>Action:</option>
                     <option value="allow_late">Allow late submission</option>
                     <option value="disallow_late">Disallow late submission</option>
                 </select>
             </div>
-            </div>
-            % endif
         </div>
+        % endif
     </header>
 
     % if message:
