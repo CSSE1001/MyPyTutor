@@ -106,7 +106,19 @@ function checkbox_click(name) {
             <h1><a href="">MyPyTutor Progress for ${user.name}</a>
                 <small>(${user.id})</small>
             </h1>
-            <p class="lead">Total mark: ${mark} / ${total} = ${round(100.*mark/total, 2)}% (${late} late)</p>
+            <div class="row">
+                <div class="col-lg-10 col-md-9 col-sm-8">
+                    <div class="progress" style="margin-top: 5px;">
+                      <div class="progress-bar progress-bar-success" style="width: ${100.*mark/total}%" data-toggle="tooltip" data-placement="top" title="${mark} submitted">
+                        <span class="sr-only">${mark} submitted</span>
+                      </div>
+                      <div class="progress-bar progress-bar-danger" style="width: ${100.*late/total}%" data-toggle="tooltip" data-placement="top" title="${late} late">
+                        <span class="sr-only">${late} late</span>
+                      </div>
+                    </div>
+                </div>
+                <p class="lead col-lg-2 col-md-3 col-sm-4">${mark} / ${total} = ${round(100.*mark/total, 2)}%</p>
+            </div>
         </div>
         % if is_admin:
         <div class="row">
