@@ -525,7 +525,7 @@ def has_allow_late(user, tutorial_hash):
     """
     admin_log_path = _get_or_create_admin_log_file(user)
 
-    with open(admin_log_path, 'a') as f:
+    with open(admin_log_path, 'rU') as f:
         return any(line[0] == 'allow_late' and line[1] == tutorial_hash
                    for line in map(str.split, f))
 
