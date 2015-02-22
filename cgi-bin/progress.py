@@ -69,7 +69,7 @@ def main():
     is_admin = (this_user in ADMINS and 'noadmin' not in form)
 
     user = form.getvalue('user', this_user)
-    if user != this_user and not is_admin:
+    if user != this_user and not this_user in ADMINS:
         print UNAUTHORISED.format(this_user)
         return
 
