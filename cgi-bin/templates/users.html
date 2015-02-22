@@ -104,7 +104,7 @@ function checkbox_click() {
     % endif
     <div class="row-fluid">
         <form action="" method="get" role="search">
-            <div class="col-lg-3 col-lg-push-6">
+            <div class="col-md-3 col-md-push-6 col-sm-4 col-sm-push-4">
                 <div class="input-group" style="width: 100%;"> <!-- Sorry for using inline styling :) -->
                     <input type="text" class="form-control" name="query" placeholder="Filter" value="${query}">
                     <div class="input-group-btn">
@@ -115,7 +115,7 @@ function checkbox_click() {
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-lg-push-6">
+            <div class="col-md-3 col-md-push-6 col-sm-4 col-sm-push-4">
                 <select class="form-control" name="enrol_filter" onchange="this.form.submit()">
                   <option value="all" ${'selected' if enrol_filter=='all' else ''}>Show all users</option>
                   <option value="enrolled" ${'selected' if enrol_filter=='enrolled' else ''}>Show only enrolled users</option>
@@ -127,7 +127,7 @@ function checkbox_click() {
 
     <div>
         <form action="" method="POST">
-        <div class="col-lg-2 col-lg-pull-6">
+        <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
             <select class="form-control" name="action" onchange="this.form.submit()">
                 <option selected>Action:</option>
                 <option value="enrol">Enrol</option>
