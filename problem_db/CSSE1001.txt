@@ -1,8 +1,5 @@
 [URL:https://student.eait.uq.edu.au/mypytutor/mpt/cgi-bin/mpt_cgi.py]
 
-[01/01/15 Testing]
-Test Problem:__testing.tut
-
 [20/03/15 Introduction]
 
 Introduction:intro.tut
