@@ -61,7 +61,7 @@ def main():
         return
 
     form = cgi.FieldStorage(keep_blank_values=True)
-    is_admin = (this_user in ADMINS)
+    is_admin = (this_user in ADMINS and 'noadmin' not in form)
 
     user = form.getvalue('user', this_user)
     if user != this_user and not is_admin:
