@@ -111,7 +111,7 @@ def main():
         'name': 'Change Me',
         'id': 'changeme',
         'user': user_info,
-        'openIndex': 0,
+        'openIndex': -1,
         'is_admin': is_admin,
         'message': message,
     };
@@ -129,17 +129,22 @@ def main():
                 'slug': tutorial.problem_set_name,
                 'title': tutorial.problem_set_name.replace('_', ' '),
                 'due': (tutorial.due + TZ_DELTA).strftime(DATE_FORMAT),
-                'problems': []
+                'problems': [],
+                'mark': 0,
+                'late': 0,
             }
 
             data['groups'].append(group)
 
-        group['problems'].append(process_tutorial(tutorial, submission))
+        tut = process_tutorial(tutorial, submission)
+        group['problems'].append(tut)
 
         if (submission is not None and submission.date is not None and
                 (submission.date <= tutorial.due or submission.allow_late)):
+            group['mark'] += 1
             data['mark'] += 1
         elif submission is not None and submission.date is not None:
+            group['late'] += 1
             data['late'] += 1
 
     data['total'] = len(submissions)

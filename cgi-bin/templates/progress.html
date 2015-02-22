@@ -47,6 +47,11 @@
         color: inherit;
         text-decoration: inherit;
     }
+
+    .panel-heading .progress {
+        margin: 10px 10px 10px 10px;
+        background-color: #eaeaea;
+    }
 </style>
 % if is_admin:
 <script type="text/javascript">
@@ -150,6 +155,16 @@ function checkbox_click(name) {
                     <i class="glyphicon glyphicon-circle-arrow-down down"></i>
                     <i class="glyphicon glyphicon-circle-arrow-up up"></i>
                     </h4>
+                    <div class="pull-right col-sm-4">
+                        <div class="progress">
+                          <div class="progress-bar progress-bar-success" style="width: ${100.*group['mark']/len(group['problems'])}%" data-toggle="tooltip" data-placement="top" title="${group['mark']} submitted">
+                            <span class="sr-only">${group['mark']} submitted</span>
+                          </div>
+                          <div class="progress-bar progress-bar-danger" style="width: ${100.*group['late']/len(group['problems'])}%" data-toggle="tooltip" data-placement="top" title="${group['late']} late">
+                            <span class="sr-only">${group['late']} late</span>
+                          </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="collapse${loop.index}" class="panel-collapse collapse ${'in' if loop.index == openIndex else ''}"
@@ -231,5 +246,10 @@ function checkbox_click(name) {
 
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
 </body>
 </html>
