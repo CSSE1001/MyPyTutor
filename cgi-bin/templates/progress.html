@@ -56,26 +56,36 @@ function toggle_all(name) {
     for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].checked = collector.checked;
     }
+    var counter = document.getElementById('counter-'+name);
+    if (collector.checked) {
+        counter.innerHTML = " &mdash; " + checkboxes.length + " selected";
+    } else {
+        counter.innerHTML = "";
+    }
 }
 
 function checkbox_click(name) {
-    var all_on = true;
-    var all_off = true;
+    var count_on = 0;
     var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
     for (var i = 0; i < checkboxes.length; i++) {
-        all_on &= checkboxes[i].checked;
-        all_off &= !checkboxes[i].checked;
+        count_on += checkboxes[i].checked;
     }
     var master = document.getElementById('checkbox-'+name);
-    if (all_off) {
+    if (count_on == 0) {
         master.checked = false;
         master.indeterminate = false;
-    } else if (all_on) {
+    } else if (count_on == checkboxes.length) {
         master.checked = true;
         master.indeterminate = false;
     } else {
         master.checked = false;
         master.indeterminate = true;
+    }
+    var counter = document.getElementById('counter-'+name);
+    if (count_on > 0) {
+        counter.innerHTML = " &mdash; " + count_on + " selected";
+    } else {
+        counter.innerHTML = "";
     }
 }
 </script>
@@ -128,7 +138,12 @@ function checkbox_click(name) {
                 <div class="panel-title clearfix">
                     <h4 class="pull-left">
                         ${group.get('title')}
-                        <small>(${len(group['problems'])})</small>
+                        <small>
+                        (${len(group['problems'])})
+                        % if is_admin:
+                        <strong id="counter-${group['slug']}"></strong>
+                        % endif
+                        </small>
                         <!--<small>(Week ${group.get('week')})</small>-->
                     </h4>
                     <h4 class="pull-right">Due ${group.get('due')}
