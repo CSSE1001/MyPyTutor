@@ -82,6 +82,7 @@ function checkbox_click() {
         master.checked = true;
         master.indeterminate = false;
     } else {
+        master.checked = false;
         master.indeterminate = true;
     }
 }
@@ -91,7 +92,7 @@ function checkbox_click() {
 <div class="container">
     <header>
     <div class="page-header">
-            <h1><a href="?">MyPyTutor Admin Dashboard</a></h1>
+        <h1><a href="?">MyPyTutor Admin Dashboard</a></h1>
     </div>
     </header>
     % if message:
@@ -161,7 +162,7 @@ function checkbox_click() {
             <tbody>
             % for user in users:
             <tr>
-                <th class="check"><input type="checkbox" name="selected_user" value="${user.id}" onClick="checkbox_click()"></th>
+                <td class="check"><input type="checkbox" name="selected_user" value="${user.id}" onClick="checkbox_click()"></td>
                 <td class="userid">${user.id}</td>
                 <td class="name">${user.name}</td>
                 <td class="email">${user.email}</td>

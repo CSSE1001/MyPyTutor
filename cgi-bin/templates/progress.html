@@ -5,28 +5,28 @@
 </head>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
+    % if is_admin:
+    th.check,
+    td.check {
+        width: 1%;
+    }
+
+    % endif
     th.problem,
     td.problem {
-        width: 25%;
+        width: 33%;
     }
 
     th.status,
     td.status {
-        width: 20%;
+        width: 33%;
     }
 
     th.submit_time,
     td.submit_time {
-        width: 20%;
+        width: 33%;
     }
 
-    % if is_admin:
-    th.allow_late,
-    td.allow_late {
-        width: 25%;
-    }
-
-    % endif
     .panel-heading i.down,
     .panel-heading.collapsed i.up {
         display: none;
@@ -48,9 +48,44 @@
         text-decoration: inherit;
     }
 </style>
+% if is_admin:
+<script type="text/javascript">
+function toggle_all(name) {
+    var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
+    var collector = document.getElementById('checkbox-'+name);
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = collector.checked;
+    }
+}
+
+function checkbox_click(name) {
+    var all_on = true;
+    var all_off = true;
+    var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
+    for (var i = 0; i < checkboxes.length; i++) {
+        all_on &= checkboxes[i].checked;
+        all_off &= !checkboxes[i].checked;
+    }
+    var master = document.getElementById('checkbox-'+name);
+    if (all_off) {
+        master.checked = false;
+        master.indeterminate = false;
+    } else if (all_on) {
+        master.checked = true;
+        master.indeterminate = false;
+    } else {
+        master.checked = false;
+        master.indeterminate = true;
+    }
+}
+</script>
+% endif
 <body>
 
 <div class="container">
+    % if is_admin:
+    <form action="" method="POST">
+    % endif
     <header>
         <div class="page-header">
             <h1><a href="">MyPyTutor Progress for ${user.name}</a>
@@ -58,10 +93,21 @@
             </h1>
             <p class="lead">Total mark: ${mark} / ${total} = ${round(100.*mark/total, 2)}% (${late} late)</p>
             % if is_admin:
+            <div class="row">
+            <div class="col-lg-10">
             <ol class="breadcrumb">
               <li><a href="admin.py">Admin Dashboard</a></li>
               <li class="active">${user.name}</li>
             </ol>
+            </div>
+            <div class="col-lg-2">
+                <select class="form-control" name="action" onchange="this.form.submit()">
+                    <option selected>Action:</option>
+                    <option value="allow_late">Allow late submission</option>
+                    <option value="disallow_late">Disallow late submission</option>
+                </select>
+            </div>
+            </div>
             % endif
         </div>
     </header>
@@ -97,17 +143,20 @@
                     <table class="table">
                         <thead>
                         <tr>
+                            % if is_admin:
+                            <th class="check"><input type="checkbox" id="checkbox-${group['slug']}" onClick="toggle_all('${group['slug']}')"></th>
+                            % endif
                             <th class="problem">Problem</th>
                             <th class="status">Status</th>
-                            <th class="submit_time">Submit Time</th>
-                            % if is_admin:
-                            <th class="allow_late">Admin Actions</th>
-                            % endif
+                            <th class="submit_time">Time submitted</th>
                         </tr>
                         </thead>
                         <tbody>
                         % for problem in group['problems']:
                         <tr class="${'success' if problem.get('status') in ('submitted', 'late_ok') else ('danger' if problem.get('status') == 'late' else 'warning')}">
+                            % if is_admin:
+                            <td class="check"><input type="checkbox" class="checkbox-set-${group['slug']}" name="problem" value="${problem['hash']}" onClick="checkbox_click('${group['slug']}')"></td>
+                            % endif
                             <td class="problem">${problem['title']}</td>
                             <td class="status">
                                 %if problem.get('status') == 'submitted':
@@ -116,6 +165,9 @@
                                 <i class="glyphicon glyphicon-ok"></i> <em>Submitted late without penalty</em>
                                 % elif problem.get('status') == 'late':
                                 <i class="glyphicon glyphicon-remove"></i> <em>Late</em>
+                                % elif problem['has_allow_late']:
+                                <i class="glyphicon glyphicon-minus"></i> <em>Unsubmitted
+                                (<abbr title="You may submit this problem at any time without receiving a mark penalty.">late submissions allowed</abbr>)</em>
                                 % else:
                                 <i class="glyphicon glyphicon-minus"></i> <em>Unsubmitted</em>
                                 % endif
@@ -125,25 +177,6 @@
                                     ${problem.get('submit_time')}
                                 % endif
                             </td>
-                            % if is_admin:
-                            <td class="allow_late">
-                                <form action="" method="POST">
-                                <input name="hash" type="hidden" value="${problem['hash']}"></input>
-                                % if problem['has_allow_late']:
-                                    <input name="allow_late" type="hidden" value="off"></input>
-                                    % if problem['status'] == 'unsubmitted':
-                                    <span class="btn-xs">Late submission is allowed.</span>
-                                    <button class="btn btn-link btn-xs" type="submit">Disallow</button>
-                                    % elif problem['status'] == 'late_ok':
-                                    <button class="btn btn-link btn-xs" type="submit">Disallow Late Submission</button>
-                                    % endif
-                                % elif problem['status'] != 'submitted':
-                                    <input name="allow_late" type="hidden" value="on"></input>
-                                    <button class="btn btn-link btn-xs" type="submit">Allow Late Submission</button>
-                                % endif
-                                </form>
-                            </td>
-                            % endif
                         </tr>
                         % endfor
                         </tbody>
@@ -176,6 +209,9 @@
         <!--</div>-->
         <!--</div>-->
     </div>
+    % if is_admin:
+    </form>
+    % endif
 </div>
 
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>

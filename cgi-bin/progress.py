@@ -69,20 +69,28 @@ def main():
         return
 
     message = None
-    if (is_admin and 'allow_late' in form and 'hash' in form and
-            os.environ['REQUEST_METHOD'] == 'POST'):
-        if form.getvalue('allow_late') == 'on':
-            support.set_allow_late(user, form.getvalue('hash'), this_user, True)
-            message = ('alert-info', 'Student will gain credit for late '
-                       'submissions to that problem.')
-        elif form.getvalue('allow_late') == 'off':
-            support.set_allow_late(user, form.getvalue('hash'), this_user, False)
-            message = ('alert-info', 'Student will be penalised for late '
-                       'submissions to that problem.')
+    if (is_admin and os.environ.get('REQUEST_METHOD') == 'POST' and
+            'action' in form):
+        if form.getvalue('action') == 'allow_late':
+            action = (lambda tutorial:
+                      support.set_allow_late(user, tutorial, this_user, True))
+            message = ('alert-info', 'Student will now gain credit for late '
+                       'submissions to the selected problems.')
+        elif form.getvalue('action') == 'disallow_late':
+            action = (lambda tutorial:
+                      support.set_allow_late(user, tutorial, this_user, False))
+            message = ('alert-info', 'Student will now be penalised for late '
+                       'submissions to the selected problems.')
         else:
-            print ("Status: 400 Bad Request\nContent-Type: text/plain\n\n"
-                   "Bad Request: allow_late not in ('on', 'off')")
-            return
+            action = None
+            message = ('alert-danger', 'Action unknown or not specified.')
+
+        problems = form.getlist('problem')
+        if action and problems:
+            map(action, problems)
+        elif action and not problems:
+            message = ('alert-warning', 'No problems specified.')
+
 
     user_info = (support.get_user(user) or
                  support.User(user, 'UNKNOWN', 'UNKNOWN', 'not_enrolled'))
