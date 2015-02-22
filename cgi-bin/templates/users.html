@@ -8,11 +8,11 @@
 <style>
     th.check,
     td.check {
-        width: 1%;
+        width: 2%;
     }
 
-    th.userid,
-    td.userid {
+    th.id,
+    td.id {
         width: 10%;
     }
 
@@ -23,17 +23,22 @@
 
     th.email,
     td.email {
-        width: 20%;
+        width: 25%;
+    }
+
+    th.marks,
+    td.marks {
+        width: 11%;
     }
 
     th.enrolled,
     td.enrolled {
-        width: 10%;
+        width: 11%;
     }
 
     td.actions,
     td.actions {
-        width: 10%;
+        width: 11%;
     }
 
     .panel-heading i.down,
@@ -123,6 +128,7 @@ function checkbox_click() {
                   <option value="not_enrolled" ${'selected' if enrol_filter=='not_enrolled' else ''}>Show only not-enrolled users</option>
                 </select>
             </div>
+            <input type="hidden" name="sort" value="${sort}"></input>
         </form>
         <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
             <select class="form-control" form="edit_form" name="action" onchange="this.form.submit()">
@@ -139,15 +145,15 @@ function checkbox_click() {
             <thead>
             <tr>
                 <th class="check"><input type="checkbox" id="select_all" onClick="toggle_all(this)"></th>
-                % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email')]:
-                <th class="userid">${name}
+                % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email'), ('marks', 'Mark')]:
+                <th class="${key}">${name}
                 % if sort == key:
                 <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}_reverse">
-                    <i class="glyphicon glyphicon-sort-by-alphabet"></i>
+                    <i class="glyphicon glyphicon-sort-by-${'alphabet' if key != 'marks' else 'order-alt'}"></i>
                 </a>
                 % elif sort == key + '_reverse':
                 <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}">
-                    <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
+                    <i class="glyphicon glyphicon-sort-by-${'alphabet-alt' if key != 'marks' else 'order'}"></i>
                 </a>
                 % else:
                 <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}">
@@ -161,12 +167,13 @@ function checkbox_click() {
             </tr>
             </thead>
             <tbody>
-            % for user in users:
+            % for user, progress in user_data:
             <tr>
                 <td class="check"><input type="checkbox" name="selected_user" value="${user.id}" onClick="checkbox_click()"></td>
-                <td class="userid">${user.id}</td>
+                <td class="id">${user.id}</td>
                 <td class="name">${user.name}</td>
                 <td class="email">${user.email}</td>
+                <td class="marks">${progress['CORRECT']} / ${progress['TOTAL']} (${100*progress['CORRECT']/progress['TOTAL']}%)</td>
                 <td class="enrolled">${'Yes' if user.enrolled == 'enrolled' else 'No' if user.enrolled == 'not_enrolled' else '{Bad Data}'}</td>
                 <td class="actions"><a href="progress.py?user=${user.id}">View Progress</a></td>
             </tr>

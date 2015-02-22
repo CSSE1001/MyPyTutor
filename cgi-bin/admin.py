@@ -3,6 +3,7 @@
 
 import cgi
 import os
+from collections import Counter
 
 from mako.template import Template
 from mako import exceptions
@@ -43,7 +44,22 @@ def get_sort_key(sort):
         return lambda user: (user.name.lower(), user.id)
     if sort in ('email', 'email_reverse'):
         return lambda user: user.email
+    if sort in ('marks', 'marks_reverse'):
+        return lambda user: -summarise_progress(user.id)['CORRECT']
     return None
+
+
+def summarise_progress(user):
+    """Summarise the user's progress by returning a mapping of the form
+      {'OK': #, 'LATE': #, 'LATE_OK': #, 'MISSING': #, ...}
+    where the values are the number of times the user has a submission of that
+    type, and where CORRECT = OK + LATE_OK; TOTAL = CORRECT + LATE + MISSING.
+    """
+    submissions = support.get_submissions_for_user(user)
+    counter = Counter(submissions.values())
+    counter['CORRECT'] = counter['OK'] + counter['LATE_OK']
+    counter['TOTAL'] = len(submissions)
+    return counter
 
 
 def main():
@@ -85,9 +101,10 @@ def main():
     sort = form.getvalue('sort', 'id')
     reverse = sort.endswith('_reverse')
     users = support.get_users(query, enrol_filter, get_sort_key(sort), reverse)
+    user_data = zip(users, [summarise_progress(u.id) for u in users])
 
     data = {
-            'users': users,
+            'user_data': user_data,
             'query': query,
             'enrol_filter': enrol_filter,
             'sort': sort,

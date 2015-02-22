@@ -544,7 +544,9 @@ def get_submissions_for_user(user):
     for submission in submissions:
         # lookup, not get, as this must exist: if not, then we have a
         # submission with an unknown tutorial, which is a server error
-        tutorial_info = hashes[submission.hash]
+        tutorial_info = hashes.get(submission.hash)
+        if not tutorial_info:
+            continue
 
         if submission.date is None:
             pass
