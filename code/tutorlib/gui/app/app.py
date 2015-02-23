@@ -251,7 +251,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         that our local tutorials are up to date.
 
         """
-        timestamp = self.web_api.get_tutorials_timestamp()
+        try:
+            timestamp = self.web_api.get_tutorials_timestamp()
+        except WebAPIError as e:
+            self._display_web_api_error(e)
+            return
 
         # we need to be comparing as ints
         create_tuple = lambda t: tuple(map(int, t.split('.')))
@@ -366,7 +370,10 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
             self.interpreter.kill()
 
             self.synchronise(suppress_popups=True)
-            self.logout()
+            try:
+                self.logout()
+            except WebAPIError:
+                pass  # who cares at this point
 
             save_config(self.cfg)
 

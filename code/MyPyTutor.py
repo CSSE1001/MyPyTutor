@@ -21,36 +21,12 @@
 """The MyPyTutor application."""
 
 import os
-import socket
 import sys
 import tkinter as tk
 
 from tutorlib.gui.app.app import TutorialApp, VERSION
 from tutorlib.gui.app.support import safely_extract_zipfile
-import tutorlib.gui.utils.messagebox as tkMessagebox
-from tutorlib.interface.web_api import WebAPI
-
-
-def abort_if_offline():
-    """
-    Exit if the computer appears to be offline.
-
-    This attempts to look up and connect to the CSSE1001 website.
-    If the website cannot be reached, a popup will warn the user of the error,
-    and the script will termiante with a non-zero exit code.
-
-    See http://stackoverflow.com/a/20913928/1103045
-
-    """
-    try:
-        host = socket.gethostbyname('csse1001.uqcloud.net')
-        _ = socket.create_connection((host, 80), 1)
-    except Exception as e:
-        tkMessagebox.showerror(
-            'No internet connection',
-            'You must be online to use MyPyTutor\n',
-        )
-        sys.exit(1)
+from tutorlib.interface.web_api import WebAPI, WebAPIError
 
 
 def bootstrap():
@@ -60,6 +36,13 @@ def bootstrap():
     If an update is available, this function will not return.
 
     """
+    try:
+        _bootstrap()
+    except WebAPIError:
+        pass  # no internet connection
+
+
+def _bootstrap():
     web_api = WebAPI()
 
     # grab the server version
@@ -92,7 +75,6 @@ def main():
     Otherwise, it will first check for updates, before running the app itself.
 
     """
-    abort_if_offline()
     bootstrap()
 
     root = tk.Tk()
