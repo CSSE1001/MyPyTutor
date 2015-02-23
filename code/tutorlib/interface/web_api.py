@@ -117,7 +117,14 @@ class WebAPI():
             return True
 
         # the SessionManager will keep trying until it is successful
-        success = self.session_manager.login(username, password)
+        try:
+            success = self.session_manager.login(username, password)
+        except Exception as e:
+            raise WebAPIError(
+                message='Login Failed',
+                details=str(e),
+            ) from e
+
         self.listener(success)
 
         return success

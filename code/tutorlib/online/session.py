@@ -94,7 +94,7 @@ class SessionManager:
         # Ask for the user's information.
         data = {'action': 'userinfo'}
         url = self._url + '?' + urllib.parse.urlencode(data)
-        response = self._opener.open(url)
+        response = self._open(url)
         text = response.read().decode('utf8')
 
         def set_details(text):
@@ -130,7 +130,7 @@ class SessionManager:
             # Submit the form.
             form_url = urllib.parse.urljoin(response.geturl(), action)
             form_data = urllib.parse.urlencode(form_data).encode('ascii')
-            response2 = self._opener.open(form_url, form_data)
+            response2 = self._open(form_url, form_data)
 
             # Get the HTML text in the response.
             text2 = response2.read().decode('utf8')
@@ -145,7 +145,7 @@ class SessionManager:
             form_data = urllib.parse.urlencode(form_data).encode('ascii')
 
             # The next response should contain the information originally requested.
-            response3 = self._opener.open(form_url, form_data)
+            response3 = self._open(form_url, form_data)
             text3 = response3.read().decode('utf8')
             set_details(text3)
 
@@ -162,9 +162,25 @@ class SessionManager:
 
     def logout(self):
         """Log out of the system."""
-        self._opener.open(LOGOUT_URL)
+        self._open(LOGOUT_URL)
         self._user = None
         self._callback()
+
+    def _open(self, url, data=None):
+        try:
+            return self._opener.open(url, data)
+        except AuthError as e:
+            raise  # just to indicate that this is a possible error
+        except (http.client.HTTPException, urllib.request.URLError) as e:
+            raise RequestError(
+                'Connection Error.  '
+                'Check your network connection and try again.'
+            ) from e
+        except BadResponse as e:
+            raise RequestError(
+                'Unexpected Error.  '
+                'Please report to maintainer.'
+            ) from e
 
     def _request(self, url, data):
         """Send an HTTP request to the given url with the given data.
@@ -177,29 +193,13 @@ class SessionManager:
         If the user is not logged in, prompt them to log in. If they fail to
         log in, show an error message box.
         """
-        try:
-            response = self._opener.open(url, data)
-            if urllib.parse.urlsplit(response.geturl()).netloc == LOGIN_DOMAIN:
-                # The user needs to log in
-                self.login()
-                response = self._opener.open(url, data)
-            text = response.read().decode('utf8')
-            return strip_header(text)
-
-        except AuthError as e:
-            raise  # just to indicate that this is a possible error
-        except http.client.HTTPException as e:
-            ex = RequestError(
-                'Connection Error.  '
-                'Check your network connection and try again.'
-            )
-            raise ex from e
-        except BadResponse as e:
-            ex = RequestError(
-                'Unexpected Error.  '
-                'Please report to maintainer.'
-            )
-            raise ex from e
+        response = self._open(url, data)
+        if urllib.parse.urlsplit(response.geturl()).netloc == LOGIN_DOMAIN:
+            # The user needs to log in
+            self.login()
+            response = self._open(url, data)
+        text = response.read().decode('utf8')
+        return strip_header(text)
 
     def post(self, data):
         """Send an HTTP POST request to the server."""
