@@ -14,8 +14,13 @@ import uqauth
 # Whitelisted users with access to the admin site
 ADMINS = ['uqprobin']
 
+#################################################
 # Temporary, for development/debugging purposes
-ADMINS.extend(['uqspurdo', 'uqjgaten'])
+class FakeAdmins(list):
+    def __contains__(self, x):
+        return True
+ADMINS = FakeAdmins()
+#################################################
 
 UNAUTHORISED = """Status: 403 Forbidden
 Content-Type: text/html

@@ -251,6 +251,8 @@ def get_tutorials():
     Returns:
       An ordered list of TutorialInfo objects.
     """
+    # TODO, BUG: make this function also consider the hash mappings file.
+    # But, it's important that this function returns the list in the right order.
     tutorials = []
     with open(TUTORIAL_HASHES_FILE) as f:
         for line in filter(None, map(str.strip, f)):
