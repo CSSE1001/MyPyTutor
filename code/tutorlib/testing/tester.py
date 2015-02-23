@@ -1,6 +1,7 @@
 import copy
 import os
 import sys
+import traceback
 import unittest
 
 import tutorlib.testing.cases
@@ -92,13 +93,16 @@ class TutorialTester():
             code_text = 'def {}():\n{}'.format(
                 STUDENT_FUNCTION_NAME, indent(code_text)
             )
+            num_offset_lines = 1
+        else:
+            num_offset_lines = 0
 
         for test_class in self.test_classes:
-            result = self.run_test(test_class, code_text)
+            result = self.run_test(test_class, code_text, num_offset_lines)
 
             self._results[test_class] = result
 
-    def run_test(self, test_class, code_text):
+    def run_test(self, test_class, code_text, num_offset_lines):
         """
         Test the given code using the given test case class.
 
@@ -116,6 +120,8 @@ class TutorialTester():
         Args:
           test_class (StudentTestCase): The test class (not instance) to use.
           code_text (str): The code to test.
+          num_offset_lines (int): The number of extra lines inserted before the
+            student's code.
 
         Returns:
           The result of running the test, as a TutorialTestResult object.
@@ -130,17 +136,22 @@ class TutorialTester():
         # execute the student's code, and grab a reference to the function
         try:
             exec(compile(code_text, '<student_code>', 'exec'), lcls)
-        except SyntaxError:  # assuming EOF
-            return TutorialTestResult(
-                test_class.DESCRIPTION,
-                TutorialTestResult.FAIL,
-                StudentTestError('No code to test'),
-            )
         except Exception as e:
+            # there are some special messages that we want to try to provide
+            if isinstance(e, SyntaxError):
+                message = 'No code to test'
+            else:
+                message = 'Could not parse student code: {}'.format(e)
+
+            # attempt to grab the line number
+            # assume there's at least one entry (which there must be)
+            _, line_number, _, _ = traceback.extract_tb(e.__traceback__)[-1]
+            line_number -= num_offset_lines
+
             return TutorialTestResult(
                 test_class.DESCRIPTION,
                 TutorialTestResult.FAIL,
-                StudentTestError('Could not parse code: {}'.format(e)),
+                StudentTestError(message, line_number),
             )
 
         # inject necessary data into global scope

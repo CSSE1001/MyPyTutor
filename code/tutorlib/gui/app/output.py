@@ -20,11 +20,13 @@
 
 # The output frame where stdout and stderr are displayed
 
+from abc import ABCMeta, abstractmethod
 import tkinter as tk
 from tkinter import ttk
 
 from tutorlib.gui.utils.fonts import FIXED_FONT
 from tutorlib.testing.results import TutorialTestResult
+from tutorlib.testing.support import StudentTestError
 
 
 def get_code_font(fontsize):
@@ -86,9 +88,18 @@ class TestsListbox(tk.Listbox):
         self.selection_set(idx)
 
 
+class TestOutputDelegate(metaclass=ABCMeta):
+    @abstractmethod
+    def highlight_error(self, line_number):
+        pass
+
+
 class TestOutput(ttk.Frame):
-    def __init__(self, master, textlen, fontsize=12):
+    def __init__(self, master, delegate, textlen, fontsize=12):
         super().__init__(master)
+
+        assert isinstance(delegate, TestOutputDelegate)
+        self.delegate = delegate
 
         self.test_results = TestsListbox(self, fontsize=fontsize)
         self.test_results.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
@@ -134,6 +145,11 @@ class TestOutput(ttk.Frame):
         # show output: prints first, then errors
         self.output.add_text(result.output_text, Output.COLOR_OUTPUT)
         self.output.add_text(result.error_text, Output.COLOR_ERROR)
+
+        # highlight error if necessary
+        if isinstance(result.exception, StudentTestError) \
+                and result.exception.line_number is not None:
+            self.delegate.highlight_error(result.exception.line_number)
 
 
 class Output(ttk.Frame):

@@ -7,7 +7,8 @@ import os
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
-from tutorlib.gui.app.output import AnalysisOutput, TestOutput
+from tutorlib.gui.app.output \
+        import AnalysisOutput, TestOutput, TestOutputDelegate
 from tutorlib.gui.app.support \
         import remove_directory_contents, safely_extract_zipfile
 from tutorlib.gui.app.tutorial import TutorialFrame
@@ -31,7 +32,8 @@ from tutorlib.online.sync import SyncClient
 VERSION = '3.0.0'
 
 
-class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
+class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
+        TestOutputDelegate):
     """
     The main MyPyTutor application.
 
@@ -135,6 +137,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Test Output
         self.test_output = TestOutput(
             top_frame,
+            self,
             self.cfg.window_sizes.output,
         )
         self.test_output.pack(fill=tk.BOTH, expand=0)
@@ -407,7 +410,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         )
 
         if error_line is not None:
-            self.editor.error_line(error_line)
+            self.highlight_error(error_line)
 
         # show the results on the UI
         self.test_output.set_test_results(tester.results)
@@ -960,3 +963,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
     ## TutorEditorDelegate
     check_solution = run_tests
     quit_editor = close
+
+    ## TestOutputDelegate
+    def highlight_error(self, line_number):
+        """
+        Highlight an error on the given line.
+
+        Args:
+          line_number (int): The line number to highlight.
+
+        """
+        self.editor.error_line(line_number)
