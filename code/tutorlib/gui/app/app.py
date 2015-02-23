@@ -14,7 +14,6 @@ from tutorlib.gui.app.support \
 from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
-from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.gui.dialogs.progress import ProgressPopup
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
@@ -951,7 +950,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         Show the help dialog.
 
         """
-        HelpDialog(self.master, 'Help')
+        self.web_api.display_help()
 
     def show_about_dialog(self):
         """

@@ -8,6 +8,7 @@ from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
 
 
+HELP_URL = 'http://csse1001.uqcloud.net/mpt3/help'
 VISUALISER_URL \
     = 'http://csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
 
@@ -146,6 +147,15 @@ class WebAPI():
 
         # just open it in the browser
         webbrowser.open(url)
+
+    def display_help(self):
+        """
+        Open the help webpage.
+
+        This method will launch in the default browser.
+
+        """
+        webbrowser.open(HELP_URL)
 
     # general web communictions
     def _request(self, f, values, require_login=True):
