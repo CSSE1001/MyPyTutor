@@ -61,8 +61,6 @@ class Interpreter():
         if self.subprocess is not None:
             self.subprocess.kill()
 
-        os.remove(self.path)
-
     def reload(self, code):
         """
         Reload the interepreter with the given code.
