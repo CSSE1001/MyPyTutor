@@ -6,7 +6,6 @@ import os
 
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
-from tutorlib.config.namespaces import Namespace
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output import AnalysisOutput, TestOutput
 from tutorlib.gui.app.support \
@@ -24,7 +23,7 @@ import tutorlib.gui.utils.messagebox as tkmessagebox
 from tutorlib.gui.utils.threading import exec_sync
 from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
-from tutorlib.interface.tests import StudentCodeError, run_tests
+from tutorlib.interface.tests import run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
@@ -403,17 +402,12 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         # run the tests
         # if the student code cannot be parsed, highlight the problem line
-        try:
-            tester, analyser = run_tests(self.current_tutorial, code_text)
-        except StudentCodeError as e:
-            self.editor.error_line(e.linenum)
+        tester, analyser, error_line = run_tests(
+            self.current_tutorial, code_text
+        )
 
-            self.test_output.set_test_results([])
-            self.analysis_output.set_analyser(
-                Namespace(warnings=[], errors=[])
-            )
-
-            return False
+        if error_line is not None:
+            self.editor.error_line(error_line)
 
         # show the results on the UI
         self.test_output.set_test_results(tester.results)
