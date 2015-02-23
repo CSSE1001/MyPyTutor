@@ -38,7 +38,9 @@
             <section id="system">
                 <h3>Tutorial System</h3>
                 <p>
-                    The main window of the tutorial system is split into two sections, the description and feedback. Its top frame describes the problem and provides helpful hints and examples. The bottom frame consists of                       three sections (Tests, Analysis, Helpful Hints). 
+                    The main window of the tutorial system is split into two sections, the description and feedback.
+                    Its top frame describes the problem and provides helpful hints and examples.
+                    The bottom frame consists of three sections (Test Selection, Test Output, and Analysis).
                 </p>
                 <div class="centered">
                     <img id="main-img" src="./img/main.PNG">
@@ -48,18 +50,31 @@
                 
                 <ul>
                     <li>
-                        The 'Tests' which will be run when you check your code (F5).Tests define what you must do to pass the problem, and may consist of expected input and output. If you fail a test it will turn red, while                            passing a test will make it turn green. If your test looks like it will not work for similar inputs the test will turn orange. If the tests are unable to be run they will turn bright yellow.
+                        The 'Test Selection' section displays the tests which will be run when you check your code (F5).
+                        Tests define what you must do to pass the problem, and may consist of expected input and output.
+                        If you fail a test it will turn red, while passing a test will make it turn green.
+                        If your test looks like it will not work for similar inputs the test will turn orange.
+                        If the tests cannot be run, this will count as a failure, and they will turn red.
                     </li>
                     <li>
-                        The 'Analysis' is displayed by selecting a test. Analaysis provides helpful hints as to why you may not be passing a test. Any resulting output from your code will also be printed in this section.                            You may change between tests by clicking on them.
+                        The 'Test Output' is displayed by selecting a test.
+                        If the test has failed, an explanation of the failure will be displayed between the dashed lines at the top of this section.
+                        If you used <code>print</code> to display any information, this will be shown beneath this in blue.
+                        You can change which test this section displays by clicking on a different test in the 'Test Selection' section above.
                     </li>
                     <li>
-                        The 'Helpful Hints' section provides hints as to why your code may be failing. These hints will change and disappear as you get closer to successfully submitting the problem. 
+                        The 'Analysis' section provides tips and hints to help you complete the problem.
+                        Once your code is correct, you shouldn't see anything here.
+                        We require you to complete some problems in a specific way (for example, by using a <code>for</code> loop.
+                        If so, this requirement will be shown in the 'Analysis' section.
                     </li>
                 </ul>
                 
                 <p>
-                    You must use the provided IDLE edit window in which to write your answers. Always make sure to submit your answer once it passes by pressing (F6). If you check your answer by pressing (F5) and you pass                       all your tests the system will automatically submit your solution. You may check that your solution is submited by looking at the text just above the tests, this should read "Submitted: Yes". Here you                        may also verify that you are logged in. Remember if you are not logged in you will not be able to submit your solution.
+                    You must use the provided IDLE edit window in which to write your answers.
+                    Always make sure to submit your answer once it passes by pressing (F6).
+                    We will try to do this automatically wherever possible, but it's up to you to ensure that your problems are submitted on time.
+                    You can tell if a problem has been submitted by looking for "Submitted: Yes" just above the 'Test Selection' section.
                 </p>
 
                 <h4>
@@ -75,15 +90,18 @@
                 </ul>
                 
                 <p>
-                    Once the first problem of a session is chosen, an IDLE edit window
-                    will appear. You are to write your answer to the given problem in this window.
+                    Once the first problem of a session is chosen, an IDLE edit window will appear.
+                    You are to write your answer to the given problem in this window.
                     The menus for this window are mostly the same as the IDLE edit window.
                     The main differences are given below.
                 </p>
                     
                 <ul>
                     <li>  
-                        Because your solutions are saved and loaded from your answers folder the File menu is a little different. The 'Revert' option replaces your code by the default code from the problem.                                          The 'Save' option saves your code to the answers folder. When you choose a problem, your saved code is automatically loaded and so there is no 'Open' option.
+                        Because your solutions are saved and loaded from your answers folder the File menu is a little different.
+                        The 'Revert' option replaces your code with the default code from the problem, allowing you to start again.
+                        The 'Save' option saves your code to the answers folder.
+                        When you choose a problem, your saved code is automatically loaded and so there is no 'Open' option.
                     </li>
                     <li>The 'Check' menu is similar to the 'Run' menu of IDLE but instead of running the code in the interpreter, it checks to see your answer is correct.</li>
                     <li>The 'Online' menu behaves in the same way as the Online menu in the main window.</li>
@@ -98,7 +116,7 @@
                 <h3>Window Resizing</h3>
                 
                 <p>
-                    You can resize the main MyPyTutor window in the usual way. By dragging on the bar containing the status information you can change the relative sizes of two parts of the main window. The new size                             information will be saved for next time you run MyPyTutor.
+                    You can resize the main MyPyTutor window in the same way as any other window.
                 </p>
             
             </section>
@@ -109,10 +127,8 @@
                 
                 <ul>
                     <li>
-                        The 'Configure Tutor Fonts' item allows you to choose fonts. The font name determines the font used for the problem frame. The edit window and output frame use the courier font.
-                    </li>
-                    <li>
-                        The 'Configure Tutorials Folder' item allows you to choose the folder containing all the tutorial problems. The menu items in the 'Tutorials' menu are determined by the chosen folder.
+                        The 'Configure Tutorials Folder' item allows you to choose the folder containing all the tutorial problems.
+                        The menu items in the 'Tutorials' menu are determined by the chosen folder.
                     </li>
                     <li>
                         The 'Configure Answers Folder' item allows you to choose the folder in which your (partial) answers are saved to and loaded from.
@@ -120,7 +136,9 @@
                 </ul>
 
                 <p>
-                    MyPyTutor can work with multiple tutorials (for example, from different courses). You are able to set up new tutorials and also remove them. You can change between tutorials and set the default tutorial                      (the one used on startup). If you are logged in when you change the tutorial or remove a tutorial you will be logged out.
+                    MyPyTutor can work with multiple tutorials (for example, from different courses).
+                    You are able to set up new tutorials and also remove them.
+                    You can change between tutorials and set the default tutorial (the one used on startup).
                 </p>
 
             </section>
@@ -134,15 +152,24 @@
                     If the tutorial is configured to provide an online interface and you are registered (i.e. have a username and password for MyPyTutor) then you can use this menu to interact with your online information.
                 </p>
                 
-                <h4>A discription of the options are give below.</h4>
+                <h4>A description of the options are give below.</h4>
                 
                 <ul>
-                    <li>Login: this connects you with online system using your MyPyTutor username and password.</li>
+                    <li>Login: this connects you with online system using your UQ username and password.</li>
                     <li>Logout: this disconnects you from the online system.</li>
-                    <li>Change Password: this allows you to change your MyPyTutor password.</li>
-                    <li>Synchronise Solutions: this allows you to synchronize your solutions with the MyPyTutor network. This provides an online mechanism for saving your code that complements your local save via the Save                     option in the File menu of the editor. When closing and opening MyPyTutor, and if connected the internet, your solutions will automatically be synced.</li>
-                    <li>Submit Answer: submit your answer (for marks). Your answer must be checked (and correct) before you can submit your answer.</li>
-                    <li>Show Submissions: display all the tutorial problems showing which ones you have submitted on time ('OK') and which ones you have submitted late ('LATE'). It also shows your current percentage (late                       submissions are not counted).</li>
+                    <li>
+                        Synchronise Solutions: this allows you to synchronize your solutions with the MyPyTutor network.
+                        This provides an online mechanism for saving your code that complements your local save via the Save option in the File menu of the editor.
+                        When closing and opening MyPyTutor, and if connected the internet, your solutions will automatically be synced.
+                    </li>
+                    <li>
+                        Submit Answer: submit your answer (for marks).
+                        Your answer must be checked (and correct) before you can submit your answer.
+                    </li>
+                    <li>
+                        Show Submissions: display all the tutorial problems showing which ones you have submitted on time ('OK') and which ones you have submitted late ('LATE').
+                        It also shows your current percentage (late submissions are not counted).
+                    </li>
                 </ul>
                 
             </section>
@@ -152,14 +179,39 @@
                 <h3>Common Errors</h3>
                 
                 <ul>
-                    <li>Name 'xxxxx' is not defined  -> You need to define the variable, function or class eg.  xxxxx = (Some Value), def xxxxx(): or class xxxxx():</li>
-                    <li>'xxxx' != Expected Result  -> Your result is not equal to what is expected (you may not be printing or returning the correct answer)</li>
-                    <li>False is not True  ->  Look at the test description to understand why the test is failing</li>
-                    <li>xxxxx() takes 0 positional arguments but 2 were given  -> Your function takes 0 arguments when it should be taking 2, add arguments to your function eg. xxxxx(arg1, arg2)</li>
-                    <li>None != xxxxx  -> You are not returning any value or you are returning None, make sure you are using "return" and not "print"</li>
-                    <li>Make sure your code also works for similar inputs  -> Make sure that you write your code so that it passes all tests and not just a single test. </li>
-                    <li>['xxxx','yyyy'] != ('xxxx','yyyy')  ->  Make sure that you are returning a tuple '()' and not a list '[]'</li>
-                    <li>Error in code: test not run (possible infinite loop)  -> Check your while loops and for loops, will they even finish looping?</li>
+                    <li>
+                        <code>Name 'xxxxx' is not defined</code>
+                        -> You need to define the variable, function or class eg. <code>xxxxx = (Some Value)</code>, <code>def xxxxx():</code> or <code>class xxxxx():</code></li>
+                    <li>
+                        <code>'xxxx' != Expected Result</code>
+                        -> Your result is not equal to what is expected (you may not be printing or returning the correct answer).
+                    </li>
+                    <li>
+                        <code>False is not True</code> 
+                        -> This is a variation of the above failure; in other words, you're not returning the right value.
+                        Look at the test description to understand in more detail why the test is failing.
+                    </li>
+                    <li>
+                        <code>xxxxx() takes 0 positional arguments but 2 were given</code>
+                        -> Your function (or a function you are calling) takes 0 arguments when it should be taking 2.
+                        You should add arguments to your function eg. <code>xxxxx(arg1, arg2)</code> and/or make sure that you are providing the correct number of arguments to any function you are calling.
+                    </li>
+                    <li>
+                        <code>None != xxxxx</code>
+                        -> You are not returning any value or you are returning None, make sure you are using <code>return</code> and not <code>print</code>
+                    </li>
+                    <li>
+                        <code>Make sure your code also works for similar inputs</code>
+                        -> Make sure that you write your code so that it passes all tests (and all variations on a test), not just a single test.
+                    </li>
+                    <li>
+                        <code>['xxxx','yyyy'] != ('xxxx','yyyy')</code>
+                        ->  Make sure that you are returning a tuple '()' and not a list '[]'
+                    </li>
+                    <li>
+                        <code>Error in code: test not run (possible infinite loop)</code>
+                        -> Check your while loops and for loops, will they even finish looping?
+                    </li>
                 </ul>
                 
             </section>
