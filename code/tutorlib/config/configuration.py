@@ -8,16 +8,11 @@ Attributes:
 
 """
 import configparser
-import os
-import sys
 
 from tutorlib.config.namespaces import Namespace
+from tutorlib.config.shared import CONFIG_FILE
 from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
-
-# The config file is stored in the user's home directory
-_SCRIPT_DIR = os.path.expanduser('~')
-CONFIG_FILE = os.path.join(_SCRIPT_DIR, '.mptrc')
 
 SPECIAL_FORMATS = {
     ('tutorials', 'names'): list,

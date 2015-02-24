@@ -465,13 +465,15 @@ class WebAPI():
 
         return answer_hash, timestamp
 
-    def submit_answer(self, tutorial, code):
+    def submit_answer(self, tutorial, code, num_attempts):
         """
         Submit the given code as the student's answer for the given tutorial.
 
         Args:
           tutorial (Tutorial): The tutorial to submit the answer for.
           code (str): The code to submit as the student's answer.
+          num_attempts (int): The number of attempts made before successful
+            submission.
 
         Returns:
           True if the answer was submitted on time.
@@ -488,6 +490,7 @@ class WebAPI():
         values = {
             'action': 'submit',
             'tutorial_hash': tutorial_hash,
+            'num_attempts': num_attempts,
             'code': code,
         }
         response = self._post(values)

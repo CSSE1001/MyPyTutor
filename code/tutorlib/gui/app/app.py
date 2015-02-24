@@ -4,6 +4,7 @@ from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
 import os
 
+from tutorlib.config.attempts import TutorialAttempts
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
@@ -57,6 +58,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
           of the current tutorial problem.
       sync_client (SyncClient): The tutorial synchronisation client.
       test_output (TestOutput): The frame displaying the current test results.
+      tutorial_attempts (TutorialAttempts): The number of attempts that the
+        student has made at a tutorial problem.
       tutorial_frame (TutorialFrame): The frame which displays the tutorial
           problem and associated data, such as hints.
 
@@ -86,6 +89,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
         ## Objects
+        self.attempts = TutorialAttempts()
         self.interpreter = Interpreter()
 
         self.web_api = WebAPI(self._login_status_change)
@@ -375,6 +379,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
             except WebAPIError:
                 pass  # who cares at this point
 
+            self.attempts.save()
             save_config(self.cfg)
 
             self.master.destroy()
@@ -425,21 +430,36 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         # return whether the code passed
         success = tester.passed and not analyser.errors
 
+        previous_submission_status = self._submissions.get(
+            self.current_tutorial, WebAPI.MISSING
+        )
+
+        # record an attempt if the user has not previously been successful
+        # if the user is not logged in, assume that they have not been
+        # successful; NB that this could cause inflation in some circumstances
+        if success and (not self.web_api.is_logged_in \
+                or previous_submission_status == WebAPI.MISSING):
+            self.attempts.record_attempt(
+                self.current_tutorial, self.tutorial_package
+            )
+
+        # try to submit if successful
         if success and try_to_submit:
             if self.web_api.is_logged_in:
                 try:
                     response = self.web_api.submit_answer(
-                        self.current_tutorial, self.editor.get_text()
+                        self.current_tutorial,
+                        self.editor.get_text(),
+                        self.attempts.num_attempts_for(
+                            self.current_tutorial, self.tutorial_package
+                        )
                     )
                     if response is not None:
                         self.master.after(0, self.update_submissions)
                 except WebAPIError:
                     pass  # ignore: silently trying to submit
             else:
-                status = self._submissions.get(
-                    self.current_tutorial, WebAPI.MISSING
-                )
-                if status == WebAPI.MISSING:
+                if previous_submission_status == WebAPI.MISSING:
                     def _show_info_box():
                         tkmessagebox.showinfo(
                             'Correct!',
