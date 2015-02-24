@@ -386,7 +386,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
 
     ## Public-ish methods
     @skip_if_attr_none('current_tutorial')
-    def run_tests(self, try_to_submit=True):
+    def run_tests(self, try_to_submit=True, record_attempt=False):
         """
         Test and analyse the student code.
 
@@ -402,6 +402,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         Args:
           try_to_submit (bool, optional): If True, attempt to submit the
             tutorial if the student's answer is correct.
+        record_attempt (bool, optional): If True, record that the student has
+            made an attempt at the icurrent problem.
 
         Returns:
           Whether the code passes the tests and the analysis.
@@ -437,7 +439,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         # record an attempt if the user has not previously been successful
         # if the user is not logged in, assume that they have not been
         # successful; NB that this could cause inflation in some circumstances
-        if success and (not self.web_api.is_logged_in \
+        if record_attempt and success and (not self.web_api.is_logged_in \
                 or previous_submission_status == WebAPI.MISSING):
             self.attempts.record_attempt(
                 self.current_tutorial, self.tutorial_package
@@ -987,7 +989,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         TutAboutDialog(self.master, 'About MyPyTutor')
 
     ## TutorEditorDelegate
-    check_solution = run_tests
+    check_solution = partial(run_tests, record_attempt=True)
     quit_editor = close
 
     ## TestOutputDelegate
