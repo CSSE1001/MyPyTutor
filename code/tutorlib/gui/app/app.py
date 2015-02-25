@@ -615,7 +615,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         if self.run_tests(try_to_submit=False):
             try:
                 response = self.web_api.submit_answer(
-                    self.current_tutorial, self.editor.get_text()
+                    self.current_tutorial,
+                    self.editor.get_text(),
+                    self.attempts.num_attempts_for(
+                        self.current_tutorial, self.tutorial_package
+                    ),
                 )
             except WebAPIError as e:
                 self._display_web_api_error(e)
@@ -989,7 +993,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         TutAboutDialog(self.master, 'About MyPyTutor')
 
     ## TutorEditorDelegate
-    check_solution = partial(run_tests, record_attempt=True)
+    check_solution = lambda self: self.run_tests(record_attempt=True)
     quit_editor = close
 
     ## TestOutputDelegate
