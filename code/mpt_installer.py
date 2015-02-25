@@ -39,10 +39,7 @@ from io import StringIO
 
 # Configuration information
 DEFAULT_CONFIG = StringIO("""
-[WINDOW_SIZES]
-problem=20
-output=5
-[TUTORIALS]
+[tutorials]
 names=CSSE1001Problems
 default=CSSE1001Problems
 [CSSE1001Problems]
@@ -234,7 +231,13 @@ class Installer():
         config.readfp(DEFAULT_CONFIG)
         config.set('CSSE1001Problems', 'tut_dir', tutorial_dir)
         config.set('CSSE1001Problems', 'ans_dir', answer_dir)
-        config_file = os.path.join(home, 'mypytutor.cfg')
+
+        mpt_dir = os.path.join(home, '.mptrc')
+        if not os.path.exists(mpt_dir):
+            os.mkdir(mpt_dir)
+
+        config_file = os.path.join(mpt_dir, 'config')
+
         fp = open(config_file, 'w')
         config.write(fp)
         fp.close()
