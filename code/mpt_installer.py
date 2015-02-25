@@ -221,7 +221,7 @@ class Installer():
         self.add_text('Downloading tutorial problems...\n')
         self.master.update_idletasks()
         urlobj = urllib.request.URLopener({})
-        urlobj.retrieve('http://csse1001.uqcloud.net/mpt/CSSE1001Tutorials.zip', 'CSSE1001Tutorials.zip')
+        urlobj.retrieve('http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip', 'CSSE1001Tutorials.zip')
         unzipfile('CSSE1001Tutorials.zip', tutorial_dir)
         os.remove('CSSE1001Tutorials.zip')
         # set up config file
