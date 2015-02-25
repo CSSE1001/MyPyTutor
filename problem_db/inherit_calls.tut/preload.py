@@ -1,0 +1,1 @@
+print('obj1: C1.f, C1.g')  # C1.f calls C1.g; no superclass methods are called
