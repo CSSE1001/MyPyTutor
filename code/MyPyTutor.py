@@ -211,13 +211,30 @@ def bootstrap_tutorials():
     # if we've made it to here, assume these imports will succeed
     from tutorlib.config.configuration import load_config, save_config
     from tutorlib.gui.app.support import safely_extract_zipfile
+    from tutorlib.interface.problems \
+            import TutorialPackage, TutorialPackageError
     from tutorlib.interface.web_api import WebAPI
 
     # grab our config file
     cfg = load_config()
     options = getattr(cfg, cfg.tutorials.default or 'CSSE1001Problems')
 
-    if not options.tut_dir:
+    def tutorials_are_installed():
+        if not options.tut_dir:  # no entry in config at all (default)
+            return False
+        if not os.path.exists(options.tut_dir):  # no package directory at all
+            return False
+        if not os.path.exists(options.ans_dir):  # no answers dir
+            return False
+
+        try:
+            _ = TutorialPackage(cfg.tutorials.default, options)
+        except TutorialPackageError:
+            return False
+
+        return True
+
+    if not tutorials_are_installed():
         print('Downloading default tutorial package...', end='')
 
         web_api = WebAPI()
