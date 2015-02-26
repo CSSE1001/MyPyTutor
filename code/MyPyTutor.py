@@ -17,10 +17,10 @@ DEFAULT_CONFIG = {
         'username': '',
     },
     'tutorials': {
-        'names': ['CSSE1001Problems'],
-        'default': 'CSSE1001Problems',
+        'names': ['CSSE1001Tutorials'],
+        'default': 'CSSE1001Tutorials',
     },
-    'CSSE1001Problems': {
+    'CSSE1001Tutorials': {
         'tut_dir': '',
         'ans_dir': '',
     },
@@ -249,7 +249,7 @@ def bootstrap_tutorials():
     If the default tutorial path does not exist, download and extract the
     tutorials zipfile.
 
-    If no default tutorial package is specified, CSSE1001Problems will be
+    If no default tutorial package is specified, CSSE1001Tutorials will be
     assumed (this is the default package name used by this script).
 
     """
@@ -261,7 +261,7 @@ def bootstrap_tutorials():
 
     # grab our config file
     cfg = load_config()
-    options = getattr(cfg, cfg.tutorials.default or 'CSSE1001Problems')
+    options = getattr(cfg, cfg.tutorials.default or 'CSSE1001Tutorials')
 
     def tutorials_are_installed():
         if not options.tut_dir:  # no entry in config at all (default)
@@ -289,11 +289,11 @@ def bootstrap_tutorials():
         # set the default tutorial directory
         # our default tutorial directory is in the same directory as the script
         # note that this assumes we used the default config, which created the
-        # CSSE1001Problems key
+        # CSSE1001Tutorials key
         print('Installing default tutorial package...', end='', flush=True)
 
         script_dir = os.path.dirname(__file__)
-        options.tut_dir = os.path.join(script_dir, 'CSSE1001Problems')
+        options.tut_dir = os.path.join(script_dir, 'CSSE1001Tutorials')
         options.ans_dir = os.path.join(script_dir, 'CSSE1001Answers')
 
         safely_extract_zipfile(filename, options.tut_dir)
