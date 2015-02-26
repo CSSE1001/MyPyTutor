@@ -35,6 +35,7 @@ class Interpreter():
         self._path = None
 
     def __del__(self):
+        self.kill()
         os.remove(self.path)  # will gen before removing, but meh
 
     @property
