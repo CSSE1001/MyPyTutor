@@ -271,7 +271,6 @@ def update_default_tutorial_package():
     try:
         tutorial_package = TutorialPackage(package_name, package_options)
     except TutorialPackageError:
-        raise
         print('failed')
         return
 
