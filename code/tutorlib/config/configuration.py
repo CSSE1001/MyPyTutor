@@ -16,6 +16,7 @@ from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
 
 SPECIAL_FORMATS = {
+    ('online', 'store_credentials'): bool,
     ('tutorials', 'names'): list,
     ('window_sizes', 'analysis'): int,
     ('window_sizes', 'output'): int,
@@ -66,6 +67,10 @@ def load_config():
     # this involves hard-coding the keys, but that would have to happen in some
     # place to *use* them anyway
     defaults = {
+        'online': {
+            'store_credentials': 1,
+            'username': '',
+        },
         'tutorials': {
             'names': '',
             'default': '',
@@ -149,6 +154,8 @@ def unwrap_value(section, option, value):
         return [elem for elem in value.split(',') if elem]
     elif special_type is int:
         return int(value)
+    elif special_type is bool:
+        return value != '0'
 
     raise AssertionError('Unknown special type {}'.format(special_type))
 
@@ -185,6 +192,8 @@ def wrap_value(section, option, value):
         return ','.join(value)
     elif special_type is int:
         return str(value)
+    elif special_type is bool:
+        return '1' if value else '0'
 
     raise AssertionError('Unknown special type {}'.format(special_type))
 

@@ -10,6 +10,10 @@ from zipfile import ZipFile
 
 
 DEFAULT_CONFIG = {
+    'online': {
+        'store_credentials': True,
+        'username': '',
+    },
     'tutorials': {
         'names': ['CSSE1001Problems'],
         'default': 'CSSE1001Problems',
@@ -20,6 +24,7 @@ DEFAULT_CONFIG = {
     },
 }
 DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
+MPT_SERVICE = 'MyPyTutor'
 
 
 def check_compatibility():
@@ -321,6 +326,172 @@ def update_default_tutorial_package():
     print('done')
 
 
+def install_keyring_module():
+    """
+    Install the keyring module using pip.
+
+    If pip is not installed, print an error message and exit.
+
+    This function does not attempt to install with admin privileges.
+
+    Returns:
+      Whether the installation was successful.
+
+    """
+    try:
+        import pip
+    except ImportError:
+        print('Cannot install keyring: pip does not appear to be installed')
+        return False
+
+    args = ['install', 'keyring', '--quiet']
+    if pip.main(args):
+        # something went wrong
+        # we could potentially try running as admin, but for now just fail
+        return False
+    return True
+
+
+def try_get_credentials():
+    """
+    Try to get the user's credentials.
+
+    If the keyring module is not installed, prompt the user to install it.
+    If the user refuses, set a flag so as not to prompt again.
+
+    If the module is installed and the user has saved credentials, return them.
+    Otherwise, prompt the user to enter credentials to save.
+
+    Returns:
+      A tuple containing the user's username and password.
+
+    """
+    # we need access to the config file
+    from tutorlib.config.configuration import load_config, save_config
+    cfg = load_config()
+
+    # return if the user has said not to store anything
+    if not cfg.online.store_credentials:
+        return None, None
+
+    try:
+        import keyring
+    except ImportError:
+        print(
+            'We can securely store your username and password using the '
+            'keyring module'
+        )
+        install = input('Install keyring module [yN]: ')
+
+        # if the user said no, remember their choice
+        if install != 'y':
+            cfg.online.store_credentials = False
+            save_config(cfg)
+
+            return None, None
+
+        if not install_keyring_module():
+            return None, None
+
+        import keyring  # should cause no problems at this point
+
+    # if we have a username, return the associated password
+    if cfg.online.username:
+        password = keyring.get_password(MPT_SERVICE, cfg.online.username)
+        return cfg.online.username, password
+
+    # grab the user's username and password
+    from getpass import getpass
+
+    print()
+    print('Please enter your UQ username and password')
+    cfg.online.username = input('Username: ')
+    password = getpass()
+    print()
+
+    save_config(cfg)
+    keyring.set_password(MPT_SERVICE, cfg.online.username, password)
+
+    return cfg.online.username, password
+
+
+def try_login(username, password):
+    """
+    Try to log in with the given username and password.
+
+    Args:
+      username (str): The username to log in with.
+      password (str): The password to use.
+
+    Returns:
+      If successful, the logged-in WebAPI instance.
+      If unsuccessful, None.
+
+    """
+    from tutorlib.interface.web_api import WebAPI, WebAPIError
+    web_api = WebAPI()
+
+    print('Attempting to login as {}...'.format(username), end='', flush=True)
+
+    def reset_credentials():
+        import keyring
+        from tutorlib.config.configuration import load_config, save_config
+        cfg = load_config()
+
+        keyring.delete_password(MPT_SERVICE, cfg.online.username)
+        cfg.online.username = ''
+
+        save_config(cfg)
+
+    try:
+        success = web_api.login(username, password)
+
+        # if the login failed (but did not throw), clear the credentials
+        if not success:
+            reset_credentials()
+    except WebAPIError:
+        success = False
+
+    print('done' if success else 'failed')
+    return web_api if success else None
+
+
+def synchronise_problems(web_api):
+    """
+    Synchronise problems for the default tutorial package.
+
+    Args:
+      web_api (WebAPI): The WebAPI instance to use.  This must be logged in.
+
+    """
+    from tutorlib.config.configuration import load_config
+    from tutorlib.interface.problems \
+            import TutorialPackage, TutorialPackageError
+    from tutorlib.online.sync import SyncClient
+
+    print('Synchronising tutorial problems...', end='', flush=True)
+
+    cfg = load_config()
+    try:
+        options = getattr(cfg, cfg.tutorials.default)
+    except AttributeError:
+        print('failed')
+        return
+
+    try:
+        tutorial_package = TutorialPackage(cfg.tutorials.default, options)
+    except TutorialPackageError:
+        print('failed')
+        return
+
+    client = SyncClient(web_api)
+    if not client.synchronise(tutorial_package):
+        print('failed')
+        return
+
+    print('done')
+
+
 def print_version():
     """
     Print the current version of MyPyTutor.
@@ -330,19 +501,24 @@ def print_version():
     print(VERSION)
 
 
-def launch_mpt():
+def launch_mpt(web_api=None):
     """
     Launch MyPyTutor.
 
     This function enters the tkinter main loop and so will not return until
     the program has been closed.
 
+    Args:
+      web_api (WebAPI, optional): The WebAPI object, if any, to pass to the
+        TutorialApp instance.  Defaults to None.  If provided, this must be
+        logged in.
+
     """
     # if we've made it to here, assume these imports will succeed
     from tutorlib.gui.app.app import TutorialApp
 
     root = tk.Tk()
-    _ = TutorialApp(root)
+    _ = TutorialApp(root, web_api=web_api)
     root.mainloop()
 
 
@@ -364,23 +540,38 @@ def parse_args():
 
 
 def main():
+    # parse args, and exit early where necessary
     args = parse_args()
 
     if args.version:
         print_version()
         return 0
 
+    # exit if the user's system is not compatible with MyPyTutor
     check_compatibility()
 
+    # install and update MyPyTutor
     bootstrap_install(use_gui=not args.no_gui)
     update_mpt()
 
     create_config_if_needed()
-    bootstrap_tutorials()
 
+    # install and update the default tutorial package
+    bootstrap_tutorials()
     update_default_tutorial_package()
 
-    launch_mpt()
+    # try to log the user in automatically
+    username, password = try_get_credentials()
+    if username is not None:
+        web_api = try_login(username, password)
+    else:
+        web_api = None
+
+    if web_api is not None:
+        synchronise_problems(web_api)
+
+    # launch MyPyTutor itself
+    launch_mpt(web_api)
 
     return 0
 

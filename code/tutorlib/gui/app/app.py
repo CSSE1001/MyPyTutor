@@ -64,7 +64,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
           problem and associated data, such as hints.
 
     """
-    def __init__(self, master):
+    def __init__(self, master, web_api=None):
         #### Set up the window
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
@@ -96,8 +96,15 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         self.attempts = TutorialAttempts()
         self.interpreter = Interpreter()
 
-        self.web_api = WebAPI(self._login_status_change)
-        self.master.after(0, self.login)
+        if web_api is None:
+            self.web_api = WebAPI(self._login_status_change)
+            self.master.after(0, self.login)
+        else:
+            self.web_api = web_api
+            self.web_api.listener = self._login_status_change
+
+            # immediately perform the callback, assuming we've synced already
+            self._login_status_change(logged_in=True, do_sync=False)
 
         self.sync_client = SyncClient(self.web_api)
 
@@ -505,11 +512,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         # this will fill out the results and static analysis sections
         self.run_tests()
 
-    def _login_status_change(self, logged_in):
-        # sync no matter what
-        callback = partial(self.synchronise, no_login=not logged_in)
-        callback.__name__ = 'callback'
-        self.master.after(0, callback)
+    def _login_status_change(self, logged_in, do_sync=True):
+        if do_sync:  # on login or logout
+            callback = partial(self.synchronise, no_login=not logged_in)
+            callback.__name__ = 'callback'
+            self.master.after(0, callback)
 
         if logged_in:
             self.master.after(0, self.update_submissions)
