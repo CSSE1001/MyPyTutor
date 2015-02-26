@@ -39,7 +39,7 @@ class Interpreter():
     @property
     def is_alive(self):
         return self.subprocess is not None \
-               and self.subprocess.poll() is not None
+               and self.subprocess.poll() is None
 
     @property
     def args(self):
