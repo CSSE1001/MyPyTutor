@@ -39,7 +39,8 @@ def execl(cmd, *args):
 
     """
     if sys.platform == 'win32':
-        argv = [cmd] + list(args)
+        # by convention, cmd == args[0], but Popen only needs it the once
+        argv = [cmd] + list(args[1:])
         process = subprocess.Popen(argv)
 
         sys.exit(process.wait())
