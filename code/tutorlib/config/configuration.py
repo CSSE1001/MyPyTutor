@@ -16,9 +16,6 @@ from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
 SPECIAL_FORMATS = {
     ('tutorials', 'names'): list,
-    ('window_sizes', 'analysis'): int,
-    ('window_sizes', 'output'): int,
-    ('window_sizes', 'output'): int,
 }
 
 
