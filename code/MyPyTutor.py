@@ -58,7 +58,11 @@ def get_install_path(use_gui=True):
       The desired path to install MyPyTutor at.
 
     """
-    default_path = os.path.join(os.path.expanduser('~'), 'MyPyTutor')
+    # we should special-case the lab machines
+    if sys.platform == 'win32' and os.path.exists('H:'):
+        default_path = os.path.join('H:', 'MyPyTutor')
+    else:
+        default_path = os.path.join(os.path.expanduser('~'), 'MyPyTutor')
 
     print('Default MyPyTutor install directory: {}'.format(default_path))
     change_default = input('Change installation directory [yN]: ')
