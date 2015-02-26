@@ -21,12 +21,31 @@
 """The MyPyTutor application."""
 
 import os
+import subprocess
 import sys
 import tkinter as tk
 
 from tutorlib.gui.app.app import TutorialApp, VERSION
 from tutorlib.gui.app.support import safely_extract_zipfile
 from tutorlib.interface.web_api import WebAPI, WebAPIError
+
+
+def execl(cmd, *args):
+    """
+    Execute the given command with the given arguments.
+
+    This is an alisas for the underlying execl system call on Unix.
+    Windows does not support a sensible fork + exec mechanism; as a result,
+    this method makes use of subprocess on that OS.
+
+    """
+    if sys.platform == 'win32':
+        argv = [cmd] + list(args)
+        process = subprocess.Popen(argv)
+
+        sys.exit(process.wait())
+    else:
+        os.execl(cmd, *args)
 
 
 def bootstrap():
@@ -63,7 +82,7 @@ def _bootstrap():
         safely_extract_zipfile(mpt_zip_path, script_dir)
 
         # re-exec with the new version
-        os.execl(sys.executable, sys.executable, *sys.argv)
+        execl(sys.executable, sys.executable, *sys.argv)
 
 
 def main():
