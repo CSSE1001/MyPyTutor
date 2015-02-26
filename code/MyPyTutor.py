@@ -89,9 +89,14 @@ def get_install_path(use_gui=True):
       The desired path to install MyPyTutor at.
 
     """
-    # we should special-case the lab machines
+    # we should special-case the lab machines to use H: drive
+    # windows machines should use Documents (NB: it's not always at this path;
+    # if not, default to the home dir)
+    documents_dir = os.path.join(os.path.expanduser('~'), 'Documents')
     if sys.platform == 'win32' and os.path.exists('H:'):
         default_path = os.path.join('H:', 'MyPyTutor')
+    elif sys.platform == 'win32' and os.path.exists(documents_dir):
+        default_path = os.path.join(documents_dir, 'MyPyTutor')
     else:
         default_path = os.path.join(os.path.expanduser('~'), 'MyPyTutor')
 
