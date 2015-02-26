@@ -27,6 +27,7 @@ DEFAULT_CONFIG = {
 }
 DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
 MPT_SERVICE = 'MyPyTutor'
+MPT_FILENAME = 'MyPyTutor.py'  # usually __file__, but need to support renaming
 
 
 def execl(cmd, *args):
@@ -156,7 +157,7 @@ def bootstrap_install(use_gui):
         install_mpt(install_path)
 
         # re-exec in MPT dir
-        this_file = os.path.basename(__file__)
+        this_file = os.path.basename(MPT_FILENAME)
         mpt_path = os.path.join(install_path, this_file)
 
         argv = [mpt_path] + sys.argv[1:]
