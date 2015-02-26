@@ -28,6 +28,7 @@ DEFAULT_CONFIG = {
 DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
 MPT_SERVICE = 'MyPyTutor'
 MPT_FILENAME = 'MyPyTutor.py'  # usually __file__, but need to support renaming
+GLOBAL_TIMEOUT = 5.  # seconds
 
 
 def execl(cmd, *args):
@@ -47,6 +48,15 @@ def execl(cmd, *args):
         sys.exit(process.wait())
     else:
         os.execl(cmd, *args)
+
+
+def setup_modules():
+    """
+    Perform any global module setup needed by MyPyTutor.
+
+    """
+    import socket
+    socket.setdefaulttimeout(GLOBAL_TIMEOUT)
 
 
 def check_compatibility():
@@ -572,6 +582,9 @@ def main():
 
     # exit if the user's system is not compatible with MyPyTutor
     check_compatibility()
+
+    # set up module globals (eg, socket timeout)
+    setup_modules()
 
     # install and update MyPyTutor
     bootstrap_install(use_gui=not args.no_gui)
