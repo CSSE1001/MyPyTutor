@@ -302,6 +302,15 @@ def update_default_tutorial_package():
     print('done')
 
 
+def print_version():
+    """
+    Print the current version of MyPyTutor.
+
+    """
+    from tutorlib.gui.app.app import VERSION
+    print(VERSION)
+
+
 def launch_mpt():
     """
     Launch MyPyTutor.
@@ -326,12 +335,21 @@ def parse_args():
         action='store_true',
         help='Run the installer without using a GUI',
     )
+    parser.add_argument(
+        '--version',
+        action='store_true',
+        help='Print the version and then terminate',
+    )
 
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+
+    if args.version:
+        print_version()
+        return 0
 
     check_compatibility()
 

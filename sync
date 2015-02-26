@@ -47,7 +47,7 @@ printf "done\n"
 
 printf "Updating version info..."
 VERSION_FILE=.tmp_mpt_version
-code/mpt_version.py > $VERSION_FILE
+code/MyPyTutor.py --version > $VERSION_FILE
 sleep $DELAY
 sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put $VERSION_FILE /opt/local/share/MyPyTutor/MPT3_CSSE1001/mpt_version
