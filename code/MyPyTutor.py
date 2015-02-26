@@ -27,6 +27,26 @@ DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
 MPT_SERVICE = 'MyPyTutor'
 
 
+def execl(cmd, *args):
+    """
+    Execute the given command with the given arguments.
+
+    This is an alisas for the underlying execl system call on Unix.
+    Windows does not support a sensible fork + exec mechanism; as a result,
+    this method makes use of subprocess on that OS.
+
+    """
+    if sys.platform == 'win32':
+        import subprocess
+
+        argv = [cmd] + list(args)
+        process = subprocess.Popen(argv)
+
+        sys.exit(process.wait())
+    else:
+        os.execl(cmd, *args)
+
+
 def check_compatibility():
     """
     Print an error message and exit if the user is not running the correct
@@ -140,7 +160,7 @@ def bootstrap_install(use_gui):
 
         argv = [mpt_path] + sys.argv[1:]
 
-        os.execl(sys.executable, sys.executable, *argv)
+        execl(sys.executable, sys.executable, *argv)
 
 
 def update_mpt():
@@ -185,7 +205,7 @@ def update_mpt():
             print('done')
 
             # re-exec with the new version
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            execl(sys.executable, sys.executable, *sys.argv)
 
     try:
         _check_for_updates()
