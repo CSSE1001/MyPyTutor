@@ -55,6 +55,8 @@ def install_mpt(install_path, url=DEFAULT_MPT_URL):
     if not os.path.exists(install_path):
         os.makedirs(install_path)
 
+    print('Installing MyPyTutor...', end='', flush=True)
+
     # grab the latest zip file
     urlobj = URLopener()
     filename, _ = urlobj.retrieve(url)
@@ -62,6 +64,8 @@ def install_mpt(install_path, url=DEFAULT_MPT_URL):
     # extract the file
     with ZipFile(filename) as zf:
         zf.extractall(install_path)
+
+    print('done')
 
 
 def get_install_path(use_gui=True):
@@ -143,7 +147,7 @@ def update_mpt():
     from tutorlib.gui.app.support import safely_extract_zipfile
     from tutorlib.interface.web_api import WebAPI, WebAPIError
 
-    print('Checking for MyPyTutor updates...', end='')
+    print('Checking for MyPyTutor updates...', end='', flush=True)
 
     def _check_for_updates():
         # grab the server version
@@ -157,7 +161,7 @@ def update_mpt():
         local_version = create_tuple(VERSION)
 
         if server_version > local_version:
-            print('Updating MyPyTutor...', end='')
+            print('Updating MyPyTutor...', end='', flush=True)
 
             # grab our new zip file
             mpt_zip_path = web_api.get_mpt_zipfile()
@@ -191,7 +195,7 @@ def create_config_if_needed():
     from tutorlib.config.namespaces import Namespace
 
     if not config_exists():
-        print('Creating default config...', end='')
+        print('Creating default config...', end='', flush=True)
 
         default_config = Namespace(**DEFAULT_CONFIG)
         save_config(default_config)
@@ -235,7 +239,7 @@ def bootstrap_tutorials():
         return True
 
     if not tutorials_are_installed():
-        print('Downloading default tutorial package...', end='')
+        print('Downloading default tutorial package...', end='', flush=True)
 
         web_api = WebAPI()
         filename = web_api.get_tutorials_zipfile()
@@ -246,7 +250,7 @@ def bootstrap_tutorials():
         # our default tutorial directory is in the same directory as the script
         # note that this assumes we used the default config, which created the
         # CSSE1001Problems key
-        print('Installing default tutorial package...', end='')
+        print('Installing default tutorial package...', end='', flush=True)
 
         script_dir = os.path.dirname(__file__)
         options.tut_dir = os.path.join(script_dir, 'CSSE1001Problems')
@@ -275,7 +279,7 @@ def update_default_tutorial_package():
             import TutorialPackage, TutorialPackageError
     from tutorlib.interface.web_api import WebAPI
 
-    print('Checking for tutorial package updates...', end='')
+    print('Checking for tutorial package updates...', end='', flush=True)
 
     # grab our config file
     cfg = load_config()
@@ -305,7 +309,7 @@ def update_default_tutorial_package():
     if server_timestamp <= local_timestamp:
         return
 
-    print('Updating tutorial package...', end='')
+    print('Updating tutorial package...', end='', flush=True)
 
     # grab the zipfile
     zip_path = web_api.get_tutorials_zipfile()
