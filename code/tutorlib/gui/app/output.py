@@ -95,7 +95,7 @@ class TestOutputDelegate(metaclass=ABCMeta):
 
 
 class TestOutput(ttk.Frame):
-    def __init__(self, master, delegate, textlen, fontsize=12):
+    def __init__(self, master, delegate, height=5, fontsize=12):
         super().__init__(master)
 
         assert isinstance(delegate, TestOutputDelegate)
@@ -105,7 +105,7 @@ class TestOutput(ttk.Frame):
         self.test_results.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
         self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
 
-        self.output = Output(self, textlen, fontsize=fontsize)
+        self.output = Output(self, height=height, fontsize=fontsize)
         self.output.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
 
     def update_text_length(self, lines):
@@ -158,10 +158,10 @@ class Output(ttk.Frame):
     COLOR_ERROR = 'red'
     COLOR_WARNING = 'orange'
 
-    def __init__(self, master, textlen, fontsize=12):
+    def __init__(self, master, height=5, fontsize=12):
         super().__init__(master)
 
-        self.text = tk.Text(self, height=textlen)
+        self.text = tk.Text(self, height=height)
         self.text.config(state=tk.DISABLED)
         self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
@@ -198,8 +198,8 @@ class Output(ttk.Frame):
 
 
 class AnalysisOutput(Output):
-    def __init__(self, master, textlen, fontsize=12):
-        super().__init__(master, textlen, fontsize=fontsize)
+    def __init__(self, master, height=5, fontsize=12):
+        super().__init__(master, height=height, fontsize=fontsize)
 
     def set_analyser(self, analyser):
         self.clear_text()

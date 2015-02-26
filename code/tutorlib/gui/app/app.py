@@ -69,6 +69,10 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
 
+        width = min(master.winfo_screenwidth(), 600)
+        height = min(master.winfo_screenheight(), 800)
+        master.geometry('{}x{}'.format(width, height))
+
         #### Set up our menu
         self.menu = TutorialMenu(master, delegate=self)
         master.config(menu=self.menu)
@@ -105,7 +109,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         ## Tutorial (html display of tutorial problem)
         self.tutorial_frame = TutorialFrame(
             top_frame,
-            self.cfg.window_sizes.problem
         )
         self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
         self.tutorial_frame.splash(version=VERSION)
@@ -141,16 +144,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         self.test_output = TestOutput(
             top_frame,
             self,
-            self.cfg.window_sizes.output,
         )
-        self.test_output.pack(fill=tk.BOTH, expand=0)
+        self.test_output.pack(fill=tk.X, expand=tk.FALSE)
 
         ## Analysis Output
         self.analysis_output = AnalysisOutput(
             top_frame,
-            self.cfg.window_sizes.analysis,
         )
-        self.analysis_output.pack(fill=tk.BOTH, expand=0)
+        self.analysis_output.pack(fill=tk.X, expand=tk.FALSE)
 
     ## Properties
     @property
