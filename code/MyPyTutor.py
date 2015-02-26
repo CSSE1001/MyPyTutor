@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
+from getpass import getpass
 import os
+import subprocess
 import sys
 import tkinter as tk
 import tkinter.filedialog as tkFiledialog
@@ -37,8 +39,6 @@ def execl(cmd, *args):
 
     """
     if sys.platform == 'win32':
-        import subprocess
-
         argv = [cmd] + list(args)
         process = subprocess.Popen(argv)
 
@@ -220,7 +220,6 @@ def create_config_if_needed():
     Note that this will not download the initial tutorial set.
 
     """
-    # if we've made it to here, assume these imports will succeed
     from tutorlib.config.configuration import config_exists, save_config
     from tutorlib.config.namespaces import Namespace
 
@@ -242,7 +241,6 @@ def bootstrap_tutorials():
     assumed (this is the default package name used by this script).
 
     """
-    # if we've made it to here, assume these imports will succeed
     from tutorlib.config.configuration import load_config, save_config
     from tutorlib.gui.app.support import safely_extract_zipfile
     from tutorlib.interface.problems \
@@ -301,7 +299,6 @@ def update_default_tutorial_package():
     Update the default tutorial package if necessary.
 
     """
-    # if we've made it to here, assume these imports will succeed
     from tutorlib.config.configuration import load_config
     from tutorlib.gui.app.support \
             import remove_directory_contents, safely_extract_zipfile
@@ -427,8 +424,6 @@ def try_get_credentials():
         return cfg.online.username, password
 
     # grab the user's username and password
-    from getpass import getpass
-
     print()
     print('Please enter your UQ username and password')
     cfg.online.username = input('Username: ')
