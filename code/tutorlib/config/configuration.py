@@ -65,11 +65,6 @@ def load_config():
             'names': '',
             'default': '',
         },
-        'window_sizes': {
-            'analysis': 5,
-            'output': 5,
-            'problem': 20,
-        },
     }
 
     cfg_dict = defaults
