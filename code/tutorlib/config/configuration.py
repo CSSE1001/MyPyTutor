@@ -8,6 +8,7 @@ Attributes:
 
 """
 import configparser
+import os
 
 from tutorlib.config.namespaces import Namespace
 from tutorlib.config.shared import CONFIG_FILE
@@ -20,6 +21,10 @@ SPECIAL_FORMATS = {
     ('window_sizes', 'output'): int,
     ('window_sizes', 'output'): int,
 }
+
+
+def config_exists():
+    return os.path.exists(CONFIG_FILE)
 
 
 def load_config():

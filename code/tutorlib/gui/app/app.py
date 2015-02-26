@@ -240,50 +240,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         # update menu
         self.menu.set_selected_tutorial_package(self.tutorial_package)
 
-        # start update process
-        self.master.after(0, self._update_tutorial_package)
-
-    def _update_tutorial_package(self):
-        """
-        Update the current tutorial package.
-
-        This will only perform the update if the current package is out of date
-        according to the server.
-
-        This process is NOT performed in the background, as we can't proceed
-        with setup (including with synchronisation) until and unless we know
-        that our local tutorials are up to date.
-
-        """
-        try:
-            timestamp = self.web_api.get_tutorials_timestamp()
-        except WebAPIError as e:
-            self._display_web_api_error(e)
-            return
-
-        # we need to be comparing as ints
-        create_tuple = lambda t: tuple(map(int, t.split('.')))
-        server_timestamp = create_tuple(timestamp)
-        local_timestamp = create_tuple(self.tutorial_package.timestamp)
-
-        # we only want to update if the server's version is more recent
-        # a more recent local version should only arise in development, anyway
-        if server_timestamp <= local_timestamp:
-            return
-
-        # grab the zipfile
-        zip_path = self.web_api.get_tutorials_zipfile()
-
-        # extract the zipfile into our empty tutorial directory
-        remove_directory_contents(self.tutorial_package.options.tut_dir)
-        safely_extract_zipfile(zip_path, self.tutorial_package.options.tut_dir)
-
-        # reload our tutorial package
-        # this will call this function recursively, but will exit if the
-        # timestamps match correctly (as they must if there has not been an
-        # update in the interim)
-        self.tutorial_package = self.tutorial_package.name
-
     def _next_hint(self):
         """
         Display the next hint.
