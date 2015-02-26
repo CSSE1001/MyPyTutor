@@ -18,9 +18,6 @@ from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 SPECIAL_FORMATS = {
     ('online', 'store_credentials'): bool,
     ('tutorials', 'names'): list,
-    ('window_sizes', 'analysis'): int,
-    ('window_sizes', 'output'): int,
-    ('window_sizes', 'output'): int,
 }
 
 
