@@ -58,7 +58,7 @@ class Interpreter():
         return self._path
 
     def kill(self):
-        if self.subprocess is not None:
+        if self.is_alive:
             self.subprocess.kill()
 
     def reload(self, code):
@@ -84,7 +84,7 @@ class Interpreter():
             f.write(code_file_string)
 
         # terminate existing subprocess if necessary
-        if self.subprocess is not None:
+        if self.is_alive:
             self.subprocess.terminate()
 
         # create the shell
