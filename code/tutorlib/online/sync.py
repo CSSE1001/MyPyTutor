@@ -119,7 +119,17 @@ class SyncClient():
 
             if not success:
                 return False
-        return f
+
+        def try_repeatedly(f, n=3):
+            def fn():
+                for _ in range(n):
+                    result = f()
+                    if result:
+                        return result
+                return result
+            return fn
+
+        return try_repeatedly(f)
 
     def synchronise(self, tutorial_package):
         """
