@@ -30,4 +30,4 @@ build: tutorials $(BUILD)
 	cp $(BUILD) build
 
 push:
-	./sync
+	./sync CSSE1001Tutorials
