@@ -204,9 +204,8 @@ def bootstrap_tutorials():
     If the default tutorial path does not exist, download and extract the
     tutorials zipfile.
 
-    Note that this function assumes that CSSE1001Problems is the default
-    tutorial package, and that the standard config file created by this script
-    already exists.
+    If no default tutorial package is specified, CSSE1001Problems will be
+    assumed (this is the default package name used by this script).
 
     """
     # if we've made it to here, assume these imports will succeed
@@ -216,8 +215,9 @@ def bootstrap_tutorials():
 
     # grab our config file
     cfg = load_config()
+    options = getattr(cfg, cfg.tutorials.default or 'CSSE1001Problems')
 
-    if not cfg.CSSE1001Problems.tut_dir:
+    if not options.tut_dir:
         print('Downloading default tutorial package...', end='')
 
         web_api = WebAPI()
@@ -232,17 +232,13 @@ def bootstrap_tutorials():
         print('Installing default tutorial package...', end='')
 
         script_dir = os.path.dirname(__file__)
-        cfg.CSSE1001Problems.tut_dir = os.path.join(
-            script_dir, 'CSSE1001Problems'
-        )
-        cfg.CSSE1001Problems.ans_dir = os.path.join(
-            script_dir, 'CSSE1001Answers'
-        )
+        options.tut_dir = os.path.join(script_dir, 'CSSE1001Problems')
+        options.ans_dir = os.path.join(script_dir, 'CSSE1001Answers')
 
-        safely_extract_zipfile(filename, cfg.CSSE1001Problems.tut_dir)
+        safely_extract_zipfile(filename, options.tut_dir)
 
-        if not os.path.exists(cfg.CSSE1001Problems.ans_dir):
-            os.mkdir(cfg.CSSE1001Problems.ans_dir)
+        if not os.path.exists(options.ans_dir):
+            os.mkdir(options.ans_dir)
 
         save_config(cfg)
 
