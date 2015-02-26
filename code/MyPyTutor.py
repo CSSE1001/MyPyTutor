@@ -138,9 +138,6 @@ def bootstrap_install(use_gui):
         this_file = os.path.basename(__file__)
         mpt_path = os.path.join(install_path, this_file)
 
-        # we *must* quote the path, in case it has spaces
-        mpt_path = '"{}"'.format(mpt_path)
-
         argv = [mpt_path] + sys.argv[1:]
 
         os.execl(sys.executable, sys.executable, *argv)
