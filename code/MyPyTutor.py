@@ -20,6 +20,26 @@ DEFAULT_CONFIG = {
 DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
 
 
+def check_compatibility():
+    """
+    Print an error message and exit if the user is not running the correct
+    Python version for MyPyTutor.
+
+    This function will not return if the system is not compatible.
+
+    """
+    major, minor = sys.version_info[:2]
+    allowed_minor_versions = [4]
+
+    if major != 3 or minor not in allowed_minor_versions:
+        print('Python {}.{} is unsupported by MyPyTutor'.format(major, minor))
+        allowed_versions = ', '.join(
+            '{}.{}'.format(major, m) for m in allowed_minor_versions
+        )
+        print('Please upgrade to one of Python {}'.format(allowed_versions))
+        sys.exit(1)
+
+
 def install_mpt(install_path, url=DEFAULT_MPT_URL):
     """
     Install MyPyTutor to the given directory.
@@ -313,6 +333,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    check_compatibility()
 
     bootstrap_install(use_gui=not args.no_gui)
     update_mpt()
