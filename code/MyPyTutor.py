@@ -377,6 +377,7 @@ def try_get_credentials():
     try:
         import keyring
     except ImportError:
+        print()
         print(
             'We can securely store your username and password using the '
             'keyring module'
