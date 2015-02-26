@@ -57,7 +57,6 @@ GUI Layout Example II : gui2.tut : layout2.gif
 GUI Layout Example III : gui3.tut : layout3.gif
 
 [22/05/15 Recursion]
-Adding Numbers:recursion_add.tut
 Extracting Digits:recursive_digits.tut
 Nested Lists:recursion_list.tut
 Extracting Digits Using a Base:recursive_digits2.tut
