@@ -138,7 +138,7 @@ class Installer():
         """Check if the version is Python is suitable - set self.version.""" 
         self.version = sys.version_info[:2]
         if self.version not in [(3, 4)]:
-            self.add_text("\nYou are running Python version %d.%d. You need to install Python 2.7\n" % self.version) 
+            self.add_text("\nYou are running Python version %d.%d. You need to install Python 3.4\n" % self.version)
             return None
         else:
             #print "Python version: ", self.version
