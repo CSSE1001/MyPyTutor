@@ -419,7 +419,7 @@ def try_get_credentials():
             'keyring module'
         )
         install = input(
-            "Type 'yes' if you would like to install the keyring module"
+            "Type 'yes' if you would like to install the keyring module: "
         )
 
         # if the user said no, remember their choice
