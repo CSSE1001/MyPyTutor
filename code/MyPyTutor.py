@@ -133,9 +133,11 @@ def get_install_path(use_gui=True):
         default_path = os.path.join(os.path.expanduser('~'), 'MyPyTutor')
 
     print('Default MyPyTutor install directory: {}'.format(default_path))
-    change_default = input('Change installation directory [yN]: ')
+    change_default = input(
+        "Type 'yes' if you would like to change the install directory: "
+    )
 
-    if change_default != 'y':
+    if change_default != 'yes':
         return default_path
 
     if use_gui:
@@ -416,10 +418,12 @@ def try_get_credentials():
             'We can securely store your username and password using the '
             'keyring module'
         )
-        install = input('Install keyring module [yN]: ')
+        install = input(
+            "Type 'yes' if you would like to install the keyring module"
+        )
 
         # if the user said no, remember their choice
-        if install != 'y':
+        if install != 'yes':
             cfg.online.store_credentials = False
             save_config(cfg)
 
