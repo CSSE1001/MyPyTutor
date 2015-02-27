@@ -95,8 +95,12 @@ def install_mpt(install_path, url=DEFAULT_MPT_URL):
     print('Installing MyPyTutor...', end='', flush=True)
 
     # grab the latest zip file
-    urlobj = URLopener()
-    filename, _ = urlobj.retrieve(url)
+    try:
+        urlobj = URLopener()
+        filename, _ = urlobj.retrieve(url)
+    except Exception:
+        print('failed')
+        sys.exit(1)
 
     # extract the file
     with ZipFile(filename) as zf:
@@ -259,7 +263,7 @@ def bootstrap_tutorials():
     from tutorlib.gui.app.support import safely_extract_zipfile
     from tutorlib.interface.problems \
             import TutorialPackage, TutorialPackageError
-    from tutorlib.interface.web_api import WebAPI
+    from tutorlib.interface.web_api import WebAPI, WebAPIError
 
     # grab our config file
     cfg = load_config()
@@ -284,7 +288,11 @@ def bootstrap_tutorials():
         print('Downloading default tutorial package...', end='', flush=True)
 
         web_api = WebAPI()
-        filename = web_api.get_tutorials_zipfile()
+        try:
+            filename = web_api.get_tutorials_zipfile()
+        except WebAPIError:
+            print('failed')
+            sys.exit(1)
 
         print('done')
 
@@ -318,7 +326,7 @@ def update_default_tutorial_package():
             import remove_directory_contents, safely_extract_zipfile
     from tutorlib.interface.problems \
             import TutorialPackage, TutorialPackageError
-    from tutorlib.interface.web_api import WebAPI
+    from tutorlib.interface.web_api import WebAPI, WebAPIError
 
     print('Checking for tutorial package updates...', end='', flush=True)
 
@@ -336,7 +344,12 @@ def update_default_tutorial_package():
 
     # check if we need to do an update at all
     web_api = WebAPI()
-    timestamp = web_api.get_tutorials_timestamp()
+
+    try:
+        timestamp = web_api.get_tutorials_timestamp()
+    except WebAPIError:
+        print('failed')
+        return
 
     # we need to be comparing as ints
     create_tuple = lambda t: tuple(map(int, t.split('.')))
@@ -353,7 +366,11 @@ def update_default_tutorial_package():
     print('Updating tutorial package...', end='', flush=True)
 
     # grab the zipfile
-    zip_path = web_api.get_tutorials_zipfile()
+    try:
+        zip_path = web_api.get_tutorials_zipfile()
+    except WebAPIError:
+        print('failed')
+        return
 
     # extract the zipfile into our empty tutorial directory
     remove_directory_contents(tutorial_package.options.tut_dir)
