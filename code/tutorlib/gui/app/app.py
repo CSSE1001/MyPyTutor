@@ -65,6 +65,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
 
     """
     def __init__(self, master, web_api=None):
+        assert web_api is None or web_api.is_logged_in, \
+                'If a WebAPI instance is provided, it must be logged in'
+
         #### Set up the window
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
