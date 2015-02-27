@@ -315,7 +315,7 @@ class WebAPI():
         }
 
         result = self._get(values, require_login=False)
-        return self._download(result.strip(), 'tutzip.zip')
+        return self._download(result.strip())
 
     def get_mpt_zipfile(self):
         """
@@ -333,7 +333,7 @@ class WebAPI():
         }
 
         result = self._get(values, require_login=False)
-        return self._download(result.strip(), 'mpt.zip')
+        return self._download(result.strip())
 
     def get_version(self):
         """
