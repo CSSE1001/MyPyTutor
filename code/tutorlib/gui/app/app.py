@@ -10,8 +10,6 @@ from tutorlib.config.configuration \
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output \
         import AnalysisOutput, TestOutput, TestOutputDelegate
-from tutorlib.gui.app.support \
-        import remove_directory_contents, safely_extract_zipfile
 from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
