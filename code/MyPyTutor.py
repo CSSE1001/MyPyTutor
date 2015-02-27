@@ -482,12 +482,14 @@ def try_login(username, password):
 
     try:
         success = web_api.login(username, password)
-
-        # if the login failed (but did not throw), clear the credentials
-        if not success:
-            reset_credentials()
     except WebAPIError:
         success = False
+
+    # it's safer to clear the credentials even if the login threw
+    # this will cause users to have to log in again if they try to run MPT
+    # without an internet connection, but oh well
+    if not success:
+        reset_credentials()
 
     print('done' if success else 'failed')
     return web_api if success else None
