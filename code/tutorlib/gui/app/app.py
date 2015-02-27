@@ -70,10 +70,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
 
-        width = min(master.winfo_screenwidth(), 600)
-        height = min(master.winfo_screenheight(), 800)
-        master.geometry('{}x{}'.format(width, height))
-
         #### Set up our menu
         self.menu = TutorialMenu(master, delegate=self)
         master.config(menu=self.menu)
@@ -108,6 +104,12 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
             self._login_status_change(logged_in=True, do_sync=False)
 
         self.sync_client = SyncClient(self.web_api)
+
+        ## Finalise GUI Setup
+
+        width = min(master.winfo_screenwidth(), self.cfg.resolution.width)
+        height = min(master.winfo_screenheight(), self.cfg.resolution.height)
+        master.geometry('{}x{}'.format(width, height))
 
         #### Create GUI Widgets
         ## Top Frame
@@ -345,6 +347,10 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
                 pass  # who cares at this point
 
             self.attempts.save()
+
+            self.cfg.resolution.width = self.master.winfo_width()
+            self.cfg.resolution.height = self.master.winfo_height()
+
             save_config(self.cfg)
 
             self.master.destroy()

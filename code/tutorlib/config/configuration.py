@@ -17,6 +17,8 @@ from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
 SPECIAL_FORMATS = {
     ('online', 'store_credentials'): bool,
+    ('resolution', 'height'): int,
+    ('resolution', 'width'): int,
     ('tutorials', 'names'): list,
 }
 
@@ -65,8 +67,12 @@ def load_config():
     # place to *use* them anyway
     defaults = {
         'online': {
-            'store_credentials': 1,
+            'store_credentials': '1',
             'username': '',
+        },
+        'resolution': {
+            'height': '800',
+            'width': '600',
         },
         'tutorials': {
             'names': '',
