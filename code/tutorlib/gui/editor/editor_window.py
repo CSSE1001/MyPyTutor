@@ -29,7 +29,7 @@ import tutorlib.gui.editor.bindings as Bindings  # be consistent with idlelib
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.io_binding import TutorIOBinding
 from tutorlib.utils.fonts import FIXED_FONT
-import tutorlib.gui.utils.messagebox as tkmessagebox
+import tutorlib.utils.messagebox as tkmessagebox
 
 
 class TutorEditor(EditorWindow.EditorWindow):
