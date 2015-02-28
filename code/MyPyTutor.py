@@ -95,9 +95,11 @@ def install_mpt(install_path, url=DEFAULT_MPT_URL):
     print('Installing MyPyTutor...', end='', flush=True)
 
     # grab the latest zip file
+    # we use an explicit filename here because we don't yet have access
+    # to the tutorlib module for abstracting away temporary file creation
     try:
         urlobj = URLopener()
-        filename, _ = urlobj.retrieve(url)
+        filename, _ = urlobj.retrieve(url, 'MyPyTutor.zip')
     except Exception:
         print('failed')
         sys.exit(1)

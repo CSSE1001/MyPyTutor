@@ -1,11 +1,11 @@
 import base64
 import json
 import urllib.parse
-import urllib.request
 import webbrowser
 
 from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
+from tutorlib.utils.tmp import retrieve
 
 
 HELP_URL = 'http://csse1001.uqcloud.net/mpt3/help'
@@ -273,10 +273,8 @@ class WebAPI():
           WebAPIError: If any exception is encountered in the download process.
 
         """
-        urlobj = urllib.request.URLopener({})
-
         try:
-            filename, _ = urlobj.retrieve(url, filename=filename)
+            filename = retrieve(url, filename=filename)
             return filename
         except Exception as e:
             raise WebAPIError(
@@ -315,7 +313,7 @@ class WebAPI():
         }
 
         result = self._get(values, require_login=False)
-        return self._download(result.strip(), 'tutzip.zip')
+        return self._download(result.strip())
 
     def get_mpt_zipfile(self):
         """
@@ -333,7 +331,7 @@ class WebAPI():
         }
 
         result = self._get(values, require_login=False)
-        return self._download(result.strip(), 'mpt.zip')
+        return self._download(result.strip())
 
     def get_version(self):
         """
