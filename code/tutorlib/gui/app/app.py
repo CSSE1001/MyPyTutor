@@ -20,6 +20,7 @@ from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.utils.decorators import skip_if_attr_none
 import tutorlib.utils.messagebox as tkmessagebox
 from tutorlib.utils.threading import exec_sync
+from tutorlib.utils.tmp import cleanup_temp_files
 from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import run_tests
@@ -340,18 +341,20 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         if self.editor.close() == tkmessagebox.YES:
             self.interpreter.kill()
 
-            self.synchronise(suppress_popups=True)
-            try:
-                self.logout()
-            except WebAPIError:
-                pass  # who cares at this point
-
             self.attempts.save()
 
             self.cfg.resolution.width = self.master.winfo_width()
             self.cfg.resolution.height = self.master.winfo_height()
 
             save_config(self.cfg)
+
+            cleanup_temp_files()
+
+            self.synchronise(suppress_popups=True)
+            try:
+                self.logout()
+            except WebAPIError:
+                pass  # who cares at this point
 
             self.master.destroy()
 

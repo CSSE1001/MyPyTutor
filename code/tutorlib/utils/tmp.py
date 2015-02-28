@@ -1,3 +1,4 @@
+import os
 from shutil import copyfileobj
 from tempfile import mkstemp as _mkstemp
 from urllib.request import urlopen
@@ -36,3 +37,17 @@ def retrieve(url, filename=None):
         copyfileobj(response, f)
 
     return filename
+
+
+def cleanup_temp_files():
+    """
+    Clean up the MyPyTutor temporary directory.
+
+    """
+    for fn in os.listdir(TMP_DIRECTORY):
+        path = os.path.join(TMP_DIRECTORY, fn)
+
+        try:
+            os.remove(path)
+        except Exception:
+            pass  # ignore errors -- we'll get them next time
