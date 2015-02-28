@@ -5,7 +5,7 @@ from subprocess import Popen
 import sys
 from tempfile import mkstemp
 
-from tutorlib.gui.utils.fonts import FIXED_FONT
+from tutorlib.utils.fonts import FIXED_FONT
 
 
 CODE_FILE_FORMAT = """

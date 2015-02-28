@@ -28,7 +28,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 
-from tutorlib.gui.utils.fonts import NORMAL_NAME, FIXED_NAME
+from tutorlib.utils.fonts import NORMAL_NAME, FIXED_NAME
 
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']

@@ -1,6 +1,6 @@
 from threading import Thread
 
-from tutorlib.gui.utils.root import get_root_widget
+from tutorlib.utils.root import get_root_widget
 
 
 def exec_sync(f, args=(), kwargs=None, sleep_time=1e-2):

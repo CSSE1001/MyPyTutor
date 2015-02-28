@@ -24,7 +24,7 @@ from abc import ABCMeta, abstractmethod
 import tkinter as tk
 from tkinter import ttk
 
-from tutorlib.gui.utils.fonts import FIXED_FONT
+from tutorlib.utils.fonts import FIXED_FONT
 from tutorlib.testing.results import TutorialTestResult
 from tutorlib.testing.support import StudentTestError
 

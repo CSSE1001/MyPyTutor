@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 import string
 import tkinter as tk
 
-from tutorlib.gui.utils.root import get_root_widget
+from tutorlib.utils.root import get_root_widget
 from tutorlib.interface.web_api import WebAPI
 
 
