@@ -442,13 +442,11 @@ def try_get_credentials():
         )
 
         # if the user said no, remember their choice
-        if install != 'yes':
+        # we also remember if the install failed, as this is unlikely to change
+        if install != 'yes' or not install_keyring_module():
             cfg.online.store_credentials = False
             save_config(cfg)
 
-            return None, None
-
-        if not install_keyring_module():
             return None, None
 
         import keyring  # should cause no problems at this point
