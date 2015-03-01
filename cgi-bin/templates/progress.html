@@ -144,6 +144,22 @@ function checkbox_click(name) {
     </div>
 
     % endif
+<!-- TODO: -->
+<div class="alert alert-dismissible alert-warning">
+<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<p>
+Note: there is a known issue with counting marks, due to issues in getting stored data.
+Some information here may be incorrect for some users.
+</p>
+
+<p>
+(Details: the function <code>support.get_submissions_for_user</code> doesn't report
+the same data or format as <code>progress.get_submissions</code>, particularly for
+problems that have been edited or removed.
+Discuss in <a href="https://github.com/CSSE1001/MyPyTutor/issues/116">#116</a>.)
+</p>
+</div>
+<!-- END TODO -->
     % if is_admin:
     <form action="#" method="POST" id="edit_form">
     % endif
