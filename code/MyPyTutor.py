@@ -437,13 +437,17 @@ def try_get_credentials():
             'We can securely store your username and password using the '
             'keyring module'
         )
-        install = input(
-            "Type 'yes' if you would like to install the keyring module: "
+        store = input(
+            "Type 'yes' if you would like us to store your credentials: "
         )
+        if store == 'yes':
+            install = input(
+                "Type 'yes' if you would like to install the keyring module: "
+            )
 
         # if the user said no, remember their choice
         # we also remember if the install failed, as this is unlikely to change
-        if install != 'yes' or not install_keyring_module():
+        if store != 'yes' or install != 'yes' or not install_keyring_module():
             cfg.online.store_credentials = False
             save_config(cfg)
 
