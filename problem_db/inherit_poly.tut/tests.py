@@ -120,7 +120,7 @@ class TestMultipleRectangleVertices(StudentTestCase):
             return outer_bounds([r1, r2])
 
         result = self.run_in_student_context(_get_results)
-        self.assertEqual(result, [(0, 0), (4, 5)])
+        self.assertEqual(result, ((0, 0), (4, 5)))
 
     def test_alternate(self):
         def _get_results():
@@ -129,7 +129,7 @@ class TestMultipleRectangleVertices(StudentTestCase):
             return outer_bounds([r1, r2])
 
         result = self.run_in_student_context(_get_results)
-        self.assertEqual(result, [(0, 0), (4, 9)])
+        self.assertEqual(result, ((0, 0), (4, 9)))
 
 
 TEST_CLASSES = [

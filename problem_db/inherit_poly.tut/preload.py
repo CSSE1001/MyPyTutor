@@ -110,7 +110,7 @@ def outer_bounds(shapes):
     return (top_left_x, top_left_y), (bottom_right_x, bottom_right_y)
 
 
+# example usage
+# note that total_area doesn't know nor care that we used instances of Square
 shapes = [Square(2), Square(4)]
 area = total_area(shapes)
-
-print('Total area: {}'.format(area))
