@@ -50,6 +50,7 @@ A Point Class Definition:class_point.tut
 [01/05/15 Inheritance]
 Using Inheritance:inherit_def.tut
 Method Calls:inherit_calls.tut
+Polymorphism:inherit_poly.tut
 
 [15/05/15 GUI]
 GUI Layout Example I : gui1.tut : layout1.gif
