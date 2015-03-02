@@ -112,5 +112,5 @@ def outer_bounds(shapes):
 
 # example usage
 # note that total_area doesn't know nor care that we used instances of Square
-shapes = [Square(2), Square(4)]
+shapes = [Square(2), Square(4, origin=(2, 2))]
 area = total_area(shapes)

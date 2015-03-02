@@ -132,6 +132,29 @@ class TestMultipleRectangleVertices(StudentTestCase):
         self.assertEqual(result, ((0, 0), (4, 9)))
 
 
+class TestRectangleWithShiftedOrigin(StudentTestCase):
+    DESCRIPTION = 'r = Rectangle(4, 3, origin=(1, 1)); r.vertices() -> [(1, 1), (1, 4), (5, 4), (5, 1)]'
+    MAIN_TEST = 'test_main'
+
+    def test_main(self):
+        def _get_results():
+            r = Rectangle(4, 3, origin=(1, 1))
+            return r.vertices()
+
+        result = self.run_in_student_context(_get_results)
+        expected = [(1, 1), (1, 4), (5, 4), (5, 1)]
+        self.assertEqual(sorted(result), sorted(expected))
+
+    def test_alternate(self):
+        def _get_results():
+            r = Rectangle(7, 2, origin=(2, 3))
+            return r.vertices()
+
+        result = self.run_in_student_context(_get_results)
+        expected = [(2, 3), (2, 5), (9, 5), (9, 3)]
+        self.assertEqual(sorted(result), sorted(expected))
+
+
 TEST_CLASSES = [
     TestRectangleArea,
     TestRectangleVertices,
@@ -139,4 +162,5 @@ TEST_CLASSES = [
     TestTriangleVertices,
     TestMultipleRectangleArea,
     TestMultipleRectangleVertices,
+    TestRectangleWithShiftedOrigin,
 ]
