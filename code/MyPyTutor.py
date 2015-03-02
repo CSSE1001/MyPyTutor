@@ -50,6 +50,17 @@ def execl(cmd, *args):
         os.execl(cmd, *args)
 
 
+def get_script_dir():
+    """
+    Return the path to the script.
+
+    The use of realpath in both places is necessary to get sensible behaviour
+    under Windows.
+
+    """
+    return os.path.realpath(os.path.dirname(os.path.realpath(__file__)))
+
+
 def setup_modules():
     """
     Perform any global module setup needed by MyPyTutor.
@@ -218,7 +229,7 @@ def update_mpt():
 
             # extract over the script path
             # do NOT delete things; the user could have other stuff here
-            script_dir = os.path.dirname(os.path.realpath(__file__))
+            script_dir = get_script_dir()
 
             safely_extract_zipfile(mpt_zip_path, script_dir)
 
@@ -304,7 +315,7 @@ def bootstrap_tutorials():
         # CSSE1001Tutorials key
         print('Installing default tutorial package...', end='', flush=True)
 
-        script_dir = os.path.dirname(__file__)
+        script_dir = get_script_dir()
         options.tut_dir = os.path.join(script_dir, 'CSSE1001Tutorials')
         options.ans_dir = os.path.join(script_dir, 'CSSE1001Answers')
 
