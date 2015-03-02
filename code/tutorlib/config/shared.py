@@ -11,3 +11,7 @@ else:
 
 CONFIG_FILE = os.path.join(MPT_DIR, 'config')
 TUTORIAL_ATTEMPTS_FILE = os.path.join(MPT_DIR, 'tutorial_attempts')
+
+TMP_DIRECTORY = os.path.join(MPT_DIR, 'tmp')
+if not os.path.exists(TMP_DIRECTORY):
+    os.mkdir(TMP_DIRECTORY)

@@ -194,6 +194,7 @@ class Tutorial():
         self.hints = config_lcls.get('HINTS', [])
 
         # initial values for lazy properties
+        self._hash = None
         self._preload_code_text = None
 
     def _get_answer_hash(self):
@@ -263,17 +264,19 @@ class Tutorial():
           A sha512 hash of the tutorial problem, according to the above rules.
 
         """
-        hash_obj = sha512()
+        if self._hash is None:
+            hash_obj = sha512()
 
-        for module_name in self.SUBMODULES:
-            text = self.read_submodule(module_name).encode('utf8')
-            hash_obj.update(text)
+            for module_name in self.SUBMODULES:
+                text = self.read_submodule(module_name).encode('utf8')
+                hash_obj.update(text)
 
-        for file_name in self.FILES:
-            text = self.read_file(file_name).encode('utf8')
-            hash_obj.update(text)
+            for file_name in self.FILES:
+                text = self.read_file(file_name).encode('utf8')
+                hash_obj.update(text)
 
-        return hash_obj.digest()
+            self._hash = hash_obj.digest()
+        return self._hash
 
     def _assert_valid_file(self, file_name):
         """

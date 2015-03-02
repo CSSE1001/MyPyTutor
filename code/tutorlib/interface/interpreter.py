@@ -3,9 +3,9 @@ from contextlib import contextmanager
 import os
 from subprocess import Popen
 import sys
-from tempfile import mkstemp
 
-from tutorlib.gui.utils.fonts import FIXED_FONT
+from tutorlib.utils.fonts import FIXED_FONT
+from tutorlib.utils.tmp import mkstemp
 
 
 CODE_FILE_FORMAT = """

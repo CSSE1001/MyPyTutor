@@ -24,7 +24,8 @@ import tkinter.filedialog
 import os
 
 from tutorlib.gui.dialogs.dialog import Dialog
-import tutorlib.gui.utils.messagebox as tkmessagebox
+import tutorlib.utils.messagebox as tkmessagebox
+
 
 LABEL_TEXT = """Before using MyPyTutor or when adding a new tutorial you need to set two folders.
 The tutorial folder contains the tutorial problems that you should have already installed.

@@ -14,9 +14,7 @@ def strip_header(text):
     elif text.startswith(NULL_RESPONSE_HEEADER):
         raise NullResponse(text[len(NULL_RESPONSE_HEEADER):])
     else:
-        raise BadResponse("Invalid response from server: {!r}"
-                          .format(text[:len(MPT_HEADER)] + '...'
-                                  if len(text) > len(MPT_HEADER)+3 else text))
+        raise BadResponse("Invalid response from server: {!r}".format(text))
 
 
 class FormParser(html.parser.HTMLParser):

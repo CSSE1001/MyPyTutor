@@ -2,7 +2,7 @@ from functools import partial
 import inspect
 import tkinter.messagebox as tkmessagebox
 
-from tutorlib.gui.utils.root import get_root_widget
+from tutorlib.utils.root import get_root_widget
 
 
 def show(title, message, f=tkmessagebox.showinfo, *args, **kwargs):

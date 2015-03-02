@@ -10,8 +10,6 @@ from tutorlib.config.configuration \
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
 from tutorlib.gui.app.output \
         import AnalysisOutput, TestOutput, TestOutputDelegate
-from tutorlib.gui.app.support \
-        import remove_directory_contents, safely_extract_zipfile
 from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
@@ -19,9 +17,10 @@ from tutorlib.gui.dialogs.progress import ProgressPopup
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.editor_window import TutorEditor
-from tutorlib.gui.utils.decorators import skip_if_attr_none
-import tutorlib.gui.utils.messagebox as tkmessagebox
-from tutorlib.gui.utils.threading import exec_sync
+from tutorlib.utils.decorators import skip_if_attr_none
+import tutorlib.utils.messagebox as tkmessagebox
+from tutorlib.utils.threading import exec_sync
+from tutorlib.utils.tmp import cleanup_temp_files
 from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import run_tests
@@ -64,14 +63,13 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
           problem and associated data, such as hints.
 
     """
-    def __init__(self, master):
+    def __init__(self, master, web_api=None):
+        assert web_api is None or web_api.is_logged_in, \
+                'If a WebAPI instance is provided, it must be logged in'
+
         #### Set up the window
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
-
-        width = min(master.winfo_screenwidth(), 600)
-        height = min(master.winfo_screenheight(), 800)
-        master.geometry('{}x{}'.format(width, height))
 
         #### Set up our menu
         self.menu = TutorialMenu(master, delegate=self)
@@ -96,10 +94,23 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         self.attempts = TutorialAttempts()
         self.interpreter = Interpreter()
 
-        self.web_api = WebAPI(self._login_status_change)
-        self.master.after(0, self.login)
+        if web_api is None:
+            self.web_api = WebAPI(self._login_status_change)
+            self.master.after(0, self.login)
+        else:
+            self.web_api = web_api
+            self.web_api.listener = self._login_status_change
+
+            # immediately perform the callback, assuming we've synced already
+            self._login_status_change(logged_in=True, do_sync=False)
 
         self.sync_client = SyncClient(self.web_api)
+
+        ## Finalise GUI Setup
+
+        width = min(master.winfo_screenwidth(), self.cfg.resolution.width)
+        height = min(master.winfo_screenheight(), self.cfg.resolution.height)
+        master.geometry('{}x{}'.format(width, height))
 
         #### Create GUI Widgets
         ## Top Frame
@@ -241,50 +252,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         # update menu
         self.menu.set_selected_tutorial_package(self.tutorial_package)
 
-        # start update process
-        self.master.after(0, self._update_tutorial_package)
-
-    def _update_tutorial_package(self):
-        """
-        Update the current tutorial package.
-
-        This will only perform the update if the current package is out of date
-        according to the server.
-
-        This process is NOT performed in the background, as we can't proceed
-        with setup (including with synchronisation) until and unless we know
-        that our local tutorials are up to date.
-
-        """
-        try:
-            timestamp = self.web_api.get_tutorials_timestamp()
-        except WebAPIError as e:
-            self._display_web_api_error(e)
-            return
-
-        # we need to be comparing as ints
-        create_tuple = lambda t: tuple(map(int, t.split('.')))
-        server_timestamp = create_tuple(timestamp)
-        local_timestamp = create_tuple(self.tutorial_package.timestamp)
-
-        # we only want to update if the server's version is more recent
-        # a more recent local version should only arise in development, anyway
-        if server_timestamp <= local_timestamp:
-            return
-
-        # grab the zipfile
-        zip_path = self.web_api.get_tutorials_zipfile()
-
-        # extract the zipfile into our empty tutorial directory
-        remove_directory_contents(self.tutorial_package.options.tut_dir)
-        safely_extract_zipfile(zip_path, self.tutorial_package.options.tut_dir)
-
-        # reload our tutorial package
-        # this will call this function recursively, but will exit if the
-        # timestamps match correctly (as they must if there has not been an
-        # update in the interim)
-        self.tutorial_package = self.tutorial_package.name
-
     def _next_hint(self):
         """
         Display the next hint.
@@ -374,14 +341,20 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         if self.editor.close() == tkmessagebox.YES:
             self.interpreter.kill()
 
+            self.attempts.save()
+
+            self.cfg.resolution.width = self.master.winfo_width()
+            self.cfg.resolution.height = self.master.winfo_height()
+
+            save_config(self.cfg)
+
+            cleanup_temp_files()
+
             self.synchronise(suppress_popups=True)
             try:
                 self.logout()
             except WebAPIError:
                 pass  # who cares at this point
-
-            self.attempts.save()
-            save_config(self.cfg)
 
             self.master.destroy()
 
@@ -549,11 +522,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         # this will fill out the results and static analysis sections
         self.run_tests()
 
-    def _login_status_change(self, logged_in):
-        # sync no matter what
-        callback = partial(self.synchronise, no_login=not logged_in)
-        callback.__name__ = 'callback'
-        self.master.after(0, callback)
+    def _login_status_change(self, logged_in, do_sync=True):
+        if do_sync:  # on login or logout
+            callback = partial(self.synchronise, no_login=not logged_in)
+            callback.__name__ = 'callback'
+            self.master.after(0, callback)
 
         if logged_in:
             self.master.after(0, self.update_submissions)
