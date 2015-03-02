@@ -1,0 +1,26 @@
+<h3>Inheritance - Polymorphism</h3>
+<p>
+    One advantage of using subclasses is the ability to use polymorphism.
+</p>
+<p>
+    The idea behind polymorphism is that several different types of objects can have the same methods, and be treated in the same way.
+</p>
+<p>
+    For example, have a look at the code we've included for this problem.
+    We've defined <tt>Shape</tt> as an abstract base class.
+    It doesn't provide any functionality by itself, but it does supply an interface (in the form of <tt>.area()</tt> and <tt>.vertices()</tt> methods) which are meaningful for any type of 2D Shape.
+</p>
+<p>
+    The <tt>total_area</tt> function makes use of this to calculate the area of any kind of <tt>Shape</tt>.
+    We've provided an example of this with two <tt>Square</tt> instances.
+</p>
+<p>
+    We want you to write <tt>RightAngledTriangle</tt> and <tt>Rectangle</tt> classes which implement this interface.
+</p>
+<p>
+    The constructor for <tt>RightAngledTriangle</tt> accepts one argument, <tt>vertices</tt>, being a list of the points of the triangle relative to its origin.
+    The first vertex will be at the right angle.
+</p>
+<p>
+    The constructor for <tt>Rectangle</tt> accepts <tt>width</tt> and <tt>height</tt>.
+</p>
