@@ -5,10 +5,8 @@ class CodeVisitor(TutorialNodeVisitor):
 class Analyser(CodeAnalyser):
     def _analyse(self):
         num_expected_args = {
-            'Rectangle.__init__': 3,
             'Rectangle.area': 1,
             'Rectangle.vertices': 1,
-            'RightAngledTriangle.__init__': 2,
             'RightAngledTriangle.area': 1,
             'RightAngledTriangle.vertices': 1,
         }
@@ -23,6 +21,36 @@ class Analyser(CodeAnalyser):
             elif 'self' not in function.args:
                 self.add_warning(
                     'The first argument to a method should be \'self\''
+                )
+            elif len(function.args) != argc:
+                self.add_error(
+                    'You defined {} to accept {} arguments, but it should '
+                    'accept {} (including self)'.format(
+                        method_name, len(function.args), argc
+                    )
+                )
+
+        num_expected_origin = {
+            'Rectangle.__init__': 4,
+            'RightAngledTriangle.__init__': 3,
+        }
+
+        for method_name, argc in num_expected_origin.items():
+            function = self.visitor.functions[method_name]
+
+            if not function.is_defined:
+                self.add_error(
+                    'You need to define a {} method'.format(method_name)
+                )
+            elif 'self' not in function.args:
+                self.add_warning(
+                    'The first argument to a method should be \'self\''
+                )
+            elif not function.defaults:
+                self.add_warning(
+                    'The {} method should accept a keyword argument'.format(
+                        method_name
+                    )
                 )
             elif len(function.args) != argc:
                 self.add_error(
