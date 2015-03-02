@@ -51,11 +51,15 @@ class FunctionDefinition():
             self.is_defined = False
 
             self.args = NonePaddedList()
+            self.defaults = NonePaddedList()
         else:
             self.is_defined = True
 
             arg_ids = list(map(identifier, node.args.args))
             self.args = NonePaddedList(arg_ids)
+
+            default_ids = list(map(identifier, node.args.defaults))
+            self.defaults = NonePaddedList(default_ids)
 
             # TODO: kwargs, varargs etc
 
