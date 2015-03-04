@@ -593,7 +593,7 @@ def add_feedback(user, subject, feedback, code=''):
 
     # actually write it to file
     with open(feedback_path, 'w') as f:
-        f.write(json.dumps(d))
+        f.write(json.dumps(d, indent=4))
 
 
 def get_all_feedback():
@@ -641,7 +641,7 @@ def _get_or_create_user_attempts_file(user):
     # create the file if it does not exist
     if not os.path.exists(attempts_path):
         with open(attempts_path, 'w') as f:
-            f.write(json.dumps({}))
+            f.write(json.dumps({}, indent=4))
 
     return attempts_path
 
@@ -670,4 +670,4 @@ def record_attempts(user, tutorial_hash, num_attempts):
 
     # write this out to file
     with open(attempts_path, 'w') as f:
-        f.write(json.dumps(attempts))
+        f.write(json.dumps(attempts, indent=4))
