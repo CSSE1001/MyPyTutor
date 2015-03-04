@@ -244,7 +244,12 @@ def update_mpt(force_update=False):
             print('done')
 
             # re-exec with the new version
-            execl(sys.executable, sys.executable, *sys.argv)
+            # remove update arg, or we get an infinite loop
+            argv = sys.argv
+            if '--force-update-mpt' in argv:
+                argv.remove('--force-update-mpt')
+
+            execl(sys.executable, sys.executable, *argv)
 
     try:
         _check_for_updates()
