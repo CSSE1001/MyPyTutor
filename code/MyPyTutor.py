@@ -600,9 +600,39 @@ def launch_mpt(web_api=None):
     # if we've made it to here, assume these imports will succeed
     from tutorlib.gui.app.app import TutorialApp
 
+    print('Running MyPyTutor...', end='', flush=True)
+
     root = tk.Tk()
-    _ = TutorialApp(root, web_api=web_api)
+    app = TutorialApp(root, web_api=web_api)
     root.mainloop()
+
+    print('done')
+
+    return app
+
+
+def shutdown(app):
+    from tutorlib.interface.web_api import WebAPIError
+    from tutorlib.utils.tmp import cleanup_temp_files
+
+    # sync tutorials if necessary
+    if app.web_api.is_logged_in:
+        synchronise_problems(app.web_api)
+
+        print('Logging out of MyPyTutor...', end='', flush=True)
+
+        try:
+            app.web_api.logout()
+        except WebAPIError:
+            pass  # who cares at this point
+
+        print('done')
+
+    # wipe out our temp files
+    print('Cleaning up...', end='', flush=True)
+    cleanup_temp_files()
+    print('done')
+
 
 
 def parse_args():
@@ -667,7 +697,10 @@ def main():
         synchronise_problems(web_api)
 
     # launch MyPyTutor itself
-    launch_mpt(web_api)
+    app = launch_mpt(web_api)
+
+    # cleanup (syncrhonise, logout etc)
+    shutdown(app)
 
     return 0
 
