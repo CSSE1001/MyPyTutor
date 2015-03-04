@@ -137,8 +137,14 @@ class WebAPI():
 
         """
         if self.is_logged_in:
-            self.session_manager.logout()
-            self.listener(False)
+            try:
+                self.session_manager.logout()
+                self.listener(False)
+            except Exception as e:
+                raise WebAPIError(
+                    message='Logout Failed',
+                    details=str(e),
+                ) from e
 
     # visualiser
     def visualise(self, code_text):
