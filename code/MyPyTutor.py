@@ -185,9 +185,13 @@ def bootstrap_install(use_gui):
         install_path = get_install_path(use_gui=use_gui)
         install_mpt(install_path)
 
+        # remove the installer, so the user can't keep running it
+        this_path = os.path.realpath(__file__)
+        os.remove(this_path)
+
         # re-exec in MPT dir
-        this_file = os.path.basename(MPT_FILENAME)
-        mpt_path = os.path.join(install_path, this_file)
+        this_filename = os.path.basename(MPT_FILENAME)
+        mpt_path = os.path.join(install_path, this_filename)
 
         argv = [mpt_path] + sys.argv[1:]
 
