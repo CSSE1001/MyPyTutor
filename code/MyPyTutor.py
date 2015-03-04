@@ -596,6 +596,9 @@ def launch_mpt(web_api=None):
         TutorialApp instance.  Defaults to None.  If provided, this must be
         logged in.
 
+    Returns:
+      The TutorialApp instance which was used.
+
     """
     # if we've made it to here, assume these imports will succeed
     from tutorlib.gui.app.app import TutorialApp
@@ -612,6 +615,13 @@ def launch_mpt(web_api=None):
 
 
 def shutdown(app):
+    """
+    Shut down the given app, and perform any necessary cleanup.
+
+    Args:
+      app (TutorialApp): The app which has just terminated.
+
+    """
     from tutorlib.interface.web_api import WebAPIError
     from tutorlib.utils.tmp import cleanup_temp_files
 
