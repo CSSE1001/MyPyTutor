@@ -106,6 +106,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
 
         self.sync_client = SyncClient(self.web_api)
 
+        ## Purely private vars
+        self._is_closing = False
+
         ## Finalise GUI Setup
 
         width = min(master.winfo_screenwidth(), self.cfg.resolution.width)
@@ -338,7 +341,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         to do so (this will prompt the student to save their code).
 
         """
+        # don't try to close more than once
+        # this fixes errors when the user keeps hammering the close button
+        if self._is_closing:
+            return
+
         if self.editor.close() == tkmessagebox.YES:
+            self._is_closing = True
+
             self.interpreter.kill()
 
             self.attempts.save()
