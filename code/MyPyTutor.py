@@ -198,12 +198,16 @@ def bootstrap_install(use_gui):
         execl(sys.executable, sys.executable, *argv)
 
 
-def update_mpt():
+def update_mpt(force_update=False):
     """
     Update MyPyTutor if necessary.
 
     If an update is available, this function will not return, but will instead
     re-exec the current script.
+
+    Args:
+      force_update (bool, optional): If True, update regardless of whether a
+        newer version of MyPyTutor is available on the server.
 
     """
     # if we've made it to here, we assume that we are running in the MyPyTutor
@@ -225,7 +229,7 @@ def update_mpt():
         server_version = create_tuple(version)
         local_version = create_tuple(VERSION)
 
-        if server_version > local_version:
+        if server_version > local_version or force_update:
             print('Updating MyPyTutor...', end='', flush=True)
 
             # grab our new zip file
@@ -333,9 +337,13 @@ def bootstrap_tutorials():
         print('done')
 
 
-def update_default_tutorial_package():
+def update_default_tutorial_package(force_update=False):
     """
     Update the default tutorial package if necessary.
+
+    Args:
+      force_update (bool, optional): If True, update regardless of whether a
+        newer version of the tutorial package is available on the server.
 
     """
     from tutorlib.config.configuration import load_config
@@ -377,7 +385,7 @@ def update_default_tutorial_package():
 
     # we only want to update if the server's version is more recent
     # a more recent local version should only arise in development, anyway
-    if server_timestamp <= local_timestamp:
+    if server_timestamp <= local_timestamp and not force_update:
         return
 
     print('Updating tutorial package...', end='', flush=True)
@@ -601,6 +609,16 @@ def parse_args():
     parser = ArgumentParser()
 
     parser.add_argument(
+        '--force-update-mpt',
+        action='store_true',
+        help='Update MyPyTutor even if this would not normally be required',
+    )
+    parser.add_argument(
+        '--force-update-tutorials',
+        action='store_true',
+        help='Update tutorials even if this would not normally be required',
+    )
+    parser.add_argument(
         '--no-gui',
         action='store_true',
         help='Run the installer without using a GUI',
@@ -630,13 +648,13 @@ def main():
 
     # install and update MyPyTutor
     bootstrap_install(use_gui=not args.no_gui)
-    update_mpt()
+    update_mpt(force_update=args.force_update_mpt)
 
     create_config_if_needed()
 
     # install and update the default tutorial package
     bootstrap_tutorials()
-    update_default_tutorial_package()
+    update_default_tutorial_package(force_update=args.force_update_tutorials)
 
     # try to log the user in automatically
     username, password = try_get_credentials()
