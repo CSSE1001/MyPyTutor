@@ -17,7 +17,7 @@ ADMINS = ['uqprobin']
 #################################################
 # Temporary, for development/debugging purposes
 #               Rhett,      Michael,    Ben,        Jackson,    Sean
-ADMINS.extend(['s4174955', 's4287582', 's4320859', 'uqjgaten', 'uqspurdo'])
+ADMINS.extend(['uqjgaten', 'uqspurdo'])
 #################################################
 
 UNAUTHORISED = """Status: 403 Forbidden
