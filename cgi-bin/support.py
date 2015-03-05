@@ -808,12 +808,18 @@ def add_feedback(user, subject, feedback, code=''):
         f.write(json.dumps(d, indent=4))
 
 
+Feedback = namedtuple(
+    'Feedback',
+    ['user', 'subject', 'date', 'text', 'code']
+)
+
+
 def get_all_feedback():
     """
     Get all feedback.
 
     Returns:
-      A list containing a dictionary for each item of feedback recieved.
+      A list of Feedback objects, one for each item of feedback recieved.
 
     """
     feedback = []
@@ -821,12 +827,16 @@ def get_all_feedback():
     # assumes everything in the dir is valid
     for fn in os.listdir(FEEDBACK_DIR):
         user, _, _ = fn.partition('.')
+        path = os.path.join(FEEDBACK_DIR, fn)
 
-        with open(os.path.join(FEEDBACK_DIR, fn)) as f:
+        mtime = os.path.getmtime(path)
+        date = datetime.utcfromtimestamp(int(mtime))
+
+        with open(path) as f:
             d = json.loads(f.read())
 
-        d['user'] = user
-        feedback.append(d)
+        item = Feedback(user, d['subject'], date, d['feedback'], d['code'])
+        feedback.append(item)
 
     return feedback
 

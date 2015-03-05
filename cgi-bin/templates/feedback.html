@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MyPyTutor Feedback</title>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        .panel-heading i.down,
+        .panel-heading.collapsed i.up {
+            display: none;
+        }
+
+        .panel-heading i.up,
+        .panel-heading.collapsed i.down {
+            display: inline-block;
+        }
+
+        .panel-heading {
+            cursor: pointer;
+        }
+
+        header h1 a,
+        header h1 a:hover,
+        header h1 a:focus {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        .panel-heading .progress {
+            margin: 10px 10px 10px 10px;
+            background-color: #eaeaea;
+        }
+    </style>
+    </head>
+
+    <body>
+    <div class="panel-group" id="feedbackItems" role="tablist" aria-multiselectable="true">
+        % for item in feedback:
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading${loop.index}" data-toggle="collapse"
+                 data-parent="#feedbackItems" data-target="#collapse${loop.index}" aria-expanded="true" aria-controls="collapse${loop.index}">
+                <div class="panel-title clearfix">
+                    <h4 class="pull-left">
+                        ${item.subject}
+                        <small>
+                            (${item.user})
+                        </small>
+                    </h4>
+                    <h4 class="pull-right">${item.date}
+                        <i class="glyphicon glyphicon-circle-arrow-down down"></i>
+                        <i class="glyphicon glyphicon-circle-arrow-up up"></i>
+                    </h4>
+                </div>
+            </div>
+            <div id="collapse${loop.index}" class="panel-collapse collapse ${'in' if loop.index == openIndex else ''}"
+                 role="tabpanel" aria-labelledby="heading${loop.index}">
+                <div class="panel-body">
+                    <div id="feedback-text">
+                        <h5>Feedback Text</h5>
+                        ${item.text}
+                    </div>
+                    % if item.code:
+                    <div id="feedback-code">
+                        <h5>Feedback Code</h5>
+                        ${item.code}
+                    </div>
+                    % endif
+                </div>
+            </div>
+        </div>
+        % endfor
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    </body>
+</html>
