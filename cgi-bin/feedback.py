@@ -25,6 +25,7 @@ def main():
     form = cgi.FieldStorage(keep_blank_values=True)
 
     feedback = support.get_all_feedback()
+    feedback.sort(key=lambda f: f.date)
 
     data = {
         'feedback': feedback,
