@@ -6,6 +6,7 @@ from mako.template import Template
 from mako import exceptions
 
 from admin import admin_init
+from progress import TZ_DELTA  # hacky workaround
 import support
 
 
@@ -19,6 +20,7 @@ def main():
     feedback.sort(key=lambda f: f.date)
 
     data = {
+        'dateOffset': TZ_DELTA,  # hacky workaround
         'feedback': feedback,
         'openIndex': -1,
     }
