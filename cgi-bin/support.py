@@ -621,7 +621,9 @@ NOT_ENROLLED = 'not_enrolled'
 def get_users(query='', enrol_filter=ALL, sort_key=None, reverse=False):
     """Return a list of users, optionally filtered/sorted.
 
-    User information is stored in a file in CSV format.
+    User information for known is stored in a file in CSV format.
+
+    If a user is unknown, then their name and email will be blank.
 
     Args:
       query (str, optional): A string to filter results on. If given, return
@@ -636,21 +638,40 @@ def get_users(query='', enrol_filter=ALL, sort_key=None, reverse=False):
     Returns:
         A list of User objects, filtered/sorted accordingly.
     """
+    users = {}
+
+    # first, grab all of our enrolled users
     with open(USER_INFO_FILE, 'rU') as f:
-        users = []
         for line in f:
             if line.startswith('#'):
                 continue
             id, name, email, enrolled = line.strip().split(',')
+
             # check if the query string is contained in id or name or email and
             # the enrol_filter matches the given enrol state, if given.
             if (any(query.lower() in x.lower() for x in (id, name, email))
                     and enrol_filter in (ALL, enrolled)):
-                users.append(User(id, name, email, enrolled))
+                users[id] = User(id, name, email, enrolled)
+
+    # now, read off all of the users who have logged in
+    for user in os.listdir(ANSWERS_DIR):
+        if user not in users:
+            users[user] = User(user, '', '', NOT_ENROLLED)
+
+    # filter the list direclty from the dictionary
+    user_list = [
+        user for user in users.values() if any(
+            query.lower() in attr.lower()
+            for attr in (user.id, user.name, user.email)
+        ) and enrol_filter in (ALL, user.enrolled)
+    ]
+
+    # sort our list of users if required
     if sort_key is None:
         sort_key = lambda u: u.id
-    users.sort(key=sort_key, reverse=reverse)
-    return users
+    user_list.sort(key=sort_key, reverse=reverse)
+
+    return user_list
 
 
 def get_user(userid):
