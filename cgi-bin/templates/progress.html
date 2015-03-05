@@ -215,7 +215,7 @@ Discuss in <a href="https://github.com/CSSE1001/MyPyTutor/issues/116">#116</a>.)
                             % if is_admin:
                             <td class="check"><input type="checkbox" class="checkbox-set-${group['slug']}" name="problem" value="${problem['hash']}" onClick="checkbox_click('${group['slug']}')"></td>
                             % endif
-                            <td class="problem">${problem['title']}</td>
+                            <td class="problem"><a href="answers.py?user=${user.id}&pset=${group['title']}&tutorial=${problem['title']}">${problem['title']}</a></td>
                             <td class="status">
                                 %if problem.get('status') == 'submitted':
                                 <i class="glyphicon glyphicon-ok"></i> <em>Submitted</em>
