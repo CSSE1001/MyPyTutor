@@ -5,22 +5,13 @@ import cgi
 from mako.template import Template
 from mako import exceptions
 
-from admin import ADMINS, UNAUTHORISED
+from admin import admin_init
 import support
-import uqauth
 
 
 def main():
-    try:
-        user = uqauth.get_user()
-
-        if user not in ADMINS:
-            print UNAUTHORISED.format(user)
-            return
-    except uqauth.Redirected:
+    if not admin_init():
         return
-    else:
-        print "Content-Type: text/html\n"
 
     form = cgi.FieldStorage(keep_blank_values=True)
 

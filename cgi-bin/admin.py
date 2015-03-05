@@ -65,17 +65,24 @@ def summarise_progress(user):
     return counter
 
 
-def main():
-    # Check the user's privileges first
+def admin_init(admins=ADMINS):
     try:
         user = uqauth.get_user()
-        if user not in ADMINS:
+
+        if user not in admins:
             print UNAUTHORISED.format(user)
-            return
+            return False
     except uqauth.Redirected:
-        return
+        return False
     else:
         print "Content-Type: text/html\n"
+        return True
+
+
+def main():
+    # Check the user's privileges first
+    if not admin_init():
+        return
 
     form = cgi.FieldStorage(keep_blank_values=True)
 
