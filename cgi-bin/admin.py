@@ -16,7 +16,7 @@ ADMINS = ['uqprobin']
 
 #################################################
 # Temporary, for development/debugging purposes
-#               Rhett,      Michael,    Ben,        Jackson,    Sean
+#               Jackson,    Sean
 ADMINS.extend(['uqjgaten', 'uqspurdo'])
 #################################################
 
