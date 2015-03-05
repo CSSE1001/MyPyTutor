@@ -2,9 +2,10 @@ from base64 import b64encode
 from contextlib import contextmanager
 import os
 from subprocess import Popen
-from tempfile import mkstemp
+import sys
 
-from tutorlib.gui.utils.fonts import FIXED_FONT
+from tutorlib.utils.fonts import FIXED_FONT
+from tutorlib.utils.tmp import mkstemp
 
 
 CODE_FILE_FORMAT = """
@@ -34,22 +35,39 @@ class Interpreter():
         self._path = None
 
     def __del__(self):
+        self.kill()
         os.remove(self.path)  # will gen before removing, but meh
 
     @property
     def is_alive(self):
         return self.subprocess is not None \
-               and self.subprocess.poll() is not None
+               and self.subprocess.poll() is None
 
     @property
     def args(self):
-        # we hope that idle3 is correctly defined
-        # (idle could be idle2, though it might be worth falling back to it)
-        return [
-            'idle3',
+        """
+        Return the arguments to use to launch the interpreter.
+
+        If we are on Windows, we need to run python with the idle script as
+        its argument, ie /Lib/idlelib/idle.py
+
+        On a decent OS, idle3 will already be in PATH.
+
+        Fail if neither of these conditions are true.
+
+        """
+        base_args = [
             '-t', 'MyPyTutor',  # window title
             '-r', self.path,  # script to run
         ]
+
+        if sys.platform == 'win32':
+            python_dir = os.path.dirname(sys.executable)
+            idle_script = os.path.join(python_dir, 'Lib', 'idlelib', 'idle.py')
+
+            return [sys.executable, idle_script] + base_args
+        else:
+            return ['idle3'] + base_args
 
     @property
     def path(self):
@@ -58,10 +76,8 @@ class Interpreter():
         return self._path
 
     def kill(self):
-        if self.subprocess is not None:
+        if self.is_alive:
             self.subprocess.kill()
-
-        os.remove(self.path)
 
     def reload(self, code):
         """
@@ -86,7 +102,7 @@ class Interpreter():
             f.write(code_file_string)
 
         # terminate existing subprocess if necessary
-        if self.subprocess is not None:
+        if self.is_alive:
             self.subprocess.terminate()
 
         # create the shell

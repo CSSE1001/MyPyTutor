@@ -28,7 +28,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 
-from tutorlib.gui.utils.fonts import NORMAL_NAME, FIXED_NAME
+from tutorlib.utils.fonts import NORMAL_NAME, FIXED_NAME
 
 
 HEADERS = ['h1', 'h2', 'h3', 'h4', 'h5']
@@ -97,15 +97,18 @@ class TutorialHTMLParserDelegate(metaclass=ABCMeta):
 
 
 class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
-    def __init__(self, master, textlen):
+    def __init__(self, master):
         super().__init__(master)
 
-        self.text = tk.Text(self, height=textlen, wrap=tk.WORD)
+        # height sets the minimum size for the window
+        # we want zero so that people with small screens can use MyPyTutor
+        # it will be up to the app to *request* a larger size
+        self.text = tk.Text(self, height=0, wrap=tk.WORD)
         self.text.config(state=tk.DISABLED)
-        self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
         scrollbar = ttk.Scrollbar(self)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        scrollbar.pack(side=tk.LEFT, fill=tk.Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
 

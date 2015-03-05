@@ -9,22 +9,22 @@ Attributes:
 """
 import configparser
 import os
-import sys
 
 from tutorlib.config.namespaces import Namespace
+from tutorlib.config.shared import CONFIG_FILE
 from tutorlib.gui.dialogs.config import TutorialDirectoryPrompt
 
 
-# The config file is stored in the user's home directory
-_SCRIPT_DIR = os.path.expanduser('~')
-CONFIG_FILE = os.path.join(_SCRIPT_DIR, '.mptrc')
-
 SPECIAL_FORMATS = {
+    ('online', 'store_credentials'): bool,
+    ('resolution', 'height'): int,
+    ('resolution', 'width'): int,
     ('tutorials', 'names'): list,
-    ('window_sizes', 'analysis'): int,
-    ('window_sizes', 'output'): int,
-    ('window_sizes', 'output'): int,
 }
+
+
+def config_exists():
+    return os.path.exists(CONFIG_FILE)
 
 
 def load_config():
@@ -66,14 +66,17 @@ def load_config():
     # this involves hard-coding the keys, but that would have to happen in some
     # place to *use* them anyway
     defaults = {
+        'online': {
+            'store_credentials': '1',
+            'username': '',
+        },
+        'resolution': {
+            'height': '800',
+            'width': '600',
+        },
         'tutorials': {
             'names': '',
             'default': '',
-        },
-        'window_sizes': {
-            'analysis': 5,
-            'output': 5,
-            'problem': 20,
         },
     }
 
@@ -154,6 +157,8 @@ def unwrap_value(section, option, value):
         return [elem for elem in value.split(',') if elem]
     elif special_type is int:
         return int(value)
+    elif special_type is bool:
+        return value != '0'
 
     raise AssertionError('Unknown special type {}'.format(special_type))
 
@@ -190,6 +195,8 @@ def wrap_value(section, option, value):
         return ','.join(value)
     elif special_type is int:
         return str(value)
+    elif special_type is bool:
+        return '1' if value else '0'
 
     raise AssertionError('Unknown special type {}'.format(special_type))
 

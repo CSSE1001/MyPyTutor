@@ -49,6 +49,8 @@ A Point Class Definition:class_point.tut
 
 [01/05/15 Inheritance]
 Using Inheritance:inherit_def.tut
+Method Calls:inherit_calls.tut
+Polymorphism:inherit_poly.tut
 
 [15/05/15 GUI]
 GUI Layout Example I : gui1.tut : layout1.gif
@@ -56,7 +58,6 @@ GUI Layout Example II : gui2.tut : layout2.gif
 GUI Layout Example III : gui3.tut : layout3.gif
 
 [22/05/15 Recursion]
-Adding Numbers:recursion_add.tut
 Extracting Digits:recursive_digits.tut
 Nested Lists:recursion_list.tut
 Extracting Digits Using a Base:recursive_digits2.tut

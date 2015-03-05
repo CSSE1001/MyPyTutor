@@ -119,7 +119,17 @@ class SyncClient():
 
             if not success:
                 return False
-        return f
+
+        def try_repeatedly(f, n=3):
+            def fn():
+                for _ in range(n):
+                    result = f()
+                    if result:
+                        return result
+                return result
+            return fn
+
+        return try_repeatedly(f)
 
     def synchronise(self, tutorial_package):
         """
@@ -143,7 +153,7 @@ class SyncClient():
           tutorial_package (TutorialPackage): The tutorial package to sync.
 
         """
-        max_workers = sum(len(pset) for pset in tutorial_package.problem_sets)
+        max_workers = len(tutorial_package.problem_sets)
         with ThreadPoolExecutor(max_workers) as executor:
             futures = []
 

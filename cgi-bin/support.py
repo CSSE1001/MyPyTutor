@@ -23,6 +23,7 @@ File structure:
         <username>/
           submission_log             <- student submission log
           admin_log                  <- log of admin actions taken on the user
+          attempts                   <- record of num attempts at tutorials
           <tutorial_problem_hash>    <- the student's answer, as submitted
       feedback/
         <username>.<feedback_id>     <- an individual item of feedback
@@ -57,6 +58,8 @@ TUTORIAL_HASH_MAPPINGS_FILE = os.path.join(
 )
 SUBMISSION_LOG_NAME = "submission_log"
 ADMIN_LOG_NAME = "admin_log"
+ATTEMPTS_NAME = 'attempts'
+
 DUE_DATE_FORMAT = "%H_%d/%m/%y"
 
 # MyPyTutor version file
@@ -781,7 +784,7 @@ def add_feedback(user, subject, feedback, code=''):
 
     # actually write it to file
     with open(feedback_path, 'w') as f:
-        f.write(json.dumps(d))
+        f.write(json.dumps(d, indent=4))
 
 
 def get_all_feedback():
@@ -805,3 +808,57 @@ def get_all_feedback():
         feedback.append(d)
 
     return feedback
+
+
+def _get_or_create_user_attempts_file(user):
+    """
+    Get the path to the attempts file for the given user.
+
+    The file will be created if it does not exist.
+
+    Args:
+      user (str): The username to get the attempts file for.
+
+    Returns:
+      The path to the attempts file for the given user.
+
+    """
+    # we assume that the username does not need sanitisation
+    user_submissions_dir = _get_or_create_user_submissions_dir(user)
+    attempts_path = os.path.join(
+        user_submissions_dir, ATTEMPTS_NAME
+    )
+
+    # create the file if it does not exist
+    if not os.path.exists(attempts_path):
+        with open(attempts_path, 'w') as f:
+            f.write(json.dumps({}, indent=4))
+
+    return attempts_path
+
+
+def record_attempts(user, tutorial_hash, num_attempts):
+    """
+    Record the given number of attempts by the given user for the given
+    tutorial hash.
+
+    Args:
+      user (str): The username to record attempts for.
+      tutorial_hash (str): The tutorial hash, as a base32 string.
+      num_attempts (int): The number of attempts that the user made at the
+        tutorial before submission.
+
+    """
+    # get the path to the file
+    attempts_path = _get_or_create_user_attempts_file(user)
+
+    # read the existing data in the file
+    with open(attempts_path) as f:
+        attempts = json.loads(f.read())
+
+    # add this attempt, overwriting if it was present before
+    attempts[tutorial_hash] = num_attempts
+
+    # write this out to file
+    with open(attempts_path, 'w') as f:
+        f.write(json.dumps(attempts, indent=4))

@@ -232,7 +232,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
 
 
 @action('submit')
-def submit_answer(tutorial_hash, code):
+def submit_answer(tutorial_hash, code, num_attempts):
     """
     Submit the student's answer for the given tutorial.
 
@@ -257,6 +257,8 @@ def submit_answer(tutorial_hash, code):
       tutorial_hash (str): The sha512 hash of the tutorial folder, encoded as
           a base32 string.
       code (str): The student's code.
+      num_attmepts (int): The number of attempts that the student mde before
+        the current submission.
 
     Returns:
       'OK' if submitted on time.
@@ -307,6 +309,9 @@ def submit_answer(tutorial_hash, code):
     submission = support.add_submission(user, tutorial_hash, code)
     if submission is None:
         raise ActionError('Could not add submission: {}'.format(tutorial_hash))
+
+    # record the number of attempts
+    support.record_attempts(user, tutorial_hash, num_attempts)
 
     # return either 'OK' or 'LATE'
     if submission.date <= tutorial_info.due:

@@ -20,11 +20,13 @@
 
 # The output frame where stdout and stderr are displayed
 
+from abc import ABCMeta, abstractmethod
 import tkinter as tk
 from tkinter import ttk
 
-from tutorlib.gui.utils.fonts import FIXED_FONT
+from tutorlib.utils.fonts import FIXED_FONT
 from tutorlib.testing.results import TutorialTestResult
+from tutorlib.testing.support import StudentTestError
 
 
 def get_code_font(fontsize):
@@ -33,7 +35,7 @@ def get_code_font(fontsize):
 
 
 class TestsListbox(tk.Listbox):
-    COLOR_NOT_RUN = 'yellow'
+    COLOR_NOT_RUN = 'red'
     COLOR_PASS = 'green'
     COLOR_FAIL = 'red'
     COLOR_ERROR = 'red'
@@ -86,15 +88,24 @@ class TestsListbox(tk.Listbox):
         self.selection_set(idx)
 
 
+class TestOutputDelegate(metaclass=ABCMeta):
+    @abstractmethod
+    def highlight_error(self, line_number):
+        pass
+
+
 class TestOutput(ttk.Frame):
-    def __init__(self, master, textlen, fontsize=12):
+    def __init__(self, master, delegate, height=5, fontsize=12):
         super().__init__(master)
+
+        assert isinstance(delegate, TestOutputDelegate)
+        self.delegate = delegate
 
         self.test_results = TestsListbox(self, fontsize=fontsize)
         self.test_results.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
         self.test_results.bind('<<ListboxSelect>>', self.selected_test_result)
 
-        self.output = Output(self, textlen, fontsize=fontsize)
+        self.output = Output(self, height=height, fontsize=fontsize)
         self.output.pack(side=tk.TOP, expand=1, fill=tk.BOTH)
 
     def update_text_length(self, lines):
@@ -135,6 +146,11 @@ class TestOutput(ttk.Frame):
         self.output.add_text(result.output_text, Output.COLOR_OUTPUT)
         self.output.add_text(result.error_text, Output.COLOR_ERROR)
 
+        # highlight error if necessary
+        if isinstance(result.exception, StudentTestError) \
+                and result.exception.line_number is not None:
+            self.delegate.highlight_error(result.exception.line_number)
+
 
 class Output(ttk.Frame):
     COLOR_BASE = 'black'
@@ -142,10 +158,10 @@ class Output(ttk.Frame):
     COLOR_ERROR = 'red'
     COLOR_WARNING = 'orange'
 
-    def __init__(self, master, textlen, fontsize=12):
+    def __init__(self, master, height=5, fontsize=12):
         super().__init__(master)
 
-        self.text = tk.Text(self, height=textlen)
+        self.text = tk.Text(self, height=height)
         self.text.config(state=tk.DISABLED)
         self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
@@ -180,10 +196,13 @@ class Output(ttk.Frame):
     def update_text_length(self, lines):
         self.text.config(height=lines)
 
+    def set_height(self, height):
+        self.text.config(height=height)
+
 
 class AnalysisOutput(Output):
-    def __init__(self, master, textlen, fontsize=12):
-        super().__init__(master, textlen, fontsize=fontsize)
+    def __init__(self, master, height=5, fontsize=12):
+        super().__init__(master, height=height, fontsize=fontsize)
 
     def set_analyser(self, analyser):
         self.clear_text()
@@ -194,3 +213,5 @@ class AnalysisOutput(Output):
 
         if analyser.errors:
             self.add_line(analyser.errors[0], Output.COLOR_ERROR)
+
+        self.set_height((1 if analyser.errors else 0) + len(analyser.warnings))

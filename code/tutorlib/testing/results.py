@@ -1,6 +1,7 @@
+import traceback
 import unittest
 
-from tutorlib.testing.support import construct_header_message
+from tutorlib.testing.support import StudentTestError, construct_header_message
 
 
 class TutorialTestResult():
@@ -182,7 +183,9 @@ class TestResult(unittest.TestResult):
 
         # generate the test message
         if err is not None:
-            _, exception, _ = err
+            _, e, _ = err
+            _, line_number, _, _ = traceback.extract_tb(e.__traceback__)[-1]
+            exception = StudentTestError(str(e), line_number)
         else:
             exception = None
 

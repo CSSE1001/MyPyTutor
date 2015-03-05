@@ -23,7 +23,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from tutorlib.gui.dialogs.dialog import Dialog
-import tutorlib.gui.utils.messagebox as tkmessagebox
+import tutorlib.utils.messagebox as tkmessagebox
 
 
 class LoginDialog(Dialog):

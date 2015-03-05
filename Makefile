@@ -1,5 +1,4 @@
 # Usage:
-# To create the MyPyTutor zip file:
 #   $ make
 #
 # To push all relevant files to the EAIT zone:
@@ -10,11 +9,9 @@
 
 BUILD = CSSE1001Tutorials/CSSE1001Tutorials.zip \
         CSSE1001Tutorials/config.txt \
-        doc/MyPyTutor.html \
         code/mpt_installer.py \
-        www/index.html
 
-all: MyPyTutor34.zip tutorials
+all: tutorials
 
 clean: cleantutorials
 	-rm MyPyTutor34.zip
@@ -25,6 +22,7 @@ cleantutorials:
 	-rm -r CSSE1001Tutorials
 
 tutorials: problem_db/* cleantutorials
+	cp code/MyPyTutor.py code/MyPyTutor.pyw
 	python3 code/create_tutorial.py problem_db/CSSE1001.txt \
 	CSSE1001Tutorials --ignore-invalid-tutorials --verbose
 
@@ -33,4 +31,4 @@ build: tutorials $(BUILD)
 	cp $(BUILD) build
 
 push:
-	./sync
+	./sync CSSE1001Tutorials

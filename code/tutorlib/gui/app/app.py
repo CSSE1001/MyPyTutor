@@ -4,35 +4,34 @@ from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
 import os
 
+from tutorlib.config.attempts import TutorialAttempts
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
-from tutorlib.config.namespaces import Namespace
 from tutorlib.gui.app.menu import TutorialMenuDelegate, TutorialMenu
-from tutorlib.gui.app.output import AnalysisOutput, TestOutput
-from tutorlib.gui.app.support \
-        import remove_directory_contents, safely_extract_zipfile
+from tutorlib.gui.app.output \
+        import AnalysisOutput, TestOutput, TestOutputDelegate
 from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
-from tutorlib.gui.dialogs.help import HelpDialog
 from tutorlib.gui.dialogs.progress import ProgressPopup
 from tutorlib.gui.dialogs.submissions import SubmissionsDialog
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.editor_window import TutorEditor
-from tutorlib.gui.utils.decorators import skip_if_attr_none
-import tutorlib.gui.utils.messagebox as tkmessagebox
-from tutorlib.gui.utils.threading import exec_sync
+from tutorlib.utils.decorators import skip_if_attr_none
+import tutorlib.utils.messagebox as tkmessagebox
+from tutorlib.utils.threading import exec_sync
 from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
-from tutorlib.interface.tests import StudentCodeError, run_tests
+from tutorlib.interface.tests import run_tests
 from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
 
-VERSION = '3.0.0'
+VERSION = '3.0.1'
 
 
-class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
+class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
+        TestOutputDelegate):
     """
     The main MyPyTutor application.
 
@@ -57,11 +56,16 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
           of the current tutorial problem.
       sync_client (SyncClient): The tutorial synchronisation client.
       test_output (TestOutput): The frame displaying the current test results.
+      tutorial_attempts (TutorialAttempts): The number of attempts that the
+        student has made at a tutorial problem.
       tutorial_frame (TutorialFrame): The frame which displays the tutorial
           problem and associated data, such as hints.
 
     """
-    def __init__(self, master):
+    def __init__(self, master, web_api=None):
+        assert web_api is None or web_api.is_logged_in, \
+                'If a WebAPI instance is provided, it must be logged in'
+
         #### Set up the window
         master.title('MyPyTutor')
         master.protocol("WM_DELETE_WINDOW", self.close)
@@ -86,12 +90,29 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         self.menu.set_tutorial_packages(self.cfg.tutorials.names)
 
         ## Objects
+        self.attempts = TutorialAttempts()
         self.interpreter = Interpreter()
 
-        self.web_api = WebAPI(self._login_status_change)
-        self.master.after(0, self.login)
+        if web_api is None:
+            self.web_api = WebAPI(self._login_status_change)
+            self.master.after(0, self.login)
+        else:
+            self.web_api = web_api
+            self.web_api.listener = self._login_status_change
+
+            # immediately perform the callback, assuming we've synced already
+            self._login_status_change(logged_in=True, do_sync=False)
 
         self.sync_client = SyncClient(self.web_api)
+
+        ## Purely private vars
+        self._is_closing = False
+
+        ## Finalise GUI Setup
+
+        width = min(master.winfo_screenwidth(), self.cfg.resolution.width)
+        height = min(master.winfo_screenheight(), self.cfg.resolution.height)
+        master.geometry('{}x{}'.format(width, height))
 
         #### Create GUI Widgets
         ## Top Frame
@@ -101,7 +122,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Tutorial (html display of tutorial problem)
         self.tutorial_frame = TutorialFrame(
             top_frame,
-            self.cfg.window_sizes.problem
         )
         self.tutorial_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
         self.tutorial_frame.splash(version=VERSION)
@@ -136,16 +156,15 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         ## Test Output
         self.test_output = TestOutput(
             top_frame,
-            self.cfg.window_sizes.output,
+            self,
         )
-        self.test_output.pack(fill=tk.BOTH, expand=0)
+        self.test_output.pack(fill=tk.X, expand=tk.FALSE)
 
         ## Analysis Output
         self.analysis_output = AnalysisOutput(
             top_frame,
-            self.cfg.window_sizes.analysis,
         )
-        self.analysis_output.pack(fill=tk.BOTH, expand=0)
+        self.analysis_output.pack(fill=tk.X, expand=tk.FALSE)
 
     ## Properties
     @property
@@ -235,46 +254,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         # update menu
         self.menu.set_selected_tutorial_package(self.tutorial_package)
 
-        # start update process
-        self.master.after(0, self._update_tutorial_package)
-
-    def _update_tutorial_package(self):
-        """
-        Update the current tutorial package.
-
-        This will only perform the update if the current package is out of date
-        according to the server.
-
-        This process is NOT performed in the background, as we can't proceed
-        with setup (including with synchronisation) until and unless we know
-        that our local tutorials are up to date.
-
-        """
-        timestamp = self.web_api.get_tutorials_timestamp()
-
-        # we need to be comparing as ints
-        create_tuple = lambda t: tuple(map(int, t.split('.')))
-        server_timestamp = create_tuple(timestamp)
-        local_timestamp = create_tuple(self.tutorial_package.timestamp)
-
-        # we only want to update if the server's version is more recent
-        # a more recent local version should only arise in development, anyway
-        if server_timestamp <= local_timestamp:
-            return
-
-        # grab the zipfile
-        zip_path = self.web_api.get_tutorials_zipfile()
-
-        # extract the zipfile into our empty tutorial directory
-        remove_directory_contents(self.tutorial_package.options.tut_dir)
-        safely_extract_zipfile(zip_path, self.tutorial_package.options.tut_dir)
-
-        # reload our tutorial package
-        # this will call this function recursively, but will exit if the
-        # timestamps match correctly (as they must if there has not been an
-        # update in the interim)
-        self.tutorial_package = self.tutorial_package.name
-
     def _next_hint(self):
         """
         Display the next hint.
@@ -361,11 +340,20 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         to do so (this will prompt the student to save their code).
 
         """
+        # don't try to close more than once
+        # this fixes errors when the user keeps hammering the close button
+        if self._is_closing:
+            return
+
         if self.editor.close() == tkmessagebox.YES:
+            self._is_closing = True
+
             self.interpreter.kill()
 
-            self.synchronise(suppress_popups=True)
-            self.logout()
+            self.attempts.save()
+
+            self.cfg.resolution.width = self.master.winfo_width()
+            self.cfg.resolution.height = self.master.winfo_height()
 
             save_config(self.cfg)
 
@@ -373,7 +361,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
     ## Public-ish methods
     @skip_if_attr_none('current_tutorial')
-    def run_tests(self, try_to_submit=True):
+    def run_tests(self, try_to_submit=True, record_attempt=False):
         """
         Test and analyse the student code.
 
@@ -389,6 +377,8 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         Args:
           try_to_submit (bool, optional): If True, attempt to submit the
             tutorial if the student's answer is correct.
+        record_attempt (bool, optional): If True, record that the student has
+            made an attempt at the icurrent problem.
 
         Returns:
           Whether the code passes the tests and the analysis.
@@ -403,17 +393,12 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
         # run the tests
         # if the student code cannot be parsed, highlight the problem line
-        try:
-            tester, analyser = run_tests(self.current_tutorial, code_text)
-        except StudentCodeError as e:
-            self.editor.error_line(e.linenum)
+        tester, analyser, error_line = run_tests(
+            self.current_tutorial, code_text
+        )
 
-            self.test_output.set_test_results([])
-            self.analysis_output.set_analyser(
-                Namespace(warnings=[], errors=[])
-            )
-
-            return False
+        if error_line is not None:
+            self.highlight_error(error_line)
 
         # show the results on the UI
         self.test_output.set_test_results(tester.results)
@@ -422,21 +407,36 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         # return whether the code passed
         success = tester.passed and not analyser.errors
 
+        previous_submission_status = self._submissions.get(
+            self.current_tutorial, WebAPI.MISSING
+        )
+
+        # record an attempt if the user has not previously been successful
+        # if the user is not logged in, assume that they have not been
+        # successful; NB that this could cause inflation in some circumstances
+        if record_attempt and success and (not self.web_api.is_logged_in \
+                or previous_submission_status == WebAPI.MISSING):
+            self.attempts.record_attempt(
+                self.current_tutorial, self.tutorial_package
+            )
+
+        # try to submit if successful
         if success and try_to_submit:
             if self.web_api.is_logged_in:
                 try:
                     response = self.web_api.submit_answer(
-                        self.current_tutorial, self.editor.get_text()
+                        self.current_tutorial,
+                        self.editor.get_text(),
+                        self.attempts.num_attempts_for(
+                            self.current_tutorial, self.tutorial_package
+                        )
                     )
                     if response is not None:
                         self.master.after(0, self.update_submissions)
                 except WebAPIError:
                     pass  # ignore: silently trying to submit
             else:
-                status = self._submissions.get(
-                    self.current_tutorial, WebAPI.MISSING
-                )
-                if status == WebAPI.MISSING:
+                if previous_submission_status == WebAPI.MISSING:
                     def _show_info_box():
                         tkmessagebox.showinfo(
                             'Correct!',
@@ -523,10 +523,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         # this will fill out the results and static analysis sections
         self.run_tests()
 
-    def _login_status_change(self, logged_in):
-        # sync no matter what
-        callback = partial(self.synchronise, no_login=not logged_in)
-        self.master.after(0, callback)
+    def _login_status_change(self, logged_in, do_sync=True):
+        if do_sync:  # on login or logout
+            callback = partial(self.synchronise, no_login=not logged_in)
+            callback.__name__ = 'callback'
+            self.master.after(0, callback)
 
         if logged_in:
             self.master.after(0, self.update_submissions)
@@ -589,7 +590,11 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         if self.run_tests(try_to_submit=False):
             try:
                 response = self.web_api.submit_answer(
-                    self.current_tutorial, self.editor.get_text()
+                    self.current_tutorial,
+                    self.editor.get_text(),
+                    self.attempts.num_attempts_for(
+                        self.current_tutorial, self.tutorial_package
+                    ),
                 )
             except WebAPIError as e:
                 self._display_web_api_error(e)
@@ -605,7 +610,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
 
             messages = {self.web_api.OK: 'Code submitted on time',
                         self.web_api.LATE: 'Code submitted late',
-                        self.web_api.LATE_OK: 'Code submitted. You will not '
+                        self.web_api.LATE_OK: 'Code submitted. You will not ' \
                             'receive a penalty for late submission.'}
 
             tkmessagebox.showinfo(
@@ -953,7 +958,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         Show the help dialog.
 
         """
-        HelpDialog(self.master, 'Help')
+        self.web_api.display_help()
 
     def show_about_dialog(self):
         """
@@ -963,5 +968,16 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate):
         TutAboutDialog(self.master, 'About MyPyTutor')
 
     ## TutorEditorDelegate
-    check_solution = run_tests
+    check_solution = lambda self: self.run_tests(record_attempt=True)
     quit_editor = close
+
+    ## TestOutputDelegate
+    def highlight_error(self, line_number):
+        """
+        Highlight an error on the given line.
+
+        Args:
+          line_number (int): The line number to highlight.
+
+        """
+        self.editor.error_line(line_number)

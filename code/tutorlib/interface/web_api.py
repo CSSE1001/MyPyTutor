@@ -1,13 +1,14 @@
 import base64
 import json
 import urllib.parse
-import urllib.request
 import webbrowser
 
 from tutorlib.online.exceptions import AuthError, RequestError, NullResponse
 from tutorlib.online.session import SessionManager
+from tutorlib.utils.tmp import retrieve
 
 
+HELP_URL = 'http://csse1001.uqcloud.net/mpt3/help'
 VISUALISER_URL \
     = 'http://csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
 
@@ -116,7 +117,14 @@ class WebAPI():
             return True
 
         # the SessionManager will keep trying until it is successful
-        success = self.session_manager.login(username, password)
+        try:
+            success = self.session_manager.login(username, password)
+        except Exception as e:
+            raise WebAPIError(
+                message='Login Failed',
+                details=str(e),
+            ) from e
+
         self.listener(success)
 
         return success
@@ -129,8 +137,14 @@ class WebAPI():
 
         """
         if self.is_logged_in:
-            self.session_manager.logout()
-            self.listener(False)
+            try:
+                self.session_manager.logout()
+                self.listener(False)
+            except Exception as e:
+                raise WebAPIError(
+                    message='Logout Failed',
+                    details=str(e),
+                ) from e
 
     # visualiser
     def visualise(self, code_text):
@@ -146,6 +160,15 @@ class WebAPI():
 
         # just open it in the browser
         webbrowser.open(url)
+
+    def display_help(self):
+        """
+        Open the help webpage.
+
+        This method will launch in the default browser.
+
+        """
+        webbrowser.open(HELP_URL)
 
     # general web communictions
     def _request(self, f, values, require_login=True):
@@ -256,10 +279,8 @@ class WebAPI():
           WebAPIError: If any exception is encountered in the download process.
 
         """
-        urlobj = urllib.request.URLopener({})
-
         try:
-            filename, _ = urlobj.retrieve(url, filename=filename)
+            filename = retrieve(url, filename=filename)
             return filename
         except Exception as e:
             raise WebAPIError(
@@ -298,7 +319,7 @@ class WebAPI():
         }
 
         result = self._get(values, require_login=False)
-        return self._download(result.strip(), 'tutzip.zip')
+        return self._download(result.strip())
 
     def get_mpt_zipfile(self):
         """
@@ -316,7 +337,7 @@ class WebAPI():
         }
 
         result = self._get(values, require_login=False)
-        return self._download(result.strip(), 'mpt.zip')
+        return self._download(result.strip())
 
     def get_version(self):
         """
@@ -448,13 +469,15 @@ class WebAPI():
 
         return answer_hash, timestamp
 
-    def submit_answer(self, tutorial, code):
+    def submit_answer(self, tutorial, code, num_attempts):
         """
         Submit the given code as the student's answer for the given tutorial.
 
         Args:
           tutorial (Tutorial): The tutorial to submit the answer for.
           code (str): The code to submit as the student's answer.
+          num_attempts (int): The number of attempts made before successful
+            submission.
 
         Returns:
           True if the answer was submitted on time.
@@ -471,6 +494,7 @@ class WebAPI():
         values = {
             'action': 'submit',
             'tutorial_hash': tutorial_hash,
+            'num_attempts': num_attempts,
             'code': code,
         }
         response = self._post(values)

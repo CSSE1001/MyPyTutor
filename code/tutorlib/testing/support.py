@@ -5,7 +5,10 @@ class StudentTestError(Exception):
     Used when there is no more specific exception available.
 
     """
-    pass
+    def __init__(self, message, line_number=None):
+        super().__init__(message)
+
+        self.line_number = line_number
 
 
 def indent(text, spaces=4):

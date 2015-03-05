@@ -3,21 +3,6 @@ from tutorlib.interface.tutorial import Tutorial
 from tutorlib.testing.tester import TutorialTester
 
 
-class StudentCodeError(Exception):
-    """
-    An exception raised in student code, for which the problem line can be
-    identified.  This includes, inter alia, SyntaxErrors.
-
-    Attributes:
-      message (str): The exception message.
-      linenum (int): The line of the error in the student's code.
-
-    """
-    def __init__(self, message, linenum):
-        super().__init__(message)
-        self.linenum = linenum
-
-
 def run_tests(tutorial, text):
     """
     Run the tests for the given tutorial.
@@ -33,7 +18,7 @@ def run_tests(tutorial, text):
       text (str): The student's code.
 
     Returns:
-      A two-element tuple.
+      A three-element tuple.
 
       The first element in the tuple will be the TutorialTester object which
       was run on the student's code.
@@ -41,12 +26,12 @@ def run_tests(tutorial, text):
       The second element in the tuple will be the CodeAnalyser object which was
       run on the student's code.
 
-      If execution of the student's code times out, None will be returned for
-      both elements.
+      The third element in the tuple will be the line number of any error found
+      in the student's code, or None if no such error exists.
 
-    Raises:
-      StudentCodeError: If an error is encountered when compiling the
-          student's code.
+      Both the TutorialTester and the CodeAnalyser will be returned regardless
+      of whether an error is encountered.  They will have as much state as was
+      possible to determine before the error occurred.
 
     """
     # load the support file (giving students access to functions, variables
@@ -72,7 +57,7 @@ def run_tests(tutorial, text):
 
     error_line = analyser.check_for_errors(text)
     if error_line is not None:
-        raise StudentCodeError('Exception in student code', error_line)
+        return tester, analyser, error_line
 
     if not analyser.errors:
         # there were no errors, so it's safe to perform the analysis
@@ -91,4 +76,4 @@ def run_tests(tutorial, text):
     finally:
         alarm.stop_interrupt()
 
-    return tester, analyser
+    return tester, analyser, None
