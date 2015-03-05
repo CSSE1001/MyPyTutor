@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MyPyTutor Progress :: ${user.get("name")}</title>
-</head>
+<meta charset="UTF-8">
+<title>MyPyTutor Progress :: ${user.name}</title>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
+    % if is_admin:
+    th.check,
+    td.check {
+        width: 1%;
+    }
+
+    % endif
     th.problem,
     td.problem {
-        width: 34%;
+        width: 33%;
     }
 
     th.status,
@@ -33,35 +40,159 @@
     .panel-heading {
         cursor: pointer;
     }
+
+    header h1 a,
+    header h1 a:hover,
+    header h1 a:focus {
+        color: inherit;
+        text-decoration: inherit;
+    }
+
+    .panel-heading .progress {
+        margin: 10px 10px 10px 10px;
+        background-color: #eaeaea;
+    }
 </style>
+% if is_admin:
+<script type="text/javascript">
+function toggle_all(name) {
+    var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
+    var collector = document.getElementById('checkbox-'+name);
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = collector.checked;
+    }
+    var counter = document.getElementById('counter-'+name);
+    if (collector.checked) {
+        counter.innerHTML = " &mdash; " + checkboxes.length + " selected";
+    } else {
+        counter.innerHTML = "";
+    }
+}
+
+function checkbox_click(name) {
+    var count_on = 0;
+    var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
+    for (var i = 0; i < checkboxes.length; i++) {
+        count_on += checkboxes[i].checked;
+    }
+    var master = document.getElementById('checkbox-'+name);
+    if (count_on == 0) {
+        master.checked = false;
+        master.indeterminate = false;
+    } else if (count_on == checkboxes.length) {
+        master.checked = true;
+        master.indeterminate = false;
+    } else {
+        master.checked = false;
+        master.indeterminate = true;
+    }
+    var counter = document.getElementById('counter-'+name);
+    if (count_on > 0) {
+        counter.innerHTML = " &mdash; " + count_on + " selected";
+    } else {
+        counter.innerHTML = "";
+    }
+}
+</script>
+% endif
+</head>
 <body>
 
 <div class="container">
-    <div class="row-fluid">
-        <header>
-            <h1>MyPyTutor Progress for ${user.get("name")}
-                <small>(${user.get("user")})</small>
+    <header>
+        <div class="page-header">
+            <h1><a href="">MyPyTutor Progress for ${user.name}</a>
+                <small>(${user.id})</small>
             </h1>
-            <p class="lead">Total mark: ${mark} / ${total} = ${round(100.*mark/total, 2)}% (${late} late)</p>
-        </header>
+            <div class="row row-fluid">
+                <div class="col-lg-10 col-md-9 col-sm-8">
+                    <div class="progress" style="margin-top: 5px;">
+                      <div class="progress-bar progress-bar-success" style="width: ${100.*mark/total}%" data-toggle="tooltip" data-placement="top" title="${mark} submitted">
+                        <span class="sr-only">${mark} submitted</span>
+                      </div>
+                      <div class="progress-bar progress-bar-danger" style="width: ${100.*late/total}%" data-toggle="tooltip" data-placement="top" title="${late} late">
+                        <span class="sr-only">${late} late</span>
+                      </div>
+                    </div>
+                </div>
+                <p class="lead col-lg-2 col-md-3 col-sm-4">${mark} / ${total} = ${round(100.*mark/total, 2)}%</p>
+            </div>
+        </div>
+        % if is_admin:
+        <div class="row">
+            <div class="col-md-10 col-md-push-2 col-sm-9 col-sm-push-3">
+                <ol class="breadcrumb">
+                    <li><a href="admin.py">Admin Dashboard</a></li>
+                    <li class="active">${user.name}</li>
+                </ol>
+            </div>
+            <div class="col-md-2 col-md-pull-10 col-sm-3 col-sm-pull-9">
+                <select class="form-control" name="action" form="edit_form" onchange="this.form.submit()">
+                    <option selected>Action:</option>
+                    <option value="allow_late">Allow late submission</option>
+                    <option value="disallow_late">Disallow late submission</option>
+                </select>
+            </div>
+        </div>
+        % endif
+    </header>
+
+    % if message:
+    <div class="alert alert-dismissible ${message[0]}">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    ${message[1]}
     </div>
 
+    % endif
+<!-- TODO: -->
+<div class="alert alert-dismissible alert-warning">
+<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<p>
+Note: there is a known issue with counting marks, due to issues in getting stored data.
+Some information here may be incorrect for some users.
+</p>
+
+<p>
+(Details: the function <code>support.get_submissions_for_user</code> doesn't report
+the same data or format as <code>progress.get_submissions</code>, particularly for
+problems that have been edited or removed.
+Discuss in <a href="https://github.com/CSSE1001/MyPyTutor/issues/116">#116</a>.)
+</p>
+</div>
+<!-- END TODO -->
+    % if is_admin:
+    <form action="#" method="POST" id="edit_form">
+    % endif
     <div class="panel-group" id="problemSets" role="tablist" aria-multiselectable="true">
         % for group in groups:
         <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="heading${loop.index}" data-toggle="collapse"
-                 data-parent="#problemSets" href="#collapse${loop.index}" aria-expanded="true"
-                 aria-controls="collapseOne">
+                 data-parent="#problemSets" data-target="#collapse${loop.index}" aria-expanded="true" aria-controls="collapse${loop.index}">
                 <div class="panel-title clearfix">
                     <h4 class="pull-left">
                         ${group.get('title')}
-                        <small>(${len(group['problems'])})</small>
+                        <small>
+                        (${len(group['problems'])})
+                        % if is_admin:
+                        <strong id="counter-${group['slug']}"></strong>
+                        % endif
+                        </small>
                         <!--<small>(Week ${group.get('week')})</small>-->
                     </h4>
                     <h4 class="pull-right">Due ${group.get('due')}
                     <i class="glyphicon glyphicon-circle-arrow-down down"></i>
                     <i class="glyphicon glyphicon-circle-arrow-up up"></i>
                     </h4>
+                    <div class="pull-right col-sm-4">
+                        <div class="progress">
+                          <div class="progress-bar progress-bar-success" style="width: ${100.*group['mark']/len(group['problems'])}%" data-toggle="tooltip" data-placement="top" title="${group['mark']} submitted">
+                            <span class="sr-only">${group['mark']} submitted</span>
+                          </div>
+                          <div class="progress-bar progress-bar-danger" style="width: ${100.*group['late']/len(group['problems'])}%" data-toggle="tooltip" data-placement="top" title="${group['late']} late">
+                            <span class="sr-only">${group['late']} late</span>
+                          </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="collapse${loop.index}" class="panel-collapse collapse ${'in' if loop.index == openIndex else ''}"
@@ -70,14 +201,20 @@
                     <table class="table">
                         <thead>
                         <tr>
+                            % if is_admin:
+                            <th class="check"><input type="checkbox" id="checkbox-${group['slug']}" onClick="toggle_all('${group['slug']}')"></th>
+                            % endif
                             <th class="problem">Problem</th>
                             <th class="status">Status</th>
-                            <th class="submit_time">Submit Time</th>
+                            <th class="submit_time">Time submitted</th>
                         </tr>
                         </thead>
                         <tbody>
                         % for problem in group['problems']:
                         <tr class="${'success' if problem.get('status') in ('submitted', 'late_ok') else ('danger' if problem.get('status') == 'late' else 'warning')}">
+                            % if is_admin:
+                            <td class="check"><input type="checkbox" class="checkbox-set-${group['slug']}" name="problem" value="${problem['hash']}" onClick="checkbox_click('${group['slug']}')"></td>
+                            % endif
                             <td class="problem">${problem['title']}</td>
                             <td class="status">
                                 %if problem.get('status') == 'submitted':
@@ -86,6 +223,9 @@
                                 <i class="glyphicon glyphicon-ok"></i> <em>Submitted late without penalty</em>
                                 % elif problem.get('status') == 'late':
                                 <i class="glyphicon glyphicon-remove"></i> <em>Late</em>
+                                % elif problem['has_allow_late']:
+                                <i class="glyphicon glyphicon-minus"></i> <em>Unsubmitted
+                                (</em><abbr data-toggle="tooltip" data-placement="bottom" title="You may submit this problem at any time without receiving a mark penalty."><em>late submissions allowed</em></abbr><em>)</em>
                                 % else:
                                 <i class="glyphicon glyphicon-minus"></i> <em>Unsubmitted</em>
                                 % endif
@@ -104,9 +244,17 @@
         </div>
         % endfor
     </div>
+    % if is_admin:
+    </form>
+    % endif
 </div>
 
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
 </body>
 </html>

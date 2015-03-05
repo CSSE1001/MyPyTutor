@@ -12,6 +12,7 @@ File structure:
   base_dir/
     mpt_version                      <- MyPyTutor version file
     data/
+      user_info                      <- Names/email/etc storage for all users
       answers/
         <username>/
           <tutorial_package_name>/
@@ -48,6 +49,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 ANSWERS_DIR = os.path.join(DATA_DIR, "answers")
 FEEDBACK_DIR = os.path.join(DATA_DIR, "feedback")
 SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
+USER_INFO_FILE = os.path.join(DATA_DIR, "user_info")
 
 # submission specific constants
 TUTORIAL_HASHES_FILE = os.path.join(SUBMISSIONS_DIR, "tutorial_hashes")
@@ -252,6 +254,8 @@ def get_tutorials():
     Returns:
       An ordered list of TutorialInfo objects.
     """
+    # TODO, BUG: make this function also consider the hash mappings file.
+    # But, it's important that this function returns the list in the right order.
     tutorials = []
     with open(TUTORIAL_HASHES_FILE) as f:
         for line in filter(None, map(str.strip, f)):
@@ -404,8 +408,11 @@ TutorialSubmission = namedtuple('TutorialSubmission',
 
 
 def parse_submission_log(user):
-    """
-    Get the submission log for the given user.
+    """Get the submission log for the given user.
+
+    If a problem has not been submitted yet, then either it will not be
+    present in the list, or the date field on the TutorialSubmisison object
+    will be None.
 
     Format of submission_log file:
       hash submitted_dd_mm_yy
@@ -433,10 +440,13 @@ def parse_submission_log(user):
     submission_log_path = _get_or_create_user_submissions_file(user)
     admin_log_path = _get_or_create_admin_log_file(user)
 
+    allow_lates = set()
     with open(admin_log_path) as f:
-        allow_lates = [line[1]
-                       for line in filter(None, map(str.split, f))
-                       if line[0] == 'allow_late']
+        for line in map(str.split, f):
+            if line[0] == 'allow_late':
+                allow_lates.add(line[1])
+            elif line[0] == 'disallow_late':
+                allow_lates.discard(line[1])
 
     # parse the submission log file
     with open(submission_log_path) as f:
@@ -445,11 +455,16 @@ def parse_submission_log(user):
 
             submitted_date = dateutil.parser.parse(submitted_date_str)
             allow_late = hash_str in allow_lates
+            allow_lates.discard(hash_str)
 
             submission_info = TutorialSubmission(hash_str,
                                                  submitted_date,
                                                  allow_late)
             data.append(submission_info)
+
+    # get data for problems which aren't submitted but have allow_late set
+    for hash_str in allow_lates:
+        data.append(TutorialSubmission(hash_str, None, True))
 
     return data
 
@@ -502,8 +517,57 @@ def add_submission(user, tutorial_hash, code):
     # return the TutorialSubmission object
     return submission
 
+def get_submissions_for_user(user):
+    """
+    Return the submissions for the given user.
 
-def set_allow_late(user, tutorial_hash):
+    No attempt is made to check that the logged in user has permission to view
+    these submissions.  That is the responsibility of the caller.
+
+    Args:
+      user (str): The user to return the submissions for.
+
+    Returns:
+      A list of two-element tuples.
+      Each tuple represents a single tutorial.
+
+      The first element in the tuple is the hash of the tutorial package (in
+      the same format as usual, ie base32 encoded sha512 hash).
+
+      The second element in the tuple is one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
+
+    """
+    # get our data
+    hashes = parse_tutorial_hashes()
+    submissions = parse_submission_log(user)
+    tutorials = set(hashes.values())
+
+    # check if our submissions are late or not
+    results = {ti.hash: 'MISSING' for ti in tutorials}
+
+    for submission in submissions:
+        # lookup, not get, as this must exist: if not, then we have a
+        # submission with an unknown tutorial, which is a server error
+        tutorial_info = hashes.get(submission.hash)
+        if not tutorial_info:
+            continue
+
+        if submission.date is None:
+            pass
+        elif submission.date <= tutorial_info.due:
+            status = 'OK'
+        elif submission.allow_late:
+            status = 'LATE_OK'
+        elif submission.date is not None:
+            status = 'LATE'
+
+        results[tutorial_info.hash] = status
+
+    return results
+
+
+def set_allow_late(user, tutorial_hash, authorised_by, on):
     """
     Allow a user to submit a tutorial late without incurring a mark penalty.
     If the user has not yet submitted, they will be allowed to submit late.
@@ -514,11 +578,23 @@ def set_allow_late(user, tutorial_hash):
     Args:
       user (str): The username to set the late allowance on.
       tutorial_hash (str): The tutorial hash, as a base32 string.
+      authorised_by (str): The username of the person who called this method
+      on (bool): True if the flag should be set, False if it should be unset
+
+    Returns:
+      False if the allow_late flag was already the same as the `on` parameter.
     """
+    if on == has_allow_late(user, tutorial_hash):
+        return False
+
+    msg = ('disallow_late', 'allow_late')[on]
     admin_log_path = _get_or_create_admin_log_file(user)
+    time = datetime.now().isoformat()
 
     with open(admin_log_path, 'a') as f:
-        f.write('allow_late {}\n'.format(tutorial_hash))
+        f.write('{} {} {} {}\n'
+                .format(msg, tutorial_hash, authorised_by, time))
+    return True
 
 
 def has_allow_late(user, tutorial_hash):
@@ -527,10 +603,146 @@ def has_allow_late(user, tutorial_hash):
     tutorial.
     """
     admin_log_path = _get_or_create_admin_log_file(user)
-
+    allowed = False
     with open(admin_log_path, 'rU') as f:
-        return any(line[0] == 'allow_late' and line[1] == tutorial_hash
-                   for line in map(str.split, f))
+        for line in map(str.split, f):
+            if line[0] == 'allow_late' and line[1] == tutorial_hash:
+                allowed = True
+            elif line[0] == 'disallow_late' and line[1] == tutorial_hash:
+                allowed = False
+    return allowed
+
+User = namedtuple('User', ['id', 'name', 'email', 'enrolled'])
+
+ALL = 'all'
+ENROLLED = 'enrolled'
+NOT_ENROLLED = 'not_enrolled'
+
+def get_users(query='', enrol_filter=ALL, sort_key=None, reverse=False):
+    """Return a list of users, optionally filtered/sorted.
+
+    User information for known is stored in a file in CSV format.
+
+    If a user is unknown, then their name and email will be blank.
+
+    Args:
+      query (str, optional): A string to filter results on. If given, return
+          only those users whose id/name/email contains the given string.
+      enrol_filter (str, optional): One of ENROLLED/NOT_ENROLLED/ALL. Return
+          only those users whose enrolment status matches the parameter (or
+          all users, if ALL).
+      sort_key (function, optional): A key-function to sort the users on.
+          Defaults to sorting on user's id.
+      reverse (bool, optional): Whether or not to reverse the sort.
+
+    Returns:
+        A list of User objects, filtered/sorted accordingly.
+    """
+    users = {}
+
+    # first, grab all of our enrolled users
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            id, name, email, enrolled = line.strip().split(',')
+
+            # check if the query string is contained in id or name or email and
+            # the enrol_filter matches the given enrol state, if given.
+            if (any(query.lower() in x.lower() for x in (id, name, email))
+                    and enrol_filter in (ALL, enrolled)):
+                users[id] = User(id, name, email, enrolled)
+
+    # now, read off all of the users who have logged in
+    for user in os.listdir(ANSWERS_DIR):
+        if user not in users:
+            users[user] = User(user, '', '', NOT_ENROLLED)
+
+    # filter the list direclty from the dictionary
+    user_list = [
+        user for user in users.values() if any(
+            query.lower() in attr.lower()
+            for attr in (user.id, user.name, user.email)
+        ) and enrol_filter in (ALL, user.enrolled)
+    ]
+
+    # sort our list of users if required
+    if sort_key is None:
+        sort_key = lambda u: u.id
+    user_list.sort(key=sort_key, reverse=reverse)
+
+    return user_list
+
+
+def get_user(userid):
+    """Return known metadata about a single user (or None, if unknown)."""
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            info = line.strip().split(',')
+            if userid == info[0]:
+                return User(*info)
+    return None
+
+
+def add_user(user):
+    """Adds a user to the user_info file, if they don't already exist.
+    This function should get called whenever a new user interacts with the
+    system, or when an administrator imports a list of users.
+
+    If the user's ID already exists in the records, no action is taken (even if
+    the rest of the information is different).
+
+    Args:
+      user (support.User): The user to add information about.
+
+    Returns:
+      True if the user was added, False if the user already existed.
+    """
+    # TODO: This implementation might cause a race condition if the user is
+    # added by another process while this process is reading the file.
+    # TODO: This is also possibly too slow (imagine ~600 users, this function
+    # probably gets called any time any of them attempts an action)
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            info = line.strip().split(',')
+            if user.id == info[0]:
+                return False
+
+    with open(USER_INFO_FILE, 'a') as f:
+        f.write('{0.id},{0.name},{0.email},{0.enrolled}\n'.format(user))
+        return True
+
+
+def set_user_enrolment(user, is_enrolled):
+    """Sets a user to be enrolled/unenrolled.
+
+    Args:
+      user (str): The user's login ID
+      is_enrolled (bool): True if the user should now be enrolled
+
+    Return:
+      True if the user's enrolment was changed, False if it stayed the same.
+    """
+    with open(USER_INFO_FILE) as f:
+        users = list(f)
+
+    new_status = (NOT_ENROLLED, ENROLLED)[is_enrolled]
+    is_changed = False
+    for i, u in enumerate(users):
+        fields = u.strip('\n').split(',')
+        if fields[0] == user:
+            is_changed |= (fields[3] != new_status)
+            fields[3] = new_status
+            users[i] = ','.join(fields) + '\n'
+
+    with open(USER_INFO_FILE, 'w') as f:
+        f.write(''.join(users))
+
+    return is_changed
 
 
 def get_mypytutor_version():
