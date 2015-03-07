@@ -26,7 +26,11 @@ def main():
     }
 
     try:
-        print(Template(filename="./templates/feedback.html").render(**data))
+        print(Template(
+            filename="./templates/feedback.html",
+            output_encoding='utf-8',
+            encoding_errors='ignore',
+        ).render(**data))
     except:
         print(exceptions.html_error_template().render())
 
