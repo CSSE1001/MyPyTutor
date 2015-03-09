@@ -12,6 +12,12 @@ class Analyser(CodeAnalyser):
         if not self.visitor.functions['square'].returns:
             self.add_error('You need a return statement')
 
+        if self.visitor.functions['square'].calls['input']:
+            self.add_error(
+                "You don't need to call input; function arguments are passed "
+                "automatically by Python"
+            )
+
 
 
 ANALYSER = Analyser(CodeVisitor)

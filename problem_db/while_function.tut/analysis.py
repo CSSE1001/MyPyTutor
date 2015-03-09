@@ -36,5 +36,11 @@ class Analyser(CodeAnalyser):
                 'while loop'
             )
 
+        if self.visitor.functions['div_3_5'].calls['input']:
+            self.add_error(
+                "You don't need to call input; function arguments are passed "
+                "automatically by Python"
+            )
+
 
 ANALYSER = Analyser(CodeVisitor)

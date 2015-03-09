@@ -32,6 +32,12 @@ class Analyser(CodeAnalyser):
                     function_name, argc
                 ))
 
+            if function.calls['input']:
+                self.add_error(
+                    "You don't need to call input; function arguments are "
+                    "passed automatically by Python"
+                )
+
         if not self.visitor.slice_from_slices:
             self.add_error('You need to use a slice in slice_from')
         if not self.visitor.reverse_string_slices:
