@@ -26,7 +26,7 @@ def main():
     #       (b) submitting the form
     form = cgi.FieldStorage(keep_blank_values=True)
 
-    view_list = 'view' in form
+    view_list = user in TUTORS and 'noadmin' not in form
     if view_list and user not in TUTORS:
         print UNAUTHORISED.format(user)
         return
