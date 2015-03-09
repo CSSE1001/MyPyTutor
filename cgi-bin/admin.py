@@ -20,6 +20,9 @@ ADMINS = ['uqprobin']
 ADMINS.extend(['uqjgaten', 'uqspurdo'])
 #################################################
 
+TUTORS = ADMINS[:]
+TUTORS.extend([])  # TODO: add tutor accounts
+
 UNAUTHORISED = """Status: 403 Forbidden
 Content-Type: text/html
 

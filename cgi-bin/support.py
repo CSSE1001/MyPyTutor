@@ -13,6 +13,7 @@ File structure:
     mpt_version                      <- MyPyTutor version file
     data/
       user_info                      <- Names/email/etc storage for all users
+      help_list                      <- current list of students needing help
       answers/
         <username>/
           <tutorial_package_name>/
@@ -49,7 +50,9 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 ANSWERS_DIR = os.path.join(DATA_DIR, "answers")
 FEEDBACK_DIR = os.path.join(DATA_DIR, "feedback")
 SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
+
 USER_INFO_FILE = os.path.join(DATA_DIR, "user_info")
+HELP_LIST_FILE = os.path.join(DATA_DIR, "help_list")
 
 # submission specific constants
 TUTORIAL_HASHES_FILE = os.path.join(SUBMISSIONS_DIR, "tutorial_hashes")
@@ -893,3 +896,188 @@ def record_attempts(user, tutorial_hash, num_attempts):
     # write this out to file
     with open(attempts_path, 'w') as f:
         f.write(json.dumps(attempts, indent=4))
+
+
+HelpInfo = namedtuple(
+    'HelpInfo',
+    ['username', 'name', 'message', 'traceback', 'timestamp', 'status'],
+)
+HELP_STATUS_QUEUED = 'QUEUED'
+HELP_STATUS_IGNORED = 'IGNORED'  # eg, absent student
+HELP_STATUS_IN_PROGRESS = 'IN_PROGRESS'
+HELP_STATUS_COMPLETE = 'COMPLETE'
+HELP_STATUSES = [
+    HELP_STATUS_QUEUED,
+    HELP_STATUS_IGNORED,
+    HELP_STATUS_IN_PROGRESS,
+    HELP_STATUS_COMPLETE,
+]
+
+
+def get_help_list():
+    """
+    Return a list of information on all the students needing help in the lab
+    at the current time.
+
+    Returns:
+      A list of HelpInfo objects.
+
+    """
+    if not os.path.exists(HELP_LIST_FILE):
+        return []
+
+    with open(HELP_LIST_FILE) as f:
+        raw_list = json.loads(f.read())
+
+    # convert the timestamps
+    for d in raw_list:
+        d['timestamp'] = dateutil.parser.parse(d['timestamp'])
+
+    return [HelpInfo(**d) for d in raw_list]
+
+
+def write_help_list(help_list):
+    """
+    Write the given help list to the help list file.
+
+    Args:
+      help_list ([HelpInfo]): The list to write.
+
+    """
+    # for a named tuple, __dict__ is an OrderedDict of the fields
+    raw_list = [
+        dict(help_info.__dict__) for help_info in help_list
+    ]
+
+    # convert the timestamps
+    for d in raw_list:
+        d['timestamp'] = d['timestamp'].isoformat()
+
+    with open(HELP_LIST_FILE, 'w') as f:
+        f.write(json.dumps(raw_list, indent=4))
+
+
+def log_help_request(username, name, message, traceback=''):
+    """
+    Log a request for help from the given user.
+
+    A user may only have a single help request pending.  If this user has a
+    help request which has not been completed, it will be replaced.
+
+    This will also replace the status of the pending help request *unless* the
+    request is currently marked as being in progress.
+
+    Args:
+      username (str): The username of the user requesting help.
+      name (str): The name of the user requesting help.
+      message (str): The user's request for help.
+      traceback (str, optional): The error traceback, if applicable.
+
+    """
+    data = {
+        'username': username,
+        'name': name,
+        'message': message,
+        'traceback': traceback,
+        'timestamp': datetime.now(),
+        'status': HELP_STATUS_QUEUED,
+    }
+
+    help_list = get_help_list()
+    pending_request = get_pending_help_request(username, help_list=help_list)
+
+    # if a previous request exists, use its timestamp
+    # also, don't let requests which are in progress reset to being queued
+    if pending_request is not None:
+        data['timestamp'] = pending_request.timestamp
+
+        if pending_request.status == HELP_STATUS_IN_PROGRESS:
+            data['status'] = pending_request.status
+
+    new_request = HelpInfo(**data)
+
+    if pending_request is None:
+        help_list.append(new_request)
+    else:
+        assert pending_request in help_list
+        idx = help_list.index(pending_request)
+
+        help_list[idx] = new_request
+
+    write_help_list(help_list)
+
+
+def get_pending_help_request(user, help_list=None):
+    """
+    Return the pending help request for the given user, if one exists.
+
+    Args:
+      user (str): The username of the user to check.
+      help_list ([HelpInfo], optional): The help list to use.
+
+    Returns:
+      A HelpInfo object if the user has a pending help request.
+      None otherwise.
+
+    """
+    if help_list is None:
+        help_list = get_help_list()
+
+    for help_info in help_list:
+        if help_info.username == user \
+                and help_info.status != HELP_STATUS_COMPLETE:
+            return help_info
+    return None
+
+
+def set_help_request_status(user, status):
+    """
+    Set the status of the pending help request for the given user to the
+    given status value.
+
+    The user must have a pending help request.  Resetting the status of
+    completed help requests is not supported.
+
+    The given status must be a valid status.
+
+    Args:
+      user (str): The username of the user to set the status for.
+      status (str): The status to set.
+
+    """
+    assert status in HELP_STATUSES
+
+    help_list = get_help_list()
+    pending_request = get_pending_help_request(user, help_list=help_list)
+
+    assert pending_request is not None
+    assert pending_request in help_list
+
+    data = pending_request.__dict__
+    data['status'] = status
+
+    idx = help_list.index(pending_request)
+    help_list[idx] = HelpInfo(**data)
+
+    write_help_list(help_list)
+
+
+def get_position_in_help_queue(user):
+    """
+    Return the given user's position in the help queue.
+
+    Args:
+      user (str): The username of the user to look up.
+
+    Returns:
+      The position of the user in the help queue, as an integer, starting at 1.
+
+      None if the user does not have a pending request.
+
+    """
+    incomplete = lambda hi: hi.status != HELP_STATUS_COMPLETE
+
+    for idx, help_info in enumerate(filter(incomplete, get_help_list())):
+        if help_info.username == user:
+            return idx + 1
+    return None
