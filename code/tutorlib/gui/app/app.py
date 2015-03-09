@@ -27,7 +27,7 @@ from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
 
-VERSION = '3.0.3'
+VERSION = '3.0.4'
 
 
 class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
