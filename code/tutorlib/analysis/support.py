@@ -1,5 +1,5 @@
 from collections import defaultdict
-from collections.abc import Hashable, Iterable, Sequence, MutableMapping
+from collections.abc import Sequence, MutableMapping
 
 
 class StaticAnalysisError(Exception):
@@ -133,10 +133,9 @@ class AutoHashingDefaultDict(MutableMapping):
         return self._store[self._convert_key(key)]
 
     def __setitem__(self, key, value):
-        if not isinstance(key, Hashable):
-            skey = self._convert_key(key)
-            self._key_mappings[skey] = key
-            key = skey
+        skey = self._convert_key(key)
+        self._key_mappings[skey] = key
+        key = skey
 
         self._store[key] = value
 
