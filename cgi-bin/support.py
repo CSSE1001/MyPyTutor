@@ -1045,7 +1045,7 @@ def set_help_request_status(user, status):
       status (str): The status to set.
 
     """
-    assert status in HELP_STATUSES
+    assert status in HELP_STATUSES, 'Unknown status: {}'.format(status)
 
     help_list = get_help_list()
     pending_request = get_pending_help_request(user, help_list=help_list)

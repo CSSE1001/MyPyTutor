@@ -41,7 +41,7 @@ def main():
         # make our changes if the form was submitted
         if os.environ.get('REQUEST_METHOD') == 'POST' and 'mark_as' in form:
             user = form.getvalue('username')
-            status = form.getvalue('mark_as')
+            status = [v for v in form.getlist('mark_as') if v != 'Mark as:'][0]  # hacky workaround: no idea why this is showing up as a status
 
             support.set_help_request_status(user, status)
 
@@ -73,12 +73,15 @@ def main():
 
         pending_request = support.get_pending_help_request(user)
         data['has_pending'] = pending_request is not None
+        data['is_ignored'] = False
         data['queue_position'] = None
 
         if pending_request is not None:
             message = pending_request.message
             traceback = pending_request.traceback
 
+            data['is_ignored'] = \
+                pending_request.status == support.HELP_STATUS_IGNORED
             data['queue_position'] = support.get_position_in_help_queue(user)
 
         data['message'] = message

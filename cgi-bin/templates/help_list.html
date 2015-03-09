@@ -91,17 +91,6 @@
                 <small>(${sum(1 for item in help_list if item.status != 'COMPLETE')} requests pending)</small>
             </h1>
         </div>
-
-        <div class="row">
-            <div class="col-md-2 col-md-pull-10 col-sm-3 col-sm-pull-9">
-                <select class="form-control" name="action" form="edit_form" onchange="this.form.submit()">
-                    <option selected>Action:</option>
-                    <option value="mark_in_progress">Mark as In Progress</option>
-                    <option value="mark_ignored">Mark as Ignored</option>
-                    <option value="mark_complete">Mark as Completed</option>
-                </select>
-            </div>
-        </div>
     </header>
 
     % if alert_message:
