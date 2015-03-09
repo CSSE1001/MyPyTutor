@@ -524,7 +524,11 @@ def try_login(username, password):
         from tutorlib.config.configuration import load_config, save_config
         cfg = load_config()
 
-        keyring.delete_password(MPT_SERVICE, cfg.online.username)
+        try:
+            keyring.delete_password(MPT_SERVICE, cfg.online.username)
+        except Exception:  # PasswordDeleteError isn't defined anywhere!
+            pass
+
         cfg.online.username = ''
 
         save_config(cfg)
