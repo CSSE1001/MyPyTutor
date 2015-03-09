@@ -1,5 +1,5 @@
 from collections import defaultdict
-from collections.abc import Hashable, Sequence, MutableMapping
+from collections.abc import Hashable, Iterable, Sequence, MutableMapping
 
 
 class StaticAnalysisError(Exception):
@@ -105,7 +105,19 @@ class AutoHashingDefaultDict(MutableMapping):
         self._key_mappings = {}
 
     def _convert_key(self, key):
-        if not isinstance(key, Hashable):
+        # originally, I had some elegant code here that was intended to handle
+        # iterables as a special case and recurse
+        # that approach is *not* viable, as Python objects can be self-
+        # referential (thus creating a loop)
+        # as is often the case, it's easier to ask forgiveness than permission
+        def hashable(obj):
+            try:
+                hash(obj)
+            except Exception:
+                return False
+            return True
+
+        if not hashable(key):
             # prepend the id of this class to the repr of the key
             # this should reduce collisions with, eg, '()' or '[]'
             key = '{}.{}'.format(id(self), repr(key))
