@@ -20,15 +20,13 @@ def get_submissions(user):
     """Return a list of submission statistics for the given user."""
     # get the raw data
     tutorials = support.get_tutorials()
-    all_submissions = support.parse_submission_log(user)
+    submissions = support.parse_submission_log(user)
+    mappings = support.parse_tutorial_hashes()
 
-    # create a list containing either submission date or None for each tutorial
-    submissions = []
-    for tut in tutorials:
-        sub = [s for s in all_submissions if s.hash == tut.hash]
-        submissions.append(sub[0] if sub else None)
-
-    return zip(tutorials, submissions)
+    tutorial_submissions = {
+        mappings[submission.hash]: submission for submission in submissions
+    }
+    return zip(tutorials, map(tutorial_submissions.get, tutorials))
 
 
 def process_tutorial(tutorial, submission):

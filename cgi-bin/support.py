@@ -248,17 +248,17 @@ TutorialInfo = namedtuple(
 )
 
 
-# TODO: refactor the two functions below maybe?
-# (look at how each of them is used and maybe there'll be a smarter way)
 def get_tutorials():
     """
     Get a list of all tutorials, as TutorialInfo objects.
 
+    Tutorials will be ordered as in the tutorial hashes file (meaning that
+    tutorials from the same problem set will be grouped together).
+
     Returns:
       An ordered list of TutorialInfo objects.
+
     """
-    # TODO, BUG: make this function also consider the hash mappings file.
-    # But, it's important that this function returns the list in the right order.
     tutorials = []
     with open(TUTORIAL_HASHES_FILE) as f:
         for line in filter(None, map(str.strip, f)):
@@ -520,6 +520,7 @@ def add_submission(user, tutorial_hash, code):
     # return the TutorialSubmission object
     return submission
 
+
 def get_submissions_for_user(user):
     """
     Return the submissions for the given user.
@@ -531,14 +532,11 @@ def get_submissions_for_user(user):
       user (str): The user to return the submissions for.
 
     Returns:
-      A list of two-element tuples.
-      Each tuple represents a single tutorial.
+      A dictionary mapping tutorial hashes to the submission status of that
+      particular tutorial.
 
-      The first element in the tuple is the hash of the tutorial package (in
-      the same format as usual, ie base32 encoded sha512 hash).
-
-      The second element in the tuple is one of the strings
-      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
+      The submission status will be one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}
 
     """
     # get our data
