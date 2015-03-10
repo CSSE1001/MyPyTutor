@@ -172,7 +172,7 @@ function checkbox_click() {
                 <td class="check"><input type="checkbox" name="selected_user" value="${user.id}" onClick="checkbox_click()"></td>
                 <td class="id">${user.id}</td>
                 <td class="name">${user.name}</td>
-                <td class="email">${user.email}</td>
+                <td class="email"><a href="mailto:${user.email}">${user.email}</a></td>
                 <td class="marks">${progress['CORRECT']} / ${progress['TOTAL']} (${100*progress['CORRECT']/progress['TOTAL']}%)</td>
                 <td class="enrolled">${'Yes' if user.enrolled == 'enrolled' else 'No' if user.enrolled == 'not_enrolled' else '{Bad Data}'}</td>
                 <td class="actions"><a href="progress.py?user=${user.id}">View Progress</a></td>
