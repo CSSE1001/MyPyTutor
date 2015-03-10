@@ -68,11 +68,27 @@ def summarise_progress(user):
     return counter
 
 
-def admin_init(admins=ADMINS):
+def admin_init(admins=ADMINS, permitted_user=None):
+    """
+    Check if the user is an admin.
+
+    If the user is not an admin, and is not a permitted user, print an
+    error message.
+
+    Args:
+      admins ([str], optional): The list of admins to check against.
+      permitted_user (str, optional): One additional user who is permitted to
+        access the page in question.  This is intended to allow users to see
+        their own data.
+
+    Returns:
+      Whether the user is authorised.
+
+    """
     try:
         user = uqauth.get_user()
 
-        if user not in admins:
+        if user not in admins and user != permitted_user:
             print UNAUTHORISED.format(user)
             return False
     except uqauth.Redirected:

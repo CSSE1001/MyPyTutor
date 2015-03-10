@@ -9,16 +9,17 @@ import support
 
 
 def main():
-    if not admin_init():
-        return
-
     form = cgi.FieldStorage(keep_blank_values=True)
+
+    user = form.getvalue('user')
+
+    if not admin_init(permitted_user=user):
+        return
 
     if not all(val in form for val in ('user', 'pset', 'tutorial')):
         print 'Invalid query params'
         return
 
-    user = form.getvalue('user')
     problem_set_name = form.getvalue('pset')
     tutorial_name = form.getvalue('tutorial')
 
