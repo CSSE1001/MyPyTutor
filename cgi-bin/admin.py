@@ -2,6 +2,7 @@
 # A CGI script to run the administrator interface
 
 import cgi
+import csv
 import os
 from collections import Counter
 
@@ -43,11 +44,65 @@ Content-Type: text/html
 the staff and/or MyPyTutor developers.</p>
 </body>"""
 
-# Each action should take a username as input and return one of {0, 1} or
-# {False, True} depending on whether the action was successful.
+
+# Each action should take the CGI form as input and return a message to display
+# in response. The message format is a pair ('alert-xxx', 'message text')
+
+def _set_enrolments_factory(value):
+    """Create a function to set or unset the list of selected users in a form
+    (setting/unsetting is determined by the True/False value parameter)
+    """
+    def result(form):
+        selected_users = form.getlist('selected_user')
+        if not selected_users:
+            return ('alert-warning', 'No users selected.')
+
+        # Set the users' enrolment statuses, and count how many were changed.
+        count = sum(support.set_user_enrolment(u, value) for u in selected_users)
+        if count == 0:
+            return ('alert-warning', '0 users modified.')
+        elif count < len(selected_users):
+            return ('alert-success', '{} users modified, {} unchanged.'
+                    .format(count, len(selected_users) - count))
+        else:
+            return ('alert-success', '{} users modified.'
+                    .format(count))
+    return result
+
+
+def _upload_userlist(form):
+    filename = 'userlist'
+    if filename not in form or not form[filename].filename:
+        return ('alert-danger', 'No file given.<br/>{}'.format(form.getvalue(filename)))
+
+    users = []
+    for lineno, row in enumerate(csv.reader(form[filename].file), 1):
+        try:
+            userid, name, email = row
+            users.append(support.User(userid, name, email, support.ENROLLED))
+        except Exception as e:
+            return ('alert-danger',
+                    'File format error on line {}: {}: {}'
+                    .format(lineno, row, e))
+
+    new_count = newly_enrolled_count = unchanged_count = 0
+    for u in users:
+        if support.add_user(u):
+            new_count += 1
+        elif support.set_user_enrolment(u.id, True):
+            newly_enrolled_count += 1
+        else:
+            unchanged_count += 1
+
+    return ('alert-success',
+            '{} users added, {} existing users enrolled, {} users unchanged.'
+            .format(new_count, newly_enrolled_count, unchanged_count))
+
+
 ACTIONS = {
-           'enrol': lambda username: support.set_user_enrolment(username, True),
-           'unenrol': lambda username: support.set_user_enrolment(username, False),
+           'enrol': _set_enrolments_factory(True),
+           'unenrol': _set_enrolments_factory(False),
+           'upload': _upload_userlist,
           }
 
 
@@ -116,21 +171,10 @@ def main():
     message = None
     if os.environ.get('REQUEST_METHOD') == 'POST':
         action = form.getvalue('action')
-        selected_users = form.getlist('selected_user')
         if action not in ACTIONS:
             message = ('alert-danger', 'Action unknown or not specified.')
-        elif selected_users:
-            count = sum(ACTIONS[action](u) for u in selected_users)
-            if count == 0:
-                message = ('alert-warning', '0 users modified.')
-            elif count < len(selected_users):
-                message = ('alert-success', '{} users modified, {} unchanged.'
-                           .format(count, len(selected_users) - count))
-            else:
-                message = ('alert-success', '{} users modified.'
-                           .format(count))
         else:
-            message = ('alert-warning', 'No users selected.')
+            message = ACTIONS[action](form)
 
 
     query = form.getvalue('query', '')
