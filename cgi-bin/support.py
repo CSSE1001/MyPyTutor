@@ -775,6 +775,28 @@ def get_tutorials_timestamp():
             return f.readline().strip()  # we just need the first line
 
 
+Feedback = namedtuple(
+    'Feedback',
+    ['user', 'id', 'subject', 'date', 'text', 'code', 'status']
+)
+
+FEEDBACK_STATUS_RESOLVED = 'RESOLVED'
+FEEDBACK_STATUS_IGNORED = 'IGNORED'
+FEEDBACK_STATUS_TODO = 'TODO'
+FEEDBACK_STATUS_UNRESOLVED = 'UNRESOLVED'
+FEEDBACK_STATUSES = [
+    FEEDBACK_STATUS_RESOLVED,
+    FEEDBACK_STATUS_IGNORED,
+    FEEDBACK_STATUS_TODO,
+    FEEDBACK_STATUS_UNRESOLVED,
+]
+
+
+def _get_feedback_path(user, feedback_id):
+    feedback_filename = '{user}.{id}'.format(user=user, id=feedback_id)
+    return os.path.join(FEEDBACK_DIR, feedback_filename)
+
+
 def add_feedback(user, subject, feedback, code=''):
     """
     Add the given feedback for the given user.
@@ -794,25 +816,20 @@ def add_feedback(user, subject, feedback, code=''):
         int(n) for u, n in existing_feedback if u == user
     )
     feedback_id = max(existing_feedback) + 1 if existing_feedback else 0
-    feedback_filename = '{user}.{id}'.format(user=user, id=feedback_id)
-    feedback_path = os.path.join(FEEDBACK_DIR, feedback_filename)
+    feedback_path = _get_feedback_path(user, feedback_id)
 
     # build the json dict
     d = {
         'subject': subject,
         'feedback': feedback,
         'code': code,
+        'time': datetime.now().isoformat(),
+        'status': FEEDBACK_STATUS_UNRESOLVED,
     }
 
     # actually write it to file
     with open(feedback_path, 'w') as f:
         f.write(json.dumps(d, indent=4))
-
-
-Feedback = namedtuple(
-    'Feedback',
-    ['user', 'subject', 'date', 'text', 'code']
-)
 
 
 def get_all_feedback():
@@ -827,19 +844,57 @@ def get_all_feedback():
 
     # assumes everything in the dir is valid
     for fn in os.listdir(FEEDBACK_DIR):
-        user, _, _ = fn.partition('.')
-        path = os.path.join(FEEDBACK_DIR, fn)
+        user, _, feedback_id = fn.partition('.')
 
-        mtime = os.path.getmtime(path)
-        date = datetime.utcfromtimestamp(int(mtime))
-
-        with open(path) as f:
-            d = json.loads(f.read())
-
-        item = Feedback(user, d['subject'], date, d['feedback'], d['code'])
+        item = get_feedback(user, feedback_id)
         feedback.append(item)
 
     return feedback
+
+
+def get_feedback(user, feedback_id):
+    path = _get_feedback_path(user, feedback_id)
+
+    with open(path) as f:
+        d = json.loads(f.read())
+
+    item = Feedback(
+        user,
+        feedback_id,
+        d['subject'],
+        dateutil.parser.parse(d['time']),
+        d['feedback'],
+        d['code'],
+        d['status'],
+    )
+    return item
+
+
+def set_feedback_status(feedback, status):
+    """
+    Set the status of the given feedback to the given status value.
+
+    The given status value must be valid.
+
+    Args:
+      feedback ([Feedback]): The feedback to modify.
+      status (str): The status to set.
+
+    """
+    assert status in FEEDBACK_STATUSES, 'Unknown status: {}'.format(status)
+
+    feedback_path = _get_feedback_path(feedback.user, feedback.id)
+
+    d = {
+        'subject': feedback.subject,
+        'feedback': feedback.text,
+        'code': feedback.code,
+        'time': feedback.date.isoformat(),
+        'status': status,
+    }
+
+    with open(feedback_path, 'w') as f:
+        f.write(json.dumps(d, indent=4))
 
 
 def _get_or_create_user_attempts_file(user):

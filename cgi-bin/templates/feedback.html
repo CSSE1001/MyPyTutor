@@ -36,7 +36,7 @@
     <body>
     <div class="panel-group" id="feedbackItems" role="tablist" aria-multiselectable="true">
         % for item in feedback:
-        <div class="panel panel-default">
+        <div class="panel panel-${dict([('RESOLVED', 'success'), ('UNRESOLVED', 'default'), ('IGNORED', 'warning'), ('TODO', 'info')])[item.status]}">
             <div class="panel-heading" role="tab" id="heading${loop.index}" data-toggle="collapse"
                  data-parent="#feedbackItems" data-target="#collapse${loop.index}" aria-expanded="true" aria-controls="collapse${loop.index}">
                 <div class="panel-title clearfix">
@@ -65,6 +65,20 @@
                         <pre><code>${item.code}</code></pre>
                     </div>
                     % endif
+
+                    <form action="#" method="POST" id="${item.user}_${item.id}">
+                        <input type="hidden" name="feedback_user" value="${item.user}">
+                        <input type="hidden" name="feedback_id" value="${item.id}">
+                        <div class="dropdown pull-left">
+                            <select class="form-control" name="mark_as" form="${item.user}_${item.id}" onchange="document.forms['${item.user}_${item.id}'].submit()">
+                                <option selected>Mark as:</option>
+                                <option value="RESOLVED">Resolved</option>
+                                <option value="IGNORED">Ignored</option>
+                                <option value="TODO">Todo</option>
+                                <option value="UNRESOLVED">Unresolved</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

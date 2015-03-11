@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import cgi
+import os
 
 from mako.template import Template
 from mako import exceptions
@@ -15,6 +16,17 @@ def main():
         return
 
     form = cgi.FieldStorage(keep_blank_values=True)
+
+    if os.environ.get('REQUEST_METHOD') == 'POST' and 'mark_as' in form:
+        # work out which submit button was used
+        feedback_user = form.getvalue('feedback_user')
+        feedback_id = form.getvalue('feedback_id')
+        feedback = support.get_feedback(feedback_user, feedback_id)
+
+        # grab the changed status
+        status = form.getvalue('mark_as')
+
+        support.set_feedback_status(feedback, status)
 
     feedback = support.get_all_feedback()
     feedback.sort(key=lambda f: f.date)
