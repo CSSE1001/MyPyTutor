@@ -29,7 +29,7 @@ def main():
         support.set_feedback_status(feedback, status)
 
     feedback = support.get_all_feedback()
-    feedback.sort(key=lambda f: f.date)
+    feedback.sort(key=lambda f: f.date, reverse=True)
 
     data = {
         'dateOffset': TZ_DELTA,  # hacky workaround
