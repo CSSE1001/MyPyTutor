@@ -70,7 +70,10 @@ def _upload_userlist(form):
     users = []
     for lineno, row in enumerate(csv.reader(form[filename].file), 1):
         try:
-            userid, name, email = row
+            _, _, _, surname, given, email, _, _ = row[:8]
+            assert email.endswith('@student.uq.edu.au'), "Unexpected email address"
+            name = given + surname
+            userid = email.partition('@')[0]
             users.append(support.User(userid, name, email, support.ENROLLED))
         except Exception as e:
             return ('alert-danger',
