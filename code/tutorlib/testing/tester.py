@@ -15,6 +15,13 @@ from tutorlib.testing.support \
 STUDENT_FUNCTION_NAME = '_function_under_test'
 
 
+class InvalidInputError(Exception):
+    """
+    An error raised when the student's code requests input during compilation.
+
+    """
+
+
 class TutorialTester():
     """
     A class for testing a student's solution to a tutorial problem.
@@ -133,6 +140,17 @@ class TutorialTester():
         except:
             lcls = copy.copy(self.test_lcls)
 
+        # replace input, so that prompts don't cause compile/exec to hang
+        old_input = lcls.get('input')
+
+        def _input(prompt=''):
+            raise InvalidInputError(
+                'Unexpected input statement with prompt {!r}.\n'
+                'This normally means that input was requested outside a '
+                'function.'.format(prompt)
+            )
+        lcls['input'] = _input
+
         # execute the student's code, and grab a reference to the function
         try:
             exec(compile(code_text, '<student_code>', 'exec'), lcls)
@@ -140,6 +158,8 @@ class TutorialTester():
             # there are some special messages that we want to try to provide
             if isinstance(e, SyntaxError):
                 message = 'No code to test'
+            elif isinstance(e, InvalidInputError):
+                message = str(e)
             else:
                 message = 'Could not parse student code: {}'.format(e)
 
@@ -153,6 +173,14 @@ class TutorialTester():
                 TutorialTestResult.FAIL,
                 StudentTestError(message, line_number),
             )
+        finally:
+            # if the student code set input, we don't change it
+            # otherwise, we reset it to its old value
+            if lcls['input'] == _input:
+                if old_input is None:
+                    del lcls['input']
+                else:
+                    lcls['input'] = old_input
 
         # inject necessary data into global scope
         inject_to_module(tutorlib.testing.cases, STUDENT_LOCALS_NAME, lcls)
