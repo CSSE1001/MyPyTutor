@@ -41,7 +41,7 @@ def main():
         # make our changes if the form was submitted
         if os.environ.get('REQUEST_METHOD') == 'POST' and 'mark_as' in form:
             user = form.getvalue('username')
-            status = [v for v in form.getlist('mark_as') if v != 'Mark as:'][0]  # hacky workaround: no idea why this is showing up as a status
+            status = form.getvalue('mark_as')
 
             support.set_help_request_status(user, status)
 

@@ -133,10 +133,10 @@
                     % endif
 
                     % if item.status != 'COMPLETE':
-                    <form action="#" method="POST" id="edit_form">
+                    <form action="#" method="POST" id="${item.username}">
                         <input type="hidden" name="username" value="${item.username}">
                         <div class="dropdown pull-left">
-                            <select class="form-control" name="mark_as" form="edit_form" onchange="this.form.submit()">
+                            <select class="form-control" name="mark_as" form="${item.username}" onchange="document.forms['${item.username}'].submit()">
                                 <option selected>Mark as:</option>
                                 <option value="QUEUED">Queued</option>
                                 <option value="IGNORED">Ignored</option>
