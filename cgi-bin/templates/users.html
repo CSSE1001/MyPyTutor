@@ -64,10 +64,23 @@
     }
 </style>
 <script type="text/javascript">
+function enable_actions() {
+    document.getElementById("actionMenu").removeAttribute("disabled");
+}
+
+function disable_actions() {
+    document.getElementById("actionMenu").setAttribute("disabled", "");
+}
+
 function toggle_all(source) {
     var checkboxes = document.getElementsByName('selected_user');
     for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].checked = source.checked;
+    }
+    if (source.checked) {
+        enable_actions();
+    } else {
+        disable_actions();
     }
 }
 
@@ -83,12 +96,15 @@ function checkbox_click() {
     if (all_off) {
         master.checked = false;
         master.indeterminate = false;
+        disable_actions();
     } else if (all_on) {
         master.checked = true;
         master.indeterminate = false;
+        enable_actions();
     } else {
         master.checked = false;
         master.indeterminate = true;
+        enable_actions();
     }
 }
 </script>
@@ -131,7 +147,7 @@ function checkbox_click() {
             <input type="hidden" name="sort" value="${sort}"></input>
         </form>
         <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
-            <select class="form-control" form="edit_form" name="action" onchange="this.form.submit()">
+            <select class="form-control" form="edit_form" name="action" onchange="this.form.submit()" id="actionMenu" disabled>
                 <option selected>Action:</option>
                 <option value="enrol">Enrol</option>
                 <option value="unenrol">Unenrol</option>
