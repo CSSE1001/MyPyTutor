@@ -72,6 +72,11 @@ MPT_VERSION_FILE = os.path.join(BASE_DIR, 'mpt_version')
 TUTORIALS_ZIP_PATH = os.path.join(PUBLIC_DIR, 'CSSE1001Tutorials.zip')
 
 
+##############################################################################
+# SUPPORT FOR STORING USER'S SYNCED ANSWERS
+##############################################################################
+
+
 def _get_answer_path(user, tutorial_package_name, problem_set_name,
         tutorial_name, create_dir=False):
     """
@@ -242,6 +247,11 @@ def get_answer_modification_time(user, tutorial_package_name, problem_set_name,
     return os.path.getmtime(path)
 
 
+##############################################################################
+# SUPPORT FOR STORING TUTORIAL INFORMATION
+##############################################################################
+
+
 TutorialInfo = namedtuple(
     'TutorialInfo',
     ['hash', 'due', 'package_name', 'problem_set_name', 'tutorial_name']
@@ -339,6 +349,11 @@ def parse_tutorial_hashes():
     hashes.update(resolved_hashes)
 
     return hashes
+
+
+##############################################################################
+# SUPPORT FOR STORING USER SUBMISSIONS
+##############################################################################
 
 
 def _get_or_create_user_submissions_dir(user):
@@ -613,6 +628,12 @@ def has_allow_late(user, tutorial_hash):
                 allowed = False
     return allowed
 
+
+##############################################################################
+# SUPPORT FOR STORING DATA ABOUT USERS
+##############################################################################
+
+
 User = namedtuple('User', ['id', 'name', 'email', 'enrolled'])
 
 ALL = 'all'
@@ -746,6 +767,11 @@ def set_user_enrolment(user, is_enrolled):
     return is_changed
 
 
+##############################################################################
+# SUPPORT FOR RETRIEVING VERSION INFORMATION
+##############################################################################
+
+
 def get_mypytutor_version():
     """
     Return the current MyPyTutor version.
@@ -773,6 +799,11 @@ def get_tutorials_timestamp():
     with ZipFile(TUTORIALS_ZIP_PATH) as zf:
         with zf.open('config.txt') as f:
             return f.readline().strip()  # we just need the first line
+
+
+##############################################################################
+# SUPPORT FOR STORING FEEDBACK
+##############################################################################
 
 
 Feedback = namedtuple(
@@ -897,6 +928,11 @@ def set_feedback_status(feedback, status):
         f.write(json.dumps(d, indent=4))
 
 
+##############################################################################
+# SUPPORT FOR STORING USERS' ATTEMPT COUNTS
+##############################################################################
+
+
 def _get_or_create_user_attempts_file(user):
     """
     Get the path to the attempts file for the given user.
@@ -949,6 +985,11 @@ def record_attempts(user, tutorial_hash, num_attempts):
     # write this out to file
     with open(attempts_path, 'w') as f:
         f.write(json.dumps(attempts, indent=4))
+
+
+##############################################################################
+# SUPPORT FOR HELP REQUESTS
+##############################################################################
 
 
 HelpInfo = namedtuple(
