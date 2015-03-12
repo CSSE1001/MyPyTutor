@@ -295,8 +295,8 @@ def value(node):
         return lambda node: tpe(map(value, node.elts))
 
     def build_dict(node):
-        keys = map(node_value, node.keys)
-        values = map(node_value, node.values)
+        keys = map(value, node.keys)
+        values = map(value, node.values)
         return dict(zip(keys, values))
 
     mappings = {
