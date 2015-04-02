@@ -26,7 +26,9 @@ TUTORS.extend([
     's4284683',  # Anne
     's4320859', 'uqbmart8',  # Ben
     's4204782',  # Jon
+    's4290365',  # Josh
     's4117719',  # Matt Hamlet
+    's4287582', 'uqmhend8',  # Michael
     's4316494', 'uqscolbr',  # Sam
     's4353273',  # Scott
     's4315893',  # Tom
