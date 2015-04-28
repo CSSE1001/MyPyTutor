@@ -69,7 +69,7 @@ class Analyser(CodeAnalyser):
                 self.add_error(
                     'You seem to be using the incorrect value for pack '
                     '(have {}, but should be tk.BOTH)'.format(
-                        child_frame_pack.keywords['expand']
+                        child_frame_pack.keywords['fill']
                     )
                 )
 
