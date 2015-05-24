@@ -2,14 +2,14 @@ class CodeVisitor(TutorialNodeVisitor):
     def __init__(self):
         super().__init__()
 
-        self.uses_lambda = False
+        self.lambda_count = 0
         self.num_lambda_args = None
         self.adds_in_lambda = False
 
     def visit_Lambda(self, node):
         super().visit_Lambda(node)
 
-        self.uses_lambda = True
+        self.lambda_count += 1
         self.num_lambda_args = len(node.args.args)
 
         if isinstance(node.body, ast.BinOp) \
@@ -25,8 +25,10 @@ class Analyser(CodeAnalyser):
             self.add_error('add_functions should accept exactly two args')
         else:
             # some of these are only safe if the function is defined properly
-            if not self.visitor.uses_lambda:
+            if self.visitor.lambda_count == 0:
                 self.add_error('You need to use a lambda function')
+            elif self.visitor.lambda_count > 1:
+                self.add_error('You only need to define one lambda function')
             elif self.visitor.num_lambda_args != 1:
                 self.add_error('Your lambda should only take in a single arg')
             elif not self.visitor.adds_in_lambda:
