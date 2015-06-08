@@ -225,7 +225,7 @@ def main():
 
     print "Content-Type: text/html\n"
     query = form.getvalue('query', '')
-    enrol_filter = form.getvalue('enrol_filter', support.ALL)  # TODO: change to support.ENROLLED later
+    enrol_filter = form.getvalue('enrol_filter', support.ENROLLED)
     sort = form.getvalue('sort', 'id')
     reverse = sort.endswith('_reverse')
     users = support.get_users(query, enrol_filter, get_sort_key(sort), reverse)
