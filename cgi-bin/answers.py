@@ -16,6 +16,7 @@ def main():
     if not admin_init(permitted_user=user):
         return
 
+    print "Content-Type: text/html\n"
     if not all(val in form for val in ('user', 'pset', 'tutorial')):
         print 'Invalid query params'
         return

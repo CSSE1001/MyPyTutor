@@ -15,6 +15,7 @@ def main():
     if not admin_init():
         return
 
+    print "Content-Type: text/html\n"
     form = cgi.FieldStorage(keep_blank_values=True)
 
     if os.environ.get('REQUEST_METHOD') == 'POST' and 'mark_as' in form:

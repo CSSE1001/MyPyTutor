@@ -134,11 +134,12 @@ function checkbox_click() {
             <input form="edit_form" name="userlist" type="file"></input>
         </div>
         <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
-            <select class="form-control" form="edit_form" name="action" onchange="this.form.submit()">
+            <select class="form-control" id="actionMenu" form="edit_form" name="action" onchange="this.form.submit()">
                 <option selected>Action:</option>
                 <option value="enrol">Enrol selection</option>
                 <option value="unenrol">Unenrol selection</option>
                 <option value="upload">Upload users file</option>
+                <option value="export">Export marks to CSV</option>
             </select>
         </div>
     </div>

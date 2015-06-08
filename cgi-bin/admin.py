@@ -47,6 +47,15 @@ the staff and/or MyPyTutor developers.</p>
 </body>"""
 
 
+class StopOutput(Exception):
+    """Raised to indicate that the required output has been printed, and that
+    nothing else should be printed to stdout.
+
+    There should be a better way to do things that doesn't require this class,
+    but that can be fixed later.
+    """
+
+
 # Each action should take the CGI form as input and return a message to display
 # in response. The message format is a pair ('alert-xxx', 'message text')
 
@@ -104,10 +113,38 @@ def _upload_userlist(form):
             .format(new_count, newly_enrolled_count, unchanged_count))
 
 
+def _export(form):
+    """Return a list of summarised results for CSV download.
+    If the export cannot be performed (e.g. no users selected), then return a
+    tuple with the error message to show.
+
+    This is kinda messy and hacky and squeezed into a place that it probably
+    shouldn't be.
+    """
+    selected_users = form.getlist('selected_user')
+    if not selected_users:
+        return ('alert-warning', 'No users selected.')
+
+    rows = []
+    for user in selected_users:
+        progress = summarise_progress(user)
+        # Scale the mark out of 10
+        mark = progress['CORRECT'] * 10.0 / progress['TOTAL']
+        rows.append((user, mark))
+
+    print "Content-Type: text/csv"
+    print "Content-disposition: attachment;filename=results.csv\n"
+    # Too lazy to use a CSV writer
+    for line in rows:
+        print ','.join(map(str, line))
+    raise StopOutput()
+
+
 ACTIONS = {
            'enrol': _set_enrolments_factory(True),
            'unenrol': _set_enrolments_factory(False),
            'upload': _upload_userlist,
+           'export': _export,
           }
 
 
@@ -162,7 +199,6 @@ def admin_init(admins=ADMINS, permitted_user=None):
     except uqauth.Redirected:
         return False
     else:
-        print "Content-Type: text/html\n"
         return True
 
 
@@ -179,9 +215,15 @@ def main():
         if action not in ACTIONS:
             message = ('alert-danger', 'Action unknown or not specified.')
         else:
-            message = ACTIONS[action](form)
+            try:
+                message = ACTIONS[action](form)
+            except StopOutput:
+                return
+            except Exception as e:
+                message = ('alert-danger', 'Encountered error:\n' +
+                           type(e).__name__ + ': ' + str(e))
 
-
+    print "Content-Type: text/html\n"
     query = form.getvalue('query', '')
     enrol_filter = form.getvalue('enrol_filter', support.ALL)  # TODO: change to support.ENROLLED later
     sort = form.getvalue('sort', 'id')
