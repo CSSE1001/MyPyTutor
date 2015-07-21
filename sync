@@ -34,7 +34,7 @@ EOF
 printf "done\n"
 
 printf "Creating MyPyTutor zip..."
-rm $MPT_ZIP
+rm -f $MPT_ZIP
 cd code && find tutorlib -name "*.py" | xargs zip ../$MPT_ZIP MyPyTutor.py{,w} >/dev/null && cd ..
 printf "done\n"
 

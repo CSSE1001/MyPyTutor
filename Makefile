@@ -14,12 +14,12 @@ BUILD = CSSE1001Tutorials/CSSE1001Tutorials.zip \
 all: tutorials
 
 clean: cleantutorials
-	-rm MyPyTutor34.zip
-	-rm code/tutorlib/*.pyc
-	-rm -r build
+	-rm -f MyPyTutor34.zip
+	-rm -f code/tutorlib/*.pyc
+	-rm -rf build
 
 cleantutorials:
-	-rm -r CSSE1001Tutorials
+	-rm -rf CSSE1001Tutorials
 
 tutorials: problem_db/* cleantutorials
 	cp code/MyPyTutor.py code/MyPyTutor.pyw
