@@ -8,7 +8,7 @@ DELAY=3
 MPT_ZIP="MyPyTutor34.zip"
 
 printf "Downloading hash files..."
-sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 get /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hashes
 get /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hash_mappings
 EOF
@@ -20,7 +20,7 @@ printf "done\n"
 
 printf "Uploading new hash files..."
 sleep $DELAY
-sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put tutorial_hashes /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hashes
 put tutorial_hash_mappings /opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions/tutorial_hash_mappings
 EOF
@@ -28,7 +28,7 @@ printf "done\n"
 
 printf "Uploading tutorials zip..."
 sleep $DELAY
-sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put $1/$1.zip /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/$1.zip
 EOF
 printf "done\n"
@@ -40,7 +40,7 @@ printf "done\n"
 
 printf "Uploading MyPyTutor zip..."
 sleep $DELAY
-sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put $MPT_ZIP /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/$MPT_ZIP
 EOF
 printf "done\n"
@@ -49,7 +49,7 @@ printf "Updating version info..."
 VERSION_FILE=.tmp_mpt_version
 python3 code/MyPyTutor.py --version > $VERSION_FILE
 sleep $DELAY
-sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put $VERSION_FILE /opt/local/share/MyPyTutor/MPT3_CSSE1001/mpt_version
 EOF
 rm $VERSION_FILE
@@ -57,17 +57,17 @@ printf "done\n"
 
 printf "Uploading installer..."
 sleep $DELAY
-sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
+sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put code/MyPyTutor.py /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/MyPyTutor.py
 EOF
 printf "done\n"
 
 printf "Updating cgi scripts..."
 sleep $DELAY
-rsync --delete --rsh=ssh -av --no-perms --omit-dir-times cgi-bin/ csse1001.zones.eait.uq.edu.au:/opt/local/libexec/cgi-bin/mpt3 >/dev/null 2>&1
+rsync --delete --rsh=ssh -av --no-perms --omit-dir-times cgi-bin/ s4320859-csse1001.zones.eait.uq.edu.au:/opt/local/libexec/cgi-bin/mpt3 >/dev/null 2>&1
 printf "done\n"
 
 printf "Updating help webpage..."
 sleep $DELAY
-rsync --delete --rsh=ssh -av --no-perms --omit-dir-times static/help/ csse1001.zones.eait.uq.edu.au:/opt/local/share/MyPyTutor/MPT3_CSSE1001/public/help >/dev/null 2>&1
+rsync --delete --rsh=ssh -av --no-perms --omit-dir-times static/help/ s4320859-csse1001.zones.eait.uq.edu.au:/opt/local/share/MyPyTutor/MPT3_CSSE1001/public/help >/dev/null 2>&1
 printf "done\n"

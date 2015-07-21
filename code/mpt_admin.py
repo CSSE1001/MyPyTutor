@@ -74,7 +74,7 @@ the above username and password and change your password.
 
 Details on how to download MyPyTutor can be found on the course web site at
 
-http://csse1001.uqcloud.net/
+http://s4320859-csse1001.uqcloud.net/
 
 """
 

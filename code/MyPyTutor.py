@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
         'ans_dir': '',
     },
 }
-DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
+DEFAULT_MPT_URL = 'http://s4320859-csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
 MPT_SERVICE = 'MyPyTutor'
 MPT_FILENAME = 'MyPyTutor.py'  # usually __file__, but need to support renaming
 GLOBAL_TIMEOUT = 5.  # seconds

@@ -11,8 +11,8 @@ import support
 import uqauth
 
 # static files (eg zipfiles)
-TUTORIAL_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
-MPT34_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
+TUTORIAL_ZIPFILE_URL = "http://s4320859-csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
+MPT34_ZIPFILE_URL = "http://s4320859-csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
 
 
 
@@ -30,7 +30,7 @@ HTML_ERROR = '''Content-Type: text/html
     </body>
 </html>'''
 
-ADMINS = ['uqprobin', 'uqspurdo']
+ADMINS = ['uqprobin', 'uqspurdo', 'uqbmart8']
 
 ACTIONS = {}
 
