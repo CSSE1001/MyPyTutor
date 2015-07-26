@@ -28,7 +28,7 @@ DEFAULT_CONFIG = {
 DEFAULT_MPT_URL = 'http://s4320859-csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
 MPT_SERVICE = 'MyPyTutor'
 MPT_FILENAME = 'MyPyTutor.py'  # usually __file__, but need to support renaming
-GLOBAL_TIMEOUT = 5.  # seconds
+GLOBAL_TIMEOUT = 10.  # seconds
 
 
 def execl(cmd, *args):
@@ -185,21 +185,29 @@ def bootstrap_install(use_gui):
         install_path = get_install_path(use_gui=use_gui)
         install_mpt(install_path)
 
+        # remove the installer, so the user can't keep running it
+        this_path = os.path.realpath(__file__)
+        os.remove(this_path)
+
         # re-exec in MPT dir
-        this_file = os.path.basename(MPT_FILENAME)
-        mpt_path = os.path.join(install_path, this_file)
+        this_filename = os.path.basename(MPT_FILENAME)
+        mpt_path = os.path.join(install_path, this_filename)
 
         argv = [mpt_path] + sys.argv[1:]
 
         execl(sys.executable, sys.executable, *argv)
 
 
-def update_mpt():
+def update_mpt(force_update=False):
     """
     Update MyPyTutor if necessary.
 
     If an update is available, this function will not return, but will instead
     re-exec the current script.
+
+    Args:
+      force_update (bool, optional): If True, update regardless of whether a
+        newer version of MyPyTutor is available on the server.
 
     """
     # if we've made it to here, we assume that we are running in the MyPyTutor
@@ -221,7 +229,7 @@ def update_mpt():
         server_version = create_tuple(version)
         local_version = create_tuple(VERSION)
 
-        if server_version > local_version:
+        if server_version > local_version or force_update:
             print('Updating MyPyTutor...', end='', flush=True)
 
             # grab our new zip file
@@ -236,7 +244,12 @@ def update_mpt():
             print('done')
 
             # re-exec with the new version
-            execl(sys.executable, sys.executable, *sys.argv)
+            # remove update arg, or we get an infinite loop
+            argv = sys.argv
+            if '--force-update-mpt' in argv:
+                argv.remove('--force-update-mpt')
+
+            execl(sys.executable, sys.executable, *argv)
 
     try:
         _check_for_updates()
@@ -329,9 +342,13 @@ def bootstrap_tutorials():
         print('done')
 
 
-def update_default_tutorial_package():
+def update_default_tutorial_package(force_update=False):
     """
     Update the default tutorial package if necessary.
+
+    Args:
+      force_update (bool, optional): If True, update regardless of whether a
+        newer version of the tutorial package is available on the server.
 
     """
     from tutorlib.config.configuration import load_config
@@ -373,7 +390,7 @@ def update_default_tutorial_package():
 
     # we only want to update if the server's version is more recent
     # a more recent local version should only arise in development, anyway
-    if server_timestamp <= local_timestamp:
+    if server_timestamp <= local_timestamp and not force_update:
         return
 
     print('Updating tutorial package...', end='', flush=True)
@@ -507,7 +524,11 @@ def try_login(username, password):
         from tutorlib.config.configuration import load_config, save_config
         cfg = load_config()
 
-        keyring.delete_password(MPT_SERVICE, cfg.online.username)
+        try:
+            keyring.delete_password(MPT_SERVICE, cfg.online.username)
+        except Exception:  # PasswordDeleteError isn't defined anywhere!
+            pass
+
         cfg.online.username = ''
 
         save_config(cfg)
@@ -584,18 +605,68 @@ def launch_mpt(web_api=None):
         TutorialApp instance.  Defaults to None.  If provided, this must be
         logged in.
 
+    Returns:
+      The TutorialApp instance which was used.
+
     """
     # if we've made it to here, assume these imports will succeed
     from tutorlib.gui.app.app import TutorialApp
 
+    print('Running MyPyTutor...', end='', flush=True)
+
     root = tk.Tk()
-    _ = TutorialApp(root, web_api=web_api)
+    app = TutorialApp(root, web_api=web_api)
     root.mainloop()
+
+    print('done')
+
+    return app
+
+
+def shutdown(app):
+    """
+    Shut down the given app, and perform any necessary cleanup.
+
+    Args:
+      app (TutorialApp): The app which has just terminated.
+
+    """
+    from tutorlib.interface.web_api import WebAPIError
+    from tutorlib.utils.tmp import cleanup_temp_files
+
+    # sync tutorials if necessary
+    if app.web_api.is_logged_in:
+        synchronise_problems(app.web_api)
+
+        print('Logging out of MyPyTutor...', end='', flush=True)
+
+        try:
+            app.web_api.logout()
+        except WebAPIError:
+            pass  # who cares at this point
+
+        print('done')
+
+    # wipe out our temp files
+    print('Cleaning up...', end='', flush=True)
+    cleanup_temp_files()
+    print('done')
+
 
 
 def parse_args():
     parser = ArgumentParser()
 
+    parser.add_argument(
+        '--force-update-mpt',
+        action='store_true',
+        help='Update MyPyTutor even if this would not normally be required',
+    )
+    parser.add_argument(
+        '--force-update-tutorials',
+        action='store_true',
+        help='Update tutorials even if this would not normally be required',
+    )
     parser.add_argument(
         '--no-gui',
         action='store_true',
@@ -626,13 +697,13 @@ def main():
 
     # install and update MyPyTutor
     bootstrap_install(use_gui=not args.no_gui)
-    update_mpt()
+    update_mpt(force_update=args.force_update_mpt)
 
     create_config_if_needed()
 
     # install and update the default tutorial package
     bootstrap_tutorials()
-    update_default_tutorial_package()
+    update_default_tutorial_package(force_update=args.force_update_tutorials)
 
     # try to log the user in automatically
     username, password = try_get_credentials()
@@ -645,7 +716,10 @@ def main():
         synchronise_problems(web_api)
 
     # launch MyPyTutor itself
-    launch_mpt(web_api)
+    app = launch_mpt(web_api)
+
+    # cleanup (syncrhonise, logout etc)
+    shutdown(app)
 
     return 0
 

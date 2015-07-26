@@ -47,7 +47,7 @@ class ExecutiveIsDefined(StudentTestCase):
 
 
 class ExecutiveCalculatesWage(StudentTestCase):
-    DESCRIPTION = "mary = Executive('Mary', 26000, 5200); mary.get_wage() -> 1200."
+    DESCRIPTION = "mary = Executive('Mary', 26000, 5200); mary.wage() -> 1200."
     MAIN_TEST = 'test_main'
 
     def test_main(self):

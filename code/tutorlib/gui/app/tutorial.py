@@ -105,10 +105,10 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
         # it will be up to the app to *request* a larger size
         self.text = tk.Text(self, height=0, wrap=tk.WORD)
         self.text.config(state=tk.DISABLED)
-        self.text.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.TRUE)
+        self.text.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
         scrollbar = ttk.Scrollbar(self)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        scrollbar.pack(side=tk.LEFT, fill=tk.Y)
         self.text.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.text.yview)
 

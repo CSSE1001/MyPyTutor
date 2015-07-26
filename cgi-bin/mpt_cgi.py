@@ -35,6 +35,17 @@ ADMINS = ['uqprobin', 'uqspurdo', 'uqbmart8']
 ACTIONS = {}
 
 
+# A wrapper for the uqauth.get_user() interface
+def get_user_and_add():
+    """Returns the result of uqauth.get_user(), and also permanently records
+       the user's information (name, email) for administration purposes."""
+    info = uqauth.get_user_info()
+    userid, name, email = map(str, [info['user'], info.get('name', 'NO_NAME'),
+                                    info.get('email', 'NO_EMAIL')])
+    support.add_user(support.User(userid, name, email, support.NOT_ENROLLED))
+    return str(info['user'])
+
+
 class ActionError(Exception):
     """An exception that represents some error in the request.
     Text messages of this error will be displayed to the user in the client.
@@ -124,7 +135,7 @@ def upload_code(code, tutorial_package_name, problem_set_name, tutorial_name):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # immediately fail if the student is trying to send us too much junk
     # (so that we can't easily be DOSed)
@@ -160,7 +171,7 @@ def download_code(tutorial_package_name, problem_set_name, tutorial_name):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # read the answer
     code = support.read_answer(
@@ -199,7 +210,7 @@ def answer_info(tutorial_package_name, problem_set_name, tutorial_name):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # grab our data
     answer_hash = support.get_answer_hash(
@@ -262,7 +273,7 @@ def submit_answer(tutorial_hash, code, num_attempts):
 
     """
     # authenticate the user
-    user = uqauth.get_user()
+    user = get_user_and_add()
 
     # check that the tutorial actually exists
     hashes = support.parse_tutorial_hashes()
@@ -286,7 +297,8 @@ def submit_answer(tutorial_hash, code, num_attempts):
     valid_hashes = [h for h, ti in hashes.items() if ti == tutorial_info]
 
     try:
-        next(si for si in submissions if si.hash in valid_hashes)
+        next(si for si in submissions if si.hash in valid_hashes
+             and si.date is not None)
         raise NullResponse(
             'Tutorial already submitted: {}'.format(tutorial_hash)
         )
@@ -327,55 +339,8 @@ def show_submit():
 
     """
     # authenticate the user
-    user = uqauth.get_user()
-
-    return _get_submissions_for_user(user)
-
-
-def _get_submissions_for_user(user):
-    """
-    Return the submissions for the given user.
-
-    No attempt is made to check that the logged in user has permission to view
-    these submissions.  That is the responsibility of the caller.
-
-    Args:
-      user (str): The user to return the submissions for.
-
-    Returns:
-      A list of two-element tuples.
-      Each tuple represents a single tutorial.
-
-      The first element in the tuple is the hash of the tutorial package (in
-      the same format as usual, ie base32 encoded sha512 hash).
-
-      The second element in the tuple is one of the strings
-      {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
-
-    """
-    # get our data
-    hashes = support.parse_tutorial_hashes()
-    submissions = support.parse_submission_log(user)
-    tutorials = set(hashes.values())
-
-    # check if our submissions are late or not
-    results = {ti.hash: 'MISSING' for ti in tutorials}
-
-    for submission in submissions:
-        # lookup, not get, as this must exist: if not, then we have a
-        # submission with an unknown tutorial, which is a server error
-        tutorial_info = hashes[submission.hash]
-
-        if submission.date <= tutorial_info.due:
-            status = 'OK'
-        elif submission.allow_late:
-            status = 'LATE_OK'
-        else:
-            status = 'LATE'
-
-        results[tutorial_info.hash] = status
-
-    return json.dumps(results.items())
+    user = get_user_and_add()
+    return json.dumps(support.get_submissions_for_user(user).items())
 
 
 @action('provide_feedback')
@@ -391,18 +356,6 @@ def provide_feedback(subject, feedback, code=''):
     support.add_feedback(user, subject, feedback, code)
 
     return 'OK'  # this can't fail
-
-
-@action('get_feedback', admin=True)
-def get_feedback():
-    """
-    Return a JSON list of feedback, with each item of feedback represented
-    as a JSON dictionary.
-
-    """
-    feedback = support.get_all_feedback()
-
-    return json.dumps(feedback)
 
 
 @action('match', admin=True)
@@ -495,7 +448,7 @@ def get_results(user):
       {'MISSING', 'OK', 'LATE', 'LATE_OK'}.
 
     """
-    return _get_submissions_for_user(user)
+    return json.dumps(support.get_submissions_for_user(user).items())
 
 
 @action('get_user_subs', admin=True)

@@ -18,6 +18,7 @@ class CodeVisitor(TutorialNodeVisitor):
         if self.in_while:
             self.return_in_while = True
 
+
 class Analyser(CodeAnalyser):
     def _analyse(self):
         if not self.visitor.functions['div_3_5'].is_defined:
@@ -26,11 +27,20 @@ class Analyser(CodeAnalyser):
                 self.add_error('div_3_5 should accept exactly two arguments')
         if not self.visitor.has_while_statement:
             self.add_error('You need to use a while statement')
-        if self.visitor.return_in_while:
-            self.add_warning('You proably don\'t want a return statement inside the while loop')
-        elif not self.visitor.has_return:
-            self.add_error('You need a return statement')
 
+        if not self.visitor.has_return:
+            self.add_error('You need a return statement')
+        elif self.visitor.return_in_while:
+            self.add_warning(
+                'You proably don\'t want a return statement inside the '
+                'while loop'
+            )
+
+        if self.visitor.functions['div_3_5'].calls['input']:
+            self.add_error(
+                "You don't need to call input; function arguments are passed "
+                "automatically by Python"
+            )
 
 
 ANALYSER = Analyser(CodeVisitor)

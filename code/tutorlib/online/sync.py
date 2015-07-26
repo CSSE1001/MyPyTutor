@@ -153,7 +153,7 @@ class SyncClient():
           tutorial_package (TutorialPackage): The tutorial package to sync.
 
         """
-        max_workers = sum(len(pset) for pset in tutorial_package.problem_sets)
+        max_workers = len(tutorial_package.problem_sets)
         with ThreadPoolExecutor(max_workers) as executor:
             futures = []
 

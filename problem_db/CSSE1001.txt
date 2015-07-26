@@ -1,6 +1,6 @@
 [URL:https://student.eait.uq.edu.au/mypytutor/mpt/cgi-bin/mpt_cgi.py]
 
-[20/03/15 Introduction]
+[14/08/15 Introduction]
 
 Introduction:intro.tut
 Input and Output:input.tut
@@ -14,7 +14,7 @@ While Statements:while_average.tut
 While Using Break:while_break_average.tut
 Writing a Function Using While:while_function.tut
 
-[27/03/15 Abstract Data Types]
+[21/08/15 Abstract Data Types]
 
 Accessing String Elements:string_indexing.tut
 Slicing Strings:string_slicing.tut
@@ -23,7 +23,7 @@ Filtering Characters from a String:string_filter.tut
 Intersecting String:string_intersection.tut
 Using Tuples:tuple.tut
 
-[03/04/15 Classes and Objects]
+[28/08/15 Classes and Objects]
 
 Using Range:range.tut
 Finding Digits in Strings:string_digits.tut
@@ -33,7 +33,7 @@ Transforming a List:list_append.tut
 Suming Elements of a List:list_sum.tut
 Finding the Mean:meanfun.tut
 
-[17/04/15 Classes, Error Handling and I/O]
+[04/09/15 Classes, Error Handling and I/O]
 
 Accessing a Dictionary:dict_subscript.tut
 Accessing a Dictionary Using Get:dict_get.tut
@@ -42,27 +42,28 @@ Updating a Dictionary:dict_update.tut
 Exception Handling:except_try.tut
 Raising an Exception:except_raise.tut
 
-[24/04/15 Class Design]
+[11/09/15 Class Design]
 Using Classes:class_use.tut
 Defining a Class:class_rect.tut
 A Point Class Definition:class_point.tut
 
-[01/05/15 Inheritance]
+[18/09/15 Inheritance]
 Using Inheritance:inherit_def.tut
 Method Calls:inherit_calls.tut
+Polymorphism:inherit_poly.tut
 
-[15/05/15 GUI]
+[09/10/15 GUI]
 GUI Layout Example I : gui1.tut : layout1.gif
 GUI Layout Example II : gui2.tut : layout2.gif
 GUI Layout Example III : gui3.tut : layout3.gif
 
-[22/05/15 Recursion]
+[16/10/15 Recursion]
 Extracting Digits:recursive_digits.tut
 Nested Lists:recursion_list.tut
 Extracting Digits Using a Base:recursive_digits2.tut
 Converting List of Digits to Number:recursive_base2dec.tut
 
-[05/06/15 Functional Programming]
+[30/10/15 Functional Programming]
 Writing Lambda Functions:lambda.tut
 List Comprehension:list_comp.tut
 Add Functions:add_functions.tut

@@ -59,6 +59,7 @@ printf "Uploading installer..."
 sleep $DELAY
 sftp s4320859-csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
 put code/MyPyTutor.py /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/MyPyTutor.py
+put run_in_python3.bat /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/run_in_python3.bat
 EOF
 printf "done\n"
 

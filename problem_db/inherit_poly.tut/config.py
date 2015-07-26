@@ -1,0 +1,1 @@
+SHORT_DESCRIPTION = 'Write RightAngledTriangle and Rectangle subclasses of Shape'

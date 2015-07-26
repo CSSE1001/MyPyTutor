@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>CSSE1001 Help List</title>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        th.check,
+        td.check {
+            width: 1%;
+        }
+
+        div.mark-buttons {
+            padding: 5px;
+        }
+
+        .panel-heading i.down,
+        .panel-heading.collapsed i.up {
+            display: none;
+        }
+
+        .panel-heading i.up,
+        .panel-heading.collapsed i.down {
+            display: inline-block;
+        }
+
+        .panel-heading {
+            cursor: pointer;
+        }
+
+        header h1 a,
+        header h1 a:hover,
+        header h1 a:focus {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        .panel-heading .progress {
+            margin: 10px 10px 10px 10px;
+            background-color: #eaeaea;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function toggle_all(name) {
+            var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
+            var collector = document.getElementById('checkbox-'+name);
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = collector.checked;
+            }
+            var counter = document.getElementById('counter-'+name);
+            if (collector.checked) {
+                counter.innerHTML = " &mdash; " + checkboxes.length + " selected";
+            } else {
+                counter.innerHTML = "";
+            }
+        }
+
+        function checkbox_click(name) {
+            var count_on = 0;
+            var checkboxes = document.getElementsByClassName('checkbox-set-'+name);
+            for (var i = 0; i < checkboxes.length; i++) {
+                count_on += checkboxes[i].checked;
+            }
+            var master = document.getElementById('checkbox-'+name);
+            if (count_on == 0) {
+                master.checked = false;
+                master.indeterminate = false;
+            } else if (count_on == checkboxes.length) {
+                master.checked = true;
+                master.indeterminate = false;
+            } else {
+                master.checked = false;
+                master.indeterminate = true;
+            }
+            var counter = document.getElementById('counter-'+name);
+            if (count_on > 0) {
+                counter.innerHTML = " &mdash; " + count_on + " selected";
+            } else {
+                counter.innerHTML = "";
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="page-header">
+            <h1><a href="">CSSE1001 Help List</a>
+                <small>(${sum(1 for item in help_list if item.status != 'COMPLETE')} requests pending)</small>
+            </h1>
+        </div>
+    </header>
+
+    % if alert_message:
+    <div class="alert alert-dismissible ${alert_message[0]}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            ${alert_message[1]}
+    </div>
+    % endif
+
+    <div class="panel-group" id="help_items" role="tablist" aria-multiselectable="true">
+        % for item in help_list:
+        <div class="panel panel-${dict([('COMPLETE', 'success'), ('QUEUED', 'default'), ('IGNORED', 'warning'), ('IN_PROGRESS', 'info')])[item.status]}">
+            <div class="panel-heading" role="tab" id="heading${loop.index}" data-toggle="collapse"
+                 data-parent="#help_items" data-target="#collapse${loop.index}" aria-expanded="true" aria-controls="collapse${loop.index}">
+                <div class="panel-title clearfix">
+                    <h4 class="pull-left">
+                    ${item.name}
+                        <small>
+                            (${item.username})
+                        </small>
+                    </h4>
+                    <h4 class="pull-right">${item.timestamp + date_offset}
+                        <i class="glyphicon glyphicon-circle-arrow-down down"></i>
+                        <i class="glyphicon glyphicon-circle-arrow-up up"></i>
+                    </h4>
+                </div>
+            </div>
+            <div id="collapse${loop.index}" class="panel-collapse collapse ${'in' if loop.index == open_index else ''}"
+                 role="tabpanel" aria-labelledby="heading${loop.index}">
+                <div class="panel-body">
+                    <div id="help-message">
+                        <h5>Message</h5>
+                            ${item.message}
+                    </div>
+                    % if item.traceback:
+                    <div id="help-traceback">
+                        <h5>Traceback</h5>
+                        <pre><code>${item.traceback}</code></pre>
+                    </div>
+                    % endif
+
+                    % if item.status != 'COMPLETE':
+                    <form action="#" method="POST" id="${item.username}">
+                        <input type="hidden" name="username" value="${item.username}">
+                        <div class="dropdown pull-left">
+                            <select class="form-control" name="mark_as" form="${item.username}" onchange="document.forms['${item.username}'].submit()">
+                                <option selected>Mark as:</option>
+                                <option value="QUEUED">Queued</option>
+                                <option value="IGNORED">Ignored</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="COMPLETE">Completed</option>
+                            </select>
+                        </div>
+                    </form>
+                    % endif
+                </div>
+            </div>
+        </div>
+        % endfor
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+
+</body>
+</html>

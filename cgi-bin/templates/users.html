@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!-- TODO: improve the markup of the admin interface. -->
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MyPyTutor Admin Dashboard</title>
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+    th.check,
+    td.check {
+        width: 2%;
+    }
+
+    th.id,
+    td.id {
+        width: 10%;
+    }
+
+    th.name,
+    td.name {
+        width: 30%;
+    }
+
+    th.email,
+    td.email {
+        width: 25%;
+    }
+
+    th.marks,
+    td.marks {
+        width: 11%;
+    }
+
+    th.enrolled,
+    td.enrolled {
+        width: 11%;
+    }
+
+    td.actions,
+    td.actions {
+        width: 11%;
+    }
+
+    .panel-heading i.down,
+    .panel-heading.collapsed i.up {
+        display: none;
+    }
+
+    .panel-heading i.up,
+    .panel-heading.collapsed i.down {
+        display: inline-block;
+    }
+
+    .panel-heading {
+        cursor: pointer;
+    }
+
+    th a,
+    header h1 a,
+    header h1 a:hover,
+    header h1 a:focus {
+        color: inherit;
+        text-decoration: inherit;
+    }
+</style>
+<script type="text/javascript">
+function toggle_all(source) {
+    var checkboxes = document.getElementsByName('selected_user');
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+
+function checkbox_click() {
+    var all_on = true;
+    var all_off = true;
+    var checkboxes = document.getElementsByName('selected_user');
+    for (var i = 0; i < checkboxes.length; i++) {
+        all_on &= checkboxes[i].checked;
+        all_off &= !checkboxes[i].checked;
+    }
+    var master = document.getElementById('select_all');
+    if (all_off) {
+        master.checked = false;
+        master.indeterminate = false;
+    } else if (all_on) {
+        master.checked = true;
+        master.indeterminate = false;
+    } else {
+        master.checked = false;
+        master.indeterminate = true;
+    }
+}
+</script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+    <div class="page-header">
+        <h1><a href="?">MyPyTutor Admin Dashboard</a></h1>
+    </div>
+    </header>
+    % if message:
+    <div class="alert alert-dismissible ${message[0]}">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    ${message[1]}
+    </div>
+
+    % endif
+    <div class="row row-fluid">
+        <form action="#" method="get" role="search">
+            <div class="col-md-3 col-md-push-6 col-sm-4 col-sm-push-4">
+                <div class="input-group" style="width: 100%;"> <!-- Sorry for using inline styling :) -->
+                    <input type="text" class="form-control" name="query" placeholder="Filter" value="${query}">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        % if query != '':
+                        <a href="?query=&amp;enrol_filter=${enrol_filter}&amp;sort=${sort}" type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+                        % endif
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-md-push-6 col-sm-4 col-sm-push-4">
+                <select class="form-control" name="enrol_filter" onchange="this.form.submit()">
+                  <option value="all" ${'selected' if enrol_filter=='all' else ''}>Show all users</option>
+                  <option value="enrolled" ${'selected' if enrol_filter=='enrolled' else ''}>Show only enrolled users</option>
+                  <option value="not_enrolled" ${'selected' if enrol_filter=='not_enrolled' else ''}>Show only not-enrolled users</option>
+                </select>
+            </div>
+            <input type="hidden" name="sort" value="${sort}"></input>
+        </form>
+        <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
+            <input form="edit_form" name="userlist" type="file"></input>
+        </div>
+        <div class="col-md-2 col-md-pull-6 col-sm-4 col-sm-pull-8">
+            <select class="form-control" id="actionMenu" form="edit_form" name="action" onchange="this.form.submit()">
+                <option selected>Action:</option>
+                <option value="enrol">Enrol selection</option>
+                <option value="unenrol">Unenrol selection</option>
+                <option value="upload">Upload users file</option>
+                <option value="export">Export marks to CSV</option>
+            </select>
+        </div>
+    </div>
+
+    <div>
+        <form action="#" method="POST" id="edit_form" enctype="multipart/form-data">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="check"><input type="checkbox" id="select_all" onClick="toggle_all(this)"></th>
+                % for key, name in [('id', 'User ID'), ('name', 'Name'), ('email', 'Email'), ('marks', 'Mark')]:
+                <th class="${key}">${name}
+                % if sort == key:
+                <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}_reverse">
+                    <i class="glyphicon glyphicon-sort-by-${'alphabet' if key != 'marks' else 'order-alt'}"></i>
+                </a>
+                % elif sort == key + '_reverse':
+                <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}">
+                    <i class="glyphicon glyphicon-sort-by-${'alphabet-alt' if key != 'marks' else 'order'}"></i>
+                </a>
+                % else:
+                <a href="?query=${query}&amp;enrol_filter=${enrol_filter}&amp;sort=${key}">
+                    <i class="glyphicon glyphicon-sort"></i>
+                </a>
+                % endif
+                </th>
+                % endfor
+                <th class="enrolled">Enrolled?</th>
+                <th class="actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            % for user, progress in user_data:
+            <tr>
+                <td class="check"><input type="checkbox" name="selected_user" value="${user.id}" onClick="checkbox_click()"></td>
+                <td class="id">${user.id}</td>
+                <td class="name">${user.name}</td>
+                <td class="email"><a href="mailto:${user.email}">${user.email}</a></td>
+                <td class="marks">${progress['CORRECT']} / ${progress['TOTAL']} (${100*progress['CORRECT']/progress['TOTAL']}%)</td>
+                <td class="enrolled">${'Yes' if user.enrolled == 'enrolled' else 'No' if user.enrolled == 'not_enrolled' else '{Bad Data}'}</td>
+                <td class="actions"><a href="progress.py?user=${user.id}">View Progress</a></td>
+            </tr>
+            % endfor
+            </tbody>
+        </table>
+        </form>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>

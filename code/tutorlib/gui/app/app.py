@@ -20,7 +20,6 @@ from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.utils.decorators import skip_if_attr_none
 import tutorlib.utils.messagebox as tkmessagebox
 from tutorlib.utils.threading import exec_sync
-from tutorlib.utils.tmp import cleanup_temp_files
 from tutorlib.interface.interpreter import Interpreter
 from tutorlib.interface.problems import TutorialPackage, TutorialPackageError
 from tutorlib.interface.tests import run_tests
@@ -28,7 +27,7 @@ from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
 
-VERSION = '3.0.0'
+VERSION = '3.0.7'
 
 
 class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
@@ -105,6 +104,9 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
             self._login_status_change(logged_in=True, do_sync=False)
 
         self.sync_client = SyncClient(self.web_api)
+
+        ## Purely private vars
+        self._is_closing = False
 
         ## Finalise GUI Setup
 
@@ -338,7 +340,14 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         to do so (this will prompt the student to save their code).
 
         """
+        # don't try to close more than once
+        # this fixes errors when the user keeps hammering the close button
+        if self._is_closing:
+            return
+
         if self.editor.close() == tkmessagebox.YES:
+            self._is_closing = True
+
             self.interpreter.kill()
 
             self.attempts.save()
@@ -347,14 +356,6 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
             self.cfg.resolution.height = self.master.winfo_height()
 
             save_config(self.cfg)
-
-            cleanup_temp_files()
-
-            self.synchronise(suppress_popups=True)
-            try:
-                self.logout()
-            except WebAPIError:
-                pass  # who cares at this point
 
             self.master.destroy()
 

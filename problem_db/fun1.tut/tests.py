@@ -38,7 +38,7 @@ class TestZeroNumber(StudentTestCase):
 
 
 class TestNegativeNumber(StudentTestCase):
-    DESCRIPTION = "'-3' -> '-3'"
+    DESCRIPTION = "'-3' -> '-4'"
     MAIN_TEST = 'test_main'
 
     def test_main(self):

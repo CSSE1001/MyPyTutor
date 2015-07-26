@@ -196,6 +196,9 @@ class Output(ttk.Frame):
     def update_text_length(self, lines):
         self.text.config(height=lines)
 
+    def set_height(self, height):
+        self.text.config(height=height)
+
 
 class AnalysisOutput(Output):
     def __init__(self, master, height=5, fontsize=12):
@@ -210,3 +213,5 @@ class AnalysisOutput(Output):
 
         if analyser.errors:
             self.add_line(analyser.errors[0], Output.COLOR_ERROR)
+
+        self.set_height((1 if analyser.errors else 0) + len(analyser.warnings))

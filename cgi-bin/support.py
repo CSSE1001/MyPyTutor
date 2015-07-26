@@ -12,6 +12,8 @@ File structure:
   base_dir/
     mpt_version                      <- MyPyTutor version file
     data/
+      user_info                      <- Names/email/etc storage for all users
+      help_list                      <- current list of students needing help
       answers/
         <username>/
           <tutorial_package_name>/
@@ -49,6 +51,9 @@ ANSWERS_DIR = os.path.join(DATA_DIR, "answers")
 FEEDBACK_DIR = os.path.join(DATA_DIR, "feedback")
 SUBMISSIONS_DIR = os.path.join(DATA_DIR, "submissions")
 
+USER_INFO_FILE = os.path.join(DATA_DIR, "user_info")
+HELP_LIST_FILE = os.path.join(DATA_DIR, "help_list")
+
 # submission specific constants
 TUTORIAL_HASHES_FILE = os.path.join(SUBMISSIONS_DIR, "tutorial_hashes")
 TUTORIAL_HASH_MAPPINGS_FILE = os.path.join(
@@ -65,6 +70,11 @@ MPT_VERSION_FILE = os.path.join(BASE_DIR, 'mpt_version')
 
 # Tutorial zipfile
 TUTORIALS_ZIP_PATH = os.path.join(PUBLIC_DIR, 'CSSE1001Tutorials.zip')
+
+
+##############################################################################
+# SUPPORT FOR STORING USER'S SYNCED ANSWERS
+##############################################################################
 
 
 def _get_answer_path(user, tutorial_package_name, problem_set_name,
@@ -237,20 +247,27 @@ def get_answer_modification_time(user, tutorial_package_name, problem_set_name,
     return os.path.getmtime(path)
 
 
+##############################################################################
+# SUPPORT FOR STORING TUTORIAL INFORMATION
+##############################################################################
+
+
 TutorialInfo = namedtuple(
     'TutorialInfo',
     ['hash', 'due', 'package_name', 'problem_set_name', 'tutorial_name']
 )
 
 
-# TODO: refactor the two functions below maybe?
-# (look at how each of them is used and maybe there'll be a smarter way)
 def get_tutorials():
     """
     Get a list of all tutorials, as TutorialInfo objects.
 
+    Tutorials will be ordered as in the tutorial hashes file (meaning that
+    tutorials from the same problem set will be grouped together).
+
     Returns:
       An ordered list of TutorialInfo objects.
+
     """
     tutorials = []
     with open(TUTORIAL_HASHES_FILE) as f:
@@ -334,6 +351,11 @@ def parse_tutorial_hashes():
     return hashes
 
 
+##############################################################################
+# SUPPORT FOR STORING USER SUBMISSIONS
+##############################################################################
+
+
 def _get_or_create_user_submissions_dir(user):
     """
     Get the submissions directory for the user.
@@ -404,8 +426,11 @@ TutorialSubmission = namedtuple('TutorialSubmission',
 
 
 def parse_submission_log(user):
-    """
-    Get the submission log for the given user.
+    """Get the submission log for the given user.
+
+    If a problem has not been submitted yet, then either it will not be
+    present in the list, or the date field on the TutorialSubmisison object
+    will be None.
 
     Format of submission_log file:
       hash submitted_dd_mm_yy
@@ -433,10 +458,13 @@ def parse_submission_log(user):
     submission_log_path = _get_or_create_user_submissions_file(user)
     admin_log_path = _get_or_create_admin_log_file(user)
 
+    allow_lates = set()
     with open(admin_log_path) as f:
-        allow_lates = [line[1]
-                       for line in filter(None, map(str.split, f))
-                       if line[0] == 'allow_late']
+        for line in map(str.split, f):
+            if line[0] == 'allow_late':
+                allow_lates.add(line[1])
+            elif line[0] == 'disallow_late':
+                allow_lates.discard(line[1])
 
     # parse the submission log file
     with open(submission_log_path) as f:
@@ -445,11 +473,16 @@ def parse_submission_log(user):
 
             submitted_date = dateutil.parser.parse(submitted_date_str)
             allow_late = hash_str in allow_lates
+            allow_lates.discard(hash_str)
 
             submission_info = TutorialSubmission(hash_str,
                                                  submitted_date,
                                                  allow_late)
             data.append(submission_info)
+
+    # get data for problems which aren't submitted but have allow_late set
+    for hash_str in allow_lates:
+        data.append(TutorialSubmission(hash_str, None, True))
 
     return data
 
@@ -503,7 +536,54 @@ def add_submission(user, tutorial_hash, code):
     return submission
 
 
-def set_allow_late(user, tutorial_hash):
+def get_submissions_for_user(user):
+    """
+    Return the submissions for the given user.
+
+    No attempt is made to check that the logged in user has permission to view
+    these submissions.  That is the responsibility of the caller.
+
+    Args:
+      user (str): The user to return the submissions for.
+
+    Returns:
+      A dictionary mapping tutorial hashes to the submission status of that
+      particular tutorial.
+
+      The submission status will be one of the strings
+      {'MISSING', 'OK', 'LATE', 'LATE_OK'}
+
+    """
+    # get our data
+    hashes = parse_tutorial_hashes()
+    submissions = parse_submission_log(user)
+    tutorials = set(hashes.values())
+
+    # check if our submissions are late or not
+    results = {ti.hash: 'MISSING' for ti in tutorials}
+
+    for submission in submissions:
+        # lookup, not get, as this must exist: if not, then we have a
+        # submission with an unknown tutorial, which is a server error
+        tutorial_info = hashes.get(submission.hash)
+        if not tutorial_info:
+            continue
+
+        if submission.date is None:
+            pass
+        elif submission.date <= tutorial_info.due:
+            status = 'OK'
+        elif submission.allow_late:
+            status = 'LATE_OK'
+        elif submission.date is not None:
+            status = 'LATE'
+
+        results[tutorial_info.hash] = status
+
+    return results
+
+
+def set_allow_late(user, tutorial_hash, authorised_by, on):
     """
     Allow a user to submit a tutorial late without incurring a mark penalty.
     If the user has not yet submitted, they will be allowed to submit late.
@@ -514,11 +594,23 @@ def set_allow_late(user, tutorial_hash):
     Args:
       user (str): The username to set the late allowance on.
       tutorial_hash (str): The tutorial hash, as a base32 string.
+      authorised_by (str): The username of the person who called this method
+      on (bool): True if the flag should be set, False if it should be unset
+
+    Returns:
+      False if the allow_late flag was already the same as the `on` parameter.
     """
+    if on == has_allow_late(user, tutorial_hash):
+        return False
+
+    msg = ('disallow_late', 'allow_late')[on]
     admin_log_path = _get_or_create_admin_log_file(user)
+    time = datetime.now().isoformat()
 
     with open(admin_log_path, 'a') as f:
-        f.write('allow_late {}\n'.format(tutorial_hash))
+        f.write('{} {} {} {}\n'
+                .format(msg, tutorial_hash, authorised_by, time))
+    return True
 
 
 def has_allow_late(user, tutorial_hash):
@@ -527,10 +619,157 @@ def has_allow_late(user, tutorial_hash):
     tutorial.
     """
     admin_log_path = _get_or_create_admin_log_file(user)
-
+    allowed = False
     with open(admin_log_path, 'rU') as f:
-        return any(line[0] == 'allow_late' and line[1] == tutorial_hash
-                   for line in map(str.split, f))
+        for line in map(str.split, f):
+            if line[0] == 'allow_late' and line[1] == tutorial_hash:
+                allowed = True
+            elif line[0] == 'disallow_late' and line[1] == tutorial_hash:
+                allowed = False
+    return allowed
+
+
+##############################################################################
+# SUPPORT FOR STORING DATA ABOUT USERS
+##############################################################################
+
+
+User = namedtuple('User', ['id', 'name', 'email', 'enrolled'])
+
+ALL = 'all'
+ENROLLED = 'enrolled'
+NOT_ENROLLED = 'not_enrolled'
+
+def get_users(query='', enrol_filter=ALL, sort_key=None, reverse=False):
+    """Return a list of users, optionally filtered/sorted.
+
+    User information for known is stored in a file in CSV format.
+
+    If a user is unknown, then their name and email will be blank.
+
+    Args:
+      query (str, optional): A string to filter results on. If given, return
+          only those users whose id/name/email contains the given string.
+      enrol_filter (str, optional): One of ENROLLED/NOT_ENROLLED/ALL. Return
+          only those users whose enrolment status matches the parameter (or
+          all users, if ALL).
+      sort_key (function, optional): A key-function to sort the users on.
+          Defaults to sorting on user's id.
+      reverse (bool, optional): Whether or not to reverse the sort.
+
+    Returns:
+        A list of User objects, filtered/sorted accordingly.
+    """
+    users = {}
+
+    # first, grab all of our enrolled users
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            id, name, email, enrolled = line.strip().split(',')
+
+            # check if the query string is contained in id or name or email and
+            # the enrol_filter matches the given enrol state, if given.
+            if (any(query.lower() in x.lower() for x in (id, name, email))
+                    and enrol_filter in (ALL, enrolled)):
+                users[id] = User(id, name, email, enrolled)
+
+    # now, read off all of the users who have logged in
+    for user in os.listdir(ANSWERS_DIR):
+        if user not in users:
+            users[user] = User(user, '', '', NOT_ENROLLED)
+
+    # filter the list direclty from the dictionary
+    user_list = [
+        user for user in users.values() if any(
+            query.lower() in attr.lower()
+            for attr in (user.id, user.name, user.email)
+        ) and enrol_filter in (ALL, user.enrolled)
+    ]
+
+    # sort our list of users if required
+    if sort_key is None:
+        sort_key = lambda u: u.id
+    user_list.sort(key=sort_key, reverse=reverse)
+
+    return user_list
+
+
+def get_user(userid):
+    """Return known metadata about a single user (or None, if unknown)."""
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            info = line.strip().split(',')
+            if userid == info[0]:
+                return User(*info)
+    return None
+
+
+def add_user(user):
+    """Adds a user to the user_info file, if they don't already exist.
+    This function should get called whenever a new user interacts with the
+    system, or when an administrator imports a list of users.
+
+    If the user's ID already exists in the records, no action is taken (even if
+    the rest of the information is different).
+
+    Args:
+      user (support.User): The user to add information about.
+
+    Returns:
+      True if the user was added, False if the user already existed.
+    """
+    # TODO: This implementation might cause a race condition if the user is
+    # added by another process while this process is reading the file.
+    # TODO: This is also possibly too slow (imagine ~600 users, this function
+    # probably gets called any time any of them attempts an action)
+    with open(USER_INFO_FILE, 'rU') as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            info = line.strip().split(',')
+            if user.id == info[0]:
+                return False
+
+    with open(USER_INFO_FILE, 'a') as f:
+        f.write('{0.id},{0.name},{0.email},{0.enrolled}\n'.format(user))
+        return True
+
+
+def set_user_enrolment(user, is_enrolled):
+    """Sets a user to be enrolled/unenrolled.
+
+    Args:
+      user (str): The user's login ID
+      is_enrolled (bool): True if the user should now be enrolled
+
+    Return:
+      True if the user's enrolment was changed, False if it stayed the same.
+    """
+    with open(USER_INFO_FILE) as f:
+        users = list(f)
+
+    new_status = (NOT_ENROLLED, ENROLLED)[is_enrolled]
+    is_changed = False
+    for i, u in enumerate(users):
+        fields = u.strip('\n').split(',')
+        if fields[0] == user:
+            is_changed |= (fields[3] != new_status)
+            fields[3] = new_status
+            users[i] = ','.join(fields) + '\n'
+
+    with open(USER_INFO_FILE, 'w') as f:
+        f.write(''.join(users))
+
+    return is_changed
+
+
+##############################################################################
+# SUPPORT FOR RETRIEVING VERSION INFORMATION
+##############################################################################
 
 
 def get_mypytutor_version():
@@ -562,6 +801,33 @@ def get_tutorials_timestamp():
             return f.readline().strip()  # we just need the first line
 
 
+##############################################################################
+# SUPPORT FOR STORING FEEDBACK
+##############################################################################
+
+
+Feedback = namedtuple(
+    'Feedback',
+    ['user', 'id', 'subject', 'date', 'text', 'code', 'status']
+)
+
+FEEDBACK_STATUS_RESOLVED = 'RESOLVED'
+FEEDBACK_STATUS_IGNORED = 'IGNORED'
+FEEDBACK_STATUS_TODO = 'TODO'
+FEEDBACK_STATUS_UNRESOLVED = 'UNRESOLVED'
+FEEDBACK_STATUSES = [
+    FEEDBACK_STATUS_RESOLVED,
+    FEEDBACK_STATUS_IGNORED,
+    FEEDBACK_STATUS_TODO,
+    FEEDBACK_STATUS_UNRESOLVED,
+]
+
+
+def _get_feedback_path(user, feedback_id):
+    feedback_filename = '{user}.{id}'.format(user=user, id=feedback_id)
+    return os.path.join(FEEDBACK_DIR, feedback_filename)
+
+
 def add_feedback(user, subject, feedback, code=''):
     """
     Add the given feedback for the given user.
@@ -581,19 +847,20 @@ def add_feedback(user, subject, feedback, code=''):
         int(n) for u, n in existing_feedback if u == user
     )
     feedback_id = max(existing_feedback) + 1 if existing_feedback else 0
-    feedback_filename = '{user}.{id}'.format(user=user, id=feedback_id)
-    feedback_path = os.path.join(FEEDBACK_DIR, feedback_filename)
+    feedback_path = _get_feedback_path(user, feedback_id)
 
     # build the json dict
     d = {
         'subject': subject,
         'feedback': feedback,
         'code': code,
+        'time': datetime.now().isoformat(),
+        'status': FEEDBACK_STATUS_UNRESOLVED,
     }
 
     # actually write it to file
     with open(feedback_path, 'w') as f:
-        f.write(json.dumps(d))
+        f.write(json.dumps(d, indent=4))
 
 
 def get_all_feedback():
@@ -601,22 +868,69 @@ def get_all_feedback():
     Get all feedback.
 
     Returns:
-      A list containing a dictionary for each item of feedback recieved.
+      A list of Feedback objects, one for each item of feedback recieved.
 
     """
     feedback = []
 
     # assumes everything in the dir is valid
     for fn in os.listdir(FEEDBACK_DIR):
-        user, _, _ = fn.partition('.')
+        user, _, feedback_id = fn.partition('.')
 
-        with open(os.path.join(FEEDBACK_DIR, fn)) as f:
-            d = json.loads(f.read())
-
-        d['user'] = user
-        feedback.append(d)
+        item = get_feedback(user, feedback_id)
+        feedback.append(item)
 
     return feedback
+
+
+def get_feedback(user, feedback_id):
+    path = _get_feedback_path(user, feedback_id)
+
+    with open(path) as f:
+        d = json.loads(f.read())
+
+    item = Feedback(
+        user,
+        feedback_id,
+        d['subject'],
+        dateutil.parser.parse(d['time']),
+        d['feedback'],
+        d['code'],
+        d['status'],
+    )
+    return item
+
+
+def set_feedback_status(feedback, status):
+    """
+    Set the status of the given feedback to the given status value.
+
+    The given status value must be valid.
+
+    Args:
+      feedback ([Feedback]): The feedback to modify.
+      status (str): The status to set.
+
+    """
+    assert status in FEEDBACK_STATUSES, 'Unknown status: {}'.format(status)
+
+    feedback_path = _get_feedback_path(feedback.user, feedback.id)
+
+    d = {
+        'subject': feedback.subject,
+        'feedback': feedback.text,
+        'code': feedback.code,
+        'time': feedback.date.isoformat(),
+        'status': status,
+    }
+
+    with open(feedback_path, 'w') as f:
+        f.write(json.dumps(d, indent=4))
+
+
+##############################################################################
+# SUPPORT FOR STORING USERS' ATTEMPT COUNTS
+##############################################################################
 
 
 def _get_or_create_user_attempts_file(user):
@@ -641,7 +955,7 @@ def _get_or_create_user_attempts_file(user):
     # create the file if it does not exist
     if not os.path.exists(attempts_path):
         with open(attempts_path, 'w') as f:
-            f.write(json.dumps({}))
+            f.write(json.dumps({}, indent=4))
 
     return attempts_path
 
@@ -670,4 +984,194 @@ def record_attempts(user, tutorial_hash, num_attempts):
 
     # write this out to file
     with open(attempts_path, 'w') as f:
-        f.write(json.dumps(attempts))
+        f.write(json.dumps(attempts, indent=4))
+
+
+##############################################################################
+# SUPPORT FOR HELP REQUESTS
+##############################################################################
+
+
+HelpInfo = namedtuple(
+    'HelpInfo',
+    ['username', 'name', 'message', 'traceback', 'timestamp', 'status'],
+)
+HELP_STATUS_QUEUED = 'QUEUED'
+HELP_STATUS_IGNORED = 'IGNORED'  # eg, absent student
+HELP_STATUS_IN_PROGRESS = 'IN_PROGRESS'
+HELP_STATUS_COMPLETE = 'COMPLETE'
+HELP_STATUSES = [
+    HELP_STATUS_QUEUED,
+    HELP_STATUS_IGNORED,
+    HELP_STATUS_IN_PROGRESS,
+    HELP_STATUS_COMPLETE,
+]
+
+
+def get_help_list():
+    """
+    Return a list of information on all the students needing help in the lab
+    at the current time.
+
+    Returns:
+      A list of HelpInfo objects.
+
+    """
+    if not os.path.exists(HELP_LIST_FILE):
+        return []
+
+    with open(HELP_LIST_FILE) as f:
+        raw_list = json.loads(f.read())
+
+    # convert the timestamps
+    for d in raw_list:
+        d['timestamp'] = dateutil.parser.parse(d['timestamp'])
+
+    return [HelpInfo(**d) for d in raw_list]
+
+
+def write_help_list(help_list):
+    """
+    Write the given help list to the help list file.
+
+    Args:
+      help_list ([HelpInfo]): The list to write.
+
+    """
+    # for a named tuple, __dict__ is an OrderedDict of the fields
+    raw_list = [
+        dict(help_info.__dict__) for help_info in help_list
+    ]
+
+    # convert the timestamps
+    for d in raw_list:
+        d['timestamp'] = d['timestamp'].isoformat()
+
+    with open(HELP_LIST_FILE, 'w') as f:
+        f.write(json.dumps(raw_list, indent=4))
+
+
+def log_help_request(username, name, message, traceback=''):
+    """
+    Log a request for help from the given user.
+
+    A user may only have a single help request pending.  If this user has a
+    help request which has not been completed, it will be replaced.
+
+    This will also replace the status of the pending help request *unless* the
+    request is currently marked as being in progress.
+
+    Args:
+      username (str): The username of the user requesting help.
+      name (str): The name of the user requesting help.
+      message (str): The user's request for help.
+      traceback (str, optional): The error traceback, if applicable.
+
+    """
+    data = {
+        'username': username,
+        'name': name,
+        'message': message,
+        'traceback': traceback,
+        'timestamp': datetime.now(),
+        'status': HELP_STATUS_QUEUED,
+    }
+
+    help_list = get_help_list()
+    pending_request = get_pending_help_request(username, help_list=help_list)
+
+    # if a previous request exists, use its timestamp
+    # also, don't let requests which are in progress reset to being queued
+    if pending_request is not None:
+        data['timestamp'] = pending_request.timestamp
+
+        if pending_request.status == HELP_STATUS_IN_PROGRESS:
+            data['status'] = pending_request.status
+
+    new_request = HelpInfo(**data)
+
+    if pending_request is None:
+        help_list.append(new_request)
+    else:
+        assert pending_request in help_list
+        idx = help_list.index(pending_request)
+
+        help_list[idx] = new_request
+
+    write_help_list(help_list)
+
+
+def get_pending_help_request(user, help_list=None):
+    """
+    Return the pending help request for the given user, if one exists.
+
+    Args:
+      user (str): The username of the user to check.
+      help_list ([HelpInfo], optional): The help list to use.
+
+    Returns:
+      A HelpInfo object if the user has a pending help request.
+      None otherwise.
+
+    """
+    if help_list is None:
+        help_list = get_help_list()
+
+    for help_info in help_list:
+        if help_info.username == user \
+                and help_info.status != HELP_STATUS_COMPLETE:
+            return help_info
+    return None
+
+
+def set_help_request_status(user, status):
+    """
+    Set the status of the pending help request for the given user to the
+    given status value.
+
+    The user must have a pending help request.  Resetting the status of
+    completed help requests is not supported.
+
+    The given status must be a valid status.
+
+    Args:
+      user (str): The username of the user to set the status for.
+      status (str): The status to set.
+
+    """
+    assert status in HELP_STATUSES, 'Unknown status: {}'.format(status)
+
+    help_list = get_help_list()
+    pending_request = get_pending_help_request(user, help_list=help_list)
+
+    assert pending_request is not None
+    assert pending_request in help_list
+
+    data = pending_request.__dict__
+    data['status'] = status
+
+    idx = help_list.index(pending_request)
+    help_list[idx] = HelpInfo(**data)
+
+    write_help_list(help_list)
+
+
+def get_position_in_help_queue(user):
+    """
+    Return the given user's position in the help queue.
+
+    Args:
+      user (str): The username of the user to look up.
+
+    Returns:
+      The position of the user in the help queue, as an integer, starting at 1.
+
+      None if the user does not have a pending request.
+
+    """
+    incomplete = lambda hi: hi.status != HELP_STATUS_COMPLETE
+
+    for idx, help_info in enumerate(filter(incomplete, get_help_list())):
+        if help_info.username == user:
+            return idx + 1
+    return None

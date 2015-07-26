@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>CSSE1001 Help Request</title>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="page-header">
+            <h1><a href="">CSSE1001 Help Request</a>
+                <small>(${user})</small>
+            </h1>
+        </div>
+    </header>
+
+    % if alert_message:
+    <div class="alert alert-dismissible ${alert_message[0]}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            ${alert_message[1]}
+    </div>
+    % endif
+
+    % if is_ignored:
+    <div class="alert alert-dismissible alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Your current request has been marked as ignored.
+        This usually means that you weren't in the room when your name was called.
+        <br>
+        Please see a tutor and let them know that you've returned.
+    </div>
+    % elif has_pending:
+    <div class="alert alert-dismissible alert-info">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Your current place in the queue: ${queue_position}
+        <br>
+        <br>
+        You can only have a single help request pending at any one time.
+        <br>
+        If you submit a request here, it will replace your existing request.
+        You will not lose your place in the queue.
+    </div>
+    % endif
+
+    <form action="#" method="POST" id="edit_form">
+        <div id="help-message">
+            <h3>Message
+            <small>(an explanation of your problem for the tutor)</small>
+            </h3>
+            <textarea name="message" rows="10" cols="80">${message if message is not None else ''}</textarea>
+        </div>
+
+        <div id="help-traceback">
+            <h3>Traceback
+                <small>(the error message that you're seeing)</small>
+            </h3>
+            <textarea name="traceback" rows="10" cols="80">${traceback if traceback is not None else ''}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-default">Submit Help Request</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

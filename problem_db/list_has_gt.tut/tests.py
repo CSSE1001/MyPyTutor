@@ -20,7 +20,7 @@ class SingleElementTrue(StudentTestCase):
 
 
 class SingleElementFalse(StudentTestCase):
-    DESCRIPTION = 'has_gt([1], l) -> False'
+    DESCRIPTION = 'has_gt([1], 1) -> False'
     MAIN_TEST = 'test_single_element_false'
 
     def test_single_element_false(self):
@@ -104,7 +104,7 @@ class MultipleElementsMixedTrue(StudentTestCase):
 
 
 class MultipleElementsMixedFalse(StudentTestCase):
-    DESCRIPTION = 'has_gt([1, 2, 3], 5) -> True'
+    DESCRIPTION = 'has_gt([1, 2, 3], 5) -> False'
     MAIN_TEST = 'test_multiple_elements_mixed_false'
 
     def test_multiple_elements_mixed_false(self):
