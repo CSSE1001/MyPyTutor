@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # A CGI script to run the administrator interface
 
 import cgi
@@ -18,7 +18,7 @@ ADMINS = ['uqprobin']
 #################################################
 # Temporary, for development/debugging purposes
 #               Jackson,    Sean
-ADMINS.extend(['uqjgaten', 'uqspurdo'])
+ADMINS.extend(['uqjgaten', 'uqspurdo', 'uqbmart8'])
 #################################################
 
 TUTORS = ADMINS[:]
