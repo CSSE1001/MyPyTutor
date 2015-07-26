@@ -26,7 +26,7 @@ from tutorlib.gui.dialogs.dialog import Dialog
 
 
 ## The URL for the feedback CGI script.
-URL = 'http://s4320859-csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
+URL = 'http://csse1001.uqcloud.net/mpt/cgi-bin/feedback.py'
 
 
 class FeedbackDialog(Dialog):

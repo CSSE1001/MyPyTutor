@@ -8,9 +8,9 @@ from tutorlib.online.session import SessionManager
 from tutorlib.utils.tmp import retrieve
 
 
-HELP_URL = 'http://s4320859-csse1001.uqcloud.net/mpt3/help'
+HELP_URL = 'http://csse1001.uqcloud.net/mpt3/help'
 VISUALISER_URL \
-    = 'http://s4320859-csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
+    = 'http://csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
 
 
 class WebAPIError(Exception):

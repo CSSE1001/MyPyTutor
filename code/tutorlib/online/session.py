@@ -41,7 +41,7 @@ from tutorlib.online.parser import FormParser, strip_header
 
 LOGIN_DOMAIN = 'auth.uq.edu.au'
 LOGOUT_URL = 'http://api.uqcloud.net/logout'
-SERVER = 'http://s4320859-csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
+SERVER = 'http://csse1001.uqcloud.net/cgi-bin/mpt3/mpt_cgi.py'
 
 
 def make_opener():
