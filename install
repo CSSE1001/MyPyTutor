@@ -6,7 +6,7 @@ set -e
 DELAY=3
 
 printf "Creating directory structure..."
-ssh s4320859-csse1001.zones.eait.uq.edu.au <<ENDSSH
+ssh csse1001.zones.eait.uq.edu.au <<ENDSSH
 cd /opt/local/share/MyPyTutor/MPT3_CSSE1001
 mkdir -p data/answers
 mkdir -p data/submissions
@@ -17,5 +17,5 @@ printf "done\n"
 sleep $DELAY
 
 printf "Uploading hash files..."
-rsync -avz tutorial_* s4320859-csse1001.zones.eait.uq.edu.au:/opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions
+rsync -avz tutorial_* csse1001.zones.eait.uq.edu.au:/opt/local/share/MyPyTutor/MPT3_CSSE1001/data/submissions
 printf "done\n"

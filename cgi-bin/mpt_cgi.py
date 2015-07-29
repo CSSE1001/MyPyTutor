@@ -30,7 +30,7 @@ HTML_ERROR = '''Content-Type: text/html
     </body>
 </html>'''
 
-ADMINS = ['uqprobin', 'uqspurdo', 'uqbmart8']
+ADMINS = ['uqprobin', 'uqspurdo', 'uqbmart8', 'uqposhe1']
 
 ACTIONS = {}
 

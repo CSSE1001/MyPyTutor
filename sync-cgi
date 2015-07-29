@@ -9,10 +9,10 @@ MPT_ZIP="MyPyTutor34.zip"
 
 printf "Updating cgi scripts..."
 sleep $DELAY
-rsync --delete --rsh=ssh -av --no-perms --omit-dir-times cgi-bin/ s4320859-csse1001.zones.eait.uq.edu.au:/opt/local/libexec/cgi-bin/mpt3 >/dev/null 2>&1
+rsync --delete --rsh=ssh -av --no-perms --omit-dir-times cgi-bin/ csse1001.zones.eait.uq.edu.au:/opt/local/libexec/cgi-bin/mpt3 >/dev/null 2>&1
 printf "done\n"
 
 printf "Updating help webpage..."
 sleep $DELAY
-rsync --delete --rsh=ssh -av --no-perms --omit-dir-times static/help/ s4320859-csse1001.zones.eait.uq.edu.au:/opt/local/share/MyPyTutor/MPT3_CSSE1001/public/help >/dev/null 2>&1
+rsync --delete --rsh=ssh -av --no-perms --omit-dir-times static/help/ csse1001.zones.eait.uq.edu.au:/opt/local/share/MyPyTutor/MPT3_CSSE1001/public/help >/dev/null 2>&1
 printf "done\n"

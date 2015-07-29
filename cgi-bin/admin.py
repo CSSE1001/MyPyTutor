@@ -13,12 +13,12 @@ import support
 import uqauth
 
 # Whitelisted users with access to the admin site
-ADMINS = ['uqprobin']
+ADMINS = ['uqprobin', 'uqposhe1', 'uqbmart8']
 
 #################################################
 # Temporary, for development/debugging purposes
 #               Jackson,    Sean
-ADMINS.extend(['uqjgaten', 'uqspurdo', 'uqbmart8'])
+ADMINS.extend(['uqjgaten', 'uqspurdo'])
 #################################################
 
 TUTORS = ADMINS[:]
