@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-
-from argparse import ArgumentParser
-from getpass import getpass
-import os
-import subprocess
+from __future__ import print_function
 import sys
-import tkinter as tk
-import tkinter.filedialog as tkFiledialog
-from urllib.request import URLopener
-from zipfile import ZipFile
+from argparse import ArgumentParser
 
+ALLOWED_VERSIONS = [(3, 4)]
+
+if sys.version_info.major == 3:
+    from getpass import getpass
+    import os
+    import subprocess
+    import tkinter as tk
+    import tkinter.filedialog as tkFiledialog
+    from urllib.request import URLopener
+    from zipfile import ZipFile
 
 DEFAULT_CONFIG = {
     'online': {
@@ -79,15 +82,31 @@ def check_compatibility():
 
     """
     major, minor = sys.version_info[:2]
-    allowed_minor_versions = [4]
 
-    if major != 3 or minor not in allowed_minor_versions:
-        print('Python {}.{} is unsupported by MyPyTutor'.format(major, minor))
-        allowed_versions = ', '.join(
-            '{}.{}'.format(major, m) for m in allowed_minor_versions
-        )
-        print('Please upgrade to one of Python {}'.format(allowed_versions))
-        sys.exit(1)
+    for version in ALLOWED_VERSIONS:
+        if version == (major, minor):
+            return
+
+    print('Python {}.{} is unsupported by MyPyTutor.'.format(major, minor))
+    allowed_versions = ', '.join(
+        '{}.{}'.format(*version) for version in ALLOWED_VERSIONS
+    )
+    print('Please upgrade to {}Python {}'.format("one of " if len(ALLOWED_VERSIONS) > 1 else "", allowed_versions))
+
+    import subprocess
+    import platform
+    if platform.system() in ['Darwin', 'Linux']:
+        p = subprocess.Popen(["which", "python3"], stdout=subprocess.PIPE)
+        output = p.communicate()[0]
+        if not p.returncode:
+            print("Python 3 auto-detected at: {}".format(output.strip()))
+        else:
+            print("Failed to auto-detect Python 3.")
+    print("For more information, please visit the following url: http://csse1001.uqcloud.net/installing-mpt#common-errors")
+
+    (input if major == 3 else raw_input)("\nPress Enter to continue...")
+
+    sys.exit(1)
 
 
 def install_mpt(install_path, url=DEFAULT_MPT_URL):
