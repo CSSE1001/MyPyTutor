@@ -343,6 +343,20 @@ def show_submit():
     return json.dumps(support.get_submissions_for_user(user).items())
 
 
+@action('reset_submissions')
+def reset_submissions(hashes):
+    """
+    Reset the given user submissions
+
+    :return:
+    """
+    hashes = hashes.split(',')
+
+    user = get_user_and_add()
+
+    return json.dumps(support.reset_submissions_for_user(user, hashes).items())
+
+
 @action('provide_feedback')
 def provide_feedback(subject, feedback, code=''):
     """

@@ -4,6 +4,9 @@ from tkinter import ttk
 import tkinter.filedialog as tkfiledialog
 import os
 
+import tkinter.messagebox as tkmessagebox
+import datetime, time, shutil
+
 from tutorlib.config.attempts import TutorialAttempts
 from tutorlib.config.configuration \
         import add_tutorial, load_config, save_config
@@ -14,7 +17,7 @@ from tutorlib.gui.app.tutorial import TutorialFrame
 from tutorlib.gui.dialogs.about import TutAboutDialog
 from tutorlib.gui.dialogs.feedback import FeedbackDialog
 from tutorlib.gui.dialogs.progress import ProgressPopup
-from tutorlib.gui.dialogs.submissions import SubmissionsDialog
+from tutorlib.gui.dialogs.submissions import SubmissionsDialog, SubmissionsSelectDialog
 from tutorlib.gui.editor.delegate import TutorEditorDelegate
 from tutorlib.gui.editor.editor_window import TutorEditor
 from tutorlib.utils.decorators import skip_if_attr_none
@@ -27,7 +30,7 @@ from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
 
-VERSION = '3.0.7'
+VERSION = '3.0.8'
 
 
 class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
@@ -760,6 +763,122 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
 
         """
         self.interpreter.reload(self.editor.get_text())
+
+    #@skip_if_attr_none('editor')
+    def backup(self):
+        """
+        Backup the user's data.
+
+        """
+        filename = self._backup()
+
+    def _backup(self, filename=None, now=None, showMessage=True):
+        """
+        Backup the user's data.
+
+        Args:
+            filename:       The filename to backup to. If None, prompts users for one.
+            now:            The time to use for generation of timestamp to suffix to the filename.
+                            Not relevant if filename is not None.
+            showMessage:    Determines whether to show a GUI success message or not once backup has been completed.
+
+        """
+
+        if now is None:
+            now = time.time()
+
+        if filename is None:
+            timestamp = datetime.datetime.fromtimestamp(now).strftime('%Y-%m-%d %H-%M-%S')
+
+            # Request filename from user
+            filename = tkfiledialog.asksaveasfilename(
+                defaultextension='.zip',
+                filetypes=[('Zip Archives', '.zip'), ('All files', '.*')],
+                initialfile="mpt-backup {timestamp}".format(timestamp=timestamp)
+                )
+
+        if not filename:
+            return
+
+        if filename.endswith('.zip'):
+            filename = filename[:-4]
+
+        # Create zipfile
+        filename = shutil.make_archive(filename, 'zip', self.tutorial_package.options.ans_dir)
+
+        if showMessage:
+            tkmessagebox.showinfo("Backup complete!", "Your answers have been backed up successfully to {}".format(filename))
+
+        return filename
+
+    def process_submission_reset(self, problems, now=None):
+        """
+        Processes a user initiated submission reset.
+        1. Clears local files
+        2. Clears submissions on server
+        3. Synchronizes attempts with server
+
+        Args:
+            problems: A list of tutorial problems to reset.
+        """
+
+        window = tk.Toplevel()
+        tk.Label(window, text="Working").pack(anchor=tk.CENTER, padx=50, pady=50)
+        window.grab_set()
+
+        # 1. Clear local files
+        for problem, problem_set in problems:
+            if not problem.has_answer:
+                # Skip problems that have no attempt recorded
+                continue
+
+            problem.clear_local_attempt()
+
+        # 2. Clear submissions on server
+        self.web_api.reset_answers([problem for problem, _ in problems])
+
+        # 3. Synchronize attempts with server
+        self.synchronise()
+
+        window.grab_release()
+        window.destroy()
+
+        tkmessagebox.showinfo("Successfully Reset", "The submissions that you selected have been successfully reset.")
+
+    def reset_submissions(self):
+        """
+        Allows a user to select some of their submissions to reset.
+        """
+        if self.current_tutorial and self.editor.maybesave() == tkmessagebox.CANCEL:
+            return
+
+        now = datetime.datetime.now()
+
+        def done():
+            self.master.after(0, self.update_submissions)
+
+            if self.current_tutorial:
+                self.editor.reset(self.current_tutorial)
+                self.editor.undo.reset_undo()
+
+        def process(output):
+            self.process_submission_reset(output, now)
+
+            done()
+
+        # Check for backup first
+        do_backup = tkmessagebox.askyesno(
+            "Backup first?",
+            "It is HIGHLY recommended to backup your answers before attempting to reset any of your submissions."
+            "\n\n"
+            "Would you like to backup now?"
+        )
+
+        if do_backup:
+            self._backup(now=now)
+
+        # Prompt user with list of submissions to reset
+        dialog = SubmissionsSelectDialog(self.master, None, self.tutorial_package, text="Reset", command=process)
 
     # preferences
     @skip_if_attr_none('tutorial_package')

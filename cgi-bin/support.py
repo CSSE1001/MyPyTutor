@@ -535,6 +535,51 @@ def add_submission(user, tutorial_hash, code):
     # return the TutorialSubmission object
     return submission
 
+def reset_submissions_for_user(user, tutorial_hashes):
+    """
+    Reset the tutorial for the given user.
+
+    :param user: The user who requested the reset.
+    :param tutorial_hash: The tutorial_hash corresponding to the tutorial for which the submission should be reset.
+    :return:
+    """
+
+    submission_log_path = _get_or_create_user_submissions_file(user)
+
+    res = {}
+
+    with open(submission_log_path, 'r') as fd:
+        lines = fd.readlines()
+
+    new_lines = []
+    for line in lines:
+        remove_line = False
+        for hash in tutorial_hashes:
+            if line.startswith(hash):
+                remove_line = True
+                break
+
+        hash = line.split(' ', 1)[0]
+
+        if not remove_line:
+            new_lines.append(line)
+            res[hash] = 'RETAINED'
+        else:
+            res[hash] = 'REMOVED'
+
+    for hash in tutorial_hashes:
+        if hash in res:
+            continue
+
+        res[hash] = "IGNORED"
+
+    with open(submission_log_path, 'w') as fd:
+        fd.writelines(new_lines)
+
+
+
+    return res
+
 
 def get_submissions_for_user(user):
     """

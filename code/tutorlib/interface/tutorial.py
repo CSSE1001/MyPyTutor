@@ -1,6 +1,7 @@
 import ast
 from hashlib import sha512
 import os
+import datetime
 
 from tutorlib.analysis.analyser import CodeAnalyser
 from tutorlib.analysis.visitor import TutorialNodeVisitor
@@ -455,3 +456,41 @@ class Tutorial():
             )
 
         return self._preload_code_text
+
+    def clear_local_attempt(self, now=None, preserve=True):
+        """
+        Clears the local attempt at this problem.
+
+        :param now: A datetime object containing the time on which to log the reset.
+        :param preserve: Determines whether to preserve old attempt at end of file by commenting out.
+        :return:
+        """
+
+        if not self.has_answer:
+            return
+
+        if now is None:
+            now = datetime.datetime.now()
+
+        timestamp = now.strftime('%Y-%m-%d %H-%M-%S')
+
+        header = "# Reset on {}".format(timestamp)
+
+        with open(self.answer_path, 'r') as fd:
+            lines = fd.readlines()
+
+        with open(self.answer_path, 'w') as fd:
+            fd.write(header + "\n")
+
+            fd.write(self.preload_code_text)
+
+            if preserve:
+                for i in range(40):
+                    fd.write("\n")
+
+                lines = ["Previous attempt:\n"] + lines
+                lines = ["## " + line for line in lines]
+
+                fd.writelines(lines)
+
+        return True

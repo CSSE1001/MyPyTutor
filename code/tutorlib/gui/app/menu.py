@@ -19,10 +19,12 @@ MENU_STRUCTURE = [
         ('Show Submissions', None, 'submissions'),
         (None, None, None),
         ('Synchronise Solutions', None, 'sync'),
+        ('Reset Submissions', None, 'reset_submissions'),
     ]),
     ('Tools', [
         ('Visualise Code', None, 'visualise'),
         ('Show Interpreter', None, 'interpreter'),
+        ('Backup Answers', None, 'backup')
     ]),
     ('Preferences', [
         ('Configure Tutorial Folder', None, 'tutorial_directory'),
@@ -70,6 +72,10 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
     def synchronise(self):
         pass
 
+    @abstractmethod
+    def reset_submissions(self):
+        pass
+
     # tools
     @abstractmethod
     def show_visualiser(self):
@@ -77,6 +83,10 @@ class TutorialMenuDelegate(metaclass=ABCMeta):
 
     @abstractmethod
     def show_interpreter(self):
+        pass
+
+    @abstractmethod
+    def backup(self):
         pass
 
     # preferences
@@ -324,11 +334,17 @@ class TutorialMenu(tk.Menu):
     def menu_online_sync(self):
         self.delegate.synchronise()
 
+    def menu_online_reset_submissions(self):
+        self.delegate.reset_submissions()
+
     def menu_tools_visualise(self):
         self.delegate.show_visualiser()
 
     def menu_tools_interpreter(self):
         self.delegate.show_interpreter()
+
+    def menu_tools_backup(self):
+        self.delegate.backup()
 
     def menu_preferences_tutorial_directory(self):
         self.delegate.change_tutorial_directory()

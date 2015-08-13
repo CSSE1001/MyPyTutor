@@ -170,7 +170,7 @@ class WebAPI():
         """
         webbrowser.open(HELP_URL)
 
-    # general web communictions
+    # general web communications
     def _request(self, f, values, require_login=True):
         """
         Base method for making a web request.
@@ -509,6 +509,26 @@ class WebAPI():
             )
 
         return response
+
+    def reset_answers(self, tutorials):
+        """
+        Resets submissions for each given tutorial on the server.
+
+        :param tutorials: The tutorials to reset.
+        :return:
+        """
+
+        hashes = [base64.b32encode(tutorial.hash) for tutorial in tutorials]
+        hashes = ",".join([hash.decode("utf-8") for hash in hashes])
+
+        values = {
+            'action': 'reset_submissions',
+            'hashes': hashes
+        }
+
+        response = self._post(values)
+        if response is None:
+            return None
 
     def get_submissions(self, tutorial_package):
         """
