@@ -71,7 +71,7 @@ class SubmissionsSelectDialog(tk.Toplevel):
         now = datetime.datetime.now()
 
         for problem_set in tutorial_package.problem_sets:
-            past_due = datetime.datetime.strptime(problem_set.date, "%d/%m/%y") <= now + datetime.timedelta(days=2)
+            past_due = datetime.datetime.strptime(problem_set.date, "%d/%m/%y") <= now
 
             var = tk.BooleanVar()
             var.set(not past_due)
