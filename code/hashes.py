@@ -9,7 +9,7 @@ from tutorlib.config.namespaces import Namespace
 from tutorlib.interface.problems import TutorialPackage
 
 
-DUE_DATE_HOUR = 17
+DUE_DATE_HOUR = 18
 INPUT_DATE_FORMAT = "%d/%m/%y"
 DATE_FORMAT = "%H_%d/%m/%y"
 TIMEZONE_OFFSET = timedelta(hours=10)  # UTC+10
