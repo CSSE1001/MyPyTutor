@@ -822,7 +822,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
             problems: A list of tutorial problems to reset.
         """
 
-        window = tk.Toplevel()
+        window = tk.Toplevel(self.master)
         tk.Label(window, text="Working").pack(anchor=tk.CENTER, padx=50, pady=50)
         window.grab_set()
 
