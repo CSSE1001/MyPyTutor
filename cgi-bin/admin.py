@@ -23,15 +23,18 @@ ADMINS.extend(['uqjgaten', 'uqspurdo'])
 
 TUTORS = ADMINS[:]
 TUTORS.extend([
-    's4284683',  # Anne
-    's4320859', 'uqbmart8',  # Ben
-    's4204782',  # Jon
-    's4290365',  # Josh
-    's4117719',  # Matt Hamlet
-    's4287582', 'uqmhend8',  # Michael
-    's4316494', 'uqscolbr',  # Sam
-    's4353273',  # Scott
-    's4315893',  # Tom
+    's4290365',                 # Josh Arnold
+    's4320859', 'uqbmart8',     # Ben Martin
+    's4316494', 'uqscolbr',     # Sam Colbran
+    's4284683',                 # Anne Redulla
+    's4289147',                 # Chelsea Edmonds
+    'uqnhoy', 's4296445',       # Ned Hoy
+    'uqrport1', 's4356084',     # Roy Portas
+    "uqcwint3", "s4141092",     # Craig Winter
+    "s4323542",                 # Rhys McCane
+    "s4395960",                 # Ashleigh Richardson
+    "",                         # Benjamin O'Brien
+    "s4394679"                  # Steven Summers
 ])
 
 UNAUTHORISED = """Status: 403 Forbidden

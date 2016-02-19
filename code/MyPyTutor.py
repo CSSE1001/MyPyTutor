@@ -693,6 +693,7 @@ def parse_args():
     )
     parser.add_argument(
         '--version',
+        '--version',
         action='store_true',
         help='Print the version and then terminate',
     )
