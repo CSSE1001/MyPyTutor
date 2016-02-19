@@ -5,7 +5,7 @@ set -e
 # there's rate limiting on the server logins, so we need sleeps
 DELAY=3
 
-MPT_ZIP="MyPyTutor34.zip"
+MPT_ZIP="MyPyTutor35.zip"
 
 printf "Updating cgi scripts..."
 sleep $DELAY

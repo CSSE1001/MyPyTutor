@@ -12,7 +12,7 @@ import uqauth
 
 # static files (eg zipfiles)
 TUTORIAL_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
-MPT34_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip"
+MPT35_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor35.zip"
 
 
 
@@ -512,7 +512,7 @@ def get_mpt():
     Return the URL of a zip file containing the latest version of MyPyTutor.
 
     """
-    return MPT34_ZIPFILE_URL
+    return MPT35_ZIPFILE_URL
 
 
 @action('get_version')

@@ -323,7 +323,7 @@ class WebAPI():
 
     def get_mpt_zipfile(self):
         """
-        Download the MyPyTutor Python 3.4 zip file from the server.
+        Download the MyPyTutor Python 3.5 zip file from the server.
 
         Returns:
           The path to the zip file.

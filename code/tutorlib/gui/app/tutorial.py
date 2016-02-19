@@ -201,7 +201,7 @@ class TutorialFrame(ttk.Frame, TutorialHTMLParserDelegate):
 
 class TutorialHTMLParser(HTMLParser):
     def __init__(self, delegate):
-        super().__init__(self)
+        super().__init__()
 
         self.delegate = delegate
 

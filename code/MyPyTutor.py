@@ -3,7 +3,7 @@ from __future__ import print_function
 import sys
 from argparse import ArgumentParser
 
-ALLOWED_VERSIONS = [(3, 4)]
+ALLOWED_VERSIONS = [(3, 5), (3, 4)]
 
 if sys.version_info.major == 3:
     from getpass import getpass
@@ -28,7 +28,7 @@ DEFAULT_CONFIG = {
         'ans_dir': '',
     },
 }
-DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor34.zip'
+DEFAULT_MPT_URL = 'http://csse1001.uqcloud.net/mpt3/MyPyTutor35.zip'
 MPT_SERVICE = 'MyPyTutor'
 MPT_FILENAME = 'MyPyTutor.py'  # usually __file__, but need to support renaming
 GLOBAL_TIMEOUT = 10.  # seconds
@@ -692,6 +692,7 @@ def parse_args():
         help='Run the installer without using a GUI',
     )
     parser.add_argument(
+        '--version',
         '--version',
         action='store_true',
         help='Print the version and then terminate',
