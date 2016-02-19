@@ -3,7 +3,7 @@ from __future__ import print_function
 import sys
 from argparse import ArgumentParser
 
-ALLOWED_VERSIONS = [(3, 4)]
+ALLOWED_VERSIONS = [(3, 5), (3, 4)]
 
 if sys.version_info.major == 3:
     from getpass import getpass
