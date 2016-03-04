@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python2.7
 # A CGI script to run the administrator interface
 
 import cgi
