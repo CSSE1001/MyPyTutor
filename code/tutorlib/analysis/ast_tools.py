@@ -1,4 +1,5 @@
 import ast
+import sys
 from functools import partial
 from operator import attrgetter
 
@@ -204,7 +205,7 @@ def involved_identifiers(*nodes):
             ast.YieldFrom: ['value'],
 
             ast.Compare: ['left', 'comparators'],
-            ast.Call: ['func', 'args', 'keywords', 'starargs', 'kwargs'],
+            ast.Call: ['func', 'args', 'keywords'],
 
             ast.Attribute: ['value'],
             ast.Subscript: ['value', 'slice'],
@@ -229,6 +230,13 @@ def involved_identifiers(*nodes):
             # withitem
             ast.withitem: ['context_expr', 'optional_vars'],
         }
+
+        # Due to PEP0448, Python 3.5 doesn't have starargs or kwargs in the
+        # abstract grammar definition. This should retain backwards
+        # compatibility.
+        if sys.version_info[1] < 5:
+            recurse_on[ast.Call].extend(['starargs', 'kwargs'])
+
 
         # if we don't have anything to recurse on, we're done
         if type(node) not in recurse_on:
