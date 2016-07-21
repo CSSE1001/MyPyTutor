@@ -30,7 +30,7 @@ from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
 
-VERSION = '3.0.11'
+VERSION = '3.0.12'
 
 
 class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
@@ -779,6 +779,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         Args:
             filename:       The filename to backup to. If None, prompts users for one.
             now:            The time to use for generation of timestamp to suffix to the filename.
+                            Defaults to time.time()
                             Not relevant if filename is not None.
             showMessage:    Determines whether to show a GUI success message or not once backup has been completed.
 
@@ -852,7 +853,7 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
         if self.current_tutorial and self.editor.maybesave() == tkmessagebox.CANCEL:
             return
 
-        now = datetime.datetime.now()
+        now = time.time()
 
         def done():
             self.master.after(0, self.update_submissions)
@@ -866,16 +867,21 @@ class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
 
             done()
 
-        # Check for backup first
-        do_backup = tkmessagebox.askyesno(
-            "Backup first?",
-            "It is HIGHLY recommended to backup your answers before attempting to reset any of your submissions."
-            "\n\n"
-            "Would you like to backup now?"
-        )
+        while True:
+            # Check for backup first
+            do_backup = tkmessagebox.askyesno(
+                "Backup first?",
+                "It is HIGHLY recommended to backup your answers before attempting to reset any of your submissions."
+                "\n\n"
+                "Would you like to backup now?"
+            )
 
-        if do_backup:
-            self._backup(now=now)
+            if do_backup:
+                if self._backup(now=now):
+                    break
+            else:
+                break
+
 
         # Prompt user with list of submissions to reset
         dialog = SubmissionsSelectDialog(self.master, None, self.tutorial_package, text="Reset", command=process)
