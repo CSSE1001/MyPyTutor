@@ -30,7 +30,7 @@ from tutorlib.interface.web_api import WebAPI, WebAPIError
 from tutorlib.online.sync import SyncClient
 
 
-VERSION = '3.0.12'
+VERSION = '3.0.14'
 
 
 class TutorialApp(TutorialMenuDelegate, TutorEditorDelegate,
