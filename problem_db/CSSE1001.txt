@@ -56,9 +56,9 @@ Polymorphism:inherit_poly.tut
 
 [14/10/16 GUI]
 
-GUI Layout Example I:gui1.tut
-GUI Layout Example II:gui2.tut
-GUI Layout Example III:gui3.tut
+GUI Layout Example I:gui1.tut : layout1.gif
+GUI Layout Example II:gui2.tut : layout2.gif
+GUI Layout Example III:gui3.tut : layout3.gif
 
 [21/10/16 Recursion]
 
