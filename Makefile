@@ -14,7 +14,7 @@ BUILD = CSSE1001Tutorials/CSSE1001Tutorials.zip \
 all: tutorials
 
 clean: cleantutorials
-	-rm -f MyPyTutor35.zip
+	-rm -f MyPyTutor351.zip
 	-rm -f code/tutorlib/*.pyc
 	-rm -rf build
 

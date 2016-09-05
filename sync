@@ -5,7 +5,7 @@ set -e
 # there's rate limiting on the server logins, so we need sleeps
 DELAY=3
 
-MPT_ZIP="MyPyTutor35.zip"
+MPT_ZIP="MyPyTutor351.zip"
 
 printf "Downloading hash files..."
 sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
@@ -29,7 +29,7 @@ printf "done\n"
 printf "Uploading tutorials zip..."
 sleep $DELAY
 sftp csse1001.zones.eait.uq.edu.au >/dev/null 2>&1 << EOF
-put $1/$1.zip /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/$1.zip
+put CSSE1001Tutorials/CSSE1001Tutorials.zip /opt/local/share/MyPyTutor/MPT3_CSSE1001/public/CSSE1001Tutorials.zip
 EOF
 printf "done\n"
 

@@ -12,7 +12,7 @@ import uqauth
 
 # static files (eg zipfiles)
 TUTORIAL_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/CSSE1001Tutorials.zip"
-MPT35_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor35.zip"
+MPT35_ZIPFILE_URL = "http://csse1001.uqcloud.net/mpt3/MyPyTutor351.zip"
 
 
 

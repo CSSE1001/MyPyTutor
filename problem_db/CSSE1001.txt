@@ -33,7 +33,7 @@ Transforming a List:list_append.tut
 Suming Elements of a List:list_sum.tut
 Finding the Mean:meanfun.tut
 
-[02/09/16 Classes, Error Handling and I/O]
+[09/09/16 Classes, Error Handling and I/O]
 
 Accessing a Dictionary:dict_subscript.tut
 Accessing a Dictionary Using Get:dict_get.tut
