@@ -32,7 +32,7 @@ from tutorlib.utils.fonts import FIXED_FONT
 import tutorlib.utils.messagebox as tkmessagebox
 
 
-class TutorEditor(EditorWindow.EditorWindow):
+class TutorEditor(editor.EditorWindow):
     menu_specs = [
         ("file", "_File"),
         ("edit", "_Edit"),

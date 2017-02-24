@@ -19,8 +19,8 @@
 ## This define menus in the code edit window
 ## It is a modification of idlelib/Bindings.py
 
-from idlelib.configHandler import idleConf
-from idlelib import macosxSupport
+from idlelib.config import idleConf
+from idlelib import macosx
 
 menudefs = [
  # underscore prefixes character to underscore
