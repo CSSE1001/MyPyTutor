@@ -16,17 +16,17 @@
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA.
 
-## This define IO bindings for the code edit window
-## It is a modification of idlelib/IOBinding.py
+## This defines IO bindings for the code edit window.
+## It is an extension of the IOBinding class from idlelib/iomenu.py.
 
-from idlelib import IOBinding
+from idlelib.iomenu import IOBinding
 
 import tutorlib.utils.messagebox as tkmessagebox
 
 
-class TutorIOBinding(IOBinding.IOBinding):
+class TutorIOBinding(IOBinding):
     def __init__(self, parent):
-        IOBinding.IOBinding.__init__(self, parent)
+        IOBinding.__init__(self, parent)
         self.editwin = parent
 
     def open(self, event=None, editFile=None):

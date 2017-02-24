@@ -16,13 +16,13 @@
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA.
 
-# This defines the code edit window - it inherits from
-# idlelib/EditorWindow and so has the same look and feel
+# This defines the code edit window - it inherits from EditorWindow
+# in idlelib/editor and so has the same look and feel.
 
 import os
 import tkinter as tk
 import tkinter.filedialog as tkfiledialog
-from idlelib import EditorWindow, macosxSupport
+from idlelib import editor, macosx
 
 from tutorlib.gui.app.menu import TutorialMenuDelegate
 import tutorlib.gui.editor.bindings as Bindings  # be consistent with idlelib
@@ -50,8 +50,11 @@ class TutorEditor(EditorWindow.EditorWindow):
                  filename=None, online=False):
 
         # Support for Python >= 2.7.7 (TODO find a better way)
-        if hasattr(macosxSupport, "_initializeTkVariantTests") and macosxSupport._tk_type is None:
-            macosxSupport._initializeTkVariantTests(root)
+		# Changes for Python 3.6
+		# The library macosxSupport was changed to macosx
+		# _initializeTkVariantTests was changed to _init_tk_type
+        if hasattr(macosx, "_init_tk_type") and macosx._tk_type is None:
+            macosx._init_tk_type()
 
         super().__init__(root=root, filename=filename)
 
