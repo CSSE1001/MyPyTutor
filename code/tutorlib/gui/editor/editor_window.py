@@ -44,11 +44,10 @@ class TutorEditor(editor.EditorWindow):
         ("help", "_Help"),
     ]
 
-    Bindings = Bindings
+    mainmenu = Bindings
 
     def __init__(self, menu_delegate, editor_delegate, flist=None, root=None,
                  filename=None, online=False):
-
         # Support for Python >= 2.7.7 (TODO find a better way)
 		# Changes for Python 3.6
 		# The library macosxSupport was changed to macosx
