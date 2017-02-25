@@ -32,7 +32,7 @@ from tutorlib.utils.fonts import FIXED_FONT
 import tutorlib.utils.messagebox as tkmessagebox
 
 
-class TutorEditor(EditorWindow.EditorWindow):
+class TutorEditor(editor.EditorWindow):
     menu_specs = [
         ("file", "_File"),
         ("edit", "_Edit"),
@@ -44,11 +44,10 @@ class TutorEditor(EditorWindow.EditorWindow):
         ("help", "_Help"),
     ]
 
-    Bindings = Bindings
+    mainmenu = Bindings
 
     def __init__(self, menu_delegate, editor_delegate, flist=None, root=None,
                  filename=None, online=False):
-
         # Support for Python >= 2.7.7 (TODO find a better way)
 		# Changes for Python 3.6
 		# The library macosxSupport was changed to macosx
