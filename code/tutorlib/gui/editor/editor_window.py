@@ -102,7 +102,7 @@ class TutorEditor(editor.EditorWindow):
         self.text.tag_config("orange", background="orange")
 
         self.tutorial = None
-        self.menudict['file'].delete(0, 1)  # TODO: huh?
+        self.menudict['file'].delete(0)  # TODO: huh?
 
     ## Menu Callbacks
     # file
