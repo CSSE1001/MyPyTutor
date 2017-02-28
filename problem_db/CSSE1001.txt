@@ -70,7 +70,7 @@ Nested Lists:recursion_list.tut
 Extracting Digits Using a Base:recursive_digits2.tut
 Converting List of Digits to Number:recursive_base2dec.tut
 
-[Not Assessed: Functional Programming]
+[22/07/17 Functional Programming]
 
 Writing Lambda Functions:lambda.tut
 List Comprehension:list_comp.tut
