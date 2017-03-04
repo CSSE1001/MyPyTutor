@@ -1,6 +1,6 @@
 [URL:https://student.eait.uq.edu.au/mypytutor/mpt/cgi-bin/mpt_cgi.py]
 
-[10/03/17 Introduction]
+[17/03/17 Introduction]
 
 Introduction:intro.tut
 Input and Output:input.tut
