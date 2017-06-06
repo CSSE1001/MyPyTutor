@@ -13,7 +13,7 @@ import support
 import uqauth
 
 # Whitelisted users with access to the admin site
-ADMINS = ['uqprobin', 'uqposhe1', 'uqbmart8']
+ADMINS = ['uqposhe1', 'uqbmart8', 'uqrtho17']
 
 #################################################
 # Temporary, for development/debugging purposes
