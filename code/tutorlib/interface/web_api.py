@@ -10,7 +10,7 @@ from tutorlib.utils.tmp import retrieve
 
 HELP_URL = 'http://csse1001.uqcloud.net/mpt3/help'
 VISUALISER_URL \
-    = 'http://csse1001.uqcloud.net/opt/visualize.html#py=3&code={code}'
+    = 'http://pythontutor.com/visualize.html'
 
 
 class WebAPIError(Exception):

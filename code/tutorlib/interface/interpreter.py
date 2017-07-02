@@ -119,7 +119,7 @@ def altered_idle_config():
     It's very unlikely that students will be using these.
 
     """
-    from idlelib.configHandler import idleConf
+    from idlelib.config import idleConf
 
     # save originals
     font_name = idleConf.GetOption('main', 'EditorWindow', 'font-name')
