@@ -24,7 +24,7 @@ def create_layout(frame):
       |[Button1][Button2]     |
       +-----------------------+
 
-    Args:
+    Parameters:
       frame (tk.Frame): The frame to create the two buttons in.
 
     """

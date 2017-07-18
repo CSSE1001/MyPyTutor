@@ -15,7 +15,13 @@ def validate_input(string):
       mul x y
       div x y
 
-    Arguments x and y must be convertable to float.
+    Parameters:
+        string(str): a valid command (see above)
 
+    Return:
+        tuple<str, list<float>>: the command and its corresponding arguements
+
+    Precondition:
+        Arguments x and y must be convertable to float.
     """
     # your code here

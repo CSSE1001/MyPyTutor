@@ -4,11 +4,17 @@ class Shape():
 
     """
     def __init__(self, origin=(0, 0)):
+        """Constructs a shape object
+        
+        Parameters:
+            origin(tuple<int, int>): origin of the shape 
+        """
+
         self.origin = origin
 
     def area(self):
         """
-        Return the area of the shape.
+        (int) Return the area of the shape.
 
         """
         raise NotImplementedError()
@@ -18,25 +24,43 @@ class Shape():
         Return the vertices of the shape.
 
         Returns:
-          The vertices of the shape, as a list of tuples representing two
-          dimensional points.
-
+          list<tuple<int, int>>: The vertices of the shape, as a list of tuples 
+          representing two dimensional points. 
           This list may be returned in any order.
-
         """
         raise NotImplementedError()
 
 
 class Square(Shape):
+    """A Square object"""
     def __init__(self, side_length, origin=(0, 0)):
+        """
+        Constructs a square object
+        
+        Parameters:
+            side_length (int): Length of the sides of the square
+            origin (tuple<int, int>): Coordinate of topleft corner of square
+            
+        """
         super().__init__(origin=origin)
 
         self.side_length = side_length
 
     def area(self):
+        """
+        (int) Return the area of the shape.
+        """
         return self.side_length * self.side_length
 
     def vertices(self):
+        """
+        Return the vertices of the shape.
+
+        Returns:
+          list<tuple<int, int>>: The vertices of the shape, as a list of tuples 
+          representing two dimensional points. 
+          This list may be returned in any order.
+        """
         x, y = self.origin
 
         return [
@@ -51,12 +75,12 @@ def total_area(shapes):
     """
     Return the total area of the given list of shapes.
 
-    Args:
-      shapes ([Shape]): The list of shapes to sum the area for.
+    Parameters:
+      shapes (list<Shape>): The list of shapes to sum the area for.
 
     Returns:
-      The total area of the list of shapes, being the sum of the area of each
-      individual shape.
+      int: The total area of the list of shapes, being the sum of the area of 
+      each individual shape.
 
     """
     area = 0.
@@ -71,11 +95,11 @@ def outer_bounds(shapes):
     """
     Return the outer bounds of the given list of shapes.
 
-    Args:
-      shapes ([Shape]): The list of shapes to return the outer bounds for.
+    Parameters:
+      shapes (list<Shape>): The list of shapes to return the outer bounds for.
 
     Returns:
-      A two-element tuple.
+      tuple<tuple<int, int>, tuple<int, int>>: 
 
       The first element of the tuple is the top-left corner of a rectangle
       which could enclose every shape in the given list.

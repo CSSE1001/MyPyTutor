@@ -2,11 +2,11 @@ def increment(x):
     """
     Increment the argument (ie, return the next largest integer).
 
-    Args:
-      x (int): The number to increment.
+    Parameters:
+        x (int): The number to increment.
 
     Returns:
-      The next largest integer after the argument.
+        The next largest integer after the argument.
 
     """
     return x + 1
@@ -16,11 +16,11 @@ def double(x):
     """
     Double the argument.
 
-    Args:
-      x (int): The number to double.
+    Parameters:
+        x (int): The number to double.
 
     Returns:
-      Double the argument.
+        Double the argument.
 
     """
     return 2*x
