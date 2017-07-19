@@ -6,6 +6,7 @@ class Person(object):
             name(str): The name of the person
             age(int): The age of the person
             gender(str): Either 'M' or 'F' for male or female
+            
         """
 
         self._name = name
@@ -32,18 +33,21 @@ class Person(object):
     def get_name(self):
         """
         (str) Return the name
+        
         """
         return self._name
 
     def get_age(self):
         """
         (int) Return the age
+        
         """
         return self._age
 
     def get_gender(self):
         """
         (str) Return the gender
+        
         """
         return self._gender
 
@@ -53,5 +57,6 @@ class Person(object):
     def get_friend(self):
         """
         (Person) Return the friend
+        
         """
         return self._friend

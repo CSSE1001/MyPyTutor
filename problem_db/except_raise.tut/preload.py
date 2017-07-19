@@ -4,8 +4,6 @@ class InvalidCommand(Exception):
 
 def validate_input(string):
     """
-    validate_input(str) -> (str, [float])
-
     If string is a valid command, return its name and arguments.
     If string is not a valid command, raise InvalidCommand
 
@@ -23,5 +21,6 @@ def validate_input(string):
 
     Precondition:
         Arguments x and y must be convertable to float.
+        
     """
     # your code here

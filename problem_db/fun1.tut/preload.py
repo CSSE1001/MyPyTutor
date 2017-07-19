@@ -5,7 +5,7 @@ def increment(x):
     Parameters:
         x (int): The number to increment.
 
-    Returns:
+    Return:
         The next largest integer after the argument.
 
     """
@@ -19,7 +19,7 @@ def double(x):
     Parameters:
         x (int): The number to double.
 
-    Returns:
+    Return:
         Double the argument.
 
     """

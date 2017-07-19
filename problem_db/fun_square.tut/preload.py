@@ -6,5 +6,6 @@ def square(n):
     
     Return:
         The square of n
+        
     """
     # add your code here

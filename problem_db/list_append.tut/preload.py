@@ -9,5 +9,6 @@ def add_sizes(strings):
     Return:
         list<tuple<str, int>>: a list of strings and their corresponding 
         lengths
+        
     """
     # add your code here

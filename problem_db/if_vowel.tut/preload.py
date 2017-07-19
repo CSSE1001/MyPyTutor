@@ -1,5 +1,5 @@
 def is_vowel(c):
-    """Returns True iff 'c' is a vowel.
+    """Return True iff 'c' is a vowel.
     
     Parameters:
         c (str): Character to check if it is a vowel
