@@ -1,0 +1,1 @@
+tar cvzf MPT3_CSSE1001_`date +%Y-%m-%d_%H-%M-%S`.tar.gz /opt/local/share/MyPyTutor/MPT3_CSSE1001/
