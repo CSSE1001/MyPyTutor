@@ -1,12 +1,12 @@
 [URL:https://student.eait.uq.edu.au/mypytutor/mpt/cgi-bin/mpt_cgi.py]
 
-[17/03/17 Introduction]
+[11/08/17 Introduction]
 
 Introduction:intro.tut
 Input and Output:input.tut
 Converting Input Strings:input_number.tut
 
-[24/03/17 Control Structures]
+[11/08/17 Control Structures]
 
 If Statements 1:if_abs.tut
 If Statements 2:if_vowel.tut
@@ -17,7 +17,7 @@ Using Functions:fun1.tut
 Writing a Function:fun_square.tut
 Writing a Function Using While:while_function.tut
 
-[07/04/17 Abstract Data Types]
+[18/08/17 Abstract Data Types]
 
 Accessing String Elements:string_indexing.tut
 Slicing Strings:string_slicing.tut
@@ -26,7 +26,7 @@ Filtering Characters from a String:string_filter.tut
 Intersecting String:string_intersection.tut
 Using Tuples:tuple.tut
 
-[28/04/17 Classes and Objects]
+[25/08/17 Classes and Objects]
 
 Using Range:range.tut
 Finding Digits in Strings:string_digits.tut
@@ -36,7 +36,7 @@ Transforming a List:list_append.tut
 Suming Elements of a List:list_sum.tut
 Finding the Mean:meanfun.tut
 
-[28/04/17 Classes, Error Handling and I/O]
+[01/09/17 Classes, Error Handling and I/O]
 
 Accessing a Dictionary:dict_subscript.tut
 Accessing a Dictionary Using Get:dict_get.tut
@@ -45,32 +45,32 @@ Updating a Dictionary:dict_update.tut
 Exception Handling:except_try.tut
 Raising an Exception:except_raise.tut
 
-[28/04/17 Class Design]
+[08/09/17 Class Design]
 
 Using Classes:class_use.tut
 Defining a Class:class_rect.tut
 A Point Class Definition:class_point.tut
 
-[12/05/17 Inheritance]
+[15/09/17 Inheritance]
 
 Using Inheritance:inherit_def.tut
 Method Calls:inherit_calls.tut
 Polymorphism:inherit_poly.tut
 
-[19/05/17 GUI]
+[13/10/17 GUI]
 
 GUI Layout Example I:gui1.tut : layout1.gif
 GUI Layout Example II:gui2.tut : layout2.gif
 GUI Layout Example III:gui3.tut : layout3.gif
 
-[02/06/17 Recursion]
+[20/10/17 Recursion]
 
 Extracting Digits:recursive_digits.tut
 Nested Lists:recursion_list.tut
 Extracting Digits Using a Base:recursive_digits2.tut
 Converting List of Digits to Number:recursive_base2dec.tut
 
-[22/07/17 Functional Programming]
+[27/10/17 Functional Programming]
 
 Writing Lambda Functions:lambda.tut
 List Comprehension:list_comp.tut

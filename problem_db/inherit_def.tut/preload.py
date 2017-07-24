@@ -7,9 +7,9 @@ class Employee(object):
         """
         Initialise a new Employee instance.
 
-        Args:
-          name (str): The employee's name.
-          salary (float): The employee's annual salary.
+        Parameters:
+            name (str): The employee's name.
+            salary (float): The employee's annual salary.
 
         """
         self._name = name
@@ -17,14 +17,14 @@ class Employee(object):
 
     def get_name(self):
         """
-        Return the name of this employee.
+        (str) Return the name.
 
         """
         return self._name
 
     def wage(self):
         """
-        Return the forgnightly wage of this employee.
+        (float) Return the forgnightly wage.
 
         """
         return self._salary/26

@@ -1,9 +1,14 @@
 def add_sizes(strings):
     """
-    add_sizes([str]) -> [(str, int)]
-
     Return the list of pairs consisting of the elements of strings together
     with their sizes.
 
+    Parameters:
+        list<str>: a list a strings
+
+    Return:
+        list<tuple<str, int>>: a list of strings and their corresponding 
+        lengths
+        
     """
     # add your code here
